@@ -9,10 +9,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.zxing.ResultPoint;
@@ -30,8 +30,9 @@ import ua.uz.vopak.brb4.brb4.R;
 
 public class ScanFragment extends Fragment {
     Context mcontext;
-    private BarcodeView barcodeView;
+    BarcodeView barcodeView;
     private TextView codeView, contentView;
+    private ProgressBar progresBar;
     final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
     View view;
 
@@ -85,6 +86,8 @@ public class ScanFragment extends Fragment {
                 codeView = getActivity().findViewById(R.id.scan_format);
 
                 barcodeView.pause();
+                progresBar = getActivity().findViewById(R.id.progressBar);
+                progresBar.setProgress(10);
                 //after the string has been read we prozess it
                 String ScanText = result.getText();
                 String ScanCode = result.getBarcodeFormat().toString();
@@ -94,7 +97,7 @@ public class ScanFragment extends Fragment {
                 if(!ScanText.equals("abc")){//if the tag was not scanned succesfully let us start the scan again
                     codeView.setText("code: " + ScanCode);
                     contentView.setText("content :" + ScanText);
-                    barcodeView.resume(); //notice we don't call decodeContinuous function again
+                    //barcodeView.resume(); //notice we don't call decodeContinuous function again
                 }
             }
         }
@@ -114,5 +117,9 @@ public class ScanFragment extends Fragment {
                 barcodeView.decodeContinuous(callback);
             }
         }
+    }
+
+    public static  void  setScanResult(){
+
     }
 }
