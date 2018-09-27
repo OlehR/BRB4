@@ -8,8 +8,11 @@ import com.journeyapps.barcodescanner.BarcodeView;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
+import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
+
 public class Worker //extends AsyncTask<BarcodeResult , Void, String>
 {
+    ScanFragment scanerContext;
     String CodeWarehouse="000000009";
 
     private String CodeWares;
@@ -20,6 +23,7 @@ public class Worker //extends AsyncTask<BarcodeResult , Void, String>
    public void Start(BarcodeResult parBarCode)
    {
        //Call Progres 10%;
+       scanerContext.SetProgres(10);
 
        BarCode=parBarCode.getText();
        if(BarCode.indexOf('-')>0)
@@ -43,10 +47,15 @@ public class Worker //extends AsyncTask<BarcodeResult , Void, String>
        if(BarCode.length()>7 || !CodeWares.isEmpty() )
        {
            String resHttp=Http.GetData(CodeWarehouse,BarCode,CodeWares);
+
            //Call Progres 50%;
+           scanerContext.SetProgres(50);
            if(resHttp!=null && !resHttp.isEmpty())
            {
                LI.Init(resHttp);
+
+               scanerContext.setScanResult(LI);
+
                if(LI.OldPrice!=LI.Price)
                {
                    byte[] b = new byte[0];
@@ -79,6 +88,16 @@ public class Worker //extends AsyncTask<BarcodeResult , Void, String>
           e.printStackTrace();
       }
   }
+    public Worker(ScanFragment scaner)
+    {
+        scanerContext = scaner;
+        Printer.findBT();
+        try {
+            Printer.openBT();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @Override
     public void finalize()
     {

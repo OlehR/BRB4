@@ -22,13 +22,16 @@ import com.journeyapps.barcodescanner.BarcodeView;
 
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.LabelInfo;
 import ua.uz.vopak.brb4.brb4.R;
+import ua.uz.vopak.brb4.brb4.Worker;
 
 /**
  * Created by Rishabh Bhatia on 12/5/17.
  */
 
 public class ScanFragment extends Fragment {
+    Worker worker = new Worker(this);
     Context mcontext;
     BarcodeView barcodeView;
     private TextView codeView, contentView;
@@ -86,19 +89,14 @@ public class ScanFragment extends Fragment {
                 codeView = getActivity().findViewById(R.id.scan_format);
 
                 barcodeView.pause();
-                progresBar = getActivity().findViewById(R.id.progressBar);
-                progresBar.setProgress(10);
                 //after the string has been read we prozess it
-                String ScanText = result.getText();
-                String ScanCode = result.getBarcodeFormat().toString();
-                codeView.setText("code: " + ScanCode);
-                contentView.setText("content :" + ScanText);
+                worker.Start(result);
 
-                if(!ScanText.equals("abc")){//if the tag was not scanned succesfully let us start the scan again
+               /* if(!ScanText.equals("abc")){//if the tag was not scanned succesfully let us start the scan again
                     codeView.setText("code: " + ScanCode);
                     contentView.setText("content :" + ScanText);
                     //barcodeView.resume(); //notice we don't call decodeContinuous function again
-                }
+                }*/
             }
         }
 
@@ -119,7 +117,12 @@ public class ScanFragment extends Fragment {
         }
     }
 
-    public static  void  setScanResult(){
+    public void  setScanResult(LabelInfo LI){
+        barcodeView.resume();
+    }
 
+    public void SetProgres(int progres){
+        progresBar = getActivity().findViewById(R.id.progressBar);
+        progresBar.setProgress(progres);
     }
 }
