@@ -19,20 +19,125 @@
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:max="100"
-        android:layout_marginTop="5dp" />
+        android:layout_marginTop="10dp" />
 
-    <TextView
-        android:id="@+id/scan_format"
-        android:layout_width="wrap_content"
+
+    <TableLayout
+        android:id="@+id/tableLayout1"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textIsSelectable="true"
-        android:layout_centerHorizontal="true" />
-    <TextView
-        android:id="@+id/scan_content"
-        android:layout_width="wrap_content"
+        android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:stretchColumns="0,1,2,3">
+
+        <TableRow
+            android:id="@+id/tableRow1"
+            android:layout_width="fill_parent"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/code_text"
+                android:layout_column="0"
+                android:text="Код:">
+            </TextView>
+
+            <TextView
+                android:id="@+id/code"
+                android:layout_column="1">
+            </TextView>
+
+            <TextView
+                android:id="@+id/per_text"
+                android:layout_column="2"
+                android:text="Од:">
+            </TextView>
+
+            <TextView
+                android:id="@+id/per"
+                android:layout_column="3">
+            </TextView>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow3"
+            android:layout_width="fill_parent"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/old_price_text"
+                android:layout_column="0"
+                android:text="Ціна стара:">
+            </TextView>
+
+            <TextView
+                android:id="@+id/old_price"
+                android:layout_column="1">
+            </TextView>
+
+            <TextView
+                android:id="@+id/price_text"
+                android:layout_column="2"
+                android:text="Ціна нова:">
+            </TextView>
+
+            <TextView
+                android:id="@+id/price"
+                android:layout_column="3">
+            </TextView>
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="fill_parent"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/title_text"
+                android:layout_column="0"
+                android:text="Назва:">
+            </TextView>
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_column="1"
+                android:layout_span="3">
+            </TextView>
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow4"
+            android:layout_width="fill_parent"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/bar_code_text"
+                android:layout_column="0"
+                android:text="Штрих код:">
+            </TextView>
+
+            <TextView
+                android:id="@+id/bar_code"
+                android:layout_column="1"
+                android:layout_span="3">
+            </TextView>
+
+        </TableRow>
+
+    </TableLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textIsSelectable="true"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/scan_format" />
+        android:text="Resume" />
 
 </LinearLayout>

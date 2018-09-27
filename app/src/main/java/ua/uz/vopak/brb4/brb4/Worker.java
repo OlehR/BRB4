@@ -54,7 +54,7 @@ public class Worker //extends AsyncTask<BarcodeResult , Void, String>
            {
                LI.Init(resHttp);
 
-               scanerContext.setScanResult(LI);
+
 
                if(LI.OldPrice!=LI.Price)
                {
@@ -70,6 +70,7 @@ public class Worker //extends AsyncTask<BarcodeResult , Void, String>
                        e.printStackTrace();
                       }
                }
+               scanerContext.setScanResult(LI);
            }
        }
 

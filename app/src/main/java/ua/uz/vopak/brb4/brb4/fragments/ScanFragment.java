@@ -8,10 +8,12 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -34,11 +36,10 @@ public class ScanFragment extends Fragment {
     Worker worker = new Worker(this);
     Context mcontext;
     BarcodeView barcodeView;
-    private TextView codeView, contentView;
+    private TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView;
     private ProgressBar progresBar;
     final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
     View view;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -84,10 +85,6 @@ public class ScanFragment extends Fragment {
         @Override
         public void barcodeResult(BarcodeResult result) {
             if (result.getText() != null) {
-
-                contentView = getActivity().findViewById(R.id.scan_content);
-                codeView = getActivity().findViewById(R.id.scan_format);
-
                 barcodeView.pause();
                 //after the string has been read we prozess it
                 worker.Start(result);
@@ -118,6 +115,22 @@ public class ScanFragment extends Fragment {
     }
 
     public void  setScanResult(LabelInfo LI){
+
+        codeView = getActivity().findViewById(R.id.code);
+        perView  = getActivity().findViewById(R.id.per);
+        nameView  = getActivity().findViewById(R.id.title);
+        oldPriceView  = getActivity().findViewById(R.id.old_price);
+        priceView  = getActivity().findViewById(R.id.price);
+        textBarcodeView = getActivity().findViewById(R.id.bar_code);
+
+        codeView.setText(LI.Code);
+        perView.setText(LI.Unit);
+        nameView.setText(LI.Name);
+        oldPriceView.setText(LI.OldPrice);
+        priceView.setText(LI.Price);
+        textBarcodeView.setText(LI.BarCode);
+
+
         barcodeView.resume();
     }
 
