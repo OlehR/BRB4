@@ -14,7 +14,7 @@ public class BluetoothPrinter {
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice;
-
+    public TypePrinter  varTypePrinter = TypePrinter.NotDefined;
     // needed for communication to bluetooth device / network
     OutputStream mmOutputStream;
     InputStream mmInputStream;
@@ -43,6 +43,20 @@ public class BluetoothPrinter {
             if(pairedDevices.size() > 0) {
                 for (BluetoothDevice device : pairedDevices) {
                     String name=device.getName();
+                    switch (name)
+                    {
+                        case "ARGO 25":
+                            varTypePrinter=TypePrinter.ARGO_25;
+                            break;
+                        case "Godex MX20":
+                            varTypePrinter=TypePrinter.Godex_MX20;
+                            break;
+                        default:
+                            varTypePrinter=TypePrinter.NotDefined;
+
+                    }
+                    varTypePrinter=TypePrinter.ARGO_25;
+
                     // RPP300 is the name of the bluetooth printer device
                     // we got this name from the list of paired devices
 //                    if (device.getName().equals("RPP300")) {

@@ -51,7 +51,7 @@ public class Worker //extends AsyncTask<BarcodeResult , Void, String>
                {
                    byte[] b = new byte[0];
                    try {
-                       b = LI.LevelForPrinter();
+                       b = LI.LevelForPrinter(TypeLanguagePrinter.ZPL);
                    } catch (UnsupportedEncodingException e) {
                        e.printStackTrace();
                    }

@@ -38,7 +38,7 @@ public class LabelInfo
         if(varData[6]=="1")
             Action  = true;
     }
-    public byte[] LevelForPrinter() throws UnsupportedEncodingException {
+    public byte[] LevelForPrinter(TypeLanguagePrinter parTLP) throws UnsupportedEncodingException {
         byte [] res;
         String Label="^XA\n" +
                 "^LL280\n" +
