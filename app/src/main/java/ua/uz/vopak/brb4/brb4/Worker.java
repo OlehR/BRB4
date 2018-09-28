@@ -20,9 +20,9 @@ protected LabelInfo doInBackground(BarcodeResult... param)
   return Start(param[0]);
 }
     @Override
-    protected void onPostExecute(LabelInfo varLI)
+    protected void onPostExecute(LabelInfo parLI)
     {
-        scanerContext.setScanResult(LI);
+        scanerContext.setScanResult(parLI);
     }
 
 
@@ -86,7 +86,7 @@ protected LabelInfo doInBackground(BarcodeResult... param)
 
            }
        }
-
+       scanerContext.SetProgres(100);
        return LI;
 
    }
