@@ -124,7 +124,7 @@ public class ScanFragment extends Fragment {
         priceView  = getActivity().findViewById(R.id.price);
         textBarcodeView = getActivity().findViewById(R.id.bar_code);
 
-        codeView.setText(LI.Code);
+        codeView.setText(Integer.toString(LI.Code));
         perView.setText(LI.Unit);
         nameView.setText(LI.Name);
 
@@ -143,8 +143,8 @@ public class ScanFragment extends Fragment {
             priceText.setTextColor(Color.parseColor("#3bb46e"));
         }
 
-        oldPriceView.setText(LI.OldPrice);
-        priceView.setText(LI.Price);
+        oldPriceView.setText(Double.toString(LI.OldPrice/100));
+        priceView.setText(Double.toString(LI.Price/100));
         textBarcodeView.setText(LI.BarCode);
 
 
