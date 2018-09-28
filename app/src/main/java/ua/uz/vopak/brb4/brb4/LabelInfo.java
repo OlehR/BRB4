@@ -1,6 +1,15 @@
 package ua.uz.vopak.brb4.brb4;
 
+
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import static android.app.PendingIntent.getActivity;
+
 
 public class LabelInfo
 {
@@ -32,6 +41,7 @@ public class LabelInfo
         String [] varPrice =varData[2].split(",");
         PriceBill = Integer.parseInt(varPrice[0]);
         PriceCoin = Integer.parseInt(varPrice[1]);
+        Price=PriceBill*100+PriceCoin;
         Unit = varData[3];
         Article = varData[4];
         BarCode = varData[5];
@@ -40,54 +50,61 @@ public class LabelInfo
     }
     public byte[] LevelForPrinter(TypeLanguagePrinter parTLP) throws UnsupportedEncodingException {
         byte [] res;
+        String Name1,Name2="",
+                varUnit="грн/"+this.Unit,BarCodePrice;
+        String  OffsetBill="0",OffsetCoin="350";
+        String Space="                          ";
+        if(this.Name.length()<33)
+            Name1=this.Name;
+        else
+        {
+            int pos= Name.substring(1,33).lastIndexOf(" ");
+            Name1=Name.substring(1,pos);
+            Name2=Name.substring(pos);
+            Name2=Space.substring(1,33-Name2.length()/2) + Name2;
+        }
+        Name1=Space.substring(1,(33-Name1.length()/2)) + Name1;
+        BarCodePrice = Integer.toString(Code)+"-"+Integer.toString(Price);
+
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        Date today = Calendar.getInstance().getTime();
+        String CurentDate = df.format(today);
+
+        switch(Integer.toString(PriceBill).length())
+        {
+            case 1:
+                OffsetBill="120";OffsetCoin="210";
+            case 2:
+                OffsetBill="60";OffsetCoin="180";
+            case 3:
+                OffsetBill="10";OffsetCoin="335";
+            case 4:
+                OffsetBill="0";OffsetCoin="350";
+        }
+
         String Label="^XA\n" +
                 "^LL280\n" +
-                "^FO0,12^A@N,20,20,B:904_MSSS_24.arf\n" +
-                "^FDВино \"La Famiglia\"\n" +
-                "^FS\n" +
                 "\n" +
-                "^FO0,40^A@N,20,20,B:904_MSSS_24.arf\n" +
-                "^FD Delicato біле н/сол 0.75л       \n" +
-                "^FS\n" +
+                "^FO 0,12^A@N,20,20,B:904_MSSS_24.arf ^FD{Name1}^FS\n" +
+                "^FO 0,40^A@N,20,20,B:904_MSSS_24.arf ^FD{Name2}^FS\n" +
                 "\n" +
-                "^FO  10,18^A@N,20,20,B:903_AB_120.arf\n" +
-                "^FD155\n" +
-                "^FS\n" +
+                "^FO {OffsetBill}, 18^A@N,20,20,B:903_AB_120.arf ^FD{PriceBill}^FS\n" +
+                "^FO {OffsetCoin}, 51^A@N,20,20,B:901_AB_60.arf ^FD{PriceCoin}^FS\n" +
+                "^FO {OffsetCoin},140^A@N,20,20,B:904_MSSS_24.arf ^FD{Unit}^FS\n" +
                 "\n" +
-                "^FO335  ,51^A@N,20,20,B:901_AB_60.arf\n" +
-                "^FD37\n" +
-                "^FS\n" +
+                "^FO  15,200^BY2 ^BCN,40,N,Y ^FD{BarCodePrice}^FS\n" +
                 "\n" +
-                "^FO240,215^Ab\n" +
-                "^FD21.09.2018  \n" +
-                "^FS\n" +
+                "^FO  15,250^Ab ^FD{BarCode}^FS\n" +
+                "^FO 170,250^Ab ^FD{Article}^FS\n" +
+                "^FO 320,250^Ab ^FD{Date}^FS\n" +
                 "\n" +
-                "\n" +
-                "^FO248,240^Ab\n" +
-                "^FD00093272 \n" +
-                "^FS\n" +
-                "\n" +
-                "^FO330,140^A@N,20,20,B:904_MSSS_24.arf\n" +
-                "^FD грн/пл                                      \n" +
-                "^FS\n" +
-                "\n" +
-                "^FO0,247^A@N,20,20,B:904_MSSS_24.arf\n" +
-                "^FD-------------------------------------\n" +
-                "^FS\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "^FO340,180^BY3\n" +
-                "^BQN,2,4^FDMM,N299123456123456^FS\n" +
-                "\n" +
-                "^FO15,200^BY2\n" +
-                "^BEN,40,Y,N\n" +
-                "^FD3083680015394\n" +
-                "^FS\n" +
-                "\n" +
-                "\n" +
-                "\n" +
-                "^XZ\n";
+                "^FO 0,247^A@N,20,20,B:904_MSSS_24.arf ^FD-------------------------------------^FS\n" +
+                "^XZ";
+
+        Label=Label.replace("{Name1}",Name1).replace("{Name2}",Name2).
+                    replace("{OffsetBill}",OffsetBill).replace("{OffsetCoin}",OffsetCoin).replace("{Unit}",varUnit).
+                    replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode).
+                    replace("{Article}",this.Article).replace("{Date}",CurentDate);
            res=Label.getBytes("Cp1251");
           return res;
 
