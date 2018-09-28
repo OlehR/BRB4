@@ -10,9 +10,11 @@ import java.io.UnsupportedEncodingException;
 
 import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
 
-public class Worker extends  AsyncTask<BarcodeResult , Void, LabelInfo>
-{
 
+
+public class Worker //extends  AsyncTask<BarcodeResult , Void, LabelInfo>
+{
+/*
 @Override
 protected LabelInfo doInBackground(BarcodeResult... param)
 {
@@ -25,7 +27,7 @@ protected LabelInfo doInBackground(BarcodeResult... param)
         scanerContext.setScanResult(parLI);
     }
 
-
+*/
     ScanFragment scanerContext;
     String CodeWarehouse="000000009";
 
@@ -56,6 +58,8 @@ protected LabelInfo doInBackground(BarcodeResult... param)
            }
 
        }
+       else
+           LI.OldPrice=0;
 
        if(BarCode.length()>7 || !CodeWares.isEmpty() )
        {
