@@ -23,6 +23,7 @@ import com.journeyapps.barcodescanner.BarcodeView;
 
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.AsyncWorker;
 import ua.uz.vopak.brb4.brb4.LabelInfo;
 import ua.uz.vopak.brb4.brb4.R;
 import ua.uz.vopak.brb4.brb4.Worker;
@@ -87,7 +88,11 @@ public class ScanFragment extends Fragment {
                 barcodeView.pause();
                 SetProgres(0);
                 //after the string has been read we prozess it
-                worker.execute(result);
+
+                //worker.execute(result);
+                AsyncWorker aW =  new AsyncWorker(worker);
+                aW.execute(result);
+
                 //worker.Start(result);
 
                /* if(!ScanText.equals("abc")){//if the tag was not scanned succesfully let us start the scan again
