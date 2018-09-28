@@ -5,15 +5,14 @@ package ua.uz.vopak.brb4.brb4.fragments;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -126,6 +125,11 @@ public class ScanFragment extends Fragment {
         codeView.setText(LI.Code);
         perView.setText(LI.Unit);
         nameView.setText(LI.Name);
+
+        if(LI.OldPrice != LI.Price){
+            oldPriceView.setTextColor(Color.parseColor("#ee4343"));
+            priceView.setTextColor(Color.parseColor("#ee4343"));
+        }
         oldPriceView.setText(LI.OldPrice);
         priceView.setText(LI.Price);
         textBarcodeView.setText(LI.BarCode);
