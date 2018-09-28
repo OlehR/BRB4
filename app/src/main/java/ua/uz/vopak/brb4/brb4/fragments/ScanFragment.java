@@ -85,6 +85,7 @@ public class ScanFragment extends Fragment {
         public void barcodeResult(BarcodeResult result) {
             if (result.getText() != null) {
                 barcodeView.pause();
+                SetProgres(0);
                 //after the string has been read we prozess it
                 worker.execute(result);
                 //worker.Start(result);
@@ -123,16 +124,27 @@ public class ScanFragment extends Fragment {
         priceView  = getActivity().findViewById(R.id.price);
         textBarcodeView = getActivity().findViewById(R.id.bar_code);
 
-        codeView.setText(LI.Code);
+        codeView.setText(Integer.toString(LI.Code));
         perView.setText(LI.Unit);
         nameView.setText(LI.Name);
+
+        TextView oldPriceText = getActivity().findViewById(R.id.old_price_text);
+        TextView priceText = getActivity().findViewById(R.id.price_text);
 
         if(LI.OldPrice != LI.Price){
             oldPriceView.setTextColor(Color.parseColor("#ee4343"));
             priceView.setTextColor(Color.parseColor("#ee4343"));
+            oldPriceText.setTextColor(Color.parseColor("#ee4343"));
+            priceText.setTextColor(Color.parseColor("#ee4343"));
+        }else {
+            oldPriceView.setTextColor(Color.parseColor("#3bb46e"));
+            priceView.setTextColor(Color.parseColor("#3bb46e"));
+            oldPriceText.setTextColor(Color.parseColor("#3bb46e"));
+            priceText.setTextColor(Color.parseColor("#3bb46e"));
         }
-        oldPriceView.setText(LI.OldPrice);
-        priceView.setText(LI.Price);
+
+        oldPriceView.setText(Double.toString(LI.OldPrice/100));
+        priceView.setText(Double.toString(LI.Price/100));
         textBarcodeView.setText(LI.BarCode);
 
 
