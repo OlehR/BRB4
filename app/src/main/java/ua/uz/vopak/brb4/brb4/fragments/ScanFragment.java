@@ -86,7 +86,8 @@ public class ScanFragment extends Fragment {
             if (result.getText() != null) {
                 barcodeView.pause();
                 //after the string has been read we prozess it
-                worker.Start(result);
+                worker.execute(result);
+                //worker.Start(result);
 
                /* if(!ScanText.equals("abc")){//if the tag was not scanned succesfully let us start the scan again
                     codeView.setText("code: " + ScanCode);
