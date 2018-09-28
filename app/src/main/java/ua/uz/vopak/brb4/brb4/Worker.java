@@ -61,10 +61,10 @@ protected Void doInBackground(BarcodeResult... param)
            if(resHttp!=null && !resHttp.isEmpty())
            {
                LI.Init(resHttp);
+               scanerContext.setScanResult(LI);
 
 
-
-               if(LI.OldPrice!=LI.Price)
+               /*if(LI.OldPrice!=LI.Price)
                {
                    byte[] b = new byte[0];
                    try {
@@ -77,8 +77,8 @@ protected Void doInBackground(BarcodeResult... param)
                    } catch (IOException e) {
                        e.printStackTrace();
                       }
-               }
-               scanerContext.setScanResult(LI);
+               }*/
+
            }
        }
 
