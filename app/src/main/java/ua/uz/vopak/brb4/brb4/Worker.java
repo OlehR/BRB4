@@ -10,8 +10,16 @@ import java.io.UnsupportedEncodingException;
 
 import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
 
-public class Worker //extends AsyncTask<BarcodeResult , Void, String>
+public class Worker extends  AsyncTask<BarcodeResult , Void, Void>
 {
+
+@Override
+protected Void doInBackground(BarcodeResult... param)
+{
+  Start(param[0]);
+  return null;
+}
+
     ScanFragment scanerContext;
     String CodeWarehouse="000000009";
 
