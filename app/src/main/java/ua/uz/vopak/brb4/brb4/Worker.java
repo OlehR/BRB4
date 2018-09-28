@@ -10,15 +10,21 @@ import java.io.UnsupportedEncodingException;
 
 import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
 
-public class Worker extends  AsyncTask<BarcodeResult , Void, Void>
+public class Worker extends  AsyncTask<BarcodeResult , Void, LabelInfo>
 {
 
 @Override
-protected Void doInBackground(BarcodeResult... param)
+protected LabelInfo doInBackground(BarcodeResult... param)
 {
-  Start(param[0]);
-  return null;
+
+  return Start(param[0]);
 }
+    @Override
+    protected void onPostExecute(LabelInfo varLI)
+    {
+        scanerContext.setScanResult(LI);
+    }
+
 
     ScanFragment scanerContext;
     String CodeWarehouse="000000009";
@@ -28,7 +34,7 @@ protected Void doInBackground(BarcodeResult... param)
     BluetoothPrinter Printer = new BluetoothPrinter();
     GetDataHTTP Http = new GetDataHTTP();
     LabelInfo LI = new LabelInfo();
-   public void Start(BarcodeResult parBarCode)
+   public LabelInfo Start(BarcodeResult parBarCode)
    {
        //Call Progres 10%;
        scanerContext.SetProgres(10);
@@ -47,7 +53,6 @@ protected Void doInBackground(BarcodeResult... param)
                CodeWares="";
                LI.OldPrice=0;
                BarCode="";
-
            }
 
        }
@@ -61,10 +66,10 @@ protected Void doInBackground(BarcodeResult... param)
            if(resHttp!=null && !resHttp.isEmpty())
            {
                LI.Init(resHttp);
-               scanerContext.setScanResult(LI);
 
 
-               /*if(LI.OldPrice!=LI.Price)
+
+               if(LI.OldPrice!=LI.Price)
                {
                    byte[] b = new byte[0];
                    try {
@@ -77,13 +82,12 @@ protected Void doInBackground(BarcodeResult... param)
                    } catch (IOException e) {
                        e.printStackTrace();
                       }
-               }*/
+               }
 
            }
        }
 
-       //Callback.GetIO
-
+       return LI;
 
    }
 

@@ -50,36 +50,41 @@ public class LabelInfo
     }
     public byte[] LevelForPrinter(TypeLanguagePrinter parTLP) throws UnsupportedEncodingException {
         byte [] res;
-        String Name1,Name2="",
-                varUnit="грн/"+this.Unit,BarCodePrice;
+        String Name1,Name2="", varUnit="грн/"+this.Unit,BarCodePrice;
         String  OffsetBill="0",OffsetCoin="350";
-        String Space="                          ";
+        String Space="                                 ";
+        String varPriceBill=Integer.toString(PriceBill).trim();
+        String varPriceCoin=Integer.toString(PriceCoin).trim();
         if(this.Name.length()<33)
             Name1=this.Name;
         else
         {
-            int pos= Name.substring(1,33).lastIndexOf(" ");
-            Name1=Name.substring(1,pos);
+            int pos= Name.substring(0,33).lastIndexOf(" ");
+            Name1=Name.substring(0,pos);
             Name2=Name.substring(pos);
-            Name2=Space.substring(1,33-Name2.length()/2) + Name2;
+            Name2=Space.substring(0,(33-Name2.length())/2) + Name2;
         }
-        Name1=Space.substring(1,(33-Name1.length()/2)) + Name1;
+        Name1=Space.substring(0,((33-Name1.length())/2)) + Name1;
         BarCodePrice = Integer.toString(Code)+"-"+Integer.toString(Price);
 
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         Date today = Calendar.getInstance().getTime();
         String CurentDate = df.format(today);
 
-        switch(Integer.toString(PriceBill).length())
+        switch(varPriceBill.length())
         {
             case 1:
                 OffsetBill="120";OffsetCoin="210";
+                break;
             case 2:
-                OffsetBill="60";OffsetCoin="180";
+                OffsetBill="60"; OffsetCoin="280";
+                break;
             case 3:
-                OffsetBill="10";OffsetCoin="335";
+                OffsetBill="10"; OffsetCoin="335";
+                break;
             case 4:
-                OffsetBill="0";OffsetCoin="350";
+                OffsetBill="0";  OffsetCoin="350";
+                break;
         }
 
         String Label="^XA\n" +
@@ -96,13 +101,14 @@ public class LabelInfo
                 "\n" +
                 "^FO  15,250^Ab ^FD{BarCode}^FS\n" +
                 "^FO 170,250^Ab ^FD{Article}^FS\n" +
-                "^FO 320,250^Ab ^FD{Date}^FS\n" +
+                "^FO 300,250^Ab ^FD{Date}^FS\n" +
                 "\n" +
                 "^FO 0,247^A@N,20,20,B:904_MSSS_24.arf ^FD-------------------------------------^FS\n" +
                 "^XZ";
 
         Label=Label.replace("{Name1}",Name1).replace("{Name2}",Name2).
                     replace("{OffsetBill}",OffsetBill).replace("{OffsetCoin}",OffsetCoin).replace("{Unit}",varUnit).
+                    replace("{PriceBill}",varPriceBill).replace("{PriceCoin}",varPriceCoin).
                     replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode).
                     replace("{Article}",this.Article).replace("{Date}",CurentDate);
            res=Label.getBytes("Cp1251");
