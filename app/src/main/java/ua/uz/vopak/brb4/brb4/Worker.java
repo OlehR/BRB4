@@ -71,8 +71,6 @@ protected LabelInfo doInBackground(BarcodeResult... param)
            {
                LI.Init(resHttp);
 
-
-
                if(LI.OldPrice!=LI.Price)
                {
                    byte[] b = new byte[0];

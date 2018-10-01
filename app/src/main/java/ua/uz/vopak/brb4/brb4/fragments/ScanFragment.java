@@ -4,6 +4,7 @@ package ua.uz.vopak.brb4.brb4.fragments;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Build;
@@ -23,8 +24,11 @@ import com.journeyapps.barcodescanner.BarcodeView;
 
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.ActionType;
 import ua.uz.vopak.brb4.brb4.AsyncWorker;
 import ua.uz.vopak.brb4.brb4.LabelInfo;
+import ua.uz.vopak.brb4.brb4.MessageActivity;
+import ua.uz.vopak.brb4.brb4.MessageType;
 import ua.uz.vopak.brb4.brb4.R;
 import ua.uz.vopak.brb4.brb4.Worker;
 
@@ -57,6 +61,9 @@ public class ScanFragment extends Fragment {
             barcodeView.decodeContinuous(callback);
 
         }
+
+        //Приклад відправки повідомлення користувачу
+        //sendMessage("Блютуз не підключено!","StackTrace:...", MessageType.ErrorMessage);
 
 
         mcontext=getContext();
@@ -160,4 +167,25 @@ public class ScanFragment extends Fragment {
         progresBar = getActivity().findViewById(R.id.progressBar);
         progresBar.setProgress(progres);
     }
+
+    public  void sendMessage(String messageHeader, String message, MessageType type){
+
+        Intent intent = new Intent(getActivity(), MessageActivity.class);
+        intent.putExtra("messageHeader",messageHeader);
+        intent.putExtra("message",message);
+        intent.putExtra("type",type);
+        startActivity(intent);
+
+    }
+
+    public  void sendMessage(String messageHeader, String message, MessageType type, ActionType action){
+
+        Intent intent = new Intent(getActivity(), MessageActivity.class);
+        intent.putExtra("messageHeader",messageHeader);
+        intent.putExtra("message",message);
+        intent.putExtra("type",type);
+        intent.putExtra("action", action);
+        startActivity(intent);
+    }
+
 }
