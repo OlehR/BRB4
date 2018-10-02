@@ -60,12 +60,13 @@ public class ScanFragment extends Fragment {
                         PERMISSIONS_REQUEST_ACCESS_CAMERA);
             } else {
                 barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+                barcodeView.setVisibility(View.VISIBLE);
                 barcodeView.decodeContinuous(callback);
 
             }
         }else{
             barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
-            barcodeView.setBackground(getResources().getDrawable(R.drawable.code_128));
+            barcodeView.setVisibility(View.INVISIBLE);
         }
 
         //Приклад відправки повідомлення користувачу
@@ -83,9 +84,13 @@ public class ScanFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
+        barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+
         if(!MainActivity.isCreatedScaner) {
-            barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+            barcodeView.setVisibility(View.VISIBLE);
             barcodeView.resume();
+        }else{
+            barcodeView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -93,9 +98,13 @@ public class ScanFragment extends Fragment {
     public void onPause() {
         super.onPause();
 
+        barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+
         if(!MainActivity.isCreatedScaner) {
-            barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+            barcodeView.setVisibility(View.VISIBLE);
             barcodeView.pause();
+        }else{
+            barcodeView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -134,9 +143,13 @@ public class ScanFragment extends Fragment {
             if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+                    barcodeView.setVisibility(View.VISIBLE);
                     barcodeView.decodeContinuous(callback);
                 }
             }
+        }else{
+            barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+            barcodeView.setVisibility(View.INVISIBLE);
         }
     }
 

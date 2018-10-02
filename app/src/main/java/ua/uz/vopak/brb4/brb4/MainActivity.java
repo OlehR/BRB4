@@ -11,39 +11,25 @@ import com.symbol.emdk.EMDKManager;
 import com.symbol.emdk.EMDKManager.EMDKListener;
 import com.symbol.emdk.EMDKResults;
 import com.symbol.emdk.ProfileManager;
-import com.symbol.emdk.barcode.ScanDataCollection;
-import com.symbol.emdk.barcode.Scanner.DataListener;
-import com.symbol.emdk.barcode.Scanner.StatusListener;
-import com.symbol.emdk.barcode.StatusData;
 
 import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
 
-public class MainActivity extends FragmentActivity implements View.OnClickListener, EMDKListener, StatusListener, DataListener{
+public class MainActivity extends FragmentActivity implements View.OnClickListener{
     Button btnRestart;
     public  static Boolean isCreatedScaner = false;
-    //Assign the profile name used in EMDKConfig.xml
-    private String profileName = "DataCaptureProfile";
 
-    //Declare a variable to store ProfileManager object
-    private ProfileManager mProfileManager = null;
-
-    //Declare a variable to store EMDKManager object
-    private EMDKManager emdkManager = null;
+    private EMDKWrapper emdkWrapper = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //The EMDKManager object will be created and returned in the callback.
-        EMDKResults results = EMDKManager.getEMDKManager(getApplicationContext(), this);
+        if(android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions") ){
+                emdkWrapper  = new EMDKWrapper();
+        }
 
-        //Check the return status of getEMDKManager
-        if(results.statusCode == EMDKResults.STATUS_CODE.FAILURE)
-        {
-            isCreatedScaner = false;
-
-        }else {
-            isCreatedScaner = true;
+        if(emdkWrapper != null){
+            emdkWrapper.getEMDKManager(savedInstanceState);
         }
 
         setContentView(R.layout.main_layout);
@@ -74,37 +60,6 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
 
-    @Override
-    public void onClosed() {
-        // TODO Auto-generated method stub
-    }
-    @Override
-    public void onOpened(EMDKManager emdkManager) {
-        this.emdkManager = emdkManager;
-
-        //Get the ProfileManager object to process the profiles
-        mProfileManager = (ProfileManager) emdkManager.getInstance(EMDKManager.FEATURE_TYPE.PROFILE);
-
-        if(mProfileManager != null)
-        {
-            try{
-
-                String[] modifyData = new String[1];
-                //Call processPrfoile with profile name and SET flag to create the profile. The modifyData can be null.
-
-                EMDKResults results = mProfileManager.processProfile(profileName, ProfileManager.PROFILE_FLAG.SET, modifyData);
-                if(results.statusCode == EMDKResults.STATUS_CODE.FAILURE)
-                {
-                    //Failed to set profile
-                }
-            }catch (Exception ex){
-                // Handle any exception
-            }
-
-
-        }
-    }
-
     //This function is responsible for getting the data from the intent
     private void handleDecodeData(Intent i)
     {
@@ -131,20 +86,83 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     @Override
-    public void onData(ScanDataCollection scanDataCollection) {
-        // TODO Auto-generated method stub
-    }
-    @Override
-    public void onStatus(StatusData statusData) {
-        // TODO Auto-generated method stub
-    }
-
-    @Override
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-        //Clean up the objects created by EMDK manager
-        emdkManager.release();
+        //Release the EMDKmanager on Application exit.
+        if (emdkWrapper  != null) {
+            emdkWrapper.release();
+        }
+    }
+
+    public class EMDKWrapper implements EMDKListener {
+        private String profileName = "DataCaptureProfile";
+
+        //Declare a variable to store ProfileManager object
+        private ProfileManager mProfileManager = null;
+
+        //Declare a variable to store EMDKManager object
+        EMDKManager emdkManager = null;
+
+
+        void getEMDKManager(Bundle savedInstanceState) {
+            EMDKResults results = EMDKManager.getEMDKManager(getApplicationContext(), this);
+
+            //Check the return status of getEMDKManager
+            if(results.statusCode == EMDKResults.STATUS_CODE.FAILURE)
+            {
+                isCreatedScaner = false;
+
+            }else {
+                isCreatedScaner = true;
+            }
+        }
+
+
+        void release() {
+            //Release the EMDKmanager on Application exit.
+            if (emdkManager != null) {
+                emdkManager.release();
+                emdkManager = null;
+            }
+        }
+
+        @Override
+        public void onOpened(EMDKManager emdkManager) {
+            this.emdkManager = emdkManager;
+
+            //Get the ProfileManager object to process the profiles
+            mProfileManager = (ProfileManager) emdkManager.getInstance(EMDKManager.FEATURE_TYPE.PROFILE);
+
+            if(mProfileManager != null)
+            {
+                try{
+
+                    String[] modifyData = new String[1];
+                    //Call processPrfoile with profile name and SET flag to create the profile. The modifyData can be null.
+
+                    EMDKResults results = mProfileManager.processProfile(profileName, ProfileManager.PROFILE_FLAG.SET, modifyData);
+                    if(results.statusCode == EMDKResults.STATUS_CODE.FAILURE)
+                    {
+                        //Failed to set profile
+                    }
+                }catch (Exception ex){
+                    // Handle any exception
+                }
+
+
+            }
+        }
+
+
+        @Override
+        public void onClosed() {
+            /* EMDKManager is closed abruptly. Call EmdkManager.release() to free the resources used by the current EMDK instance. */
+            if (emdkManager != null) {
+                emdkManager.release();
+                emdkManager = null;
+            }
+        }
     }
 
 }
