@@ -3,11 +3,11 @@ package ua.uz.vopak.brb4.brb4;
 import android.os.AsyncTask;
 import com.journeyapps.barcodescanner.BarcodeResult;
 
-public class AsyncWorker extends  AsyncTask<BarcodeResult , Void, LabelInfo>
+public class AsyncWorker extends  AsyncTask<String , Void, LabelInfo>
 {
     Worker varWorker;
     @Override
-    protected LabelInfo doInBackground(BarcodeResult... param)
+    protected LabelInfo doInBackground(String... param)
     {
 
         return varWorker.Start(param[0]);

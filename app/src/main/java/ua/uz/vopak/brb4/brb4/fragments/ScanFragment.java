@@ -27,6 +27,7 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.ActionType;
 import ua.uz.vopak.brb4.brb4.AsyncWorker;
 import ua.uz.vopak.brb4.brb4.LabelInfo;
+import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.MessageActivity;
 import ua.uz.vopak.brb4.brb4.MessageType;
 import ua.uz.vopak.brb4.brb4.R;
@@ -37,7 +38,7 @@ import ua.uz.vopak.brb4.brb4.Worker;
  */
 
 public class ScanFragment extends Fragment {
-    Worker worker = new Worker(this);
+    public Worker worker = new Worker(this);
     Context mcontext;
     BarcodeView barcodeView;
     private TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView;
@@ -51,15 +52,20 @@ public class ScanFragment extends Fragment {
 
         view=inflater.inflate(R.layout.scan_fragment, container, false);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                getActivity().checkSelfPermission(Manifest.permission.CAMERA)
-                        != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.CAMERA},
-                    PERMISSIONS_REQUEST_ACCESS_CAMERA);
-        } else {
-            barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
-            barcodeView.decodeContinuous(callback);
+        if(!MainActivity.isCreatedScaner) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    getActivity().checkSelfPermission(Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA},
+                        PERMISSIONS_REQUEST_ACCESS_CAMERA);
+            } else {
+                barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+                barcodeView.decodeContinuous(callback);
 
+            }
+        }else{
+            barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+            barcodeView.setBackground(getResources().getDrawable(R.drawable.code_128));
         }
 
         //Приклад відправки повідомлення користувачу
@@ -75,17 +81,22 @@ public class ScanFragment extends Fragment {
 
     @Override
     public void onResume() {
-
         super.onResume();
-        barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
-        barcodeView.resume();
+
+        if(!MainActivity.isCreatedScaner) {
+            barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+            barcodeView.resume();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
-        barcodeView.pause();
+
+        if(!MainActivity.isCreatedScaner) {
+            barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+            barcodeView.pause();
+        }
     }
 
     private BarcodeCallback callback = new BarcodeCallback() {
@@ -98,7 +109,7 @@ public class ScanFragment extends Fragment {
 
                 //worker.execute(result);
                 AsyncWorker aW =  new AsyncWorker(worker);
-                aW.execute(result);
+                aW.execute(result.getText());
 
                 //worker.Start(result);
 
@@ -119,10 +130,12 @@ public class ScanFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
-                barcodeView.decodeContinuous(callback);
+        if(!MainActivity.isCreatedScaner) {
+            if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+                    barcodeView.decodeContinuous(callback);
+                }
             }
         }
     }
@@ -160,7 +173,9 @@ public class ScanFragment extends Fragment {
         textBarcodeView.setText(LI.BarCode);
 
 
-        barcodeView.resume();
+        if(!MainActivity.isCreatedScaner) {
+            barcodeView.resume();
+        }
     }
 
     public void SetProgres(int progres){

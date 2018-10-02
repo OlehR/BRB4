@@ -36,12 +36,12 @@ protected LabelInfo doInBackground(BarcodeResult... param)
     BluetoothPrinter Printer = new BluetoothPrinter();
     GetDataHTTP Http = new GetDataHTTP();
     LabelInfo LI = new LabelInfo();
-   public LabelInfo Start(BarcodeResult parBarCode)
+   public LabelInfo Start(String parBarCode)
    {
        //Call Progres 10%;
        scanerContext.SetProgres(10);
 
-       BarCode=parBarCode.getText();
+       BarCode=parBarCode;
        if(BarCode.indexOf('-')>0)
        {
            String [] str =BarCode.split("-");
