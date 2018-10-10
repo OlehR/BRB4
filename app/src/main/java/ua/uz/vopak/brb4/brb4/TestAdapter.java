@@ -58,14 +58,13 @@ public class TestAdapter
         mDbHelper.close();
     }
 
-    @Override
-    public void addContact(String parBarCode,Integer paris_good) {
+
+    public void addData(String parBarCode,Integer parIsGood) {
         SQLiteDatabase db = mDb;
         ContentValues values = new ContentValues();
         values.put("bar_code", parBarCode);
-        values.put("is_good", paris_good);
-
-        db.insert(TABLE_CONTACTS, null, values);
+        values.put("is_good", parIsGood);
+        db.insert("price", null, values);
         db.close();
     }
 
