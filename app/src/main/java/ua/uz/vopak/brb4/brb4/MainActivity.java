@@ -23,11 +23,9 @@ import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
     Button btnRestart;
     public  static Boolean isCreatedScaner = false;
-    private Worker worker = new Worker(this);
-    Activity activity= null;
-
+    private Worker  worker;
     private EMDKWrapper emdkWrapper = null;
-
+    TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,14 +40,26 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
         setContentView(R.layout.main_layout);
 
-        btnRestart = findViewById(R.id.button);
-        btnRestart.setOnClickListener(this);
-
+        //btnRestart = findViewById(R.id.button);
+        //btnRestart.setOnClickListener(this);
+        codeView = findViewById(R.id.code);
+        perView  = findViewById(R.id.per);
+        nameView  = findViewById(R.id.title);
+        oldPriceView  = findViewById(R.id.old_price);
+        priceView  = findViewById(R.id.price);
+        textBarcodeView = findViewById(R.id.bar_code);
+        oldPriceText = findViewById(R.id.old_price_text);
+        priceText = findViewById(R.id.price_text);
+        Printer = findViewById(R.id.Printer);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //In case we have been launched by the DataWedge intent plug-in
         Intent i = getIntent();
         handleDecodeData(i);
+
+        Context c=this.getApplicationContext();
+        worker = new Worker(this);
+        setScanResult(worker.LI);
     }
 
     //We need to handle any incoming intents, so let override the onNewIntent method
@@ -95,32 +105,14 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     }
 
     public void  setScanResult(LabelInfo LI){
-        TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView;
-        try
-        {
-            Context Con=getApplicationContext();
-            activity = (Activity) Con; //.getActivity();
-        }
-        catch (Exception e)
-        {
-           String m=e.getMessage();
-        }
 
 
-
-        codeView = activity.findViewById(R.id.code);
-        perView  = activity.findViewById(R.id.per);
-        nameView  = activity.findViewById(R.id.title);
-        oldPriceView  = activity.findViewById(R.id.old_price);
-        priceView  = activity.findViewById(R.id.price);
-        textBarcodeView = activity.findViewById(R.id.bar_code);
 
         codeView.setText(Integer.toString(LI.Code));
         perView.setText(LI.Unit);
         nameView.setText(LI.Name);
+        Printer.setText(LI.InfoPrinter);
 
-        TextView oldPriceText = activity.findViewById(R.id.old_price_text);
-        TextView priceText = activity.findViewById(R.id.price_text);
 
         if(LI.OldPrice != LI.Price){
             oldPriceView.setTextColor(Color.parseColor("#ee4343"));
@@ -146,21 +138,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
 
 
     public void SetProgres(int progres){
-        //private
 
-        try
-        {
-            //Context Con=getApplicationContext();
-            //activity  = this.getParent();
-
-            ProgressBar progresBar =activity.findViewById(R.id.progressBar);
+            ProgressBar progresBar = findViewById(R.id.progressBar);
             progresBar.setProgress(progres);
 
-        }
-        catch (Exception e)
-        {
-            String m=e.getMessage();
-        }
     }
 
     public void ExecuteWorker(String parBarCode){

@@ -60,13 +60,19 @@ public class SQLiteAdapter
 
 
     public void InsLogPrice(String parBarCode,Integer parIsGood) {
-        SQLiteDatabase db = mDb;
-        ContentValues values = new ContentValues();
-        values.put("bar_code", parBarCode);
-        values.put("is_good", parIsGood);
-        db.insert("price", null, values);
-        db.close();
-    }
+        try {
+            SQLiteDatabase db = mDb;
+            ContentValues values = new ContentValues();
+            values.put("bar_code", parBarCode);
+            values.put("is_good", parIsGood);
+            db.insert("LogPrice", null, values);
+            //db.close();
+        }
+        catch (Exception e)
+        {
+            String s=e.getMessage();
+        }
+     }
     public int[] GetCountScanCode() {
         int[] varRes = {0,0};
     try
@@ -80,42 +86,13 @@ public class SQLiteAdapter
             varRes[0]=mCur.getInt(0);
             varRes[1]=mCur.getInt(1);
         }
-        return varRes;
+
     }
     catch (SQLException mSQLException)
     {
         Log.e(TAG, "getTestData >>"+ mSQLException.toString());
-        throw mSQLException;
+        //throw mSQLException;
     }
-    }
-
-    public Cursor getTestData()
-    {
-        try
-        {
-            String sql ="SELECT * FROM myTable";
-
-            Cursor mCur = mDb.rawQuery(sql, null);
-            if (mCur!=null)
-            {
-                mCur.moveToNext();
-            }
-            return mCur;
-        }
-        catch (SQLException mSQLException)
-        {
-            Log.e(TAG, "getTestData >>"+ mSQLException.toString());
-            throw mSQLException;
-        }
+        return varRes;
     }
 }
-
-/*
-SQLiteAdapter mDbHelper = new SQLiteAdapter(urContext);
-mDbHelper.createDatabase();
-mDbHelper.open();
-
-Cursor testdata = mDbHelper.getTestData();
-
-mDbHelper.close();
- */

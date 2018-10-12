@@ -7,162 +7,147 @@
     android:layout_height="match_parent">
 
     <fragment
-        android:name="ua.uz.vopak.brb4.brb4.fragments.ScanFragment"
         android:id="@+id/scan_fragment"
-        android:layout_height="100pt"
+        android:name="ua.uz.vopak.brb4.brb4.fragments.ScanFragment"
         android:layout_width="match_parent"
-        tools:layout="@layout/scan_fragment"/>
+        android:layout_height="203dp"
+        tools:layout="@layout/scan_fragment" />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="20dp"
+        android:layout_marginTop="10dp"
         android:max="100"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:progressDrawable="@drawable/progresbar"
-        android:layout_marginTop="10dp" />
+        android:progressDrawable="@drawable/progresbar" />
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:padding="10dp"
-        android:layout_height="match_parent">
-    <TableLayout
-        android:id="@+id/tableLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:stretchColumns="0,1,2,3">
+        android:padding="10dp">
 
-        <TableRow
-            android:id="@+id/tableRow1"
+        <TextView
+            android:id="@+id/Printer"
+            android:layout_width="match_parent"
+            android:layout_height="31dp"
+            android:text="None" />
+
+        <TableLayout
+            android:id="@+id/tableLayout1"
             android:layout_width="fill_parent"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:stretchColumns="0,1,2,3">
 
-            <TextView
-                android:id="@+id/code_text"
-                android:layout_column="0"
-                android:textSize="8pt"
-                android:text="Код:">
-            </TextView>
+            <TableRow
+                android:id="@+id/tableRow1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
 
-            <TextView
-                android:id="@+id/code"
-                android:layout_column="1"
-                android:textSize="8pt"
-                >
-            </TextView>
+                <TextView
+                    android:id="@+id/code_text"
+                    android:layout_column="0"
+                    android:text="Код:"
+                    android:textSize="8pt"></TextView>
 
-            <TextView
-                android:id="@+id/per_text"
-                android:layout_column="2"
-                android:textSize="8pt"
-                android:text="Од:">
-            </TextView>
+                <TextView
+                    android:id="@+id/code"
+                    android:layout_column="1"
+                    android:textSize="8pt"></TextView>
 
-            <TextView
-                android:id="@+id/per"
-                android:layout_column="3"
-                android:textSize="8pt"
-                >
-            </TextView>
-        </TableRow>
+                <TextView
+                    android:id="@+id/per_text"
+                    android:layout_column="2"
+                    android:text="Од:"
+                    android:textSize="8pt"></TextView>
 
-        <TableRow
-            android:id="@+id/tableRow3"
-            android:layout_width="fill_parent"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/per"
+                    android:layout_column="3"
+                    android:textSize="8pt"></TextView>
+            </TableRow>
 
-            <TextView
-                android:id="@+id/old_price_text"
-                android:layout_column="0"
-                android:textSize="8pt"
-                android:text="Ціна с:">
-            </TextView>
+            <TableRow
+                android:id="@+id/tableRow3"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
 
-            <TextView
-                android:id="@+id/old_price"
-                android:layout_column="1"
-                android:textSize="12pt"
-                >
-            </TextView>
+                <TextView
+                    android:id="@+id/old_price_text"
+                    android:layout_column="0"
+                    android:text="Ціна с:"
+                    android:textSize="8pt"></TextView>
 
-            <TextView
-                android:id="@+id/price_text"
-                android:layout_column="2"
-                android:textSize="8pt"
-                android:text="Ціна н:">
-            </TextView>
+                <TextView
+                    android:id="@+id/old_price"
+                    android:layout_column="1"
+                    android:textSize="12pt"></TextView>
 
-            <TextView
-                android:id="@+id/price"
-                android:layout_column="3"
-                android:textSize="12pt"
-                >
-            </TextView>
-        </TableRow>
+                <TextView
+                    android:id="@+id/price_text"
+                    android:layout_column="2"
+                    android:text="Ціна н:"
+                    android:textSize="8pt"></TextView>
 
-        <TableRow
-            android:id="@+id/tableRow2"
-            android:layout_width="fill_parent"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/price"
+                    android:layout_column="3"
+                    android:textSize="12pt"></TextView>
+            </TableRow>
 
-            <TextView
-                android:id="@+id/title_text"
-                android:layout_column="0"
-                android:textSize="8pt"
-                android:text="Назва:">
-            </TextView>
+            <TableRow
+                android:id="@+id/tableRow2"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
 
-            <TextView
-                android:id="@+id/title"
-                android:layout_column="1"
-                android:textSize="8pt"
-                android:layout_span="3">
-            </TextView>
+                <TextView
+                    android:id="@+id/title_text"
+                    android:layout_column="0"
+                    android:text="Назва:"
+                    android:textSize="8pt"></TextView>
 
-        </TableRow>
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_column="1"
+                    android:layout_span="3"
+                    android:textSize="8pt"></TextView>
 
-        <TableRow
-            android:id="@+id/tableRow4"
-            android:layout_width="fill_parent"
-            android:paddingTop="5dp"
-            android:paddingBottom="5dp"
-            android:layout_height="wrap_content">
+            </TableRow>
 
-            <TextView
-                android:id="@+id/bar_code_text"
-                android:layout_column="0"
-                android:textSize="8pt"
-                android:text="Штрих код:">
-            </TextView>
+            <TableRow
+                android:id="@+id/tableRow4"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
 
-            <TextView
-                android:id="@+id/bar_code"
-                android:layout_column="1"
-                android:textSize="8pt"
-                android:layout_span="3">
-            </TextView>
+                <TextView
+                    android:id="@+id/bar_code_text"
+                    android:layout_column="0"
+                    android:text="Штрих код:"
+                    android:textSize="8pt"></TextView>
 
-        </TableRow>
+                <TextView
+                    android:id="@+id/bar_code"
+                    android:layout_column="1"
+                    android:layout_span="3"
+                    android:textSize="8pt"></TextView>
 
-    </TableLayout>
+            </TableRow>
 
+        </TableLayout>
 
-    <Button
-        android:id="@+id/button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Resume" />
 
     </LinearLayout>
 

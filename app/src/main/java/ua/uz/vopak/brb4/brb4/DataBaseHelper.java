@@ -17,7 +17,7 @@ public class DataBaseHelper extends SQLiteOpenHelper
     private static String TAG = "DataBaseHelper"; // Tag just for the LogCat window
     //destination path (location) of our database on device
     private static String DB_PATH = "";
-    private static String DB_NAME ="brb4";// Database name
+    private static String DB_NAME ="brb4.db";// Database name
     private SQLiteDatabase mDataBase;
     private final Context mContext;
 
@@ -76,8 +76,13 @@ public class DataBaseHelper extends SQLiteOpenHelper
     //Copy the database from assets
     private void copyDataBase() throws IOException
     {
-        InputStream mInput = mContext.getAssets().open(DB_NAME);
+        InputStream mInput = mContext.getAssets().open("databases/"+DB_NAME);
         String outFileName = DB_PATH + DB_NAME;
+        //File dbFile = new File(DB_PATH + DB_NAME);
+        //if(!dbFile.exists())
+//          dbFile.createNewFile();
+
+
         OutputStream mOutput = new FileOutputStream(outFileName);
         byte[] mBuffer = new byte[1024];
         int mLength;

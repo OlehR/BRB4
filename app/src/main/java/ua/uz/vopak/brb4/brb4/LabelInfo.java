@@ -25,6 +25,7 @@ public class LabelInfo
     public int AllScan=0;
     public int BadScan=0;
     public boolean Action  = false;
+    public String  InfoPrinter = "";
     public LabelInfo()
     {
     }

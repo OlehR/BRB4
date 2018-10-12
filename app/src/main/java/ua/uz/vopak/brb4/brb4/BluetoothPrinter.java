@@ -4,10 +4,8 @@ package ua.uz.vopak.brb4.brb4;
 import java.io.*;
 import java.lang.reflect.Method;
 import java.util.*;
-import android.app.*;
 
 import android.bluetooth.*;
-import android.content.Intent;
 import android.os.Handler;
 
 public class BluetoothPrinter {
@@ -15,6 +13,7 @@ public class BluetoothPrinter {
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice = null;
     public TypePrinter  varTypePrinter = TypePrinter.NotDefined;
+    public PrinterError varPrinterError=PrinterError.None;
     // needed for communication to bluetooth device / network
     OutputStream mmOutputStream;
     InputStream mmInputStream;
@@ -30,9 +29,11 @@ public class BluetoothPrinter {
 
             if(mBluetoothAdapter == null) {
                 // myLabel.setText("No bluetooth adapter available");
+                varPrinterError=PrinterError.TurnOffBluetooth;
+                return;
             }
-/*
-            if(!mBluetoothAdapter.isEnabled()) {
+
+            /*if(!mBluetoothAdapter.isEnabled()) {
                 Intent enableBluetooth = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
                 startActivityForResult(enableBluetooth, 0);
             }*/
@@ -69,6 +70,7 @@ public class BluetoothPrinter {
             // myLabel.setText("Bluetooth device found.");
 
         }catch(Exception e){
+            varPrinterError=PrinterError.TurnOffBluetooth;
             e.printStackTrace();
         }
     }
@@ -92,6 +94,7 @@ public class BluetoothPrinter {
 
         } catch (Exception e) {
             e.printStackTrace();
+            varPrinterError=PrinterError.CanNotOpen;
         }
     }
     /*
@@ -154,6 +157,7 @@ public class BluetoothPrinter {
 
                         } catch (IOException ex) {
                             stopWorker = true;
+                            varPrinterError=PrinterError.CanNotOpen;
                         }
 
                     }
@@ -169,11 +173,8 @@ public class BluetoothPrinter {
 
     public void sendData(byte[] msg) throws IOException {
         try {
-
-            mmOutputStream.write(msg);
-
-
-
+            if(varTypePrinter != TypePrinter.NotDefined && varPrinterError==PrinterError.None)
+                mmOutputStream.write(msg);
             // tell the user data were sent
             //myLabel.setText("Data sent.");
 

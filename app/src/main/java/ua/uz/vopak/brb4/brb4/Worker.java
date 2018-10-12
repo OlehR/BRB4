@@ -7,7 +7,7 @@ import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-
+import android.content.Context;
 import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
 
 
@@ -22,7 +22,7 @@ public class Worker
     BluetoothPrinter Printer = new BluetoothPrinter();
     GetDataHTTP Http = new GetDataHTTP();
     LabelInfo LI = new LabelInfo();
-    //SQLiteAdapter mDbHelper = new SQLiteAdapter(scanerContext);
+    SQLiteAdapter mDbHelper;
 
 
    public LabelInfo Start(String parBarCode)
@@ -55,7 +55,7 @@ public class Worker
        if(BarCode.length()>7 || !CodeWares.isEmpty() )
        {
            String resHttp=Http.GetData(CodeWarehouse,BarCode,CodeWares);
-
+           resHttp=resHttp.replace("&amp;","&");
            //Call Progres 50%;
            scanerContext.SetProgres(50);
            if(resHttp!=null && !resHttp.isEmpty())
@@ -74,13 +74,16 @@ public class Worker
                    try{
                      Printer.sendData(b);
                    } catch (IOException e) {
+                       LI.InfoPrinter="Lost Connect";
                        e.printStackTrace();
                       }
+                   if(Printer.varPrinterError!=PrinterError.None)
+                       LI.InfoPrinter=Printer.varPrinterError.name();
                }
 
            }
        }
-       //mDbHelper.InsLogPrice(BarCode,(LI.OldPrice==LI.Price?1:0));
+       mDbHelper.InsLogPrice(BarCode,(LI.OldPrice==LI.Price?1:0));
        scanerContext.SetProgres(100);
        return LI;
 
@@ -92,19 +95,24 @@ public class Worker
       Printer.findBT();
       try {
           Printer.openBT();
+          LI.InfoPrinter= (Printer.varPrinterError==PrinterError.None? Printer.varTypePrinter.name():Printer.varPrinterError.name());
       } catch (IOException e) {
           e.printStackTrace();
+          LI.InfoPrinter="Error";
       }
-      //mDbHelper.createDatabase();
-      //mDbHelper.open();
-      int[] varRes={0,0};//mDbHelper.GetCountScanCode();
-      LI.AllScan=varRes[0];
-      LI.BadScan=varRes[1];
+
   }
     public Worker(MainActivity scaner)
     {
         this();
         scanerContext = scaner;
+        Context c=scaner.getApplicationContext();
+        mDbHelper = new SQLiteAdapter(c);
+        mDbHelper.createDatabase();
+        mDbHelper.open();
+        int[] varRes=mDbHelper.GetCountScanCode();
+        LI.AllScan=varRes[0];
+        LI.BadScan=varRes[1];
     }
     @Override
     public void finalize()
