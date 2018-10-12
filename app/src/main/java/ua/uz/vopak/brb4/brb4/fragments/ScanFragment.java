@@ -38,11 +38,9 @@ import ua.uz.vopak.brb4.brb4.Worker;
  */
 
 public class ScanFragment extends Fragment {
-    public Worker worker = new Worker(this);
     Context mcontext;
     BarcodeView barcodeView;
-    private TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView;
-    private ProgressBar progresBar;
+
     final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
     View view;
 
@@ -113,13 +111,12 @@ public class ScanFragment extends Fragment {
         public void barcodeResult(BarcodeResult result) {
             if (result.getText() != null) {
                 barcodeView.pause();
-                SetProgres(0);
                 //after the string has been read we prozess it
 
                 //worker.execute(result);
-                AsyncWorker aW =  new AsyncWorker(worker);
-                aW.execute(result.getText());
-
+                //AsyncWorker aW =  new AsyncWorker(worker);
+                //aW.execute(result.getText());
+                ((MainActivity)getActivity()).ExecuteWorker(result.getText());
                 //worker.Start(result);
 
                /* if(!ScanText.equals("abc")){//if the tag was not scanned succesfully let us start the scan again
@@ -153,48 +150,7 @@ public class ScanFragment extends Fragment {
         }
     }
 
-    public void  setScanResult(LabelInfo LI){
 
-        codeView = getActivity().findViewById(R.id.code);
-        perView  = getActivity().findViewById(R.id.per);
-        nameView  = getActivity().findViewById(R.id.title);
-        oldPriceView  = getActivity().findViewById(R.id.old_price);
-        priceView  = getActivity().findViewById(R.id.price);
-        textBarcodeView = getActivity().findViewById(R.id.bar_code);
-
-        codeView.setText(Integer.toString(LI.Code));
-        perView.setText(LI.Unit);
-        nameView.setText(LI.Name);
-
-        TextView oldPriceText = getActivity().findViewById(R.id.old_price_text);
-        TextView priceText = getActivity().findViewById(R.id.price_text);
-
-        if(LI.OldPrice != LI.Price){
-            oldPriceView.setTextColor(Color.parseColor("#ee4343"));
-            priceView.setTextColor(Color.parseColor("#ee4343"));
-            oldPriceText.setTextColor(Color.parseColor("#ee4343"));
-            priceText.setTextColor(Color.parseColor("#ee4343"));
-        }else {
-            oldPriceView.setTextColor(Color.parseColor("#3bb46e"));
-            priceView.setTextColor(Color.parseColor("#3bb46e"));
-            oldPriceText.setTextColor(Color.parseColor("#3bb46e"));
-            priceText.setTextColor(Color.parseColor("#3bb46e"));
-        }
-
-        oldPriceView.setText(String.format("%.2f",(double)LI.OldPrice/100));
-        priceView.setText(String.format("%.2f",(double)LI.Price/100));
-        textBarcodeView.setText(LI.BarCode);
-
-
-        if(!MainActivity.isCreatedScaner) {
-            barcodeView.resume();
-        }
-    }
-
-    public void SetProgres(int progres){
-        progresBar = getActivity().findViewById(R.id.progressBar);
-        progresBar.setProgress(progres);
-    }
 
     public  void sendMessage(String messageHeader, String message, MessageType type){
 

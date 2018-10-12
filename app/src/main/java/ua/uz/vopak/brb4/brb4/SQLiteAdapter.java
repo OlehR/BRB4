@@ -9,7 +9,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-public class TestAdapter
+public class SQLiteAdapter
 {
     protected static final String TAG = "DataAdapter";
 
@@ -17,13 +17,13 @@ public class TestAdapter
     private SQLiteDatabase mDb;
     private DataBaseHelper mDbHelper;
 
-    public TestAdapter(Context context)
+    public SQLiteAdapter(Context context)
     {
         this.mContext = context;
         mDbHelper = new DataBaseHelper(mContext);
     }
 
-    public TestAdapter createDatabase() throws SQLException
+    public SQLiteAdapter createDatabase() throws SQLException
     {
         try
         {
@@ -37,7 +37,7 @@ public class TestAdapter
         return this;
     }
 
-    public TestAdapter open() throws SQLException
+    public SQLiteAdapter open() throws SQLException
     {
         try
         {
@@ -59,13 +59,34 @@ public class TestAdapter
     }
 
 
-    public void addData(String parBarCode,Integer parIsGood) {
+    public void InsLogPrice(String parBarCode,Integer parIsGood) {
         SQLiteDatabase db = mDb;
         ContentValues values = new ContentValues();
         values.put("bar_code", parBarCode);
         values.put("is_good", parIsGood);
         db.insert("price", null, values);
         db.close();
+    }
+    public int[] GetCountScanCode() {
+        int[] varRes = {0,0};
+    try
+    {
+        String sql ="select count(*),sum(case when is_good=0 then 1 else 0 end) from   LogPrice where is_send=0";
+
+        Cursor mCur = mDb.rawQuery(sql, null);
+        if (mCur!=null)
+        {
+            mCur.moveToFirst() ;
+            varRes[0]=mCur.getInt(0);
+            varRes[1]=mCur.getInt(1);
+        }
+        return varRes;
+    }
+    catch (SQLException mSQLException)
+    {
+        Log.e(TAG, "getTestData >>"+ mSQLException.toString());
+        throw mSQLException;
+    }
     }
 
     public Cursor getTestData()
@@ -90,7 +111,7 @@ public class TestAdapter
 }
 
 /*
-TestAdapter mDbHelper = new TestAdapter(urContext);
+SQLiteAdapter mDbHelper = new SQLiteAdapter(urContext);
 mDbHelper.createDatabase();
 mDbHelper.open();
 

@@ -22,6 +22,8 @@ public class LabelInfo
     public String Unit;
     public String Article;
     public String BarCode;
+    public int AllScan=0;
+    public int BadScan=0;
     public boolean Action  = false;
     public LabelInfo()
     {
@@ -49,22 +51,23 @@ public class LabelInfo
             Action  = true;
     }
     public byte[] LevelForPrinter(TypeLanguagePrinter parTLP) throws UnsupportedEncodingException {
+        final int  LengName=25;
         byte [] res;
         String Name1,Name2="", varUnit="грн/"+this.Unit,BarCodePrice;
         String  OffsetBill="0",OffsetCoin="350";
         String Space="                                 ";
         String varPriceBill=Integer.toString(PriceBill).trim();
         String varPriceCoin=Integer.toString(PriceCoin).trim();
-        if(this.Name.length()<33)
+        if(this.Name.length()<LengName)
             Name1=this.Name;
         else
         {
-            int pos= Name.substring(0,33).lastIndexOf(" ");
+            int pos= Name.substring(0,LengName).lastIndexOf(" ");
             Name1=Name.substring(0,pos);
             Name2=Name.substring(pos);
-            Name2=Space.substring(0,(33-Name2.length())/2) + Name2;
+            Name2=Space.substring(0,(LengName-Name2.length())/2) + Name2;
         }
-        Name1=Space.substring(0,((33-Name1.length())/2)) + Name1;
+        Name1=Space.substring(0,((LengName-Name1.length())/2)) + Name1;
         BarCodePrice = Integer.toString(Code)+"-"+Integer.toString(Price);
 
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");

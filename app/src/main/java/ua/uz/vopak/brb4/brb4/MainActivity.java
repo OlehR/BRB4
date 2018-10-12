@@ -1,5 +1,9 @@
 package ua.uz.vopak.brb4.brb4;
 
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -7,29 +11,33 @@ import android.view.WindowManager;
 import android.widget.Button;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
-import com.symbol.emdk.EMDKManager;
-import com.symbol.emdk.EMDKManager.EMDKListener;
-import com.symbol.emdk.EMDKResults;
-import com.symbol.emdk.ProfileManager;
+import android.content.Context;
+import android.widget.ProgressBar;
+import android.widget.TextView;
+import android.app.Activity;
 
 import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
+
+//import static android.app.PendingIntent.getActivity;
 
 public class MainActivity extends FragmentActivity implements View.OnClickListener{
     Button btnRestart;
     public  static Boolean isCreatedScaner = false;
+    private Worker worker = new Worker(this);
+    Activity activity= null;
 
     private EMDKWrapper emdkWrapper = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if(android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions") ){
-                emdkWrapper  = new EMDKWrapper();
+        String model = android.os.Build.MODEL;
+        if( model.equals("TC20")  && ( android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions")) ){
+                emdkWrapper  = new EMDKWrapper(getApplicationContext());
         }
 
         if(emdkWrapper != null){
-            emdkWrapper.getEMDKManager(savedInstanceState);
+            isCreatedScaner=emdkWrapper.getEMDKManager(savedInstanceState);
         }
 
         setContentView(R.layout.main_layout);
@@ -56,6 +64,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         if(!isCreatedScaner) {
             BarcodeView barcodeView = findViewById(R.id.barcode_scanner);
             barcodeView.resume();
+
         }
     }
 
@@ -77,12 +86,86 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
                 //Check that we have received data
                 if(data != null && data.length() > 0)
                 {
-                    ScanFragment sf = (ScanFragment) getSupportFragmentManager().findFragmentById(R.id.scan_fragment);
-                    AsyncWorker aW =  new AsyncWorker(sf.worker);
-                    aW.execute(data);
+                    ExecuteWorker(data);
+                    //ScanFragment sf = (ScanFragment) getSupportFragmentManager().findFragmentById(R.id.scan_fragment);
+
                 }
             }
         }
+    }
+
+    public void  setScanResult(LabelInfo LI){
+        TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView;
+        try
+        {
+            Context Con=getApplicationContext();
+            activity = (Activity) Con; //.getActivity();
+        }
+        catch (Exception e)
+        {
+           String m=e.getMessage();
+        }
+
+
+
+        codeView = activity.findViewById(R.id.code);
+        perView  = activity.findViewById(R.id.per);
+        nameView  = activity.findViewById(R.id.title);
+        oldPriceView  = activity.findViewById(R.id.old_price);
+        priceView  = activity.findViewById(R.id.price);
+        textBarcodeView = activity.findViewById(R.id.bar_code);
+
+        codeView.setText(Integer.toString(LI.Code));
+        perView.setText(LI.Unit);
+        nameView.setText(LI.Name);
+
+        TextView oldPriceText = activity.findViewById(R.id.old_price_text);
+        TextView priceText = activity.findViewById(R.id.price_text);
+
+        if(LI.OldPrice != LI.Price){
+            oldPriceView.setTextColor(Color.parseColor("#ee4343"));
+            priceView.setTextColor(Color.parseColor("#ee4343"));
+            oldPriceText.setTextColor(Color.parseColor("#ee4343"));
+            priceText.setTextColor(Color.parseColor("#ee4343"));
+        }else {
+            oldPriceView.setTextColor(Color.parseColor("#3bb46e"));
+            priceView.setTextColor(Color.parseColor("#3bb46e"));
+            oldPriceText.setTextColor(Color.parseColor("#3bb46e"));
+            priceText.setTextColor(Color.parseColor("#3bb46e"));
+        }
+
+        oldPriceView.setText(String.format("%.2f",(double)LI.OldPrice/100));
+        priceView.setText(String.format("%.2f",(double)LI.Price/100));
+        textBarcodeView.setText(LI.BarCode);
+
+
+        if(!MainActivity.isCreatedScaner) {
+            //barcodeView.resume();
+        }
+    }
+
+
+    public void SetProgres(int progres){
+        //private
+
+        try
+        {
+            //Context Con=getApplicationContext();
+            //activity  = this.getParent();
+
+            ProgressBar progresBar =activity.findViewById(R.id.progressBar);
+            progresBar.setProgress(progres);
+
+        }
+        catch (Exception e)
+        {
+            String m=e.getMessage();
+        }
+    }
+
+    public void ExecuteWorker(String parBarCode){
+        AsyncWorker aW =  new AsyncWorker(worker);
+        aW.execute(parBarCode);
     }
 
     @Override
@@ -95,74 +178,4 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         }
     }
 
-    public class EMDKWrapper implements EMDKListener {
-        private String profileName = "DataCaptureProfile";
-
-        //Declare a variable to store ProfileManager object
-        private ProfileManager mProfileManager = null;
-
-        //Declare a variable to store EMDKManager object
-        EMDKManager emdkManager = null;
-
-
-        void getEMDKManager(Bundle savedInstanceState) {
-            EMDKResults results = EMDKManager.getEMDKManager(getApplicationContext(), this);
-
-            //Check the return status of getEMDKManager
-            if(results.statusCode == EMDKResults.STATUS_CODE.FAILURE)
-            {
-                isCreatedScaner = false;
-
-            }else {
-                isCreatedScaner = true;
-            }
-        }
-
-
-        void release() {
-            //Release the EMDKmanager on Application exit.
-            if (emdkManager != null) {
-                emdkManager.release();
-                emdkManager = null;
-            }
-        }
-
-        @Override
-        public void onOpened(EMDKManager emdkManager) {
-            this.emdkManager = emdkManager;
-
-            //Get the ProfileManager object to process the profiles
-            mProfileManager = (ProfileManager) emdkManager.getInstance(EMDKManager.FEATURE_TYPE.PROFILE);
-
-            if(mProfileManager != null)
-            {
-                try{
-
-                    String[] modifyData = new String[1];
-                    //Call processPrfoile with profile name and SET flag to create the profile. The modifyData can be null.
-
-                    EMDKResults results = mProfileManager.processProfile(profileName, ProfileManager.PROFILE_FLAG.SET, modifyData);
-                    if(results.statusCode == EMDKResults.STATUS_CODE.FAILURE)
-                    {
-                        //Failed to set profile
-                    }
-                }catch (Exception ex){
-                    // Handle any exception
-                }
-
-
-            }
-        }
-
-
-        @Override
-        public void onClosed() {
-            /* EMDKManager is closed abruptly. Call EmdkManager.release() to free the resources used by the current EMDK instance. */
-            if (emdkManager != null) {
-                emdkManager.release();
-                emdkManager = null;
-            }
-        }
     }
-
-}

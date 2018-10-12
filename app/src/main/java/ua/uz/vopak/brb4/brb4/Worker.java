@@ -12,23 +12,9 @@ import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
 
 
 
-public class Worker //extends  AsyncTask<BarcodeResult , Void, LabelInfo>
+public class Worker
 {
-/*
-@Override
-protected LabelInfo doInBackground(BarcodeResult... param)
-{
-
-  return Start(param[0]);
-}
-    @Override
-    protected void onPostExecute(LabelInfo parLI)
-    {
-        scanerContext.setScanResult(parLI);
-    }
-
-*/
-    ScanFragment scanerContext;
+    MainActivity scanerContext;
     String CodeWarehouse="000000009";
 
     private String CodeWares;
@@ -36,6 +22,9 @@ protected LabelInfo doInBackground(BarcodeResult... param)
     BluetoothPrinter Printer = new BluetoothPrinter();
     GetDataHTTP Http = new GetDataHTTP();
     LabelInfo LI = new LabelInfo();
+    //SQLiteAdapter mDbHelper = new SQLiteAdapter(scanerContext);
+
+
    public LabelInfo Start(String parBarCode)
    {
        //Call Progres 10%;
@@ -58,8 +47,10 @@ protected LabelInfo doInBackground(BarcodeResult... param)
            }
 
        }
-       else
-           LI.OldPrice=0;
+       else {
+           CodeWares="";
+           LI.OldPrice = 0;
+       }
 
        if(BarCode.length()>7 || !CodeWares.isEmpty() )
        {
@@ -70,9 +61,10 @@ protected LabelInfo doInBackground(BarcodeResult... param)
            if(resHttp!=null && !resHttp.isEmpty())
            {
                LI.Init(resHttp);
-
+               LI.AllScan++;
                if(LI.OldPrice!=LI.Price)
                {
+                   LI.BadScan++;
                    byte[] b = new byte[0];
                    try {
                        b = LI.LevelForPrinter(TypeLanguagePrinter.ZPL);
@@ -88,6 +80,7 @@ protected LabelInfo doInBackground(BarcodeResult... param)
 
            }
        }
+       //mDbHelper.InsLogPrice(BarCode,(LI.OldPrice==LI.Price?1:0));
        scanerContext.SetProgres(100);
        return LI;
 
@@ -102,16 +95,16 @@ protected LabelInfo doInBackground(BarcodeResult... param)
       } catch (IOException e) {
           e.printStackTrace();
       }
+      //mDbHelper.createDatabase();
+      //mDbHelper.open();
+      int[] varRes={0,0};//mDbHelper.GetCountScanCode();
+      LI.AllScan=varRes[0];
+      LI.BadScan=varRes[1];
   }
-    public Worker(ScanFragment scaner)
+    public Worker(MainActivity scaner)
     {
+        this();
         scanerContext = scaner;
-        Printer.findBT();
-        try {
-            Printer.openBT();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
     @Override
     public void finalize()
@@ -121,6 +114,8 @@ protected LabelInfo doInBackground(BarcodeResult... param)
         } catch (IOException e) {
             e.printStackTrace();
         }
+       // mDbHelper.close();
+
     }
 
 

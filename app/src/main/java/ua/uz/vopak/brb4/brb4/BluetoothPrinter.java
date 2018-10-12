@@ -13,7 +13,7 @@ import android.os.Handler;
 public class BluetoothPrinter {
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket mmSocket;
-    BluetoothDevice mmDevice;
+    BluetoothDevice mmDevice = null;
     public TypePrinter  varTypePrinter = TypePrinter.NotDefined;
     // needed for communication to bluetooth device / network
     OutputStream mmOutputStream;
@@ -45,8 +45,8 @@ public class BluetoothPrinter {
                     String name=device.getName();
                     switch (name)
                     {
-                        case "ARGO 25":
-                            varTypePrinter=TypePrinter.ARGO_25;
+                        case "Argox 3230":
+                            varTypePrinter=TypePrinter.Argox_3230;
                             break;
                         case "Godex MX20":
                             varTypePrinter=TypePrinter.Godex_MX20;
@@ -55,14 +55,14 @@ public class BluetoothPrinter {
                             varTypePrinter=TypePrinter.NotDefined;
 
                     }
-                    varTypePrinter=TypePrinter.ARGO_25;
 
-                    // RPP300 is the name of the bluetooth printer device
-                    // we got this name from the list of paired devices
+
 //                    if (device.getName().equals("RPP300")) {
-                    mmDevice = device;
-                    break;
-//                    }
+                    if(varTypePrinter!= TypePrinter.NotDefined)
+                    {
+                     mmDevice = device;
+                     break;
+                    }
                 }
             }
 
