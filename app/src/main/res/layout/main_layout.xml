@@ -17,8 +17,9 @@
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="20dp"
+        android:layout_height="15dp"
         android:layout_marginTop="10dp"
+        android:progress="0"
         android:max="100"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -31,12 +32,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:padding="10dp">
-
-        <TextView
-            android:id="@+id/Printer"
-            android:layout_width="match_parent"
-            android:layout_height="31dp"
-            android:text="None" />
 
         <TableLayout
             android:id="@+id/tableLayout1"
@@ -144,6 +139,89 @@
                     android:layout_span="3"
                     android:textSize="8pt"></TextView>
 
+            </TableRow>
+
+        </TableLayout>
+
+        <TableLayout
+            android:id="@+id/tableLayout2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:stretchColumns="0,1,2,3,4">
+
+            <TableRow
+                android:id="@+id/tableRowStatusBarTitle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:id="@+id/PrinterTitle"
+                    android:layout_column="0"
+                    android:text="Блютуз"
+                    android:textSize="8pt"></TextView>
+
+                <TextView
+                    android:id="@+id/NetworkTitle"
+                    android:layout_column="1"
+                    android:text="Wi-fi"
+                    android:textSize="8pt"></TextView>
+
+                <TextView
+                    android:id="@+id/PrintCountTitle"
+                    android:layout_column="2"
+                    android:text="Друк"
+                    android:textSize="8pt"></TextView>
+
+                <TextView
+                    android:id="@+id/AllCountTitle"
+                    android:layout_column="3"
+                    android:text="Всього"
+                    android:textSize="8pt"></TextView>
+                <TextView
+                    android:id="@+id/PercentTitle"
+                    android:layout_column="4"
+                    android:text="%"
+                    android:textSize="8pt"></TextView>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/tableRowStatusBar"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:id="@+id/Printer"
+                    android:layout_column="0"
+                    android:text="None"
+                    android:textSize="8pt"></TextView>
+
+                <TextView
+                    android:id="@+id/Network"
+                    android:layout_column="1"
+                    android:text="None"
+                    android:textSize="8pt"></TextView>
+
+                <TextView
+                    android:id="@+id/PrintCount"
+                    android:layout_column="2"
+                    android:text="None"
+                    android:textSize="8pt"></TextView>
+
+                <TextView
+                    android:id="@+id/AllCount"
+                    android:layout_column="3"
+                    android:text="None"
+                    android:textSize="8pt"></TextView>
+                <TextView
+                    android:id="@+id/Percent"
+                    android:layout_column="4"
+                    android:text="None"
+                    android:textSize="8pt"></TextView>
             </TableRow>
 
         </TableLayout>

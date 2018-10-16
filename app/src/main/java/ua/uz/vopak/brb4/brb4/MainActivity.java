@@ -112,6 +112,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         perView.setText(LI.Unit);
         nameView.setText(LI.Name);
         Printer.setText(LI.InfoPrinter);
+        Printer.setTextColor(Color.parseColor("#ee4343"));
 
 
         if(LI.OldPrice != LI.Price){
