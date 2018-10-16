@@ -18,7 +18,7 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="15dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:progress="0"
         android:max="100"
         android:paddingLeft="10dp"
@@ -43,80 +43,80 @@
                 android:id="@+id/tableRow1"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
+                android:paddingTop="3dp"
                 android:paddingBottom="5dp">
 
                 <TextView
                     android:id="@+id/code_text"
                     android:layout_column="0"
                     android:text="Код:"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="7pt"></TextView>
 
                 <TextView
                     android:id="@+id/code"
                     android:layout_column="1"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="7pt"></TextView>
 
                 <TextView
                     android:id="@+id/per_text"
                     android:layout_column="2"
                     android:text="Од:"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="7pt"></TextView>
 
                 <TextView
                     android:id="@+id/per"
                     android:layout_column="3"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="7pt"></TextView>
             </TableRow>
 
             <TableRow
                 android:id="@+id/tableRow3"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
+                android:paddingTop="3dp"
                 android:paddingBottom="5dp">
 
                 <TextView
                     android:id="@+id/old_price_text"
                     android:layout_column="0"
                     android:text="Ціна с:"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="7pt"></TextView>
 
                 <TextView
                     android:id="@+id/old_price"
                     android:layout_column="1"
-                    android:textSize="12pt"></TextView>
+                    android:textSize="10pt"></TextView>
 
                 <TextView
                     android:id="@+id/price_text"
                     android:layout_column="2"
                     android:text="Ціна н:"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="7pt"></TextView>
 
                 <TextView
                     android:id="@+id/price"
                     android:layout_column="3"
-                    android:textSize="12pt"></TextView>
+                    android:textSize="10pt"></TextView>
             </TableRow>
 
             <TableRow
                 android:id="@+id/tableRow2"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
+                android:paddingTop="3dp"
                 android:paddingBottom="5dp">
 
                 <TextView
                     android:id="@+id/title_text"
                     android:layout_column="0"
                     android:text="Назва:"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="7pt"></TextView>
 
                 <TextView
                     android:id="@+id/title"
                     android:layout_column="1"
                     android:layout_span="3"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="7pt"></TextView>
 
             </TableRow>
 
@@ -124,20 +124,20 @@
                 android:id="@+id/tableRow4"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
+                android:paddingTop="3dp"
                 android:paddingBottom="5dp">
 
                 <TextView
                     android:id="@+id/bar_code_text"
                     android:layout_column="0"
                     android:text="Штрих код:"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="7pt"></TextView>
 
                 <TextView
                     android:id="@+id/bar_code"
                     android:layout_column="1"
                     android:layout_span="3"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="7pt"></TextView>
 
             </TableRow>
 
@@ -153,14 +153,13 @@
             android:id="@+id/tableLayout2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
             android:stretchColumns="0,1,2,3,4">
 
             <TableRow
                 android:id="@+id/tableRowStatusBarTitle"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
+                android:paddingTop="1dp"
                 android:paddingBottom="5dp">
 
                 <TextView
@@ -198,7 +197,7 @@
                 android:id="@+id/tableRowStatusBar"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp"
+                android:paddingTop="1dp"
                 android:paddingBottom="5dp">
 
                 <TextView

@@ -120,11 +120,11 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         Printer.setTextColor(Color.parseColor("#856404"));
         Network.setText(LI.InfoHTTP);
         Network.setTextColor(Color.parseColor("#856404"));
-        PrintCount.setText(LI.BadScan);
+        PrintCount.setText(Integer.toString (LI.BadScan));
         PrintCount.setTextColor(Color.parseColor("#856404"));
-        AllCount.setText(LI.AllScan);
+        AllCount.setText(Integer.toString (LI.AllScan));
         AllCount.setTextColor(Color.parseColor("#856404"));
-        Percent.setText(((LI.AllScan - LI.BadScan) / LI.AllScan) * 100);
+        Percent.setText(Integer.toString ( 100*(LI.AllScan - LI.BadScan) / LI.AllScan)  );
         Percent.setTextColor(Color.parseColor("#856404"));
 
 
