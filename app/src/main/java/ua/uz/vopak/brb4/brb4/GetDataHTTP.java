@@ -19,6 +19,7 @@ import static android.widget.Toast.*;
 
 public class GetDataHTTP
 {
+    eStateHTTP HttpState = eStateHTTP.HTTP_OK;
     public String GetData(String parCodeShop,String parScanCode,String parCode) {
         if (parScanCode == null || parScanCode.isEmpty())
             parScanCode = "";
@@ -70,6 +71,7 @@ public class GetDataHTTP
             writer.close();
             os.close();
             int responseCode=conn.getResponseCode();
+            //StateHttp= StateHTTP.HTTP_OK;
 
             if (responseCode == HttpsURLConnection.HTTP_OK ) {
                 String line;
