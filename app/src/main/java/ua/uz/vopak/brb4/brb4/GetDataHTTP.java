@@ -19,26 +19,38 @@ import static android.widget.Toast.*;
 
 public class GetDataHTTP
 {
-       public String GetData(String parCodeShop,String parScanCode,String parCode)
-    {
-        if(parScanCode == null || parScanCode.isEmpty())
-            parScanCode="";
-        if(parCode == null || parCode.isEmpty())
-            parCode="";
-        String varHTTPRegest ="<?xml version=\"1.0\" encoding=\"utf-8\"?>"+"\n"+
-                "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"+"\n"+
-                "<soap:Body><GetInfoForTheProduct xmlns=\"vopak\">"+"\n"+
-                "<CodeOfShop>"+parCodeShop+"</CodeOfShop>"+"\n"+
-                "<Scancode>"+parScanCode+"</Scancode>"+"\n"+
-                "<CodeOfProduct>"+parCode+"</CodeOfProduct>"+"\n"+
-                "</GetInfoForTheProduct>"+"\n"+
-                "</soap:Body>"+"\n"+
+    public String GetData(String parCodeShop,String parScanCode,String parCode) {
+        if (parScanCode == null || parScanCode.isEmpty())
+            parScanCode = "";
+        if (parCode == null || parCode.isEmpty())
+            parCode = "";
+
+        String response = "";
+        String varHTTPRegest = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" + "\n" +
+                "<soap:Envelope xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" + "\n" +
+                "<soap:Body><GetInfoForTheProduct xmlns=\"vopak\">" + "\n" +
+                "<CodeOfShop>" + parCodeShop + "</CodeOfShop>" + "\n" +
+                "<Scancode>" + parScanCode + "</Scancode>" + "\n" +
+                "<CodeOfProduct>" + parCode + "</CodeOfProduct>" + "\n" +
+                "</GetInfoForTheProduct>" + "\n" +
+                "</soap:Body>" + "\n" +
                 "</soap:Envelope>";
-        String requestURL="http://1CSRV/utppsu/ws/ws1.1cws";
+        String requestURL = "http://1CSRV/utppsu/ws/ws1.1cws";
+        response=HTTPRequest(requestURL,varHTTPRegest);
+        if(response!=null && !response.isEmpty())
+        {
+            response = response.substring(response.indexOf("-instance\">") + 11);
+            response = response.substring(0,response.indexOf("</m:return>"));
+        }
+        return response;
+    }
+
+    public String HTTPRequest(String parURL,String parData)
+    {
         URL url;
         String response = "";
         try {
-            url = new URL(requestURL);
+            url = new URL(parURL);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000);
@@ -52,7 +64,7 @@ public class GetDataHTTP
             OutputStream os = conn.getOutputStream();
             BufferedWriter writer = new BufferedWriter(
                     new OutputStreamWriter(os, "UTF-8"));
-            writer.write(varHTTPRegest) ;//(URLEncoder.encode(varHTTPRegest, "UTF-8"));
+            writer.write(parData) ;//(URLEncoder.encode(varHTTPRegest, "UTF-8"));
 
             writer.flush();
             writer.close();
@@ -65,24 +77,16 @@ public class GetDataHTTP
                 while ((line=br.readLine()) != null) {
                     response+=line;
                 }
-                response = response.substring(response.indexOf("-instance\">") + 11);
-                response = response.substring(0,response.indexOf("</m:return>"));
-
             }
             else {
                 response="";
-
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-
-
         return response;
     }
-
-
 
 }
