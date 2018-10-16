@@ -25,7 +25,8 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     public  static Boolean isCreatedScaner = false;
     private Worker  worker;
     private EMDKWrapper emdkWrapper = null;
-    TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer;
+    TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
+             Network, PrintCount, AllCount, Percent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +52,10 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         oldPriceText = findViewById(R.id.old_price_text);
         priceText = findViewById(R.id.price_text);
         Printer = findViewById(R.id.Printer);
+        Network = findViewById(R.id.Network);
+        PrintCount = findViewById(R.id.PrintCount);
+        AllCount = findViewById(R.id.AllCount);
+        Percent = findViewById(R.id.AllCount);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //In case we have been launched by the DataWedge intent plug-in
@@ -112,6 +117,15 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         perView.setText(LI.Unit);
         nameView.setText(LI.Name);
         Printer.setText(LI.InfoPrinter);
+        Printer.setTextColor(Color.parseColor("#856404"));
+        Network.setText(LI.InfoHTTP);
+        Network.setTextColor(Color.parseColor("#856404"));
+        PrintCount.setText(LI.BadScan);
+        PrintCount.setTextColor(Color.parseColor("#856404"));
+        AllCount.setText(LI.AllScan);
+        AllCount.setTextColor(Color.parseColor("#856404"));
+        Percent.setText(((LI.AllScan - LI.BadScan) / LI.AllScan) * 100);
+        Percent.setTextColor(Color.parseColor("#856404"));
 
 
         if(LI.OldPrice != LI.Price){
