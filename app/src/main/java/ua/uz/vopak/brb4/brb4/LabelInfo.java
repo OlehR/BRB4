@@ -13,6 +13,7 @@ import static android.app.PendingIntent.getActivity;
 
 public class LabelInfo
 {
+    public boolean IsLong=true;
     public int Code;
     public String Name;
     public int Price;
@@ -22,11 +23,11 @@ public class LabelInfo
     public String Unit;
     public String Article;
     public String BarCode;
-    public int AllScan=0;
-    public int BadScan=0;
+    public int AllScan=0; //Кількість відсканованих позицій
+    public int BadScan=0;//Кількість позицій, які друкувались
     public boolean Action  = false;
-    public String  InfoPrinter = "";
-    public String  InfoHTTP = "";
+    public String  InfoPrinter = ""; //Стан принтера
+    public String  InfoHTTP = "";//Стан HTTP
     public LabelInfo()
     {
     }
@@ -58,6 +59,7 @@ public class LabelInfo
         String Name1,Name2="", varUnit="грн/"+this.Unit,BarCodePrice;
         String  OffsetBill="0",OffsetCoin="350";
         String Space="                                 ";
+        String  OffsetEndLine=(IsLong?"260":"247");
         String varPriceBill=Integer.toString(PriceBill).trim();
         String varPriceCoin=Integer.toString(PriceCoin).trim();
         if(this.Name.length()<LengName)
@@ -92,6 +94,8 @@ public class LabelInfo
                 break;
         }
 
+
+
         String Label="^XA\n" +
                 "^LL280\n" +
                 "\n" +
@@ -105,17 +109,18 @@ public class LabelInfo
                 "^FO  15,200^BY2 ^BCN,40,N,Y ^FD{BarCodePrice}^FS\n" +
                 "\n" +
                 "^FO  15,250^Ab ^FD{BarCode}^FS\n" +
-                "^FO 170,250^Ab ^FD{Article}^FS\n" +
-                "^FO 300,250^Ab ^FD{Date}^FS\n" +
+                "^FO 160,250^Ab ^FD{Article}^FS\n" +
+                "^FO 270,250^Ab ^FD{Date}^FS\n" +
                 "\n" +
-                "^FO 0,247^A@N,20,20,B:904_MSSS_24.arf ^FD-------------------------------------^FS\n" +
+                "^FO 0,{OffsetEndLine}^A@N,20,20,B:904_MSSS_24.arf ^FD-------------------------------------^FS\n" +
                 "^XZ";
 
         Label=Label.replace("{Name1}",Name1).replace("{Name2}",Name2).
                     replace("{OffsetBill}",OffsetBill).replace("{OffsetCoin}",OffsetCoin).replace("{Unit}",varUnit).
                     replace("{PriceBill}",varPriceBill).replace("{PriceCoin}",varPriceCoin).
                     replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode).
-                    replace("{Article}",this.Article).replace("{Date}",CurentDate);
+                    replace("{Article}",this.Article).replace("{Date}",CurentDate).
+                    replace("{OffsetEndLine}",OffsetEndLine);
            res=Label.getBytes("Cp1251");
           return res;
 

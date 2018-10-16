@@ -71,8 +71,8 @@ public class GetDataHTTP
             writer.close();
             os.close();
             int responseCode=conn.getResponseCode();
-            //StateHttp= StateHTTP.HTTP_OK;
 
+            HttpState= eStateHTTP.values()[responseCode];
             if (responseCode == HttpsURLConnection.HTTP_OK ) {
                 String line;
                 BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
