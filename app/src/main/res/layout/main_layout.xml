@@ -143,6 +143,12 @@
 
         </TableLayout>
 
+        <Button
+            android:id="@+id/ChangePrintType"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="Широкий" />
+
         <TableLayout
             android:id="@+id/tableLayout2"
             android:layout_width="fill_parent"
@@ -161,30 +167,31 @@
                     android:id="@+id/PrinterTitle"
                     android:layout_column="0"
                     android:text="Блютуз"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="6pt"></TextView>
 
                 <TextView
                     android:id="@+id/NetworkTitle"
                     android:layout_column="1"
                     android:text="Wi-fi"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="6pt"></TextView>
 
                 <TextView
                     android:id="@+id/PrintCountTitle"
                     android:layout_column="2"
                     android:text="Друк"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="6pt"></TextView>
 
                 <TextView
                     android:id="@+id/AllCountTitle"
                     android:layout_column="3"
                     android:text="Всього"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="6pt"></TextView>
+
                 <TextView
                     android:id="@+id/PercentTitle"
                     android:layout_column="4"
                     android:text="%"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="6pt"></TextView>
             </TableRow>
 
             <TableRow
@@ -198,30 +205,31 @@
                     android:id="@+id/Printer"
                     android:layout_column="0"
                     android:text="None"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="6pt"></TextView>
 
                 <TextView
                     android:id="@+id/Network"
                     android:layout_column="1"
                     android:text="None"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="6pt"></TextView>
 
                 <TextView
                     android:id="@+id/PrintCount"
                     android:layout_column="2"
                     android:text="None"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="6pt"></TextView>
 
                 <TextView
                     android:id="@+id/AllCount"
                     android:layout_column="3"
                     android:text="None"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="6pt"></TextView>
+
                 <TextView
                     android:id="@+id/Percent"
                     android:layout_column="4"
                     android:text="None"
-                    android:textSize="8pt"></TextView>
+                    android:textSize="6pt"></TextView>
             </TableRow>
 
         </TableLayout>
