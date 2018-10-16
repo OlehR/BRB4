@@ -57,6 +57,7 @@ public class Worker
            String resHttp=Http.GetData(CodeWarehouse,BarCode,CodeWares);
            resHttp=resHttp.replace("&amp;","&");
            //Call Progres 50%;
+           LI.InfoHTTP= Http.HttpState.name();
            scanerContext.SetProgres(50);
            if(resHttp!=null && !resHttp.isEmpty())
            {
