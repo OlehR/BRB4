@@ -185,7 +185,9 @@ public enum eStateHTTP {
      * HTTP Status-Code 505: HTTP Version Not Supported.
      */
      HTTP_VERSION(505);
+
     private int action;
+
     public int getAction()
     {
         return this.action;
@@ -194,6 +196,16 @@ public enum eStateHTTP {
     private eStateHTTP(int action)
     {
         this.action = action;
+    }
+
+
+    public static eStateHTTP fromId(int id) {
+        for (eStateHTTP type : values()) {
+            if (type.getAction() == id) {
+                return type;
+            }
+        }
+        return null;
     }
 
 }
