@@ -26,7 +26,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
     private Worker  worker;
     private EMDKWrapper emdkWrapper = null;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
-             Network, PrintCount, AllCount, Percent;
+             Network, CountData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,9 +53,7 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         priceText = findViewById(R.id.price_text);
         Printer = findViewById(R.id.Printer);
         Network = findViewById(R.id.Network);
-        PrintCount = findViewById(R.id.PrintCount);
-        AllCount = findViewById(R.id.AllCount);
-        Percent = findViewById(R.id.AllCount);
+        CountData = findViewById(R.id.CountData);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //In case we have been launched by the DataWedge intent plug-in
@@ -120,13 +118,9 @@ public class MainActivity extends FragmentActivity implements View.OnClickListen
         Printer.setTextColor(Color.parseColor("#856404"));
         Network.setText(LI.InfoHTTP);
         Network.setTextColor(Color.parseColor("#856404"));
-        PrintCount.setText(Integer.toString (LI.BadScan));
-        PrintCount.setTextColor(Color.parseColor("#856404"));
-        AllCount.setText(Integer.toString (LI.AllScan));
-        AllCount.setTextColor(Color.parseColor("#856404"));
-        Percent.setText(Integer.toString ( 100*(LI.AllScan - LI.BadScan) / LI.AllScan)  );
-        Percent.setTextColor(Color.parseColor("#856404"));
-
+        String PercentData = Integer.toString ( 100*(LI.AllScan - LI.BadScan) / LI.AllScan);
+        CountData.setText(Integer.toString (LI.BadScan) +"/"+ Integer.toString (LI.AllScan)+" ("+ PercentData + "%)");
+        CountData.setTextColor(Color.parseColor("#856404"));
 
         if(LI.OldPrice != LI.Price){
             oldPriceView.setTextColor(Color.parseColor("#ee4343"));
