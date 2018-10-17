@@ -14,7 +14,7 @@ import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
 
 public class Worker
 {
-    MainActivity scanerContext;
+    PriceCheckerActivity scanerContext;
     String CodeWarehouse="000000009";
 
     private String CodeWares;
@@ -103,7 +103,7 @@ public class Worker
       }
 
   }
-    public Worker(MainActivity scaner)
+    public Worker(PriceCheckerActivity scaner)
     {
         this();
         scanerContext = scaner;

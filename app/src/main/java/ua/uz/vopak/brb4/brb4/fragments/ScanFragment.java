@@ -6,7 +6,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,24 +13,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-
 import com.google.zxing.ResultPoint;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
-
 import java.util.List;
-
 import ua.uz.vopak.brb4.brb4.ActionType;
-import ua.uz.vopak.brb4.brb4.AsyncWorker;
-import ua.uz.vopak.brb4.brb4.LabelInfo;
-import ua.uz.vopak.brb4.brb4.MainActivity;
+import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.MessageActivity;
 import ua.uz.vopak.brb4.brb4.MessageType;
 import ua.uz.vopak.brb4.brb4.R;
-import ua.uz.vopak.brb4.brb4.Worker;
 
 /**
  * Created by Rishabh Bhatia on 12/5/17.
@@ -50,7 +41,7 @@ public class ScanFragment extends Fragment {
 
         view=inflater.inflate(R.layout.scan_fragment, container, false);
 
-        if(!MainActivity.isCreatedScaner) {
+        if(!PriceCheckerActivity.isCreatedScaner) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                     getActivity().checkSelfPermission(Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
@@ -84,7 +75,7 @@ public class ScanFragment extends Fragment {
 
         barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
 
-        if(!MainActivity.isCreatedScaner) {
+        if(!PriceCheckerActivity.isCreatedScaner) {
             barcodeView.setVisibility(View.VISIBLE);
             barcodeView.resume();
         }else{
@@ -98,7 +89,7 @@ public class ScanFragment extends Fragment {
 
         barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
 
-        if(!MainActivity.isCreatedScaner) {
+        if(!PriceCheckerActivity.isCreatedScaner) {
             barcodeView.setVisibility(View.VISIBLE);
             barcodeView.pause();
         }else{
@@ -116,7 +107,7 @@ public class ScanFragment extends Fragment {
                 //worker.execute(result);
                 //AsyncWorker aW =  new AsyncWorker(worker);
                 //aW.execute(result.getText());
-                ((MainActivity)getActivity()).ExecuteWorker(result.getText());
+                ((PriceCheckerActivity)getActivity()).ExecuteWorker(result.getText());
                 //worker.Start(result);
 
                /* if(!ScanText.equals("abc")){//if the tag was not scanned succesfully let us start the scan again
@@ -136,7 +127,7 @@ public class ScanFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(!MainActivity.isCreatedScaner) {
+        if(!PriceCheckerActivity.isCreatedScaner) {
             if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
