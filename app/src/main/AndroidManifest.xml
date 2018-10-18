@@ -32,5 +32,7 @@
             android:name=".MessageActivity" />
         <activity
             android:name=".PriceCheckerActivity" />
+        <activity
+            android:name=".AuthActivity" />
     </application>
 </manifest>

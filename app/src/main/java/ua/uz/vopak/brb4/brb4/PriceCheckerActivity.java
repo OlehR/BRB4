@@ -1,6 +1,5 @@
 package ua.uz.vopak.brb4.brb4;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -10,11 +9,14 @@ import android.content.Intent;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-//import static android.app.PendingIntent.getActivity;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncWorker;
+import ua.uz.vopak.brb4.brb4.helpers.EMDKWrapper;
+import ua.uz.vopak.brb4.brb4.helpers.Worker;
+import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener{
     public  static Boolean isCreatedScaner = false;
-    private Worker  worker;
+    private Worker worker;
     private EMDKWrapper emdkWrapper = null;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData;

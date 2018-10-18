@@ -1,7 +1,8 @@
-package ua.uz.vopak.brb4.brb4;
+package ua.uz.vopak.brb4.brb4.helpers;
 
 import android.os.AsyncTask;
-import com.journeyapps.barcodescanner.BarcodeResult;
+
+import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 
 public class AsyncWorker extends  AsyncTask<String , Void, LabelInfo>
 {

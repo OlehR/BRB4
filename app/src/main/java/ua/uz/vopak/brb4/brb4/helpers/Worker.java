@@ -1,15 +1,13 @@
-package ua.uz.vopak.brb4.brb4;
+package ua.uz.vopak.brb4.brb4.helpers;
 
-import android.os.AsyncTask;
-import com.google.zxing.ResultPoint;
-import com.journeyapps.barcodescanner.BarcodeCallback;
-import com.journeyapps.barcodescanner.BarcodeResult;
-import com.journeyapps.barcodescanner.BarcodeView;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import android.content.Context;
-import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
 
+import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
+import ua.uz.vopak.brb4.brb4.enums.PrinterError;
+import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
+import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 
 
 public class Worker
@@ -21,7 +19,7 @@ public class Worker
     private String BarCode;
     BluetoothPrinter Printer = new BluetoothPrinter();
     GetDataHTTP Http = new GetDataHTTP();
-    LabelInfo LI = new LabelInfo();
+    public LabelInfo LI = new LabelInfo();
     SQLiteAdapter mDbHelper;
 
 

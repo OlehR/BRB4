@@ -1,4 +1,4 @@
-package ua.uz.vopak.brb4.brb4;
+package ua.uz.vopak.brb4.brb4.helpers;
 
 import com.symbol.emdk.EMDKManager;
 import com.symbol.emdk.EMDKManager.EMDKListener;
@@ -7,12 +7,6 @@ import com.symbol.emdk.ProfileManager;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import com.journeyapps.barcodescanner.BarcodeView;
-import android.content.Intent;
 
 public class EMDKWrapper implements EMDKListener {
     private String profileName = "DataCaptureProfile";
@@ -28,7 +22,7 @@ public class EMDKWrapper implements EMDKListener {
         varContext=parContext;
     }
 
-    boolean getEMDKManager(Bundle savedInstanceState) {
+    public boolean getEMDKManager(Bundle savedInstanceState) {
         EMDKResults results = EMDKManager.getEMDKManager(varContext, this);
 
         //Check the return status of getEMDKManager
@@ -37,7 +31,7 @@ public class EMDKWrapper implements EMDKListener {
     }
 
 
-    void release() {
+    public void release() {
         //Release the EMDKmanager on Application exit.
         if (emdkManager != null) {
             emdkManager.release();

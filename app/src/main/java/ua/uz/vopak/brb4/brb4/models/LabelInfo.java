@@ -1,14 +1,12 @@
-package ua.uz.vopak.brb4.brb4;
+package ua.uz.vopak.brb4.brb4.models;
 
 
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-
-import static android.app.PendingIntent.getActivity;
+import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
 
 
 public class LabelInfo

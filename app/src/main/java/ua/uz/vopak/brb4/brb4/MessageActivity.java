@@ -8,6 +8,9 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import ua.uz.vopak.brb4.brb4.enums.ActionType;
+import ua.uz.vopak.brb4.brb4.enums.MessageType;
+
 
 public class MessageActivity extends Activity implements View.OnClickListener {
     TextView messageHeaderView, messageView;

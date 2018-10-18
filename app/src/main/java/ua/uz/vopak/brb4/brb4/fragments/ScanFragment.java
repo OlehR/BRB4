@@ -18,10 +18,10 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
 import java.util.List;
-import ua.uz.vopak.brb4.brb4.ActionType;
+import ua.uz.vopak.brb4.brb4.enums.ActionType;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.MessageActivity;
-import ua.uz.vopak.brb4.brb4.MessageType;
+import ua.uz.vopak.brb4.brb4.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.R;
 
 /**

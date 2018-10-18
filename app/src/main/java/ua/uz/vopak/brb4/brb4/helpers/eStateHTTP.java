@@ -1,4 +1,4 @@
-package ua.uz.vopak.brb4.brb4;
+package ua.uz.vopak.brb4.brb4.helpers;
 
 public enum eStateHTTP {
      HTTP_OK (200),

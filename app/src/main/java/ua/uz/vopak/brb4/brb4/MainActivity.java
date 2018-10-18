@@ -1,6 +1,8 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -8,13 +10,24 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
+
 public class  MainActivity extends Activity implements View.OnClickListener {
     Button[] menuItems = new Button[4];
     int current = 0;
+    AuterizationsHelper auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        auth = new AuterizationsHelper();
+
+        if(!auth.isAutorized){
+            Intent i = new Intent(this, AuthActivity.class);
+            startActivity(i);
+        }
+
         setContentView(R.layout.main_layout);
 
         menuItems[0] = findViewById(R.id.PriceCheker);
@@ -40,6 +53,22 @@ public class  MainActivity extends Activity implements View.OnClickListener {
 
             menuItems[i].setOnClickListener(this);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(!auth.isAutorized){
+            Intent i = new Intent(this, AuthActivity.class);
+            startActivity(i);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        auth.isAutorized = false;
     }
 
     @Override
@@ -72,5 +101,21 @@ public class  MainActivity extends Activity implements View.OnClickListener {
                 startActivity(intent);
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        new AlertDialog.Builder(this)
+                .setTitle("Выйти из приложения?")
+                .setMessage("Вы действительно хотите выйти?")
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        //SomeActivity - имя класса Activity для которой переопределяем onBackPressed();
+                        auth.isAutorized = false;
+                        finish();
+                        moveTaskToBack(true);
+                    }
+                }).create().show();
     }
 }

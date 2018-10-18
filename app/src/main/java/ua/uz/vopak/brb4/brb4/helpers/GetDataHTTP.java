@@ -1,21 +1,10 @@
-package ua.uz.vopak.brb4.brb4;
+package ua.uz.vopak.brb4.brb4.helpers;
 
-
-import android.os.AsyncTask;
-import android.widget.Toast;
-import android.content.Intent;
 
 import java.io.*;
 //import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 import java.net.*;
-import java.util.Map;
-
 import javax.net.ssl.HttpsURLConnection;
-
-import static android.app.PendingIntent.getActivity;
-import static android.widget.Toast.*;
 
 public class GetDataHTTP
 {

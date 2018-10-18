@@ -1,4 +1,4 @@
-package ua.uz.vopak.brb4.brb4;
+package ua.uz.vopak.brb4.brb4.helpers;
 
 
 import java.io.*;
@@ -8,11 +8,14 @@ import java.util.*;
 import android.bluetooth.*;
 import android.os.Handler;
 
+import ua.uz.vopak.brb4.brb4.enums.PrinterError;
+import ua.uz.vopak.brb4.brb4.enums.TypePrinter;
+
 public class BluetoothPrinter {
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice = null;
-    public TypePrinter  varTypePrinter = TypePrinter.NotDefined;
+    public TypePrinter varTypePrinter = TypePrinter.NotDefined;
     public PrinterError varPrinterError=PrinterError.None;
     // needed for communication to bluetooth device / network
     OutputStream mmOutputStream;
