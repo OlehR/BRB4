@@ -17,6 +17,7 @@ import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener{
     public  static Boolean isCreatedScaner = false;
     private Worker worker;
+    private BarcodeView barcodeView;
     private EMDKWrapper emdkWrapper = null;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData;
@@ -47,7 +48,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         Printer = findViewById(R.id.Printer);
         Network = findViewById(R.id.Network);
         CountData = findViewById(R.id.CountData);
-
+        barcodeView = findViewById(R.id.barcode_scanner);
         //In case we have been launched by the DataWedge intent plug-in
         //Intent i = getIntent();
         //handleDecodeData(i);
@@ -67,7 +68,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     @Override
     public void onClick(View v) {
         if(!isCreatedScaner) {
-            BarcodeView barcodeView = findViewById(R.id.barcode_scanner);
+            barcodeView = findViewById(R.id.barcode_scanner);
             barcodeView.resume();
 
         }
@@ -92,7 +93,9 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                 if(data != null && data.length() > 0)
                 {
                     ExecuteWorker(data);
-                    //ScanFragment sf = (ScanFragment) getSupportFragmentManager().findFragmentById(R.id.scan_fragment);
+                    /*
+                    ScanFragment sf = (ScanFragment) getSupportFragmentManager().findFragmentById(R.id.scan_fragment);
+                    barcodeView.resume();*/
 
                 }
             }
@@ -131,8 +134,8 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         textBarcodeView.setText(LI.BarCode);
 
 
-        if(!PriceCheckerActivity.isCreatedScaner) {
-            //barcodeView.resume();
+        if(!isCreatedScaner && barcodeView!=null) {
+            barcodeView.resume();
         }
     }
 
