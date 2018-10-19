@@ -18,6 +18,8 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
 import java.util.List;
+
+import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.enums.ActionType;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.MessageActivity;
@@ -41,7 +43,7 @@ public class ScanFragment extends Fragment {
 
         view=inflater.inflate(R.layout.scan_fragment, container, false);
 
-        if(!PriceCheckerActivity.isCreatedScaner) {
+        if(!MainActivity.isCreatedScaner) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                     getActivity().checkSelfPermission(Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
@@ -75,7 +77,7 @@ public class ScanFragment extends Fragment {
 
         barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
 
-        if(!PriceCheckerActivity.isCreatedScaner) {
+        if(!MainActivity.isCreatedScaner) {
             barcodeView.setVisibility(View.VISIBLE);
             barcodeView.resume();
         }else{
@@ -89,7 +91,7 @@ public class ScanFragment extends Fragment {
 
         barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
 
-        if(!PriceCheckerActivity.isCreatedScaner) {
+        if(!MainActivity.isCreatedScaner) {
             barcodeView.setVisibility(View.VISIBLE);
             barcodeView.pause();
         }else{
@@ -127,7 +129,7 @@ public class ScanFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(!PriceCheckerActivity.isCreatedScaner) {
+        if(!MainActivity.isCreatedScaner) {
             if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);

@@ -15,22 +15,12 @@ import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener{
-    public  static Boolean isCreatedScaner = false;
     private Worker worker;
-    private EMDKWrapper emdkWrapper = null;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String model = android.os.Build.MODEL;
-        if( model.equals("TC20")  && ( android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions")) ){
-            emdkWrapper  = new EMDKWrapper(getApplicationContext());
-        }
-
-        if(emdkWrapper != null){
-            isCreatedScaner=emdkWrapper.getEMDKManager(savedInstanceState);
-        }
 
         setContentView(R.layout.price_checker_layout);
 
@@ -48,13 +38,12 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         Network = findViewById(R.id.Network);
         CountData = findViewById(R.id.CountData);
 
-        //In case we have been launched by the DataWedge intent plug-in
-        //Intent i = getIntent();
-        //handleDecodeData(i);
-
-        //Context c=this.getApplicationContext();
         worker = new Worker(this);
         setScanResult(worker.LI);
+
+        //In case we have been launched by the DataWedge intent plug-in
+        Intent i = getIntent();
+        handleDecodeData(i);
     }
 
     //We need to handle any incoming intents, so let override the onNewIntent method
@@ -66,7 +55,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
-        if(!isCreatedScaner) {
+        if(!MainActivity.isCreatedScaner) {
             BarcodeView barcodeView = findViewById(R.id.barcode_scanner);
             barcodeView.resume();
 
@@ -77,8 +66,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     //This function is responsible for getting the data from the intent
     private void handleDecodeData(Intent i)
     {
-        //Check the intent action is for us
-        if (i.getAction().contentEquals("ua.uz.vopak.brb4.brb4.RECVR") ) {
+        if (i.getAction() != null && i.getAction().contentEquals("ua.uz.vopak.brb4.brb4.RECVR") ) {
             //Get the source of the data
             String source = i.getStringExtra("com.motorolasolutions.emdk.datawedge.source");
 
@@ -131,7 +119,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         textBarcodeView.setText(LI.BarCode);
 
 
-        if(!PriceCheckerActivity.isCreatedScaner) {
+        if(!MainActivity.isCreatedScaner) {
             //barcodeView.resume();
         }
     }
@@ -154,8 +142,8 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         // TODO Auto-generated method stub
         super.onDestroy();
         //Release the EMDKmanager on Application exit.
-        if (emdkWrapper  != null) {
-            emdkWrapper.release();
+        if (MainActivity.emdkWrapper != null) {
+            MainActivity.emdkWrapper.release();
         }
     }
 

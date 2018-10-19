@@ -11,8 +11,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
+import ua.uz.vopak.brb4.brb4.helpers.EMDKWrapper;
 
 public class  MainActivity extends Activity implements View.OnClickListener {
+    public  static Boolean isCreatedScaner = false;
+    public static EMDKWrapper emdkWrapper = null;
     Button[] menuItems = new Button[4];
     int current = 0;
     AuterizationsHelper auth;
@@ -20,6 +23,15 @@ public class  MainActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        String model = android.os.Build.MODEL;
+        if( model.equals("TC20")  && ( android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions")) ){
+            emdkWrapper  = new EMDKWrapper(getApplicationContext());
+        }
+
+        if(emdkWrapper != null){
+            isCreatedScaner=emdkWrapper.getEMDKManager(savedInstanceState);
+        }
 
         auth = new AuterizationsHelper();
 
@@ -65,11 +77,11 @@ public class  MainActivity extends Activity implements View.OnClickListener {
         }
     }
 
-    @Override
+    /*@Override
     protected void onPause() {
         super.onPause();
         auth.isAutorized = false;
-    }
+    }*/
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {

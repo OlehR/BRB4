@@ -4,7 +4,7 @@
   </characteristic>
   <characteristic type="Profile">
     <parm name="ProfileName" value="DataCaptureProfile"/>
-    <parm name="ModifiedDate" value="2018-10-02 09:59:21"/>
+    <parm name="ModifiedDate" value="2018-10-19 10:24:24"/>
     <parm name="TargetSystemVersion" value="5.0"/>
     
   <characteristic type="ActivitySelection" version="0.1">
@@ -13,7 +13,7 @@
         <parm name="PrefixAppName" value="true"/>
         <parm name="package" value="ua.uz.vopak.brb4.brb4"/>
         <characteristic type="Activities">
-          <parm name="activity" value="MainActivity"/>
+          <parm name="activity" value="PriceCheckerActivity"/>
         </characteristic>
       </characteristic>
     </characteristic>

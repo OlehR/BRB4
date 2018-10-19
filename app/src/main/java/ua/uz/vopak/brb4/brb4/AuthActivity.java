@@ -30,16 +30,20 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        String CodeData = "\"CodeData\": \"1\"";
-        String Login = "\"Login\": \"" + login.getText() + "\"";
-        String PassWord = "\"PassWord\": \"" + password.getText() + "\"";
-        String data = "{"+ CodeData +", "+ Login +", "+ PassWord +"}";
+        switch (v.getId()){
+            case R.id.LoginButton:
+                String CodeData = "\"CodeData\": \"1\"";
+                String Login = "\"Login\": \"" + login.getText() + "\"";
+                String PassWord = "\"PassWord\": \"" + password.getText() + "\"";
+                String data = "{"+ CodeData +", "+ Login +", "+ PassWord +"}";
 
-        new AsyncAuthHelper(aHelper).execute(data);
+                new AsyncAuthHelper(aHelper).execute(data);
 
-        if(aHelper.isAutorized){
-            Intent i = new Intent(this, MainActivity.class);
-            startActivity(i);
+                if(aHelper.isAutorized){
+                    Intent i = new Intent(this, MainActivity.class);
+                    startActivity(i);
+                }
+                break;
         }
 
     }
