@@ -6,19 +6,26 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncWareHauseHelper;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
 import ua.uz.vopak.brb4.brb4.helpers.EMDKWrapper;
+import ua.uz.vopak.brb4.brb4.helpers.WareHauseHelper;
+import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
-public class  MainActivity extends Activity implements View.OnClickListener {
+public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
+    GlobalConfig config = GlobalConfig.instance();
     public  static Boolean isCreatedScaner = false;
     public static EMDKWrapper emdkWrapper = null;
     Button[] menuItems = new Button[4];
     int current = 0;
     AuterizationsHelper auth;
+    AsyncWareHauseHelper wares;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +41,8 @@ public class  MainActivity extends Activity implements View.OnClickListener {
         }
 
         auth = new AuterizationsHelper();
+        wares = new AsyncWareHauseHelper(new WareHauseHelper());
+        wares.execute();
 
         if(!auth.isAutorized){
             Intent i = new Intent(this, AuthActivity.class);
@@ -65,6 +74,13 @@ public class  MainActivity extends Activity implements View.OnClickListener {
 
             menuItems[i].setOnClickListener(this);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
     }
 
     @Override

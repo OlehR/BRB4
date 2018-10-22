@@ -10,8 +10,11 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import ua.uz.vopak.brb4.brb4.helpers.*;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncAuthHelper;
+import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class AuthActivity extends Activity  implements View.OnClickListener {
+    GlobalConfig config = GlobalConfig.instance();
     Button loginBtn;
     EditText login, password;
     AuterizationsHelper aHelper;
@@ -32,9 +35,11 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.LoginButton:
+                config.Login = login.getText().toString();
+                config.Password = password.getText().toString();
                 String CodeData = "\"CodeData\": \"1\"";
-                String Login = "\"Login\": \"" + login.getText() + "\"";
-                String PassWord = "\"PassWord\": \"" + password.getText() + "\"";
+                String Login = "\"Login\": \"" + config.Login + "\"";
+                String PassWord = "\"PassWord\": \"" + config.Password + "\"";
                 String data = "{"+ CodeData +", "+ Login +", "+ PassWord +"}";
 
                 new AsyncAuthHelper(aHelper).execute(data);

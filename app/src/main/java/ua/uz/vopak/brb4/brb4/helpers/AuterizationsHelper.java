@@ -6,16 +6,17 @@ import org.json.JSONObject;
 
 import ua.uz.vopak.brb4.brb4.AuthActivity;
 import ua.uz.vopak.brb4.brb4.MainActivity;
+import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class AuterizationsHelper {
+    GlobalConfig config = GlobalConfig.instance();
     private static String token = null;
     public static Boolean isAutorized = false;
     AuthActivity activity;
 
     public AuterizationsHelper Start(String data){
-        String url = "http://znp.vopak.local/api/api_v1.php";
 
-        String result = new GetDataHTTP().HTTPRequest(url, data);
+        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
         try {
             JSONObject jObject = new JSONObject(result);

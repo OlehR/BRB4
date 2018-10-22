@@ -1,10 +1,7 @@
-package ua.uz.vopak.brb4.brb4.helpers;
+package ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers;
 
-import android.content.Intent;
 import android.os.AsyncTask;
-
-import ua.uz.vopak.brb4.brb4.AuthActivity;
-import ua.uz.vopak.brb4.brb4.MainActivity;
+import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
 
 public class AsyncAuthHelper extends AsyncTask<String , Void, AuterizationsHelper>
 {

@@ -9,7 +9,7 @@ import android.content.Intent;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import ua.uz.vopak.brb4.brb4.helpers.AsyncWorker;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncWorker;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 

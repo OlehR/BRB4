@@ -7,13 +7,15 @@ import android.content.Context;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
 import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
+import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 
 
 public class Worker
 {
-    PriceCheckerActivity scanerContext;
-    String CodeWarehouse="000000009";
+    GlobalConfig config = GlobalConfig.instance();
+    public PriceCheckerActivity scanerContext;
+    String CodeWarehouse=config.CodeWarehouse;
 
     private String CodeWares;
     private String BarCode;

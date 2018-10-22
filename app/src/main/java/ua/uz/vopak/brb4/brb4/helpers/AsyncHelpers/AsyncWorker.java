@@ -1,7 +1,8 @@
-package ua.uz.vopak.brb4.brb4.helpers;
+package ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers;
 
 import android.os.AsyncTask;
 
+import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 
 public class AsyncWorker extends  AsyncTask<String , Void, LabelInfo>
