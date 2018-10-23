@@ -1,6 +1,8 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -94,5 +96,38 @@ public class SQLiteAdapter
         //throw mSQLException;
     }
         return varRes;
+    }
+
+    public List<ArrayList> GetSendData() {
+        int[] varRes = {0,0};
+        List<ArrayList> list = new ArrayList<ArrayList>();
+        try
+        {
+            String sql ="UPDATE LogPrice SET is_send=-1 WHERE `rowid` IN (SELECT `rowid` FROM LogPrice WHERE is_send=0 LIMIT 100)";
+            mDb.execSQL(sql);
+
+            sql ="select * from LogPrice where is_send=-1";
+
+            Cursor mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null)
+            {
+                mCur.moveToFirst() ;
+                while (mCur.moveToNext()){
+                    ArrayList row = new ArrayList();
+                    row.add(mCur.getString(0));
+                    row.add(mCur.getInt(1));
+                    row.add(mCur.getString(2));
+
+                    list.add(row);
+                }
+            }
+
+        }
+        catch (SQLException mSQLException)
+        {
+            Log.e(TAG, "getTestData >>"+ mSQLException.toString());
+            //throw mSQLException;
+        }
+        return list;
     }
 }

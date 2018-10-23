@@ -15,7 +15,7 @@ public class Worker
 {
     GlobalConfig config = GlobalConfig.instance();
     public PriceCheckerActivity scanerContext;
-    String CodeWarehouse=config.CodeWarehouse;
+    String CodeWarehouse=config.getCodeWarehouse();
 
     private String CodeWares;
     private String BarCode;
