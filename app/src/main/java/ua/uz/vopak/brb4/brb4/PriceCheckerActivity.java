@@ -8,6 +8,7 @@ import android.view.View;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
+import android.view.WindowManager;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.price_checker_layout);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //btnRestart = findViewById(R.id.button);
         //btnRestart.setOnClickListener(this);

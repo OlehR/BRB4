@@ -183,7 +183,7 @@ public class BluetoothPrinter {
             //myLabel.setText("Data sent.");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            varPrinterError=PrinterError.ErrorSendData;
         }
     }
 
@@ -195,7 +195,8 @@ public class BluetoothPrinter {
             mmSocket.close();
             //myLabel.setText("Bluetooth Closed");
         } catch (Exception e) {
-            e.printStackTrace();
+            varPrinterError=PrinterError.CanNotOpen; 
+            //e.printStackTrace();
         }
     }
 

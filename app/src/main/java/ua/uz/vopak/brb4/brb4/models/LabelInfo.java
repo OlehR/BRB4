@@ -89,7 +89,7 @@ public class LabelInfo
         switch(varPriceBill.length())
         {
             case 1:
-                OffsetBill="115";OffsetCoin="220";
+                OffsetBill="110";OffsetCoin="225";
                 break;
             case 2:
                 OffsetBill="60"; OffsetCoin="280";
