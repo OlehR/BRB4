@@ -2,7 +2,15 @@ package ua.uz.vopak.brb4.brb4.helpers;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.Context;
+import android.widget.ProgressBar;
+
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
 
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
@@ -14,9 +22,10 @@ import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 public class Worker
 {
     GlobalConfig config = GlobalConfig.instance();
-    public PriceCheckerActivity scanerContext;
-    String CodeWarehouse=config.getCodeWarehouse();
-
+    //public PriceCheckerActivity scanerContext;
+    private ProgressBar Progress;
+    private String CodeWarehouse=config.getCodeWarehouse();
+    public PriceCheckerActivity priceCheckerActivity;
     private String CodeWares;
     private String BarCode;
     BluetoothPrinter Printer = new BluetoothPrinter();
@@ -24,11 +33,19 @@ public class Worker
     public LabelInfo LI = new LabelInfo();
     SQLiteAdapter mDbHelper;
 
+    public void SetProgressBar(ProgressBar parProgressBar)
+    {
+        Progress=parProgressBar;
+    };
+    public void SetPriceCheckerActivity(PriceCheckerActivity parPriceCheckerActivity)
+    {
+        priceCheckerActivity=parPriceCheckerActivity;
+    };
 
    public LabelInfo Start(String parBarCode)
    {
        //Call Progres 10%;
-       scanerContext.SetProgres(10);
+       SetProgress(10);
 
        BarCode=parBarCode;
        if(BarCode.indexOf('-')>0)
@@ -58,7 +75,7 @@ public class Worker
            resHttp=resHttp.replace("&amp;","&");
            //Call Progres 50%;
            LI.InfoHTTP= Http.HttpState.name();
-           scanerContext.SetProgres(50);
+           SetProgress(50);
            if(resHttp!=null && !resHttp.isEmpty())
            {
                LI.Init(resHttp);
@@ -70,13 +87,13 @@ public class Worker
                    try {
                        b = LI.LevelForPrinter(TypeLanguagePrinter.ZPL);
                    } catch (UnsupportedEncodingException e) {
-                       e.printStackTrace();
+                       //e.printStackTrace();
                    }
                    try{
                      Printer.sendData(b);
                    } catch (IOException e) {
                        LI.InfoPrinter="Lost Connect";
-                       e.printStackTrace();
+                       //e.printStackTrace();
                       }
                    if(Printer.varPrinterError!=PrinterError.None)
                        LI.InfoPrinter=Printer.varPrinterError.name();
@@ -84,14 +101,51 @@ public class Worker
 
            }
        }
-       mDbHelper.InsLogPrice(BarCode,(LI.OldPrice==LI.Price?1:0));
-       scanerContext.SetProgres(100);
+       try {
+           mDbHelper.InsLogPrice(BarCode, (LI.OldPrice == LI.Price ? 1 : 0));
+           SetProgress(100);
+       }
+       catch (Exception e)
+       {
+
+       }
        return LI;
 
    }
 
 
-    public Worker()
+   public void SendLogPrice()
+   {
+       List<ArrayList> list = mDbHelper.GetSendData();
+       //ArrayList[] stockArr = new ArrayList[list.size()];
+       //stockArr = list.toArray(stockArr);
+
+       //Gson g= new Gson(stockArr).toJson(obj);
+       String a = new Gson().toJson(list);
+       String data="{\"CodeData\":141,\"Warehouse\":\""+GlobalConfig.CodeWarehouse +"\","+ GlobalConfig.GetLoginJson()   +",\"LogPrice\":"+a+"}";
+
+       String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
+
+       try {
+           JSONObject jObject = new JSONObject(result);
+
+           if(jObject.getInt("State") == 0){
+               mDbHelper.AfterSendData();
+           }
+
+       }catch (Exception e){
+
+       }
+
+   }
+
+    private void SetProgress(int parProgress)
+    {
+        if(Progress!=null)
+            Progress.setProgress(parProgress);
+    }
+
+  public Worker()
   {
       Printer.findBT();
       try {
@@ -101,19 +155,19 @@ public class Worker
           e.printStackTrace();
           LI.InfoPrinter="Error";
       }
-
+      mDbHelper = GlobalConfig.GetSQLiteAdapter();
+      int[] varRes=mDbHelper.GetCountScanCode();
+      LI.AllScan=varRes[0];
+      LI.BadScan=varRes[1];
   }
-    public Worker(PriceCheckerActivity scaner)
+
+
+    public Worker(ProgressBar parProgressBar )
     {
         this();
-        scanerContext = scaner;
-        Context c=scaner.getApplicationContext();
-        mDbHelper = new SQLiteAdapter(c);
-        mDbHelper.createDatabase();
-        mDbHelper.open();
-        int[] varRes=mDbHelper.GetCountScanCode();
-        LI.AllScan=varRes[0];
-        LI.BadScan=varRes[1];
+        Progress = parProgressBar;
+        //Context c=scaner.getApplicationContext();
+
     }
     @Override
     public void finalize()

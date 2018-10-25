@@ -18,7 +18,7 @@ public class AsyncWorker extends  AsyncTask<String , Void, LabelInfo>
     @Override
     protected void onPostExecute(LabelInfo parLI)
     {
-        varWorker.scanerContext.setScanResult(parLI);
+        varWorker.priceCheckerActivity.setScanResult(parLI);
     };
 
 

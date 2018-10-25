@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncWorker;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
+import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener{
@@ -36,8 +37,9 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         Printer = findViewById(R.id.Printer);
         Network = findViewById(R.id.Network);
         CountData = findViewById(R.id.CountData);
-
-        worker = new Worker(this);
+        ProgressBar progresBar = findViewById(R.id.progressBar);
+        worker = GlobalConfig.GetWorker(progresBar);
+        worker.SetPriceCheckerActivity(this);
         setScanResult(worker.LI);
 
         //In case we have been launched by the DataWedge intent plug-in
@@ -97,7 +99,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         Printer.setTextColor(Color.parseColor("#856404"));
         Network.setText(LI.InfoHTTP);
         Network.setTextColor(Color.parseColor("#856404"));
-        String PercentData = Integer.toString ( 100*(LI.AllScan - LI.BadScan) / LI.AllScan);
+        String PercentData = (LI.AllScan==0?"100":Integer.toString ( 100*(LI.AllScan - LI.BadScan) / LI.AllScan));
         CountData.setText(Integer.toString (LI.BadScan) +"/"+ Integer.toString (LI.AllScan)+" ("+ PercentData + "%)");
         CountData.setTextColor(Color.parseColor("#856404"));
 

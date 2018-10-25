@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.Button;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSyncData;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
 import ua.uz.vopak.brb4.brb4.helpers.EMDKWrapper;
+import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
@@ -24,10 +26,19 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     Button[] menuItems = new Button[4];
     int current = 0;
     AuterizationsHelper auth;
+    //Worker varWorker;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Ініціалізація BD
+        Context c=this.getApplicationContext();
+        GlobalConfig.GetSQLiteAdapter(c);
+
+
+
 
         String model = android.os.Build.MODEL;
         if( model.equals("TC20")  && ( android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions")) ){
@@ -38,7 +49,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             isCreatedScaner=emdkWrapper.getEMDKManager(savedInstanceState);
         }
 
-        new AsyncSyncData(this).execute();
 
         auth = new AuterizationsHelper();
 
@@ -46,6 +56,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             Intent i = new Intent(this, AuthActivity.class);
             startActivity(i);
         }
+
 
         setContentView(R.layout.main_layout);
 
@@ -73,6 +84,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             menuItems[i].setOnClickListener(this);
         }
     }
+
+
 
     @Override
     protected void onStart() {
@@ -106,6 +119,13 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             Intent i = new Intent(this, AuthActivity.class);
             startActivity(i);
         }
+        else {
+            Worker worker=GlobalConfig.GetWorker();
+            new AsyncSyncData(worker).execute();
+        }
+
+
+
     }
 
     /*@Override

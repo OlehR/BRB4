@@ -29,4 +29,6 @@ dependencies {
     implementation 'com.google.zxing:core:3.3.0'
     compileOnly fileTree(include: ['com.symbol.emdk.jar'], dir: 'D:\\AndroidSdk\\add-ons\\addon-symbol_emdk-symbol-26\\libs')
     implementation fileTree(exclude: ['com.symbol.emdk.jar'], dir: 'libs')
+    implementation 'com.google.code.gson:gson:2.8.2'
+
 }

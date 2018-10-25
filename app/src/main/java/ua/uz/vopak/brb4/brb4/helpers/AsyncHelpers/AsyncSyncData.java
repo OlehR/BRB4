@@ -8,19 +8,27 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
 import ua.uz.vopak.brb4.brb4.helpers.WareListHelper;
+import ua.uz.vopak.brb4.brb4.helpers.Worker;
 
-public class AsyncSyncData extends AsyncTask<String , Void, SQLiteAdapter> {
-    Context mContext;
+public class AsyncSyncData extends AsyncTask<Void , Void, Void> {
+    Worker varWorker;
     @Override
-    protected SQLiteAdapter doInBackground(String... param)
+    protected Void doInBackground(Void... param)
     {
-        SQLiteAdapter adapter = new SQLiteAdapter(mContext);
-        List<ArrayList> list = adapter.GetSendData();
+        varWorker.SendLogPrice();
+        return null;
+    }
+/*
+    @Override
+    protected void onPostExecute(Void)
+    {
+        //varWorker.scanerContext.setScanResult(parLI);
+    };*/
 
-        return  adapter;
+
+    public AsyncSyncData( Worker parWorker)
+    {
+        varWorker=parWorker;
     }
 
-    public AsyncSyncData(Context c){
-        mContext = c;
-    }
 }

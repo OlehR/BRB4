@@ -11,7 +11,7 @@ import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
 
 public class LabelInfo
 {
-    public boolean IsLong=true;
+    public boolean IsLong=false;
     public int Code;
     public String Name;
     public int Price;
@@ -41,10 +41,18 @@ public class LabelInfo
             return;
         Code = Integer.parseInt(varData[0]);
         Name = varData[1];
-        String [] varPrice =varData[2].split(",");
-        PriceBill = Integer.parseInt(varPrice[0]);
-        PriceCoin = Integer.parseInt(varPrice[1]);
+        if(varData[2].length()>1) {
+            String[] varPrice = varData[2].split(",");
+            PriceBill = Integer.parseInt(varPrice[0]);
+            PriceCoin = Integer.parseInt(varPrice[1]);
+        }
+        else
+        {
+            PriceBill=0;
+            PriceCoin =0;
+        }
         Price=PriceBill*100+PriceCoin;
+
         Unit = varData[3];
         Article = varData[4];
         BarCode = varData[5];
@@ -58,8 +66,9 @@ public class LabelInfo
         String  OffsetBill="0",OffsetCoin="350";
         String Space="                                 ";
         String  OffsetEndLine=(IsLong?"260":"247");
+        String LabelLength = (IsLong?"295":"280");
         String varPriceBill=Integer.toString(PriceBill).trim();
-        String varPriceCoin=Integer.toString(PriceCoin).trim();
+        String varPriceCoin=(PriceCoin<10?"0":"")+Integer.toString(PriceCoin).trim();
         if(this.Name.length()<LengName)
             Name1=this.Name;
         else
@@ -67,7 +76,8 @@ public class LabelInfo
             int pos= Name.substring(0,LengName).lastIndexOf(" ");
             Name1=Name.substring(0,pos);
             Name2=Name.substring(pos);
-            Name2=Space.substring(0,(LengName-Name2.length())/2) + Name2;
+            if(Name2.length()<LengName)
+               Name2=Space.substring(0,(LengName-Name2.length())/2) + Name2;
         }
         Name1=Space.substring(0,((LengName-Name1.length())/2)) + Name1;
         BarCodePrice = Integer.toString(Code)+"-"+Integer.toString(Price);
@@ -79,7 +89,7 @@ public class LabelInfo
         switch(varPriceBill.length())
         {
             case 1:
-                OffsetBill="120";OffsetCoin="210";
+                OffsetBill="115";OffsetCoin="220";
                 break;
             case 2:
                 OffsetBill="60"; OffsetCoin="280";
@@ -95,22 +105,22 @@ public class LabelInfo
 
 
         String Label="^XA\n" +
-                "^LL280\n" +
+                "^LL{LabelLength}\n" +
                 "\n" +
-                "^FO 0,12^A@N,20,20,B:904_MSSS_24.arf ^FD{Name1}^FS\n" +
-                "^FO 0,40^A@N,20,20,B:904_MSSS_24.arf ^FD{Name2}^FS\n" +
+                "^FO 0,11^A@N,20,20,B:904_MSSS_24.arf ^FD{Name1}^FS\n" +
+                "^FO 0,42^A@N,20,20,B:904_MSSS_24.arf ^FD{Name2}^FS\n" +
                 "\n" +
-                "^FO {OffsetBill}, 18^A@N,20,20,B:903_AB_120.arf ^FD{PriceBill}^FS\n" +
-                "^FO {OffsetCoin}, 51^A@N,20,20,B:901_AB_60.arf ^FD{PriceCoin}^FS\n" +
-                "^FO {OffsetCoin},140^A@N,20,20,B:904_MSSS_24.arf ^FD{Unit}^FS\n" +
+                "^FO {OffsetBill}, 20^A@N,20,20,B:903_AB_120.arf ^FD{PriceBill}^FS\n" +
+                "^FO {OffsetCoin}, 55^A@N,20,20,B:901_AB_60.arf ^FD{PriceCoin}^FS\n" +
+                "^FO {OffsetCoin},150^A@N,20,20,B:904_MSSS_24.arf ^FD{Unit}^FS\n" +
                 "\n" +
-                "^FO  15,200^BY2 ^BCN,40,N,Y ^FD{BarCodePrice}^FS\n" +
+                "^FO  15,210^BY2 ^BCN,40,N,Y ^FD{BarCodePrice}^FS\n" +
                 "\n" +
-                "^FO  15,250^Ab ^FD{BarCode}^FS\n" +
-                "^FO 160,250^Ab ^FD{Article}^FS\n" +
-                "^FO 270,250^Ab ^FD{Date}^FS\n" +
+                "^FO  15,260^Ab ^FD{BarCode}^FS\n" +
+                "^FO 160,260^Ab ^FD{Article}^FS\n" +
+                "^FO 270,260^Ab ^FD{Date}^FS\n" +
                 "\n" +
-                "^FO 0,{OffsetEndLine}^A@N,20,20,B:904_MSSS_24.arf ^FD-------------------------------------^FS\n" +
+                // "^FO 0,{OffsetEndLine}^A@N,20,20,B:904_MSSS_24.arf ^FD-------------------------------------^FS\n" +
                 "^XZ";
 
         Label=Label.replace("{Name1}",Name1).replace("{Name2}",Name2).
@@ -118,7 +128,7 @@ public class LabelInfo
                     replace("{PriceBill}",varPriceBill).replace("{PriceCoin}",varPriceCoin).
                     replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode).
                     replace("{Article}",this.Article).replace("{Date}",CurentDate).
-                    replace("{OffsetEndLine}",OffsetEndLine);
+                replace("{OffsetEndLine}",OffsetEndLine).replace("{LabelLength}",LabelLength);
            res=Label.getBytes("Cp1251");
           return res;
 

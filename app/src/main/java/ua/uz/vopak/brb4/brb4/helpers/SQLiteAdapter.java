@@ -100,18 +100,28 @@ public class SQLiteAdapter
 
     public List<ArrayList> GetSendData() {
         int[] varRes = {0,0};
+        int varN;
+        Cursor mCur;
         List<ArrayList> list = new ArrayList<ArrayList>();
         try
         {
-            String sql ="UPDATE LogPrice SET is_send=-1 WHERE `rowid` IN (SELECT `rowid` FROM LogPrice WHERE is_send=0 LIMIT 100)";
-            mDb.execSQL(sql);
+            String sql ="select count(*) from   LogPrice where is_send=-1";
 
-            sql ="select * from LogPrice where is_send=-1";
+            mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null) {
+                mCur.moveToFirst();
+                varN = mCur.getInt(0);
+                if (varN == 0) {
+                    sql = "UPDATE LogPrice SET is_send=-1 WHERE `rowid` IN (SELECT `rowid` FROM LogPrice WHERE is_send=0 LIMIT 100)";
+                    mDb.execSQL(sql);
+                }
+            }
 
-            Cursor mCur = mDb.rawQuery(sql, null);
+            sql ="select bar_code,is_good,DT_insert from LogPrice where is_send=-1";
+            mCur = mDb.rawQuery(sql, null);
             if (mCur!=null)
             {
-                mCur.moveToFirst() ;
+                //mCur.moveToFirst() ;
                 while (mCur.moveToNext()){
                     ArrayList row = new ArrayList();
                     row.add(mCur.getString(0));
@@ -130,4 +140,9 @@ public class SQLiteAdapter
         }
         return list;
     }
+    public void AfterSendData() {
+        String sql = "UPDATE LogPrice SET is_send=1 WHERE is_send=-1";
+        mDb.execSQL(sql);
+    }
+
 }

@@ -29,8 +29,12 @@ public class GetDataHTTP
         response=HTTPRequest(requestURL,varHTTPRegest);
         if(response!=null && !response.isEmpty())
         {
-            response = response.substring(response.indexOf("-instance\">") + 11);
-            response = response.substring(0,response.indexOf("</m:return>"));
+            if(response.indexOf("</m:return>")>0 && response.indexOf("-instance\">")>0) {
+                response = response.substring(response.indexOf("-instance\">") + 11);
+                response = response.substring(0, response.indexOf("</m:return>"));
+            }
+            else
+                response="0;Товар не Знайдено;0,00;;0;;0";
         }
         return response;
     }
