@@ -33,7 +33,7 @@ public class MessageActivity extends Activity implements View.OnClickListener {
         Intent intent = getIntent();
 
         String messageHeader = intent.getStringExtra("messageHeader");
-        String message = intent.getStringExtra("messageHeader");
+        String message = intent.getStringExtra("message");
         MessageType type = (MessageType)intent.getSerializableExtra("type");
         ActionType action = (ActionType)intent.getSerializableExtra("action");
 
@@ -72,7 +72,6 @@ public class MessageActivity extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(MessageActivity.this, MainActivity.class);
-        startActivity(intent);
+        this.finish();
     }
 }

@@ -6,6 +6,8 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.google.zxing.ResultPoint;
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
@@ -83,6 +86,9 @@ public class ScanFragment extends Fragment {
         }else{
             barcodeView.setVisibility(View.INVISIBLE);
         }
+
+        IntentIntegrator.forSupportFragment(this)
+                .setBeepEnabled(true);
     }
 
     @Override
@@ -104,6 +110,8 @@ public class ScanFragment extends Fragment {
         public void barcodeResult(BarcodeResult result) {
             if (result.getText() != null) {
                 barcodeView.pause();
+                ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 1000);
+                toneGen1.startTone(ToneGenerator.TONE_PROP_BEEP,250);
                 //after the string has been read we prozess it
 
                 //worker.execute(result);

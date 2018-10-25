@@ -4,6 +4,8 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
+
+import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
 import android.widget.ProgressBar;
@@ -41,6 +43,9 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         worker = GlobalConfig.GetWorker(progresBar);
         worker.SetPriceCheckerActivity(this);
         setScanResult(worker.LI);
+
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setBeepEnabled(true);
 
         //In case we have been launched by the DataWedge intent plug-in
         Intent i = getIntent();
@@ -96,8 +101,14 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         perView.setText(LI.Unit);
         nameView.setText(LI.Name);
         Printer.setText(LI.InfoPrinter);
-        Printer.setTextColor(Color.parseColor("#856404"));
+        if(LI.InfoPrinter.equals("CanNotOpen"))
+            Printer.setTextColor(getResources().getColor(R.color.messageError));
+        else
+            Printer.setTextColor(Color.parseColor("#856404"));
         Network.setText(LI.InfoHTTP);
+        if(!LI.InfoHTTP.equals("HTTP_OK"))
+            Network.setTextColor(getResources().getColor(R.color.messageError));
+        else
         Network.setTextColor(Color.parseColor("#856404"));
         String PercentData = (LI.AllScan==0?"100":Integer.toString ( 100*(LI.AllScan - LI.BadScan) / LI.AllScan));
         CountData.setText(Integer.toString (LI.BadScan) +"/"+ Integer.toString (LI.AllScan)+" ("+ PercentData + "%)");
