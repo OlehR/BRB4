@@ -11,7 +11,7 @@ import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
 
 public class LabelInfo
 {
-    public boolean IsLong=false;
+    public boolean IsShort=false;
     public int Code;
     public String Name;
     public int Price;
@@ -65,8 +65,8 @@ public class LabelInfo
         String Name1,Name2="", varUnit="грн/"+this.Unit,BarCodePrice;
         String  OffsetBill="0",OffsetCoin="350";
         String Space="                                 ";
-        String  OffsetEndLine=(IsLong?"260":"247");
-        String LabelLength = (IsLong?"295":"280");
+        String  OffsetEndLine=(IsShort?"260":"247");
+        String LabelLength = (IsShort?"295":"280");
         String varPriceBill=Integer.toString(PriceBill).trim();
         String varPriceCoin=(PriceCoin<10?"0":"")+Integer.toString(PriceCoin).trim();
         if(this.Name.length()<LengName)

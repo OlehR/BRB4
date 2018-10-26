@@ -9,6 +9,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -21,6 +22,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     private Worker worker;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData;
+    Button ChangePrintType;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,11 +43,16 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         Printer = findViewById(R.id.Printer);
         Network = findViewById(R.id.Network);
         CountData = findViewById(R.id.CountData);
+        ChangePrintType = findViewById(R.id.ChangePrintType );
+        ChangePrintType.setOnClickListener(this);
+
         ProgressBar progresBar = findViewById(R.id.progressBar);
         worker = GlobalConfig.GetWorker(progresBar);
         worker.SetPriceCheckerActivity(this);
-        setScanResult(worker.LI);
+        worker.ReInitBT();
+        ChangePrintType.setText(worker.LI.IsShort?"Коротка":"Стандартна");
 
+        setScanResult(worker.LI);
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setBeepEnabled(true);
 
@@ -54,7 +61,12 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         handleDecodeData(i);
     }
 
-    //We need to handle any incoming intents, so let override the onNewIntent method
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+        //We need to handle any incoming intents, so let override the onNewIntent method
     @Override
     public void onNewIntent(Intent i) {
         handleDecodeData(i);
@@ -63,12 +75,22 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
+      int Id= v.getId();
+        switch (Id){
+            case R.id.ChangePrintType:
+                worker.LI.IsShort=!worker.LI.IsShort;
+                ChangePrintType.setText(worker.LI.IsShort?"Коротка":"Стандартна");
+                break;
+        }
+
         if(!MainActivity.isCreatedScaner) {
             BarcodeView barcodeView = findViewById(R.id.barcode_scanner);
             barcodeView.resume();
 
         }
     }
+
+
 
 
     //This function is responsible for getting the data from the intent

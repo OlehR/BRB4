@@ -16,7 +16,7 @@ public class BluetoothPrinter {
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice = null;
     public TypePrinter varTypePrinter = TypePrinter.NotDefined;
-    public PrinterError varPrinterError=PrinterError.None;
+    public PrinterError varPrinterError=PrinterError.NotInit;
     // needed for communication to bluetooth device / network
     OutputStream mmOutputStream;
     InputStream mmInputStream;
@@ -95,7 +95,7 @@ public class BluetoothPrinter {
             beginListenForData();
 
             //myLabel.setText("Bluetooth Opened");
-
+            varPrinterError=PrinterError.None;
         } catch (Exception e) {
             e.printStackTrace();
             varPrinterError=PrinterError.CanNotOpen;
@@ -195,7 +195,7 @@ public class BluetoothPrinter {
             mmSocket.close();
             //myLabel.setText("Bluetooth Closed");
         } catch (Exception e) {
-            varPrinterError=PrinterError.CanNotOpen; 
+            varPrinterError=PrinterError.CanNotOpen;
             //e.printStackTrace();
         }
     }

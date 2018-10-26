@@ -92,7 +92,7 @@ public class Worker
                    try{
                      Printer.sendData(b);
                    } catch (IOException e) {
-                       LI.InfoPrinter="Lost Connect";
+                       //LI.InfoPrinter="Lost Connect";
                        //e.printStackTrace();
                       }
                    if(Printer.varPrinterError!=PrinterError.None)
@@ -147,19 +147,39 @@ public class Worker
 
   public Worker()
   {
-      Printer.findBT();
+      /*Printer.findBT();
       try {
           Printer.openBT();
           LI.InfoPrinter= (Printer.varPrinterError==PrinterError.None? Printer.varTypePrinter.name():Printer.varPrinterError.name());
       } catch (IOException e) {
           e.printStackTrace();
           LI.InfoPrinter="Error";
-      }
+      }*/
       mDbHelper = GlobalConfig.GetSQLiteAdapter();
       int[] varRes=mDbHelper.GetCountScanCode();
       LI.AllScan=varRes[0];
       LI.BadScan=varRes[1];
   }
+  public void ReInitBT(){
+       if(Printer.varPrinterError == PrinterError.CanNotOpen || Printer.varPrinterError == PrinterError.TurnOffBluetooth ||  Printer.varPrinterError == PrinterError.ErrorSendData ) {
+           try {
+               Printer.closeBT();
+           } catch (IOException e) {
+           }
+       }
+           InitBT();
+  }
+    public void InitBT()
+    {
+        Printer.findBT();
+        try {
+            Printer.openBT();
+            LI.InfoPrinter= (Printer.varPrinterError==PrinterError.None? Printer.varTypePrinter.name():Printer.varPrinterError.name());
+        } catch (IOException e) {
+         //   e.printStackTrace();
+            LI.InfoPrinter= PrinterError.CanNotOpen.name();
+        }
+    }
 
 
     public Worker(ProgressBar parProgressBar )
