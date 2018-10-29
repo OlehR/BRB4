@@ -97,6 +97,39 @@ public class SQLiteAdapter
     }
         return varRes;
     }
+    public boolean LoadDataInventory(String parSQL)
+    {
+        int varN=mDb.getVersion();
+        try {
+
+           //mDb.execSQL("delete from wares");
+
+            String sql ="select count(*) from   wares";
+
+            Cursor mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null) {
+                mCur.moveToFirst();
+                varN = mCur.getInt(0);
+            }
+
+            mDb.execSQL(parSQL);
+
+            mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null) {
+                mCur.moveToFirst();
+                varN = mCur.getInt(0);
+            }
+            int i=varN++;
+
+
+        }
+        catch (SQLException mSQLException)
+        {
+            String m=mSQLException.getMessage();
+            return false;
+         }
+        return true;
+    }
 
     public List<ArrayList> GetSendData() {
         int[] varRes = {0,0};

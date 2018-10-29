@@ -113,6 +113,12 @@ public class Worker
 
    }
 
+   public void LoadDataInventory()
+   {
+       String data="{\"CodeData\":152,"+GlobalConfig.GetLoginJson()+"}";
+       String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
+       mDbHelper.LoadDataInventory(result);
+   }
 
    public void SendLogPrice()
    {

@@ -24,11 +24,10 @@
         android:id="@+id/Revision"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:state_selected="false"
         android:layout_margin="5dp"
         android:background="@drawable/selected_button"
-        android:enabled="false"
-        android:focusable="false"
+        android:enabled="true"
+        android:state_selected="false"
         android:text="Ревізія" />
 
     <Button

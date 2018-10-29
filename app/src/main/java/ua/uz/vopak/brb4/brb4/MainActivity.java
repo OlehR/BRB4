@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadInventory;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSyncData;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
 import ua.uz.vopak.brb4.brb4.helpers.EMDKWrapper;
@@ -106,9 +107,15 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 return true;
+            case R.id.Revision:
+                Worker worker=GlobalConfig.GetWorker();
+                new AsyncLoadInventory(worker).execute();
+                break;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
+        return true;
     }
 
     @Override
@@ -162,6 +169,10 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             case R.id.PriceCheker:
                 Intent intent = new Intent(this, PriceCheckerActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.Revision:
+                Worker worker=GlobalConfig.GetWorker();
+                new AsyncLoadInventory(worker).execute();
                 break;
         }
     }
