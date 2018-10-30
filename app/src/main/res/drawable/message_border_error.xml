@@ -5,4 +5,5 @@
         android:id="@+id/messageBorder"
         android:width="3dp"
         android:color="@color/messageError" />
+    <solid android:color="#ffffff" />
 </shape>
