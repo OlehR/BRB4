@@ -106,12 +106,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             case R.id.action_settings:
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
-                return true;
-            case R.id.Revision:
-                Worker worker=GlobalConfig.GetWorker();
-                new AsyncLoadInventory(worker).execute();
                 break;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -173,6 +168,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             case R.id.Revision:
                 Worker worker=GlobalConfig.GetWorker();
                 new AsyncLoadInventory(worker).execute();
+                Intent i = new Intent(this, RevisionActivity.class);
+                startActivity(i);
                 break;
         }
     }

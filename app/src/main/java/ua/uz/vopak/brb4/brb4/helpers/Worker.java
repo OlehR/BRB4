@@ -4,15 +4,12 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
-
-import android.content.Context;
+import android.app.Activity;
 import android.widget.ProgressBar;
-
 import com.google.gson.Gson;
-
 import org.json.JSONObject;
-
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
+import ua.uz.vopak.brb4.brb4.RevisionActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
 import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
@@ -22,12 +19,12 @@ import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 public class Worker
 {
     GlobalConfig config = GlobalConfig.instance();
-    //public PriceCheckerActivity scanerContext;
     private ProgressBar Progress;
     private String CodeWarehouse=config.getCodeWarehouse();
     public PriceCheckerActivity priceCheckerActivity;
     private String CodeWares;
     private String BarCode;
+    public Activity RenderActivity;
     BluetoothPrinter Printer = new BluetoothPrinter();
     GetDataHTTP Http = new GetDataHTTP();
     public LabelInfo LI = new LabelInfo();
@@ -119,6 +116,16 @@ public class Worker
        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
        mDbHelper.LoadDataInventory(result);
    }
+
+    public void LoadRevisionsList(Activity context)
+    {
+        String data="{\"CodeData\":151,\"Warehouse\":"+config.CodeWarehouse+","+GlobalConfig.GetLoginJson()+"}";
+        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
+
+        RevisionActivity activity = (RevisionActivity)context;
+
+        activity.renderTable(result);
+    }
 
    public void SendLogPrice()
    {
