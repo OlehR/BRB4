@@ -35,6 +35,10 @@ public class RevisionActivity extends Activity {
 
                     if (jObject.getInt("State") == 1) {
                         JSONArray arrJson = jObject.getJSONArray("ListInventory");
+                        int dpValue = 10;
+                        float d = context.getResources().getDisplayMetrics().density;
+                        dpValue = 3;
+                        int padding = (int)(dpValue * d);
 
                         for (int i = 0; i < arrJson.length(); i++) {
                             JSONArray innerArr = arrJson.getJSONArray(i);
@@ -55,44 +59,56 @@ public class RevisionActivity extends Activity {
                             tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
                             TextView Date = new TextView(context);
-                            Date.setPadding(3, 3, 3, 3);
+                            Date.setPadding(padding, padding, padding, padding);
                             Date.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                             Date.setText(date);
                             Date.setTextColor(Color.parseColor("#000000"));
                             tr.addView(Date);
 
                             TextView NumberInv = new TextView(context);
-                            NumberInv.setPadding(3, 3, 3, 3);
+                            NumberInv.setPadding(padding, padding, padding, padding);
                             NumberInv.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                             NumberInv.setText(numberInv);
                             NumberInv.setTextColor(Color.parseColor("#000000"));
                             tr.addView(NumberInv);
 
                             TextView ExtInfo = new TextView(context);
-                            ExtInfo.setPadding(3, 3, 3, 3);
-                            ExtInfo.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                             ExtInfo.setText(extInfo);
                             ExtInfo.setTextColor(Color.parseColor("#000000"));
                             tr1.addView(ExtInfo);
 
+                            TableRow.LayoutParams params1 = (TableRow.LayoutParams)ExtInfo.getLayoutParams();
+                            params1.span = 2;
+                            ExtInfo.setLayoutParams(params1);
+                            ExtInfo.setPadding(padding, padding, padding, padding);
+                            ExtInfo.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
+                            /*
                             TextView WarehouseNumber = new TextView(context);
-                            WarehouseNumber.setPadding(3, 3, 3, 3);
+                            WarehouseNumber.setPadding(padding, padding, padding, padding);
                             WarehouseNumber.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                             WarehouseNumber.setText(warehouseNumber);
                             WarehouseNumber.setTextColor(Color.parseColor("#000000"));
                             tr1.addView(WarehouseNumber);
+                            */
 
                             TextView UserName = new TextView(context);
-                            UserName.setPadding(3, 3, 3, 3);
-                            UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                             UserName.setText(userName);
                             UserName.setTextColor(Color.parseColor("#000000"));
+                            tr2.addView(UserName);
 
-                            TableRow.LayoutParams params = (TableRow.LayoutParams)tr2.getLayoutParams();
+                            TableRow.LayoutParams params = (TableRow.LayoutParams)UserName.getLayoutParams();
                             params.span = 2;
+                            UserName.setLayoutParams(params);
+                            //UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
+                            UserName.setPadding(padding, padding, padding, padding);
+
+                            TableRow.LayoutParams params2 = (TableRow.LayoutParams)tr2.getLayoutParams();
+                            //dpValue = 15; // margin in dips
+                            //params.bottomMargin = (int)(dpValue * d);
                             tr2.setLayoutParams(params);
 
-                            tr2.addView(UserName);
+                            tr2.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
 
                             tl.addView(tr);
                             tl.addView(tr1);
