@@ -112,7 +112,7 @@ public class Worker
 
    public void LoadDataInventory()
    {
-       String data="{\"CodeData\":152,"+GlobalConfig.GetLoginJson()+"}";
+       String data="{\"CodeData\":152,\"NumberInventory\":\"00006165\","+GlobalConfig.GetLoginJson()+"}";
        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
        mDbHelper.LoadDataInventory(result);
    }

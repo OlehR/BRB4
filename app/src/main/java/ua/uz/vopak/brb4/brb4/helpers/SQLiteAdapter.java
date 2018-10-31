@@ -104,7 +104,7 @@ public class SQLiteAdapter
 
            //mDb.execSQL("delete from wares");
 
-            String sql ="select count(*) from   wares";
+            String sql ="select count(*) from   bar_code";
 
             Cursor mCur = mDb.rawQuery(sql, null);
             if (mCur!=null) {
@@ -112,7 +112,12 @@ public class SQLiteAdapter
                 varN = mCur.getInt(0);
             }
 
-            mDb.execSQL(parSQL);
+            String[] varS=parSQL.split(";;;");
+            for(int i=0;i<varS.length;i++)
+            {
+                mDb.execSQL(varS[i]);
+            }
+
 
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null) {
