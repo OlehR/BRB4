@@ -43,5 +43,8 @@
         <activity
             android:name=".RevisionActivity"
             android:launchMode="singleTop"/>
+        <activity
+            android:name=".RevisionItemsActivity"
+            android:launchMode="singleTop"/>
     </application>
 </manifest>
