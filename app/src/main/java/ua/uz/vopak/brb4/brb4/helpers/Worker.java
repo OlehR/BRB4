@@ -194,6 +194,14 @@ public class Worker
         }
     }
 
+    public void AddConfigPair(String name, String value){
+       mDbHelper.AddConfigPair(name, value);
+    }
+
+    public String GetConfigPair(String name){
+        return mDbHelper.GetConfigPair(name);
+    }
+
 
     public Worker(ProgressBar parProgressBar )
     {

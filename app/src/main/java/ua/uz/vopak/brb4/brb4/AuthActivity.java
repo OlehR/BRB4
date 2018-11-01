@@ -5,12 +5,16 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncAuthHelper;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLastLogin;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class AuthActivity extends Activity  implements View.OnClickListener {
@@ -29,6 +33,18 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
         login = findViewById(R.id.Login);
         password = findViewById(R.id.Password);
         aHelper = new AuterizationsHelper(this);
+
+        new AsyncLastLogin(aHelper).execute();
+
+        password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    loginBtn.callOnClick();
+                }
+                return false;
+            }
+        });
     }
 
     @Override

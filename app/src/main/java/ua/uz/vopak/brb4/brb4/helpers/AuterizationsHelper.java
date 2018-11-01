@@ -1,13 +1,16 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
 import android.content.Intent;
+import android.widget.EditText;
 
 import org.json.JSONObject;
 
 import ua.uz.vopak.brb4.brb4.AuthActivity;
 import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.MessageActivity;
+import ua.uz.vopak.brb4.brb4.R;
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncConfigPairAdd;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class AuterizationsHelper {
@@ -32,8 +35,8 @@ public class AuterizationsHelper {
             JSONObject jObject = new JSONObject(result);
 
             if(jObject.getInt("State") == 0){
-
                 isAutorized = true;
+                new AsyncConfigPairAdd(config.GetWorker()).execute("Login", config.Login);
                 Intent i = new Intent(activity,MainActivity.class);
                 activity.startActivity(i);
 
@@ -50,6 +53,12 @@ public class AuterizationsHelper {
         }
 
         return  this;
+    }
+
+    public void GetLastLogin(){
+        String LastLogin = config.GetWorker().GetConfigPair("Login");
+        EditText edit = (EditText)activity.findViewById(R.id.Login);
+        edit.setText(LastLogin);
     }
 
     public AuterizationsHelper(){

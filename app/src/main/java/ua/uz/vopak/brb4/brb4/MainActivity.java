@@ -37,6 +37,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         //Ініціалізація BD
         Context c=this.getApplicationContext();
         GlobalConfig.GetSQLiteAdapter(c);
+        GlobalConfig.GetWorker();
 
 
 

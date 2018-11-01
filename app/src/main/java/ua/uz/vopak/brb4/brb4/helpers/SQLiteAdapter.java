@@ -183,4 +183,23 @@ public class SQLiteAdapter
         mDb.execSQL(sql);
     }
 
+    public void AddConfigPair(String name, String value) {
+        String sql = "INSERT INTO CONFIG(NAME_VAR, DATA_VAR) VALUES('"+name+"','"+value+"')";
+        mDb.execSQL(sql);
+    }
+
+    public String GetConfigPair(String name) {
+        Cursor mCur;
+        String value = "";
+        String sql = "SELECT DATA_VAR FROM CONFIG WHERE NAME_VAR = '"+name+"'";
+
+        mCur = mDb.rawQuery(sql, null);
+        if (mCur!=null && mCur.getCount() > 0) {
+            mCur.moveToFirst();
+            value = mCur.getString(0);
+        }
+
+        return value;
+    }
+
 }
