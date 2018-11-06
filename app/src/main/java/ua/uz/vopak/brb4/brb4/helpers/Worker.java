@@ -10,9 +10,11 @@ import com.google.gson.Gson;
 import org.json.JSONObject;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.RevisionActivity;
+import ua.uz.vopak.brb4.brb4.RevisionItemsActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
 import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 
 
@@ -200,6 +202,14 @@ public class Worker
 
     public String GetConfigPair(String name){
         return mDbHelper.GetConfigPair(name);
+    }
+
+    public void GetInventories(String number, Activity context){
+        List<InventoryModel> model = mDbHelper.GetInventories(number);
+
+        RevisionItemsActivity activity = (RevisionItemsActivity)context;
+
+        activity.renderTable(model);
     }
 
 

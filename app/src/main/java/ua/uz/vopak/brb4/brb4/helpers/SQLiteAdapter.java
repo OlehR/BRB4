@@ -11,6 +11,8 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import ua.uz.vopak.brb4.brb4.models.InventoryModel;
+
 public class SQLiteAdapter
 {
     protected static final String TAG = "DataAdapter";
@@ -184,8 +186,17 @@ public class SQLiteAdapter
     }
 
     public void AddConfigPair(String name, String value) {
-        String sql = "INSERT INTO CONFIG(NAME_VAR, DATA_VAR) VALUES('"+name+"','"+value+"')";
-        mDb.execSQL(sql);
+        try {
+            SQLiteDatabase db = mDb;
+            ContentValues values = new ContentValues();
+            values.put("NAME_VAR", name);
+            values.put("DATA_VAR", value);
+            db.insert("CONFIG", null, values);
+        }
+        catch (Exception e)
+        {
+            String s=e.getMessage();
+        }
     }
 
     public String GetConfigPair(String name) {
@@ -200,6 +211,34 @@ public class SQLiteAdapter
         }
 
         return value;
+    }
+
+    public List<InventoryModel> GetInventories(String number) {
+        List<InventoryModel> model = new ArrayList<InventoryModel>();
+        Cursor mCur;
+        String sql = "SELECT iw.number_inventory,iw.code_wares,iw.nn,iw.quantity,iw.quantity_old, w.NAME_WARES FROM INVENTORY_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE number_inventory = '\"+number+\"'";
+
+        try {
+            mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null && mCur.getCount() > 0) {
+                mCur.moveToFirst();
+                while (mCur.moveToNext()){
+                    InventoryModel inventory = new InventoryModel();
+                    inventory.Number = mCur.getString(0);
+                    inventory.CodeWares = mCur.getString(1);
+                    inventory.NN = mCur.getString(2);
+                    inventory.Quantity = mCur.getString(3);
+                    inventory.OldQuantity = mCur.getString(4);
+                    inventory.NameWares = mCur.getString(5);
+                    model.add(inventory);
+                }
+            }
+        }catch (Exception e){
+            e.getMessage();
+        }
+
+
+        return model;
     }
 
 }

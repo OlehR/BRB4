@@ -1,9 +1,11 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -14,14 +16,23 @@ import org.json.JSONObject;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncRevisionHelper;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
-public class RevisionActivity extends Activity {
+public class RevisionActivity extends Activity implements View.OnClickListener {
     TableLayout tl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.revision_layout);
-        tl = (TableLayout) findViewById(R.id.RevisionsList);
+        tl = findViewById(R.id.RevisionsList);
         new AsyncRevisionHelper(GlobalConfig.GetWorker(), this).execute();
+    }
+
+    @Override
+    public void onClick(View v) {
+        TextView currentNumber = v.findViewWithTag("number_inv");
+        Intent i = new Intent(this, RevisionItemsActivity.class);
+        i.putExtra("number", currentNumber.getText());
+        startActivity(i);
+
     }
 
     public void renderTable(final String result){
@@ -46,17 +57,24 @@ public class RevisionActivity extends Activity {
                             String date = innerArr.getString(0);
                             String numberInv = innerArr.getString(1);
                             String extInfo = innerArr.getString(2);
-                            String warehouseNumber = innerArr.getString(3);
                             String userName = innerArr.getString(4);
 
+                            TableLayout tl0 = new TableLayout(context);
+                            tl0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+                            tl0.setColumnStretchable(0, true);
+                            tl0.setColumnStretchable(1, true);
+
+                            TableRow tr0 = new TableRow(context);
+                            tr0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+
                             TableRow tr = new TableRow(context);
-                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
                             TableRow tr1 = new TableRow(context);
-                            tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
                             TableRow tr2 = new TableRow(context);
-                            tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
                             TextView Date = new TextView(context);
                             Date.setPadding(padding, padding, padding, padding);
@@ -70,6 +88,7 @@ public class RevisionActivity extends Activity {
                             NumberInv.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                             NumberInv.setText(numberInv);
                             NumberInv.setTextColor(Color.parseColor("#000000"));
+                            NumberInv.setTag("number_inv");
                             tr.addView(NumberInv);
 
                             TextView ExtInfo = new TextView(context);
@@ -83,15 +102,6 @@ public class RevisionActivity extends Activity {
                             ExtInfo.setPadding(padding, padding, padding, padding);
                             ExtInfo.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
-                            /*
-                            TextView WarehouseNumber = new TextView(context);
-                            WarehouseNumber.setPadding(padding, padding, padding, padding);
-                            WarehouseNumber.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
-                            WarehouseNumber.setText(warehouseNumber);
-                            WarehouseNumber.setTextColor(Color.parseColor("#000000"));
-                            tr1.addView(WarehouseNumber);
-                            */
-
                             TextView UserName = new TextView(context);
                             UserName.setText(userName);
                             UserName.setTextColor(Color.parseColor("#000000"));
@@ -100,19 +110,18 @@ public class RevisionActivity extends Activity {
                             TableRow.LayoutParams params = (TableRow.LayoutParams)UserName.getLayoutParams();
                             params.span = 2;
                             UserName.setLayoutParams(params);
-                            //UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
                             UserName.setPadding(padding, padding, padding, padding);
-
-                            TableRow.LayoutParams params2 = (TableRow.LayoutParams)tr2.getLayoutParams();
-                            //dpValue = 15; // margin in dips
-                            //params.bottomMargin = (int)(dpValue * d);
-                            tr2.setLayoutParams(params);
 
                             tr2.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
 
-                            tl.addView(tr);
-                            tl.addView(tr1);
-                            tl.addView(tr2);
+                            tl0.addView(tr);
+                            tl0.addView(tr1);
+                            tl0.addView(tr2);
+
+                            tr0.addView(tl0);
+                            tr0.setOnClickListener(context);
+
+                            tl.addView(tr0);
                         }
                     }
 
