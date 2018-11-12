@@ -79,9 +79,9 @@ public class DataBaseHelper extends SQLiteOpenHelper
     {
         InputStream mInput = mContext.getAssets().open("databases/"+DB_NAME);
         String outFileName = DB_PATH + DB_NAME;
-        //File dbFile = new File(DB_PATH + DB_NAME);
-        //if(!dbFile.exists())
-//          dbFile.createNewFile();
+        File dbFile = new File(DB_PATH + DB_NAME);
+        if(!dbFile.exists())
+         dbFile.createNewFile();
 
 
         OutputStream mOutput = new FileOutputStream(outFileName);

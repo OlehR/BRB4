@@ -7,8 +7,13 @@
     <TableLayout
         android:id="@+id/InventoriesList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
 
     </TableLayout>
+    <Button
+        android:id="@+id/F4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="F4"/>
 </LinearLayout>
