@@ -2,20 +2,154 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:weightSum="2"
     android:padding="10dp">
 
-    <LinearLayout
+    <RelativeLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
         <TextView
             android:id="@+id/RevisionScannerTitle"
-            android:layout_width="270dp"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:id="@+id/RevisionScannerCurrentCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </LinearLayout>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:text="Назва: "/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:layout_above="@+id/RevisionAboveLayout"
+            android:weightSum="5">
+
+            <EditText
+                android:id="@+id/RevisionBarCode"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:padding="5dp"
+                android:ems="10"
+                android:background="@drawable/input_style_disabled"
+                android:inputType="none"
+                android:textAlignment="center"
+                android:layout_marginRight="5dp"
+                android:layout_weight="3"/>
+
+            <EditText
+                android:id="@+id/RevisionScannerCurrentCount"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:padding="5dp"
+                android:ems="10"
+                android:background="@drawable/input_style_disabled"
+                android:inputType="none"
+                android:textAlignment="center"
+                android:layout_weight="2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/RevisionAboveLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:layout_above="@+id/RevisionBottomLayout"
+            android:weightSum="5">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:weightSum="3"
+                android:layout_weight="3"
+                android:layout_marginRight="5dp">
+
+                <EditText
+                    android:id="@+id/RevisionInputCount"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:padding="5dp"
+                    android:ems="10"
+                    android:background="@drawable/input_style"
+                    android:inputType="numberDecimal"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="2">
+
+                        <requestFocus />
+
+                </EditText>
+
+                <EditText
+                    android:id="@+id/RevisionScannerCof"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:padding="5dp"
+                    android:ems="10"
+                    android:background="@drawable/input_style_disabled"
+                    android:inputType="none"
+                    android:layout_weight="1"
+                    android:textAlignment="center"/>
+
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/RevisionScannerCount"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:padding="5dp"
+                android:ems="10"
+                android:background="@drawable/input_style_disabled"
+                android:inputType="none"
+                android:textAlignment="center"
+                android:layout_weight="2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/RevisionBottomLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:weightSum="5">
+
+            <EditText
+                android:id="@+id/RevisionCountInPosition"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:padding="5dp"
+                android:ems="10"
+                android:background="@drawable/input_style_disabled"
+                android:inputType="none"
+                android:layout_marginRight="5dp"
+                android:textAlignment="center"
+                android:layout_weight="3"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:textAlignment="center"
+                android:layout_weight="2"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </TableLayout>
+
+    </ScrollView>
 
 </LinearLayout>
