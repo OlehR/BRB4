@@ -26,7 +26,6 @@ public class Worker
     public PriceCheckerActivity priceCheckerActivity;
     private String CodeWares;
     private String BarCode;
-    public Activity RenderActivity;
     BluetoothPrinter Printer = new BluetoothPrinter();
     GetDataHTTP Http = new GetDataHTTP();
     public LabelInfo LI = new LabelInfo();
