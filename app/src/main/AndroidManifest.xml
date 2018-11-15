@@ -5,6 +5,12 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="com.symbol.emdk.permission.EMDK" />
+    <permission
+        android:name="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
+        android:protectionLevel="normal" />
+
+    <uses-permission android:name="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER" />
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
 
 
     <application
@@ -49,5 +55,17 @@
         <activity
             android:name=".RevisionScannerActivity"
             android:launchMode="singleTop"/>
+        <receiver
+            android:name=".RevisionScannerActivity$ScanResultReceiver"
+            android:enabled="true"
+            android:permission="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
+            android:priority="0" >
+            <intent-filter>
+                <action android:name="device.common.USERMSG" />
+                <action android:name="device.scanner.EVENT" />
+            </intent-filter>
+        </receiver>
+
+        <uses-library android:name="device.sdk" android:required="false" />
     </application>
 </manifest>
