@@ -6,23 +6,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import device.common.DecodeResult;
 import device.common.DecodeStateCallback;
 import device.common.ScanConst;
 import device.sdk.ScanManager;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncRevisionScanHelper;
 import ua.uz.vopak.brb4.brb4.helpers.EMDKWrapper;
 import ua.uz.vopak.brb4.brb4.helpers.mScanerWrapper;
+import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
 public class RevisionScannerActivity extends Activity {
+    EditText barCode, currentCount, inpuCount, scannerCof, scannerCount, countInPosition;
+    TextView scannerTitle, inPosition;
     EMDKWrapper emdkWrapper;
     static mScanerWrapper mScanerW;
     private final Handler mHandler = new Handler();
+    public static RevisionScannerActivity aContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.revision_scanner_activity);
+
+        aContext = this;
 
         String model = android.os.Build.MODEL;
         if( model.equals("TC20") && ( android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions")) ){
@@ -36,6 +46,12 @@ public class RevisionScannerActivity extends Activity {
             mScanerW.mDecodeResult = new DecodeResult();
             mScanerW.mScanner.aDecodeSetResultType(ScanConst.ResultType.DCD_RESULT_EVENT);
         }
+
+
+    }
+
+    public void RenderTable(RevisionItemModel model){
+
     }
 
     public static class ScanResultReceiver extends BroadcastReceiver {
@@ -48,7 +64,7 @@ public class RevisionScannerActivity extends Activity {
                     byte[] decodeBytesValue = intent.getByteArrayExtra(ScanConst.EXTRA_EVENT_DECODE_VALUE);
                     String value = new String(decodeBytesValue);
 
-                    String a = value;
+                    new AsyncRevisionScanHelper(GlobalConfig.instance().GetWorker(), aContext).execute(value);
 
                 }
             }

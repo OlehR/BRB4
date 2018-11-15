@@ -12,6 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
+import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
 public class SQLiteAdapter
 {
@@ -232,6 +233,35 @@ public class SQLiteAdapter
                     inventory.NameWares = mCur.getString(5);
                     model.add(inventory);
                 }
+            }
+        }catch (Exception e){
+            e.getMessage();
+        }
+
+
+        return model;
+    }
+
+    public RevisionItemModel GetRevisionScanData(String number) {
+        RevisionItemModel model = new RevisionItemModel();
+        Cursor mCur;
+        String sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.NAME_UNIT , bc.BAR_CODE  from BAR_CODE bc " +
+                "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
+                "join wares w on w.CODE_WARES=bc.CODE_WARES " +
+                "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
+                "where bc.BAR_CODE=:number";
+
+        try {
+            mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null && mCur.getCount() > 0) {
+                mCur.moveToFirst();
+
+                model.CodeWares = mCur.getString(0);
+                model.NameWares = mCur.getString(1);
+                model.Coefficient = mCur.getString(2);
+                model.CodeUnit = mCur.getString(3);
+                model.NameUnit = mCur.getString(4);
+                model.BarCode = mCur.getString(5);
             }
         }catch (Exception e){
             e.getMessage();

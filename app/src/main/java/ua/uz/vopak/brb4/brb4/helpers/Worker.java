@@ -11,11 +11,13 @@ import org.json.JSONObject;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.RevisionActivity;
 import ua.uz.vopak.brb4.brb4.RevisionItemsActivity;
+import ua.uz.vopak.brb4.brb4.RevisionScannerActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
 import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
+import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
 
 public class Worker
@@ -209,6 +211,12 @@ public class Worker
         RevisionItemsActivity activity = (RevisionItemsActivity)context;
 
         activity.renderTable(model);
+    }
+
+    public void GetRevisionScannerData(String BarCode, Activity context){
+        RevisionItemModel model = mDbHelper.GetRevisionScanData(BarCode);
+
+        RevisionScannerActivity activity = (RevisionScannerActivity) context;
     }
 
 
