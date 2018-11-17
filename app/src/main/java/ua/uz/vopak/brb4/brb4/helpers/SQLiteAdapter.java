@@ -217,12 +217,11 @@ public class SQLiteAdapter
     public List<InventoryModel> GetInventories(String number) {
         List<InventoryModel> model = new ArrayList<InventoryModel>();
         Cursor mCur;
-        String sql = "SELECT iw.number_inventory,iw.code_wares,iw.nn,iw.quantity,iw.quantity_old, w.NAME_WARES FROM INVENTORY_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE number_inventory = '\"+number+\"'";
+        String sql = "SELECT iw.number_inventory,iw.code_wares,iw.nn,iw.quantity,iw.quantity_old, w.NAME_WARES FROM INVENTORY_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE number_inventory = '"+number+"'";
 
         try {
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null && mCur.getCount() > 0) {
-                mCur.moveToFirst();
                 while (mCur.moveToNext()){
                     InventoryModel inventory = new InventoryModel();
                     inventory.Number = mCur.getString(0);
@@ -249,7 +248,7 @@ public class SQLiteAdapter
                 "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
                 "join wares w on w.CODE_WARES=bc.CODE_WARES " +
                 "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
-                "where bc.BAR_CODE=:number";
+                "where bc.BAR_CODE="+number;
 
         try {
             mCur = mDb.rawQuery(sql, null);
@@ -269,6 +268,33 @@ public class SQLiteAdapter
 
 
         return model;
+    }
+
+    public ArrayList SaveRevisionData(String count, String scanNN, String codeWares, String invNumber){
+        long result = -1;
+        String s = "";
+        try {
+            SQLiteDatabase db = mDb;
+            ContentValues values = new ContentValues();
+            values.put("number_inventory", invNumber);
+            values.put("code_wares", codeWares);
+            values.put("nn", scanNN);
+            values.put("quantity", count);
+            values.put("quantity_old", 0);
+            result = db.insert("INVENTORY_WARES", null, values);
+        }
+        catch (Exception e)
+        {
+            s=e.getMessage();
+        }
+
+        final boolean status = result != -1;
+        final String msg = s;
+
+        return new ArrayList(){{
+            add(status);
+            add(msg);
+        }};
     }
 
 }

@@ -217,6 +217,16 @@ public class Worker
         RevisionItemModel model = mDbHelper.GetRevisionScanData(BarCode);
 
         RevisionScannerActivity activity = (RevisionScannerActivity) context;
+        activity.RenderData(model);
+    }
+
+    public void SaveRevisionData(String count, String scanNN, String CodeWares, String InventoryNumber, Activity context){
+        ArrayList args = mDbHelper.SaveRevisionData(count, scanNN, CodeWares, InventoryNumber);
+
+        RevisionScannerActivity activity = (RevisionScannerActivity) context;
+
+        activity.AfterSave(args);
+
     }
 
 

@@ -12,6 +12,7 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.io.Serializable;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncInventories;
@@ -21,6 +22,8 @@ import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 public class RevisionItemsActivity extends Activity implements View.OnClickListener {
     TableLayout tl;
     Button btn;
+    String number;
+    List<InventoryModel> InventoryItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +31,7 @@ public class RevisionItemsActivity extends Activity implements View.OnClickListe
         setContentView(R.layout.revision_items_layout);
         tl = findViewById(R.id.InventoriesList);
         Intent i = getIntent();
-        String number = i.getStringExtra("number");
+        number = i.getStringExtra("number");
         btn = findViewById(R.id.F4);
         btn.setOnClickListener(this);
         new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number);
@@ -39,12 +42,15 @@ public class RevisionItemsActivity extends Activity implements View.OnClickListe
         switch (v.getId()){
             case R.id.F4:
                 Intent i = new Intent(this, RevisionScannerActivity.class);
+                i.putExtra("inv_number",number);
+                i.putExtra("InventoryItems",(Serializable)InventoryItems);
                 startActivity(i);
                 break;
         }
     }
 
     public void renderTable(final List<InventoryModel> model){
+        InventoryItems = model;
         final RevisionItemsActivity context = this;
         runOnUiThread(new Runnable() {
             @Override

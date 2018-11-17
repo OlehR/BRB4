@@ -54,6 +54,7 @@
             android:launchMode="singleTop"/>
         <activity
             android:name=".RevisionScannerActivity"
+            android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop"/>
         <receiver
             android:name=".RevisionScannerActivity$ScanResultReceiver"

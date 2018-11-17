@@ -1,6 +1,8 @@
 package ua.uz.vopak.brb4.brb4.models;
 
-public class InventoryModel {
+import java.io.Serializable;
+
+public class InventoryModel implements Serializable {
     public String Number;
     public String CodeWares;
     public String NN;
