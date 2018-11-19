@@ -9,11 +9,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -36,8 +39,9 @@ import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
 public class RevisionScannerActivity extends Activity {
-    EditText barCode, currentCount, inpuCount, scannerCof, scannerCount, countInPosition;
+    EditText barCode, currentCount, inputCount, scannerCof, scannerCount, countInPosition;
     TextView scannerTitle, inPosition, nameUnit;
+    ScrollView scrollView;
     EMDKWrapper emdkWrapper;
     static mScanerWrapper mScanerW;
     private final Handler mHandler = new Handler();
@@ -50,10 +54,15 @@ public class RevisionScannerActivity extends Activity {
     RevisionItemModel InventoryItem;
     TableLayout RevisionTable;
     static Worker worker = GlobalConfig.instance().GetWorker();
+    int dpValue = 3;
+    float d;
+    int padding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        d = this.getResources().getDisplayMetrics().density;
+        padding = (int)(dpValue * d);
         setContentView(R.layout.revision_scanner_activity);
 
         aContext = this;
@@ -80,7 +89,7 @@ public class RevisionScannerActivity extends Activity {
 
         barCode = findViewById(R.id.RevisionBarCode);
         currentCount = findViewById(R.id.RevisionScannerCurrentCount);
-        inpuCount = findViewById(R.id.RevisionInputCount);
+        inputCount = findViewById(R.id.RevisionInputCount);
         scannerCof = findViewById(R.id.RevisionScannerCof);
         scannerCount = findViewById(R.id.RevisionScannerCount);
         countInPosition = findViewById(R.id.RevisionCountInPosition);
@@ -89,10 +98,11 @@ public class RevisionScannerActivity extends Activity {
         nameUnit = findViewById(R.id.RevisionNameUnit);
         loader = findViewById(R.id.RevisionLoader);
         RevisionTable = findViewById(R.id.RevisionScanItemsTable);
+        scrollView = findViewById(R.id.RevisionScrollView);
 
         RenderTable();
 
-        inpuCount.addTextChangedListener(new TextWatcher() {
+        inputCount.addTextChangedListener(new TextWatcher() {
 
             @Override
             public void afterTextChanged(Editable s) {}
@@ -106,7 +116,10 @@ public class RevisionScannerActivity extends Activity {
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 if(s.length() != 0){
-                    float input = Float.parseFloat(inpuCount.getText().toString());
+                    float input = Float.parseFloat(inputCount.getText().toString());
+                    String cofStr = scannerCof.getText().toString();
+                    if(scannerCof.getText() == null || !scannerCof.getText().equals(""))
+                        scannerCof.setText("1");
                     float cof = Float.parseFloat(scannerCof.getText().toString());
                     scannerCount.setText(String.format("%.3f",(input * cof)));
                 }
@@ -121,6 +134,7 @@ public class RevisionScannerActivity extends Activity {
 
         if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
             loader.setVisibility(View.VISIBLE);
+            scanNN++;
             new AsyncSaveInventory(worker, this).execute(scannerCount.getText().toString(),scanNN.toString(), codeWares, InventoryNumber);
         }
 
@@ -134,6 +148,17 @@ public class RevisionScannerActivity extends Activity {
             public void run() {
                 boolean isSave = (boolean) args.get(0);
                 String message = (String) args.get(1);
+
+                if(isSave) {
+                    RenderTableItem();
+                    barCode.setText("");
+                    currentCount.setText("0");
+                    scannerCof.setText("");
+                    scannerTitle.setText("Назва: ");
+                    nameUnit.setText(" X");
+                    inputCount.setText("");
+                    scannerCount.setText("");
+                }
 
                 loader.setVisibility(View.INVISIBLE);
 
@@ -152,40 +177,115 @@ public class RevisionScannerActivity extends Activity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                scanNN++;
                 InventoryItem = model;
                 codeWares = model.CodeWares;
                 barCode.setText(model.BarCode);
                 currentCount.setText("0");
                 scannerCof.setText(model.Coefficient);
-                scannerTitle.setText("Назва: " + model.NameWares);
+                scannerTitle.setText(model.NameWares);
                 nameUnit.setText(model.NameUnit + " X");
             }
         });
     }
 
+    public void RenderTableItem(){
+            LinearLayout.LayoutParams params;
+
+            TableRow tr = new TableRow(this);
+            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+
+            TextView Position = new TextView(this);
+            Position.setPadding(padding, padding, padding, padding);
+            Position.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+            Position.setText(scanNN.toString());
+            Position.setTextColor(Color.parseColor("#000000"));
+            Position.setTag(codeWares);
+            tr.addView(Position);
+
+            params = (LinearLayout.LayoutParams)Position.getLayoutParams();
+            params.weight = 1;
+            Position.setLayoutParams(params);
+
+            TextView Title = new TextView(this);
+            Title.setPadding(padding, padding, padding, padding);
+            Title.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+            Title.setText(scannerTitle.getText().toString().substring(0,25));
+            Title.setTextColor(Color.parseColor("#000000"));
+            tr.addView(Title);
+
+            params = (LinearLayout.LayoutParams)Title.getLayoutParams();
+            params.weight = 3;
+            Title.setLayoutParams(params);
+
+            TextView Quantity = new TextView(this);
+            Quantity.setPadding(padding, padding, padding, padding);
+            Quantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+            Quantity.setText(scannerCount.getText());
+            Quantity.setTextColor(Color.parseColor("#000000"));
+            tr.addView(Quantity);
+
+            params = (LinearLayout.LayoutParams)Quantity.getLayoutParams();
+            params.weight = 1;
+            Quantity.setLayoutParams(params);
+
+            TextView OldQuantity = new TextView(this);
+            OldQuantity.setPadding(padding, padding, padding, padding);
+            OldQuantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+            OldQuantity.setText("0");
+            OldQuantity.setTextColor(Color.parseColor("#000000"));
+            tr.addView(OldQuantity);
+
+            params = (LinearLayout.LayoutParams)OldQuantity.getLayoutParams();
+            params.weight = 1;
+            OldQuantity.setLayoutParams(params);
+
+            RevisionTable.addView(tr);
+
+            View similar = RevisionTable.findViewWithTag(codeWares);
+            if(similar != null){
+                //Замінити на Drawable
+                tr.setBackgroundColor(ContextCompat.getColor(this, R.color.messageAlert));
+            }
+
+            scrollView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //replace this line to scroll up or down
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                inputCount.requestFocus();
+            }
+        }, 100L);
+    }
+
     public void RenderTable(){
-        int dpValue = 3;
-        float d = this.getResources().getDisplayMetrics().density;
-        int padding = (int)(dpValue * d);
+        LinearLayout.LayoutParams params;
 
         for (InventoryModel item : InventoryItems) {
             TableRow tr = new TableRow(this);
             tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
-
-            TextView CodeWares = new TextView(this);
-            CodeWares.setPadding(padding, padding, padding, padding);
-            CodeWares.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            CodeWares.setText(item.CodeWares);
-            CodeWares.setTextColor(Color.parseColor("#000000"));
-            tr.addView(CodeWares);
 
             TextView Position = new TextView(this);
             Position.setPadding(padding, padding, padding, padding);
             Position.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
             Position.setText(item.NN);
             Position.setTextColor(Color.parseColor("#000000"));
+            Position.setTag(codeWares);
             tr.addView(Position);
+
+            params = (LinearLayout.LayoutParams)Position.getLayoutParams();
+            params.weight = 1;
+            Position.setLayoutParams(params);
+
+            TextView Title = new TextView(this);
+            Title.setPadding(padding, padding, padding, padding);
+            Title.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+            Title.setText(item.NameWares.toString().substring(0,25));
+            Title.setTextColor(Color.parseColor("#000000"));
+            tr.addView(Title);
+
+            params = (LinearLayout.LayoutParams)Title.getLayoutParams();
+            params.weight = 3;
+            Title.setLayoutParams(params);
 
             TextView Quantity = new TextView(this);
             Quantity.setPadding(padding, padding, padding, padding);
@@ -194,6 +294,10 @@ public class RevisionScannerActivity extends Activity {
             Quantity.setTextColor(Color.parseColor("#000000"));
             tr.addView(Quantity);
 
+            params = (LinearLayout.LayoutParams)Quantity.getLayoutParams();
+            params.weight = 1;
+            Quantity.setLayoutParams(params);
+
             TextView OldQuantity = new TextView(this);
             OldQuantity.setPadding(padding, padding, padding, padding);
             OldQuantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
@@ -201,14 +305,21 @@ public class RevisionScannerActivity extends Activity {
             OldQuantity.setTextColor(Color.parseColor("#000000"));
             tr.addView(OldQuantity);
 
+            params = (LinearLayout.LayoutParams)OldQuantity.getLayoutParams();
+            params.weight = 1;
+            OldQuantity.setLayoutParams(params);
+
             RevisionTable.addView(tr);
+
+            scrollView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    //replace this line to scroll up or down
+                    scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                    inputCount.requestFocus();
+                }
+            }, 100L);
         }
-    }
-
-    public void  AddTableItem(){
-
-        //Додати логіку додавання ітема в таблицю після сканування.
-
     }
 
     public static class ScanResultReceiver extends BroadcastReceiver {
@@ -219,9 +330,11 @@ public class RevisionScannerActivity extends Activity {
                     mScanerW.mScanner.aDecodeGetResult(mScanerW.mDecodeResult.recycle());
                 }else if (ScanConst.INTENT_EVENT.equals(intent.getAction())) {
                     byte[] decodeBytesValue = intent.getByteArrayExtra(ScanConst.EXTRA_EVENT_DECODE_VALUE);
-                    String value = new String(decodeBytesValue);
+                    if(decodeBytesValue != null) {
+                        String value = new String(decodeBytesValue);
 
-                    new AsyncRevisionScanHelper(worker, aContext).execute(value);
+                        new AsyncRevisionScanHelper(worker, aContext).execute(value);
+                    }
 
                 }
             }
@@ -265,7 +378,7 @@ public class RevisionScannerActivity extends Activity {
 
     @Override
     protected void onPause() {
-        if (mScanerW.mScanner != null) {
+        if (mScanerW != null) {
             mScanerW.mScanner.aUnregisterDecodeStateCallback(mStateCallback);
         }
         super.onPause();

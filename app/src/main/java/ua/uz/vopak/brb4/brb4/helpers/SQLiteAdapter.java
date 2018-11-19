@@ -217,9 +217,11 @@ public class SQLiteAdapter
     public List<InventoryModel> GetInventories(String number) {
         List<InventoryModel> model = new ArrayList<InventoryModel>();
         Cursor mCur;
-        String sql = "SELECT iw.number_inventory,iw.code_wares,iw.nn,iw.quantity,iw.quantity_old, w.NAME_WARES FROM INVENTORY_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE number_inventory = '"+number+"'";
+        String sql = "SELECT iw.number_inventory,iw.code_wares,iw.nn,iw.quantity,iw.quantity_old, w.NAME_WARES FROM INVENTORY_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE number_inventory = '"+number+"'"+
+                "order by iw.nn asc";
 
         try {
+            //mDb.delete("INVENTORY_WARES", null, null);
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null && mCur.getCount() > 0) {
                 while (mCur.moveToNext()){

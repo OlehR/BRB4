@@ -19,7 +19,9 @@
             android:id="@+id/RevisionScannerTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
+            android:textSize="20dp"
+            android:textColor="#000000"
+            android:textStyle="bold"
             android:text="Назва: "/>
 
         <LinearLayout
@@ -81,7 +83,7 @@
                     android:ems="10"
                     android:background="@drawable/input_style"
                     android:inputType="number|numberDecimal|numberSigned"
-                    android:focusableInTouchMode="true"
+                    android:focusableInTouchMode="false"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"/>
                 <TextView
@@ -152,6 +154,8 @@
     </RelativeLayout>
 
     <ScrollView
+        android:id="@+id/RevisionScrollView"
+        android:fillViewport="true"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -160,29 +164,33 @@
             android:id="@+id/RevisionScanItemsTable"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:stretchColumns="0,1,2,3">
+            android:weightSum="6">
 
             <TableRow>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="назва"/>
+                    android:text="№"
+                    android:layout_weight="1"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="позиція"/>
+                    android:text="назва"
+                    android:layout_weight="3"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="к-сть"/>
+                    android:text="к-сть"
+                    android:layout_weight="1"/>
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="стара к-сть"/>
+                    android:text="ст. к-сть"
+                    android:layout_weight="1"/>
 
             </TableRow>
 
