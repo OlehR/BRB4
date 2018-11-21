@@ -13,6 +13,8 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -133,12 +135,39 @@ public class RevisionScannerActivity extends Activity {
         String keyCode = String.valueOf(event.getKeyCode());
 
         if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
-            loader.setVisibility(View.VISIBLE);
-            scanNN++;
-            new AsyncSaveInventory(worker, this).execute(scannerCount.getText().toString(),scanNN.toString(), codeWares, InventoryNumber);
+            String input = inputCount.getText().toString();
+            if(input.equals("") || Integer.parseInt(input) <= 0){
+                RemoveItemFromTable();
+            }
+            else {
+                loader.setVisibility(View.VISIBLE);
+                scanNN++;
+                new AsyncSaveInventory(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares, InventoryNumber);
+            }
         }
 
         return super.dispatchKeyEvent(event);
+    }
+
+    public void RemoveItemFromTable(){
+        barCode.setText("");
+        currentCount.setText("0");
+        scannerCof.setText("");
+        scannerTitle.setText("Назва: ");
+        nameUnit.setText(" X");
+        inputCount.setText("");
+        scannerCount.setText("");
+
+        for (int i = 0; i < RevisionTable.getChildCount(); i++) {
+            View v = RevisionTable.getChildAt(i);
+
+            if (v instanceof TableRow) {
+                TableRow row = (TableRow) v;
+                if(row.getTag() != null && row.getTag().toString().equals("alert")) {
+                    RevisionTable.removeView(row);
+                }
+            }
+        }
     }
 
     public void AfterSave(final ArrayList args){
@@ -150,14 +179,8 @@ public class RevisionScannerActivity extends Activity {
                 String message = (String) args.get(1);
 
                 if(isSave) {
-                    RenderTableItem();
-                    barCode.setText("");
-                    currentCount.setText("0");
-                    scannerCof.setText("");
-                    scannerTitle.setText("Назва: ");
-                    nameUnit.setText(" X");
-                    inputCount.setText("");
-                    scannerCount.setText("");
+                    RenderTableItem(false);
+                    RemoveItemFromTable();
                 }
 
                 loader.setVisibility(View.INVISIBLE);
@@ -184,11 +207,17 @@ public class RevisionScannerActivity extends Activity {
                 scannerCof.setText(model.Coefficient);
                 scannerTitle.setText(model.NameWares);
                 nameUnit.setText(model.NameUnit + " X");
+
+                View similar = RevisionTable.findViewWithTag(codeWares);
+
+                if (similar != null){
+                    RenderTableItem(true);
+                }
             }
         });
     }
 
-    public void RenderTableItem(){
+    public void RenderTableItem(boolean isAlert){
             LinearLayout.LayoutParams params;
 
             TableRow tr = new TableRow(this);
@@ -241,10 +270,32 @@ public class RevisionScannerActivity extends Activity {
 
             RevisionTable.addView(tr);
 
-            View similar = RevisionTable.findViewWithTag(codeWares);
-            if(similar != null){
-                //Замінити на Drawable
-                tr.setBackgroundColor(ContextCompat.getColor(this, R.color.messageAlert));
+            if(isAlert){
+                ViewGroup rowGroup = tr;
+                for (int i = 0; i < rowGroup.getChildCount(); i++) {
+                    TextView v = (TextView) rowGroup.getChildAt(i);
+                    v.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_alert));
+                    v.setTextColor(getResources().getColor(R.color.messageAlert));
+                }
+
+                Integer newScanNN = scanNN + 1;
+                Position.setText(newScanNN.toString());
+
+                tr.setTag("alert");
+
+                ViewGroup rows = RevisionTable;
+                for (int i = 0; i < rows.getChildCount(); i++) {
+                    TableRow trc = (TableRow) rows.getChildAt(i);
+                    View v = trc.getChildAt(0);
+                    String tag = (String) v.getTag();
+                    if(tag != null && tag.equals(codeWares)){
+                        for (int j = 0; j < trc.getChildCount(); j++) {
+                            TextView vI = (TextView)trc.getChildAt(j);
+                            vI.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_alert));
+                            vI.setTextColor(getResources().getColor(R.color.messageAlert));
+                        }
+                    }
+                }
             }
 
             scrollView.postDelayed(new Runnable() {
@@ -269,7 +320,7 @@ public class RevisionScannerActivity extends Activity {
             Position.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
             Position.setText(item.NN);
             Position.setTextColor(Color.parseColor("#000000"));
-            Position.setTag(codeWares);
+            Position.setTag(item.CodeWares);
             tr.addView(Position);
 
             params = (LinearLayout.LayoutParams)Position.getLayoutParams();

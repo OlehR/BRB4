@@ -4,15 +4,15 @@
     android:layout_height="match_parent">
 
 <ScrollView
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp"
     android:layout_width="match_parent"
-    android:padding="5dp"
     android:layout_height="match_parent">
 
     <TableLayout
         android:id="@+id/RevisionsList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:stretchColumns="0"
         >
 
     </TableLayout>

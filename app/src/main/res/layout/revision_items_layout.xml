@@ -1,33 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dp">
+    android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:paddingBottom="50dp"
+        android:paddingTop="10dp"
+        android:layout_height="match_parent">
 
         <TableLayout
             android:id="@+id/InventoriesList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
 
         </TableLayout>
-        <Button
-            android:id="@+id/F4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="F4"/>
-
-        </LinearLayout>
 
     </ScrollView>
 
-</LinearLayout>
+    <Button
+        android:id="@+id/F4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="F4"/>
+
+</FrameLayout>

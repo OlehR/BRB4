@@ -60,45 +60,51 @@ public class RevisionActivity extends Activity implements View.OnClickListener {
                             String userName = innerArr.getString(4);
 
                             TableLayout tl0 = new TableLayout(context);
-                            tl0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
-                            tl0.setColumnStretchable(0, true);
-                            tl0.setColumnStretchable(1, true);
+                            tl0.setWeightSum(2f);
+
 
                             TableRow tr0 = new TableRow(context);
-                            tr0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
                             TableRow tr = new TableRow(context);
-                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
                             TableRow tr1 = new TableRow(context);
-                            tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
                             TableRow tr2 = new TableRow(context);
-                            tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
                             TextView Date = new TextView(context);
-                            Date.setPadding(padding, padding, padding, padding);
-                            Date.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                             Date.setText(date);
                             Date.setTextColor(Color.parseColor("#000000"));
                             tr.addView(Date);
 
+                            TableRow.LayoutParams params = (TableRow.LayoutParams)Date.getLayoutParams();
+                            params.width = 0;
+                            params.weight = 1;
+                            Date.setLayoutParams(params);
+                            Date.setPadding(padding, padding, padding, padding);
+                            Date.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
                             TextView NumberInv = new TextView(context);
-                            NumberInv.setPadding(padding, padding, padding, padding);
-                            NumberInv.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                             NumberInv.setText(numberInv);
                             NumberInv.setTextColor(Color.parseColor("#000000"));
                             NumberInv.setTag("number_inv");
                             tr.addView(NumberInv);
+
+                            TableRow.LayoutParams params1 = (TableRow.LayoutParams)NumberInv.getLayoutParams();
+                            params.width = 0;
+                            params1.weight = 1;
+                            NumberInv.setLayoutParams(params1);
+                            NumberInv.setPadding(padding, padding, padding, padding);
+                            NumberInv.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
                             TextView ExtInfo = new TextView(context);
                             ExtInfo.setText(extInfo);
                             ExtInfo.setTextColor(Color.parseColor("#000000"));
                             tr1.addView(ExtInfo);
 
-                            TableRow.LayoutParams params1 = (TableRow.LayoutParams)ExtInfo.getLayoutParams();
-                            params1.span = 2;
-                            ExtInfo.setLayoutParams(params1);
+                            TableRow.LayoutParams params2 = (TableRow.LayoutParams)ExtInfo.getLayoutParams();
+                            params.width = 0;
+                            params2.weight = 2;
+                            ExtInfo.setLayoutParams(params2);
                             ExtInfo.setPadding(padding, padding, padding, padding);
                             ExtInfo.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
@@ -107,12 +113,12 @@ public class RevisionActivity extends Activity implements View.OnClickListener {
                             UserName.setTextColor(Color.parseColor("#000000"));
                             tr2.addView(UserName);
 
-                            TableRow.LayoutParams params = (TableRow.LayoutParams)UserName.getLayoutParams();
-                            params.span = 2;
+                            TableRow.LayoutParams params3 = (TableRow.LayoutParams)UserName.getLayoutParams();
+                            params.width = 0;
+                            params3.weight = 2;
                             UserName.setLayoutParams(params);
                             UserName.setPadding(padding, padding, padding, padding);
-
-                            tr2.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
+                            UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
 
                             tl0.addView(tr);
                             tl0.addView(tr1);
@@ -122,6 +128,12 @@ public class RevisionActivity extends Activity implements View.OnClickListener {
                             tr0.setOnClickListener(context);
 
                             tl.addView(tr0);
+
+                            tl0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
                         }
                     }
 

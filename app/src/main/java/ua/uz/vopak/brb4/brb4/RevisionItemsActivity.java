@@ -44,9 +44,14 @@ public class RevisionItemsActivity extends Activity implements View.OnClickListe
                 Intent i = new Intent(this, RevisionScannerActivity.class);
                 i.putExtra("inv_number",number);
                 i.putExtra("InventoryItems",(Serializable)InventoryItems);
-                startActivity(i);
+                startActivityForResult(i,1);
                 break;
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number);
     }
 
     public void renderTable(final List<InventoryModel> model){
@@ -60,10 +65,9 @@ public class RevisionItemsActivity extends Activity implements View.OnClickListe
                     int dpValue = 5;
                     float d = context.getResources().getDisplayMetrics().density;
                     int padding = (int)(dpValue * d);
-                    TableRow tr;
 
                     if(model.size() == 0){
-                        tr = new TableRow(context);
+                        TableRow tr = new TableRow(context);
                         tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
                         TextView message = new TextView(context);
@@ -80,84 +84,91 @@ public class RevisionItemsActivity extends Activity implements View.OnClickListe
                         for (InventoryModel item : model) {
 
                             TableLayout tl0 = new TableLayout(context);
-                            tl0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
-                            tl0.setColumnStretchable(0, true);
-                            tl0.setColumnStretchable(1, true);
+                            tl0.setWeightSum(2f);
+
 
                             TableRow tr0 = new TableRow(context);
-                            tr0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
-                            tr = new TableRow(context);
-                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+                            TableRow tr = new TableRow(context);
 
                             TableRow tr1 = new TableRow(context);
-                            tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
                             TableRow tr2 = new TableRow(context);
-                            tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
-                            TableRow tr3 = new TableRow(context);
-                            tr3.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+                            TextView Date = new TextView(context);
+                            Date.setText(item.Number);
+                            Date.setTextColor(Color.parseColor("#000000"));
+                            tr.addView(Date);
 
-                            TextView Number = new TextView(context);
-                            Number.setPadding(padding, padding, padding, padding);
-                            Number.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
-                            Number.setText(item.Number);
-                            Number.setTextColor(Color.parseColor("#000000"));
-                            tr.addView(Number);
+                            TableRow.LayoutParams params = (TableRow.LayoutParams)Date.getLayoutParams();
+                            params.width = 0;
+                            params.weight = 1;
+                            Date.setLayoutParams(params);
+                            Date.setPadding(padding, padding, padding, padding);
+                            Date.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
-                            TextView Code = new TextView(context);
-                            Code.setPadding(padding, padding, padding, padding);
-                            Code.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
-                            Code.setText(item.CodeWares);
-                            Code.setTextColor(Color.parseColor("#000000"));
-                            tr.addView(Code);
+                            TextView NumberInv = new TextView(context);
+                            NumberInv.setText(item.CodeWares);
+                            NumberInv.setTextColor(Color.parseColor("#000000"));
+                            NumberInv.setTag("number_inv");
+                            tr.addView(NumberInv);
 
-                            TextView NameWares = new TextView(context);
-                            NameWares.setText(item.NameWares);
-                            NameWares.setTextColor(Color.parseColor("#000000"));
-                            tr1.addView(NameWares);
+                            TableRow.LayoutParams params1 = (TableRow.LayoutParams)NumberInv.getLayoutParams();
+                            params1.width = 0;
+                            params1.weight = 1;
+                            NumberInv.setLayoutParams(params1);
+                            NumberInv.setPadding(padding, padding, padding, padding);
+                            NumberInv.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
-                            TableRow.LayoutParams params1 = (TableRow.LayoutParams)NameWares.getLayoutParams();
-                            params1.span = 2;
-                            NameWares.setLayoutParams(params1);
-                            NameWares.setPadding(padding, padding, padding, padding);
-                            NameWares.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+                            TextView ExtInfo = new TextView(context);
+                            ExtInfo.setText(item.NameWares);
+                            ExtInfo.setTextColor(Color.parseColor("#000000"));
+                            tr1.addView(ExtInfo);
 
-                            TextView Quantity = new TextView(context);
-                            Quantity.setPadding(padding, padding, padding, padding);
-                            Quantity.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
-                            Quantity.setText("к-ть: " + item.Quantity);
-                            Quantity.setTextColor(Color.parseColor("#000000"));
-                            tr2.addView(Quantity);
+                            TableRow.LayoutParams params2 = (TableRow.LayoutParams)ExtInfo.getLayoutParams();
+                            params2.weight = 2;
+                            ExtInfo.setLayoutParams(params2);
+                            ExtInfo.setPadding(padding, padding, padding, padding);
+                            ExtInfo.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
+                            TextView UserName = new TextView(context);
+                            UserName.setText("к-ст: " + item.Quantity);
+                            UserName.setTextColor(Color.parseColor("#000000"));
+                            tr2.addView(UserName);
+
+                            TableRow.LayoutParams params3 = (TableRow.LayoutParams)UserName.getLayoutParams();
+                            params3.width = 0;
+                            params3.weight = 1;
+                            UserName.setLayoutParams(params3);
+                            UserName.setPadding(padding, padding, padding, padding);
+                            UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
 
                             TextView OldQuantity = new TextView(context);
-                            OldQuantity.setPadding(padding, padding, padding, padding);
-                            OldQuantity.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
-                            OldQuantity.setText("ст. к-ть: " + item.OldQuantity);
+                            OldQuantity.setText("ст.к-сть: " + item.OldQuantity);
                             OldQuantity.setTextColor(Color.parseColor("#000000"));
                             tr2.addView(OldQuantity);
 
-                            TextView NN = new TextView(context);
-                            NN.setText(item.NN);
-                            NN.setTextColor(Color.parseColor("#000000"));
-                            tr3.addView(NN);
-
-                            TableRow.LayoutParams params = (TableRow.LayoutParams)NN.getLayoutParams();
-                            params.span = 2;
-                            NN.setLayoutParams(params);
-                            NN.setPadding(padding, padding, padding, padding);
-
-                            tr3.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
+                            TableRow.LayoutParams params4 = (TableRow.LayoutParams)OldQuantity.getLayoutParams();
+                            params4.width = 0;
+                            params4.weight = 1;
+                            OldQuantity.setLayoutParams(params4);
+                            OldQuantity.setPadding(padding, padding, padding, padding);
+                            OldQuantity.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
 
                             tl0.addView(tr);
                             tl0.addView(tr1);
                             tl0.addView(tr2);
-                            tl0.addView(tr3);
 
                             tr0.addView(tl0);
+                            tr0.setOnClickListener(context);
 
                             tl.addView(tr0);
+
+                            tl0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
                         }
                     }
                 } catch (Exception e) {

@@ -6,4 +6,5 @@
     <color name="messageError">#ee4343</color>
     <color name="messageSuccess">#3bb46e</color>
     <color name="messageAlert">#856404</color>
+    <color name="AlertBackground">#fff3cd</color>
 </resources>

@@ -7,4 +7,5 @@ public class RevisionItemModel {
     public String CodeUnit;
     public String NameUnit;
     public String BarCode;
+    public String BaseCodeUnit;
 }
