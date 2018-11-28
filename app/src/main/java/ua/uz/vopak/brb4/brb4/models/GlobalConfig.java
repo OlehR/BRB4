@@ -4,10 +4,11 @@ import android.content.Context;
 import android.widget.ProgressBar;
 
 import ua.uz.vopak.brb4.brb4.helpers.*;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncGetWarehouseConfig;
 
 public class GlobalConfig {
     private static GlobalConfig Instance = null;
-    public static String CodeWarehouse = "9";
+    public static String CodeWarehouse = "0";
     public static String ApiUrl = "http://znp.vopak.local/api/api_v1_utf8.php";
     public static String Login = "c";
     public static String Password = "c";
@@ -28,6 +29,8 @@ public class GlobalConfig {
     }
 
     protected GlobalConfig(){
+
+
 
     }
 

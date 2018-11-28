@@ -192,7 +192,7 @@ public class SQLiteAdapter
             ContentValues values = new ContentValues();
             values.put("NAME_VAR", name);
             values.put("DATA_VAR", value);
-            db.insert("CONFIG", null, values);
+            db.replace("CONFIG", null, values);
         }
         catch (Exception e)
         {

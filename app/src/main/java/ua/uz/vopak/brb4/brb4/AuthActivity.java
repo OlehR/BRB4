@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncAuthHelper;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncGetWarehouseConfig;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLastLogin;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
@@ -35,6 +36,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
         aHelper = new AuterizationsHelper(this);
 
         new AsyncLastLogin(aHelper).execute();
+        new AsyncGetWarehouseConfig().execute();
 
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override

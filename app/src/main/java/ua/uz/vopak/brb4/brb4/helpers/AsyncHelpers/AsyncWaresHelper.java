@@ -33,6 +33,7 @@ public class AsyncWaresHelper extends AsyncTask<String , Void, WareListHelper>
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 config.CodeWarehouse = wH.map.get(warList.getSelectedItem().toString());
+                new AsyncConfigPairAdd(config.GetWorker()).execute("Warehouse", config.CodeWarehouse);
             }
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {

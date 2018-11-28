@@ -24,7 +24,7 @@ public class Worker
 {
     GlobalConfig config = GlobalConfig.instance();
     private ProgressBar Progress;
-    private String CodeWarehouse=config.getCodeWarehouse();
+    //private String CodeWarehouse=config.getCodeWarehouse();
     public PriceCheckerActivity priceCheckerActivity;
     private String CodeWares;
     private String BarCode;
@@ -71,7 +71,7 @@ public class Worker
 
        if(BarCode.length()>7 || !CodeWares.isEmpty() )
        {
-           String resHttp=Http.GetData(CodeWarehouse,BarCode,CodeWares);
+           String resHttp=Http.GetData(config.getCodeWarehouse(),BarCode,CodeWares);
            resHttp=resHttp.replace("&amp;","&");
            //Call Progres 50%;
            LI.InfoHTTP= Http.HttpState.name();

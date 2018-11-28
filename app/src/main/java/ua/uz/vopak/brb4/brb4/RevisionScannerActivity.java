@@ -83,7 +83,7 @@ public class RevisionScannerActivity extends Activity {
 
         if( model.equals("PM550") && android.os.Build.MANUFACTURER.contains("Point Mobile Co., Ltd.")){
             mScanerW  = new mScanerWrapper();
-            mScanerW.mContext = this;
+            //mScanerW.mContext = this;
             mScanerW.mScanner = new ScanManager();
             mScanerW.mDecodeResult = new DecodeResult();
             mScanerW.mScanner.aDecodeSetResultType(ScanConst.ResultType.DCD_RESULT_EVENT);

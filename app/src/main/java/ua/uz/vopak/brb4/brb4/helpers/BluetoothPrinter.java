@@ -51,6 +51,7 @@ public class BluetoothPrinter {
                     {
                         case "Argox 3230":
                         case "00:0A:3A:32:1B:F1":
+                        case "Argox AME-3230B":
                             varTypePrinter=TypePrinter.Argox_3230;
                             break;
                         case "Godex MX20":

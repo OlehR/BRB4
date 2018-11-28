@@ -6,6 +6,8 @@ import java.io.*;
 import java.net.*;
 import javax.net.ssl.HttpsURLConnection;
 
+import ua.uz.vopak.brb4.brb4.enums.eStateHTTP;
+
 public class GetDataHTTP
 {
     eStateHTTP HttpState = eStateHTTP.HTTP_OK;
