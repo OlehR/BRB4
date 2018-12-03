@@ -14,6 +14,7 @@ import ua.uz.vopak.brb4.brb4.RevisionItemsActivity;
 import ua.uz.vopak.brb4.brb4.RevisionScannerActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
 import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
+import ua.uz.vopak.brb4.brb4.enums.TypePrinter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
@@ -102,7 +103,8 @@ public class Worker
            }
        }
        try {
-           mDbHelper.InsLogPrice(BarCode, (LI.OldPrice == LI.Price ? 1 : 0));
+
+           mDbHelper.InsLogPrice(BarCode,(LI.OldPrice == LI.Price ? 1 : (this.Printer.varPrinterError!=PrinterError.None ?-1:0)));
            SetProgress(100);
        }
        catch (Exception e)

@@ -56,17 +56,36 @@
             android:name=".RevisionScannerActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop"/>
+                <receiver
+                    android:name=".helpers.ScanResultReceiverPM"
+                    android:enabled="true"
+                    android:permission="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
+                    android:priority="0" >
+                    <intent-filter>
+                        <action android:name="device.common.USERMSG" />
+                        <action android:name="device.scanner.EVENT" />
+                    </intent-filter>
+                </receiver>
+
+        <!--        <receiver
+                    android:name=".RevisionScannerActivity$ScanResultReceiver"
+                    android:enabled="true"
+                    android:permission="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
+                    android:priority="0" >
+                    <intent-filter>
+                        <action android:name="device.common.USERMSG" />
+                        <action android:name="device.scanner.EVENT" />
+                    </intent-filter>
+                </receiver>
         <receiver
-            android:name=".RevisionScannerActivity$ScanResultReceiver"
+            android:name=".PriceCheckerActivity$ReceiverBarCode"
             android:enabled="true"
-            android:permission="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
             android:priority="0" >
             <intent-filter>
-                <action android:name="device.common.USERMSG" />
-                <action android:name="device.scanner.EVENT" />
+                <action android:name="BRB4.BARCODE" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
-        <uses-library android:name="device.sdk" android:required="false" />
-    </application>
-</manifest>
+                <uses-library android:name="device.sdk" android:required="false" />
+            </application>
+        </manifest>

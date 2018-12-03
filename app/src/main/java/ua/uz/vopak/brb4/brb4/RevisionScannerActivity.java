@@ -34,18 +34,20 @@ import ua.uz.vopak.brb4.brb4.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncRevisionScanHelper;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSaveInventory;
 import ua.uz.vopak.brb4.brb4.helpers.EMDKWrapper;
+import ua.uz.vopak.brb4.brb4.helpers.ScanCallBack;
+import ua.uz.vopak.brb4.brb4.helpers.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.helpers.mScanerWrapper;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
-public class RevisionScannerActivity extends Activity {
+public class RevisionScannerActivity extends Activity   implements ScanCallBack {
     EditText barCode, currentCount, inputCount, scannerCof, scannerCount, countInPosition;
     TextView scannerTitle, inPosition, nameUnit;
     ScrollView scrollView;
-    EMDKWrapper emdkWrapper;
-    static mScanerWrapper mScanerW;
+    //EMDKWrapper emdkWrapper;
+    //static mScanerWrapper mScanerW;
     private final Handler mHandler = new Handler();
     public static RevisionScannerActivity aContext;
     static String InventoryNumber;
@@ -56,6 +58,7 @@ public class RevisionScannerActivity extends Activity {
     RevisionItemModel InventoryItem;
     TableLayout RevisionTable;
     static Worker worker = GlobalConfig.instance().GetWorker();
+    private Scaner scaner;
     int dpValue = 3;
     float d;
     int padding;
@@ -76,7 +79,11 @@ public class RevisionScannerActivity extends Activity {
         scanNN = Integer.parseInt(InventoryItems.get(InventoryItems.size() - 1).NN);
         codeWares = "";
 
-        String model = android.os.Build.MODEL;
+        scaner=GlobalConfig.GetScaner(getApplicationContext());
+        scaner.init(this);
+
+
+        /*String model = android.os.Build.MODEL;
         if( model.equals("TC20") && ( android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions")) ){
             emdkWrapper  = new EMDKWrapper(getApplicationContext());
         }
@@ -87,7 +94,7 @@ public class RevisionScannerActivity extends Activity {
             mScanerW.mScanner = new ScanManager();
             mScanerW.mDecodeResult = new DecodeResult();
             mScanerW.mScanner.aDecodeSetResultType(ScanConst.ResultType.DCD_RESULT_EVENT);
-        }
+        }*/
 
         barCode = findViewById(R.id.RevisionBarCode);
         currentCount = findViewById(R.id.RevisionScannerCurrentCount);
@@ -129,6 +136,13 @@ public class RevisionScannerActivity extends Activity {
         });
 
     }
+
+    @Override
+    public void Run(String parBarCode) {
+     //   ExecuteWorker(parBarCode);
+        new AsyncRevisionScanHelper(worker, aContext).execute(parBarCode);
+    }
+    ;
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -238,7 +252,8 @@ public class RevisionScannerActivity extends Activity {
             TextView Title = new TextView(this);
             Title.setPadding(padding, padding, padding, padding);
             Title.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            Title.setText(scannerTitle.getText().toString().substring(0,25));
+
+            Title.setText(scannerTitle.getText().toString().length()>25?scannerTitle.getText().toString().substring(0,25):scannerTitle.getText().toString());
             Title.setTextColor(Color.parseColor("#000000"));
             tr.addView(Title);
 
@@ -330,7 +345,8 @@ public class RevisionScannerActivity extends Activity {
             TextView Title = new TextView(this);
             Title.setPadding(padding, padding, padding, padding);
             Title.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            Title.setText(item.NameWares.toString().substring(0,25));
+            String NameWares = item.NameWares.toString().length()>25?item.NameWares.toString().substring(0,25):item.NameWares.toString();
+            Title.setText(NameWares);
             Title.setTextColor(Color.parseColor("#000000"));
             tr.addView(Title);
 
@@ -372,7 +388,7 @@ public class RevisionScannerActivity extends Activity {
             }, 100L);
         }
     }
-
+/*
     public static class ScanResultReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -442,4 +458,6 @@ public class RevisionScannerActivity extends Activity {
         }
         super.onDestroy();
     }
+
+    */
 }

@@ -1,8 +1,10 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Handler;
 
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
@@ -15,14 +17,15 @@ import device.common.ScanConst;
 import device.sdk.ScanManager;
 
 //getApplicationContext()
-public class Scaner {
+public class Scaner extends Activity {
     Context varApplicationContext;
     ScanCallBack CallBack;
     private final Handler mHandler = new Handler();
     eTypeScaner TypeScaner= eTypeScaner.None;
 
     EMDKWrapper emdkWrapper;
-    mScanerWrapper mScanerW;
+    public mScanerWrapper mScanerW;
+    //private ScanResultReceiverPM mScanResultReceiverPM;
 
     public Scaner(Context parApplicationContext)
     {
@@ -40,10 +43,30 @@ public class Scaner {
             mScanerW.mDecodeResult = new DecodeResult();
             mScanerW.mScanner.aDecodeSetResultType(ScanConst.ResultType.DCD_RESULT_EVENT);
             TypeScaner= eTypeScaner.PM550;
+
+            /*mScanResultReceiverPM = new ScanResultReceiverPM();
+            IntentFilter IF=new IntentFilter("device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER");
+            IF=new IntentFilter("device.scanner.EVENT");
+            this.registerReceiver(mScanResultReceiverPM,IF);
+            this.registerReceiver(mScanResultReceiverPM, new IntentFilter("device.scanner.EVENT"));*/
+
+        }
+    }
+
+
+    public void Send(String parBarcode) {
+        //Переробити через повідомлення
+        Intent MyIntent = new Intent("BRB4.BARCODE");
+        MyIntent.putExtra("BARCODE", parBarcode);
+        MyIntent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
+        try {
+            varApplicationContext.sendBroadcast(MyIntent);
+        } catch (Exception e)
+        {
+            String s = e.getMessage();
         }
 
     }
-
     //Motorola
     //This function is responsible for getting the data from the intent
     private void handleDecodeData(Intent i)
@@ -69,28 +92,6 @@ public class Scaner {
         }
     }
 
-    //PM
-    public  class ScanResultReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(mScanerW != null) {
-                if (ScanConst.INTENT_USERMSG.equals(intent.getAction())) {
-                    mScanerW.mScanner.aDecodeGetResult(mScanerW.mDecodeResult.recycle());
-                }else if (ScanConst.INTENT_EVENT.equals(intent.getAction())) {
-                    byte[] decodeBytesValue = intent.getByteArrayExtra(ScanConst.EXTRA_EVENT_DECODE_VALUE);
-                    if(decodeBytesValue != null) {
-                        String value = new String(decodeBytesValue);
-                        CallBack.Run(value);
-                    }
-
-                }
-            }
-
-        }
-    }
-
-
-
     public boolean StartScan()
     {
         return true;
@@ -111,8 +112,9 @@ public class Scaner {
     {
 
     }
-
+    @Override
     public void onPause() {
+        super.onPause();
         if (mScanerW != null) {
             mScanerW.mScanner.aUnregisterDecodeStateCallback(mStateCallback);
         }
@@ -159,4 +161,14 @@ public class Scaner {
         }
     };
 */
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+                //Release the EMDKmanager on Application exit.
+        if (emdkWrapper != null) {
+            emdkWrapper.release();
+        }
+    }
+
 }

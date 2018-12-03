@@ -29,15 +29,14 @@ public class GetDataHTTP
                 "</soap:Envelope>";
         String requestURL = "http://1CSRV/utppsu/ws/ws1.1cws";
         response=HTTPRequest(requestURL,varHTTPRegest);
-        if(response!=null && !response.isEmpty())
-        {
-            if(response.indexOf("</m:return>")>0 && response.indexOf("-instance\">")>0) {
+
+            if( response!=null && !response.isEmpty() && response.indexOf("</m:return>")>0 && response.indexOf("-instance\">")>0) {
                 response = response.substring(response.indexOf("-instance\">") + 11);
                 response = response.substring(0, response.indexOf("</m:return>"));
             }
             else
                 response="0;Товар не Знайдено;0,00;;0;;0";
-        }
+
         return response;
     }
 
@@ -81,6 +80,7 @@ public class GetDataHTTP
 
         } catch (Exception e) {
             e.printStackTrace();
+            HttpState= eStateHTTP.HTTP_Not_Define_Error;
         }
 
         return response;

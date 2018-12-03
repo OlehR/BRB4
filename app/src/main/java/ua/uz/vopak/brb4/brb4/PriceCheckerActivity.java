@@ -1,10 +1,14 @@
 package ua.uz.vopak.brb4.brb4;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
+import com.google.zxing.client.android.Intents;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
@@ -14,22 +18,38 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncWorker;
+import ua.uz.vopak.brb4.brb4.helpers.Scaner;
+import ua.uz.vopak.brb4.brb4.helpers.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 
-public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener{
+
+
+public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack{
     private Worker worker;
+    private Scaner scaner;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData;
     Button ChangePrintType;
+/*
+    public  class ReceiverBarCode extends BroadcastReceiver {
+        public ReceiverBarCode(){};
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String varBarCode = intent.getStringExtra("BARCODE");
+            ExecuteWorker(varBarCode);
+        }
+
+    }
+    ReceiverBarCode cReceiverBarCode = new ReceiverBarCode();*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.price_checker_layout);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         //btnRestart = findViewById(R.id.button);
         //btnRestart.setOnClickListener(this);
         codeView = findViewById(R.id.code);
@@ -56,10 +76,23 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setBeepEnabled(true);
 
-        //In case we have been launched by the DataWedge intent plug-in
+        scaner=GlobalConfig.GetScaner(getApplicationContext());
+        scaner.init(this);
+
+//        this.registerReceiver(cReceiverBarCode, new IntentFilter("BRB4.BARCODE"));
+
+      //In case we have been launched by the DataWedge intent plug-in
         Intent i = getIntent();
         handleDecodeData(i);
     }
+
+
+    @Override
+        public void Run(String parBarCode) {
+            ExecuteWorker(parBarCode);
+        }
+        ;
+
 
     @Override
     protected void onResume() {
@@ -169,18 +202,27 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     }
 
     public void ExecuteWorker(String parBarCode){
+
+  /*      final String varBarCode=parBarCode;
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+*/
         AsyncWorker aW =  new AsyncWorker(worker);
         aW.execute(parBarCode);
+
+
     }
 
     @Override
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-        //Release the EMDKmanager on Application exit.
+/*        //Release the EMDKmanager on Application exit.
         if (MainActivity.emdkWrapper != null) {
             MainActivity.emdkWrapper.release();
-        }
+        }*/
     }
 
 }

@@ -28,7 +28,11 @@ public class AsyncWaresHelper extends AsyncTask<String , Void, WareListHelper>
 
         warList.setAdapter(wH.adapter);
         warList.setPrompt("Склад");
-        warList.setSelection(wH.adapter.getPosition(wH.getKeyFromValue(wH.map,config.CodeWarehouse).toString()));
+        try {
+            warList.setSelection(wH.adapter.getPosition(wH.getKeyFromValue(wH.map, config.CodeWarehouse).toString()));
+        }
+        catch (Exception e)
+        {};
         warList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

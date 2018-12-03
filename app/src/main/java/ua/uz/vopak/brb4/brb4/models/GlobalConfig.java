@@ -14,7 +14,7 @@ public class GlobalConfig {
     public static String Password = "c";
     public static Worker Worker;
     public static SQLiteAdapter SQLiteAdapter;
-
+    public static Scaner Scaner;
     public static String GetLoginJson()
     {
       return "\"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"";
@@ -24,7 +24,7 @@ public class GlobalConfig {
 
 
     public String getCodeWarehouse(){
-        String code = "00000000" + CodeWarehouse;
+        String code = "000000000" + CodeWarehouse;
         return code.substring(code.length() - 9);
     }
 
@@ -32,6 +32,14 @@ public class GlobalConfig {
 
 
 
+    }
+
+
+    public static Scaner GetScaner(Context varContext)
+    {
+        if(Scaner==null)
+         Scaner = new Scaner(varContext);
+        return Scaner;
     }
 
     public static GlobalConfig instance(){

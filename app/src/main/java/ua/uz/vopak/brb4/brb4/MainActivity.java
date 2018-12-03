@@ -23,7 +23,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
     GlobalConfig config = GlobalConfig.instance();
     public  static Boolean isCreatedScaner = false;
-    public static EMDKWrapper emdkWrapper = null;
+    //public static EMDKWrapper emdkWrapper = null;
     Button[] menuItems = new Button[4];
     int current = 0;
     AuterizationsHelper auth;
@@ -40,7 +40,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         GlobalConfig.GetWorker();
 
 
-
+/*
 
         String model = android.os.Build.MODEL;
         if( model.equals("TC20")  && ( android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions")) ){
@@ -50,7 +50,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         if(emdkWrapper != null){
             isCreatedScaner=emdkWrapper.getEMDKManager(savedInstanceState);
         }
-
+*/
 
         auth = new AuterizationsHelper();
 

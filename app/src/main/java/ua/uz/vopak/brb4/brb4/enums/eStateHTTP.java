@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.brb4.enums;
 
 public enum eStateHTTP {
+     HTTP_Not_Define_Error (0),
      HTTP_OK (200),
 
     /**
