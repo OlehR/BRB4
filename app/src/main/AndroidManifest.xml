@@ -57,7 +57,7 @@
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop"/>
                 <receiver
-                    android:name=".helpers.ScanResultReceiverPM"
+                    android:name=".Scaner.ScanResultReceiverPM"
                     android:enabled="true"
                     android:permission="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
                     android:priority="0" >

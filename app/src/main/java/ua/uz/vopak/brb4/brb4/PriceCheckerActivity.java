@@ -1,14 +1,11 @@
 package ua.uz.vopak.brb4.brb4;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
-import com.google.zxing.client.android.Intents;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
@@ -17,13 +14,18 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import device.common.DecodeStateCallback;
+import device.common.ScanConst;
+import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500;
+import ua.uz.vopak.brb4.brb4.Scaner.ScanerTC20;
+import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncWorker;
-import ua.uz.vopak.brb4.brb4.helpers.Scaner;
-import ua.uz.vopak.brb4.brb4.helpers.ScanCallBack;
+import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
+import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
-
+import device.sdk.ScanManager;
 
 
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack{
@@ -76,16 +78,47 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setBeepEnabled(true);
 
-        scaner=GlobalConfig.GetScaner(getApplicationContext());
-        scaner.init(this);
-
+        //scaner=GlobalConfig.GetScaner();
+        //scaner.Close();
+        scaner=GlobalConfig.GetScaner();
+        scaner.Init(this);
+  /*      runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                initScanner();
+            }
+        });*/
 //        this.registerReceiver(cReceiverBarCode, new IntentFilter("BRB4.BARCODE"));
 
       //In case we have been launched by the DataWedge intent plug-in
         Intent i = getIntent();
         handleDecodeData(i);
     }
+/*    void initScanner() {
+        if (scaner != null) {
+            ScanerPM500.mScanner.aRegisterDecodeStateCallback(mStateCallback);
+            ScanerPM500.mScanner.aDecodeSetResultType(ScanConst.ResultType.DCD_RESULT_USERMSG);
 
+        }
+    }
+
+    private final Handler mHandler = new Handler();
+    private DecodeStateCallback mStateCallback = new DecodeStateCallback(mHandler) {
+        public void onChangedState(int state) {
+            switch (state) {
+                case ScanConst.STATE_ON:
+                case ScanConst.STATE_TURNING_ON:
+
+                    break;
+                case ScanConst.STATE_OFF:
+                case ScanConst.STATE_TURNING_OFF:
+
+                    break;
+            }
+        };
+    };
+
+*/
 
     @Override
         public void Run(String parBarCode) {
@@ -116,7 +149,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                 break;
         }
 
-        if(!MainActivity.isCreatedScaner) {
+        if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
             BarcodeView barcodeView = findViewById(R.id.barcode_scanner);
             barcodeView.resume();
 
@@ -152,8 +185,6 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
 
     public void  setScanResult(LabelInfo LI){
 
-
-
         codeView.setText(Integer.toString(LI.Code));
         perView.setText(LI.Unit);
         nameView.setText(LI.Name);
@@ -188,31 +219,21 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         textBarcodeView.setText(LI.BarCode);
 
 
-        if(!MainActivity.isCreatedScaner) {
-            //barcodeView.resume();
+        if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
+            BarcodeView barcodeView = (BarcodeView) findViewById(R.id.barcode_scanner);
+            barcodeView.resume();
         }
     }
 
 
     public void SetProgres(int progres){
-
         ProgressBar progresBar = findViewById(R.id.progressBar);
         progresBar.setProgress(progres);
-
     }
 
     public void ExecuteWorker(String parBarCode){
-
-  /*      final String varBarCode=parBarCode;
-
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-*/
         AsyncWorker aW =  new AsyncWorker(worker);
         aW.execute(parBarCode);
-
-
     }
 
     @Override

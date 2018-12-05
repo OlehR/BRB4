@@ -1,20 +1,16 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -26,18 +22,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import device.common.DecodeResult;
-import device.common.DecodeStateCallback;
-import device.common.ScanConst;
-import device.sdk.ScanManager;
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncRevisionScanHelper;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSaveInventory;
-import ua.uz.vopak.brb4.brb4.helpers.EMDKWrapper;
-import ua.uz.vopak.brb4.brb4.helpers.ScanCallBack;
-import ua.uz.vopak.brb4.brb4.helpers.Scaner;
+import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
+import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
-import ua.uz.vopak.brb4.brb4.helpers.mScanerWrapper;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
@@ -79,8 +69,8 @@ public class RevisionScannerActivity extends Activity   implements ScanCallBack 
         scanNN = Integer.parseInt(InventoryItems.get(InventoryItems.size() - 1).NN);
         codeWares = "";
 
-        scaner=GlobalConfig.GetScaner(getApplicationContext());
-        scaner.init(this);
+        scaner=GlobalConfig.GetScaner();
+        scaner.Init(this);
 
 
         /*String model = android.os.Build.MODEL;

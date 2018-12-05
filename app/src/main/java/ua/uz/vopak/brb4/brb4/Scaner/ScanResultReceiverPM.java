@@ -1,39 +1,36 @@
-package ua.uz.vopak.brb4.brb4.helpers;
+package ua.uz.vopak.brb4.brb4.Scaner;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
 import device.common.ScanConst;
+import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
+import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
-import static ua.uz.vopak.brb4.brb4.models.GlobalConfig.GetScaner;
+import static ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500.mScanner;
 
 public  class ScanResultReceiverPM extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Scaner mScaner=GlobalConfig.GetScaner(null);
+        if(GlobalConfig.TypeScaner!=eTypeScaner.PM550)
+            return;
+        ScanerPM500 mScaner=(ScanerPM500)GlobalConfig.GetScaner();
         if(mScaner!=null) {
-            mScanerWrapper mScanerW = mScaner.mScanerW;
+            //mScanerWrapper mScanerW = mScaner.mScanerW;
 
-            if (mScanerW != null) {
+            if (mScaner != null) {
                 if (ScanConst.INTENT_USERMSG.equals(intent.getAction())) {
-                    mScanerW.mScanner.aDecodeGetResult(mScanerW.mDecodeResult.recycle());
+                    mScanner.aDecodeGetResult(mScaner.mDecodeResult.recycle());
                 } else if (ScanConst.INTENT_EVENT.equals(intent.getAction())) {
                     byte[] decodeBytesValue = intent.getByteArrayExtra(ScanConst.EXTRA_EVENT_DECODE_VALUE);
                     if (decodeBytesValue != null) {
                         String value = new String(decodeBytesValue);
-                        //mScaner.Send(value);
+
                         if(mScaner.CallBack!=null)
                           mScaner.CallBack.Run(value);
-
-                    /* //Переробити через повідомлення
-                    Intent MyIntent = new Intent("BRB4.BARCODE");
-                    MyIntent.putExtra("BARCODE",value);
-                    intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-                    sendBroadcast(MyIntent);*/
-
                     }
 
                 }

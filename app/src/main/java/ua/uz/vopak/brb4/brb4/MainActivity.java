@@ -16,13 +16,12 @@ import android.widget.Button;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadInventory;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSyncData;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
-import ua.uz.vopak.brb4.brb4.helpers.EMDKWrapper;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
     GlobalConfig config = GlobalConfig.instance();
-    public  static Boolean isCreatedScaner = false;
+    //public  static Boolean isCreatedScaner = false;
     //public static EMDKWrapper emdkWrapper = null;
     Button[] menuItems = new Button[4];
     int current = 0;
@@ -36,10 +35,12 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
         //Ініціалізація BD
         Context c=this.getApplicationContext();
-        GlobalConfig.GetSQLiteAdapter(c);
+        GlobalConfig.Init(c);
+        /*GlobalConfig.GetSQLiteAdapter(c);
         GlobalConfig.GetWorker();
-
-
+        //Ініціалізація сканера
+        GlobalConfig.GetScaner();
+*/
 /*
 
         String model = android.os.Build.MODEL;
@@ -102,6 +103,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_settings:
@@ -161,6 +163,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+
+
         switch (v.getId()){
             case R.id.PriceCheker:
                 Intent intent = new Intent(this, PriceCheckerActivity.class);
