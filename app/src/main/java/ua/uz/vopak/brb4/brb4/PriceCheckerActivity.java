@@ -78,21 +78,14 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setBeepEnabled(true);
 
-        //scaner=GlobalConfig.GetScaner();
-        //scaner.Close();
         scaner=GlobalConfig.GetScaner();
-        scaner.Init(this);
-  /*      runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                initScanner();
-            }
-        });*/
+        scaner.Init(this,savedInstanceState);
+
 //        this.registerReceiver(cReceiverBarCode, new IntentFilter("BRB4.BARCODE"));
 
       //In case we have been launched by the DataWedge intent plug-in
-        Intent i = getIntent();
-        handleDecodeData(i);
+       // Intent i = getIntent();
+        //handleDecodeData(i);
     }
 /*    void initScanner() {
         if (scaner != null) {
@@ -132,12 +125,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         super.onResume();
     }
 
-        //We need to handle any incoming intents, so let override the onNewIntent method
-    @Override
-    public void onNewIntent(Intent i) {
-        handleDecodeData(i);
 
-    }
 
     @Override
     public void onClick(View v) {
@@ -156,31 +144,14 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
     }
 
+    //We need to handle any incoming intents, so let override the onNewIntent method
+    //Необхідно для Zebta  TC20 Оскільки повідомлення приходять саме так. !!!TMP Можливо перероблю через повідомлення
+    @Override
+    public void onNewIntent(Intent i) {
+        GlobalConfig.GetScaner().handleDecodeData(i);
+        //sendBroadcast(i);
+//        handleDecodeData(i);
 
-
-
-    //This function is responsible for getting the data from the intent
-    private void handleDecodeData(Intent i)
-    {
-        if (i.getAction() != null && i.getAction().contentEquals("ua.uz.vopak.brb4.brb4.RECVR") ) {
-            //Get the source of the data
-            String source = i.getStringExtra("com.motorolasolutions.emdk.datawedge.source");
-
-            //Check if the data has come from the Barcode scanner
-            if(source.equalsIgnoreCase("scanner"))
-            {
-                //Get the data from the intent
-                String data = i.getStringExtra("com.motorolasolutions.emdk.datawedge.data_string");
-
-                //Check that we have received data
-                if(data != null && data.length() > 0)
-                {
-                    ExecuteWorker(data);
-                    //ScanFragment sf = (ScanFragment) getSupportFragmentManager().findFragmentById(R.id.scan_fragment);
-
-                }
-            }
-        }
     }
 
     public void  setScanResult(LabelInfo LI){

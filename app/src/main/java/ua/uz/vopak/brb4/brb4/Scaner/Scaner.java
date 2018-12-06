@@ -3,6 +3,7 @@ package ua.uz.vopak.brb4.brb4.Scaner;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
@@ -52,6 +53,11 @@ public class Scaner extends Activity {
         return true;
     }
 
+    public boolean Init(ScanCallBack cCallBack,Bundle savedInstanceState)
+    {
+        return Init(cCallBack);
+    }
+
     public boolean StartScan()
     {
         return true;
@@ -65,6 +71,10 @@ public class Scaner extends Activity {
     {
 
     }
+
+    public void handleDecodeData(Intent i)
+    {}
+
 
 
 

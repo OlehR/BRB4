@@ -3,14 +3,13 @@ package ua.uz.vopak.brb4.brb4.Scaner;
         import android.app.Activity;
         import android.content.Context;
         import android.content.Intent;
+        import android.os.Bundle;
         import android.os.Handler;
 
 
 public class ScanerTC20 extends Scaner {
 
-    private final Handler mHandler = new Handler();
-    EMDKWrapper emdkWrapper;
-
+    public EMDKWrapper emdkWrapper;
 
     public ScanerTC20(Context parApplicationContext)
     {
@@ -19,9 +18,19 @@ public class ScanerTC20 extends Scaner {
     }
 
 
+    @Override
+    public boolean Init(ScanCallBack cCallBack,Bundle savedInstanceState)
+    {
+        if(emdkWrapper!=null)
+         emdkWrapper.getEMDKManager(savedInstanceState);
+        return super.Init(cCallBack,savedInstanceState);
+    }
+
+
     //Motorola
     //This function is responsible for getting the data from the intent
-    private void handleDecodeData(Intent i)
+    @Override
+    public void handleDecodeData(Intent i)
     {
         if (i.getAction() != null && i.getAction().contentEquals("ua.uz.vopak.brb4.brb4.RECVR") ) {
             //Get the source of the data
@@ -42,7 +51,6 @@ public class ScanerTC20 extends Scaner {
             }
         }
     }
-
 
 
     @Override
