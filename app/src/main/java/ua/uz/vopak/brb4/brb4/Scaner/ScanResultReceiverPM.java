@@ -3,6 +3,7 @@ package ua.uz.vopak.brb4.brb4.Scaner;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
 
 import device.common.ScanConst;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;

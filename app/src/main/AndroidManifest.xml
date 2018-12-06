@@ -30,8 +30,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MessageActivity" />
+
         <activity
             android:name=".PriceCheckerActivity"
             android:launchMode="singleTop">
@@ -39,7 +41,19 @@
                 <action android:name="ua.uz.vopak.brb4.brb4.RECVR"/>
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
+
+
         </activity>
+
+        <activity android:name=".Scaner.ScanResultReceiverTC"
+            android:launchMode="singleTask">
+            <!--<intent-filter>
+                <action android:name="ua.uz.vopak.brb4.brb4.RECVR"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>-->
+        </activity>
+
+
         <activity
             android:name=".AuthActivity"
             android:launchMode="singleTop"/>
@@ -56,7 +70,8 @@
             android:name=".RevisionScannerActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop"/>
-                <receiver
+
+        <receiver
                     android:name=".Scaner.ScanResultReceiverPM"
                     android:enabled="true"
                     android:permission="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
@@ -64,8 +79,10 @@
                     <intent-filter>
                         <action android:name="device.common.USERMSG" />
                         <action android:name="device.scanner.EVENT" />
+                        <action android:name="ua.uz.vopak.brb4.brb4.RECVR"/>
                     </intent-filter>
-                </receiver>
+        </receiver>
+
 
         <!--        <receiver
                     android:name=".RevisionScannerActivity$ScanResultReceiver"
