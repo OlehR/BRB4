@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ua.uz.vopak.brb4.clientpricechecker">
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -14,6 +15,7 @@
         <activity android:name=".ClientPriceCheckerActivity"
             android:stateNotNeeded="true"
             android:windowSoftInputMode="stateHidden"
+            android:screenOrientation="landscape"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

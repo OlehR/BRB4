@@ -19,10 +19,192 @@
         </EditText>
 
         <ImageView
-            android:background="@drawable/background_1"
+            android:id="@+id/Background"
+            android:background="@drawable/background_4"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
+
+        <LinearLayout
+            android:id="@+id/LogoLayout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:layout_gravity="center"
+                android:background="@drawable/logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="56dp"/>
+            <ImageView
+                android:layout_gravity="center"
+                android:background="@drawable/check_the_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="44dp"/>
+
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/InfoLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="invisible">
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:background="@drawable/logo_2"
+                    android:layout_width="278dp"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="10dp"
+                    />
+
+                <TextView
+                    android:id="@+id/Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text='Коржі "Медові" 400г /Домашні Продукти/'
+                    android:background="#E31E25"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="26dp"
+                    android:paddingRight="26dp"
+                    android:textSize="52dp"
+                    android:textStyle="bold"
+                    android:textScaleX="1.3"
+                    android:layout_marginTop="10px"
+                    android:textColor="#fefefe"/>
+
+                <TextView
+                    android:id="@+id/BarCodeView"
+                    android:layout_width="312dp"
+                    android:layout_height="wrap_content"
+                    android:background="#E31E25"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="26dp"
+                    android:textSize="26dp"
+                    android:text="4820186120776"
+                    android:paddingRight="26dp"
+                    android:textStyle="bold"
+                    android:textScaleX="1.3"
+                    android:layout_marginTop="26dp"
+                    android:layout_gravity="right"
+                    android:textColor="#fefefe"/>
+
+                <TextView
+                    android:id="@+id/Article"
+                    android:layout_width="312dp"
+                    android:layout_height="wrap_content"
+                    android:background="#E31E25"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="26dp"
+                    android:paddingRight="26dp"
+                    android:textSize="26dp"
+                    android:text="00093611"
+                    android:textStyle="bold"
+                    android:textScaleX="1.3"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="right"
+                    android:textColor="#fefefe"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="64dp">
+
+                <TextView
+                    android:id="@+id/Action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="#E31E25"
+                    android:paddingTop="5dp"
+                    android:paddingBottom="5dp"
+                    android:paddingLeft="26dp"
+                    android:paddingRight="26dp"
+                    android:text="АКЦІЯ"
+                    android:textColor="#fefefe"
+                    android:textSize="40dp"
+                    android:visibility="invisible"
+                    android:textScaleX="1.3"/>
+
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:background="#008550"
+                    android:layout_width="wrap_content"
+                    android:paddingLeft="26dp"
+                    android:paddingRight="26dp"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/PriceBill"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="0"
+                        android:textColor="#fefefe"
+                        android:textSize="166dp"
+                        android:textStyle="bold"
+                        android:includeFontPadding="false"
+                        android:textScaleX="1.3"/>
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:id="@+id/PriceCoin"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="00"
+                            android:textColor="#fefefe"
+                            android:textSize="83dp"
+                            android:layout_marginTop="18dp"
+                            android:includeFontPadding="false"
+                            android:textStyle="bold"
+                            android:textScaleX="1.3" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="грн"
+                            android:textColor="#fefefe"
+                            android:textSize="83dp"
+                            android:includeFontPadding="false"
+                            android:lineSpacingExtra="0dp"
+                            android:layout_marginTop="-36dp"
+                            android:textScaleX="1.3"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <TextView
+            android:background="#3D9C6E"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="З питань працевлаштування звертайтесь за тел: 050 549 6971"
+            android:textColor="#fefefe"
+            android:textStyle="bold"
+            android:textScaleX="1.3"
+            android:textSize="26dp"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:textAlignment="center"/>
 
     </FrameLayout>
 
