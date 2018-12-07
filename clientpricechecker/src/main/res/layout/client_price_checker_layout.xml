@@ -10,8 +10,8 @@
 
         <EditText
             android:id="@+id/BarCode"
+            android:layout_marginTop="-50dp"
             android:layout_width="match_parent"
-            android:focusableInTouchMode="false"
             android:layout_height="wrap_content">
 
                 <requestFocus />
@@ -21,6 +21,8 @@
         <ImageView
             android:id="@+id/Background"
             android:background="@drawable/background_4"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
@@ -29,6 +31,8 @@
             android:id="@+id/LogoLayout"
             android:orientation="vertical"
             android:layout_width="match_parent"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:layout_height="wrap_content">
 
             <ImageView
@@ -50,6 +54,8 @@
             android:id="@+id/InfoLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:visibility="invisible">
 
             <LinearLayout
@@ -204,8 +210,38 @@
             android:textSize="26dp"
             android:paddingTop="10dp"
             android:paddingBottom="10dp"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:textAlignment="center"/>
 
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusableInTouchMode="false"
+            android:focusable="false">
+
+        <VideoView
+            android:id="@+id/PromoVideo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
+            android:visibility="invisible"
+            />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusableInTouchMode="false"
+            android:focusable="false">
+
+        </LinearLayout>
     </FrameLayout>
 
 </LinearLayout>

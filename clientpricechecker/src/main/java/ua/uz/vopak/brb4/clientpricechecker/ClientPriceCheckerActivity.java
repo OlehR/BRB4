@@ -3,7 +3,10 @@ package ua.uz.vopak.brb4.clientpricechecker;
 import android.app.Activity;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -23,10 +27,12 @@ public class ClientPriceCheckerActivity extends Activity {
     RelativeLayout InfoLayout;
     LinearLayout LogoLayout;
     ImageView Background;
+    VideoView PromoVideo;
     ClientPriceCheckerActivity context;
     LinearLayout ClientPriceChecker;
     EditText BarCode;
     private Timer infoLayoutTimer;
+    private Timer videoTimer;
     private InfoLayoutTimerTask infoLayoutTimerTask;
 
     @Override
@@ -34,9 +40,9 @@ public class ClientPriceCheckerActivity extends Activity {
         super.onCreate(savedInstanceState);
         context = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.client_price_checker_layout);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.client_price_checker_layout);
 
         ClientPriceChecker = findViewById(R.id.ClientPriceCheckerLayout);
         BarCode = findViewById(R.id.BarCode);
@@ -47,6 +53,14 @@ public class ClientPriceCheckerActivity extends Activity {
                     if(s.toString().indexOf("\n") > 0){
                         String barCode = BarCode.getText().toString();
                         BarCode.setText("");
+                        if(videoTimer != null){
+                            videoTimer.cancel();
+                        }
+
+                        if(PromoVideo.isPlaying()){
+                            PromoVideo.stopPlayback();
+                            PromoVideo.setVisibility(View.INVISIBLE);
+                        }
                         new AsyncPriceDataHelper(context).execute(barCode);
                     }
             }
@@ -68,6 +82,29 @@ public class ClientPriceCheckerActivity extends Activity {
         PriceCoin = findViewById(R.id.PriceBill);
         Background = findViewById(R.id.Background);
         LogoLayout = findViewById(R.id.LogoLayout);
+        PromoVideo = findViewById(R.id.PromoVideo);
+
+        if(videoTimer != null){
+            videoTimer.cancel();
+        }
+
+        videoTimer = new Timer();
+        videoTimer.schedule(new VideoPlaybackTimerTask(), 60000, 60000);
+
+        BarCode.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, final boolean hasFocus) {
+                BarCode.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //replace this line to scroll up or down
+                        if(!hasFocus) {
+                            BarCode.requestFocus();
+                        }
+                    }
+                }, 100L);
+            }
+        });
 
     }
 
@@ -91,6 +128,15 @@ public class ClientPriceCheckerActivity extends Activity {
         LogoLayout.setVisibility(View.INVISIBLE);
         InfoLayout.setVisibility(View.VISIBLE);
 
+        if(videoTimer != null){
+            videoTimer.cancel();
+        }
+
+        if(PromoVideo.isPlaying()){
+            PromoVideo.stopPlayback();
+            PromoVideo.setVisibility(View.INVISIBLE);
+        }
+
         if (infoLayoutTimer != null) {
             infoLayoutTimer.cancel();
         }
@@ -108,6 +154,34 @@ public class ClientPriceCheckerActivity extends Activity {
         Resources res = getResources();
         Drawable background = res.getDrawable(R.drawable.background_4);
         Background.setBackground(background);
+
+        if(videoTimer != null){
+            videoTimer.cancel();
+        }
+
+        videoTimer = new Timer();
+        videoTimer.schedule(new VideoPlaybackTimerTask(), 60000, 60000);
+    }
+
+    public void videoPlayback(){
+        Uri uri = Uri.parse(Environment.getExternalStorageDirectory()+"/Movies/promo.mp4");
+        PromoVideo.setVideoURI(uri);
+        PromoVideo.setVisibility(View.VISIBLE);
+        PromoVideo.start();
+        BarCode.requestFocus();
+
+        if(videoTimer != null){
+            videoTimer.cancel();
+        }
+
+        PromoVideo.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                PromoVideo.setVisibility(View.INVISIBLE);
+                videoTimer = new Timer();
+                videoTimer.schedule(new VideoPlaybackTimerTask(), 60000, 60000);
+            }
+        });
     }
 
     class InfoLayoutTimerTask extends TimerTask {
@@ -120,6 +194,21 @@ public class ClientPriceCheckerActivity extends Activity {
                 @Override
                 public void run() {
                     hideInfo();
+                }
+            });
+        }
+    }
+
+    class VideoPlaybackTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    videoPlayback();
                 }
             });
         }
