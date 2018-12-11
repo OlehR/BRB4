@@ -16,8 +16,14 @@ public class LabelInfo
     public String Name;
     public int Price;
     public int OldPrice;
+    public int PriceOpt;
+    public int OldPriceOpt;
+    public double QuantityOpt=1;
     public int PriceBill;
     public int PriceCoin;
+    public int PriceBillOpt;
+    public int PriceCoinOpt;
+
     public String Unit;
     public String Article;
     public String BarCode;
@@ -58,6 +64,23 @@ public class LabelInfo
         BarCode = varData[5];
         if(varData[6]=="1")
             Action  = true;
+
+
+        if(varData.length>=9 && varData[7].length()>1) {
+            String[] varPrice = varData[7].split(",");
+            PriceBillOpt = Integer.parseInt(varPrice[0]);
+            PriceCoinOpt = Integer.parseInt(varPrice[1]);
+            QuantityOpt = Double.parseDouble(varData[7]);
+        }
+        else
+        {
+            PriceBillOpt=0;
+            PriceCoinOpt=0;
+            QuantityOpt=1;
+        }
+        PriceOpt=PriceBillOpt*100+PriceCoinOpt;
+
+
     }
     public byte[] LevelForPrinter(TypeLanguagePrinter parTLP) throws UnsupportedEncodingException {
         final int  LengName=25;
@@ -84,7 +107,7 @@ public class LabelInfo
 
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         Date today = Calendar.getInstance().getTime();
-        String CurentDate = df.format(today);
+        String CurrentDate = df.format(today);
 
         switch(varPriceBill.length())
         {
@@ -101,8 +124,6 @@ public class LabelInfo
                 OffsetBill="0";  OffsetCoin="350";
                 break;
         }
-
-
 
         String Label="^XA\n" +
                 "^LL{LabelLength}\n" +
@@ -127,7 +148,7 @@ public class LabelInfo
                     replace("{OffsetBill}",OffsetBill).replace("{OffsetCoin}",OffsetCoin).replace("{Unit}",varUnit).
                     replace("{PriceBill}",varPriceBill).replace("{PriceCoin}",varPriceCoin).
                     replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode).
-                    replace("{Article}",this.Article).replace("{Date}",CurentDate).
+                    replace("{Article}",this.Article).replace("{Date}",CurrentDate).
                 replace("{OffsetEndLine}",OffsetEndLine).replace("{LabelLength}",LabelLength);
            res=Label.getBytes("Cp1251");
           return res;
