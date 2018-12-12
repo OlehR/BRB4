@@ -84,7 +84,6 @@ public class AsyncFileCheker extends AsyncTask<String , Void, Void>
 
         }catch(Exception e){
             e.toString();
-
         }
 
         return null;
