@@ -153,11 +153,10 @@ public class SQLiteAdapter
                 mCur.moveToFirst();
                 varN = mCur.getInt(0);
                 if (varN == 0) {
-                    sql = "UPDATE LogPrice SET is_send=-1 WHERE `rowid` IN (SELECT `rowid` FROM LogPrice WHERE is_send=0 LIMIT 100)";
-                    mDb.execSQL(sql);
+//                    sql = "UPDATE LogPrice SET is_send=-1 WHERE `rowid` IN (SELECT `rowid` FROM LogPrice WHERE is_send=0 LIMIT 100)";
+//                    mDb.execSQL(sql);
                     ContentValues cv = new ContentValues();
                     cv.put("is_send",-1);
-
                     mDb.update("LogPrice",cv,"rowid  IN (SELECT rowid FROM LogPrice WHERE is_send=0 LIMIT 100)",null);
                 }
             }
@@ -186,8 +185,11 @@ public class SQLiteAdapter
         return list;
     }
     public void AfterSendData() {
-        String sql = "UPDATE LogPrice SET is_send=1 WHERE is_send=-1";
-        mDb.execSQL(sql);
+        ContentValues cv = new ContentValues();
+        cv.put("is_send",1);
+        mDb.update("LogPrice",cv,"is_send=-1",null);
+//        String sql = "UPDATE LogPrice SET is_send=1 WHERE is_send=-1";
+//        mDb.execSQL(sql);
     }
 
     public void AddConfigPair(String name, String value) {

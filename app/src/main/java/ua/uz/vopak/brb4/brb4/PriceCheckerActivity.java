@@ -2,7 +2,6 @@ package ua.uz.vopak.brb4.brb4;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
@@ -14,18 +13,13 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import device.common.DecodeStateCallback;
-import device.common.ScanConst;
-import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500;
-import ua.uz.vopak.brb4.brb4.Scaner.ScanerTC20;
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncWorker;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
-import ua.uz.vopak.brb4.brb4.models.LabelInfo;
-import device.sdk.ScanManager;
+import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack{

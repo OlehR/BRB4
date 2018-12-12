@@ -1,21 +1,16 @@
-package ua.uz.vopak.brb4.clientpricechecker;
+package ua.uz.vopak.brb4.lib.helpers;
 
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
+import java.io.*;
+//import java.io.UnsupportedEncodingException;
+import java.net.*;
 import javax.net.ssl.HttpsURLConnection;
 
-//import java.io.UnsupportedEncodingException;
+import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 
 public class GetDataHTTP
 {
-    eStateHTTP HttpState = eStateHTTP.HTTP_OK;
+    public eStateHTTP HttpState = eStateHTTP.HTTP_OK;
     public String GetData(String parCodeShop,String parScanCode,String parCode) {
         if (parScanCode == null || parScanCode.isEmpty())
             parScanCode = "";

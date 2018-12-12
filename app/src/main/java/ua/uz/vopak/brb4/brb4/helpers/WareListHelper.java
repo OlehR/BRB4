@@ -1,20 +1,16 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-import ua.uz.vopak.brb4.brb4.R;
 import ua.uz.vopak.brb4.brb4.SettingsActivity;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 
 public class WareListHelper {
 

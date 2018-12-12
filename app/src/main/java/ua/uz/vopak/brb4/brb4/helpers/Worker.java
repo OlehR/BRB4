@@ -13,12 +13,12 @@ import ua.uz.vopak.brb4.brb4.RevisionActivity;
 import ua.uz.vopak.brb4.brb4.RevisionItemsActivity;
 import ua.uz.vopak.brb4.brb4.RevisionScannerActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
-import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
-import ua.uz.vopak.brb4.brb4.enums.TypePrinter;
+import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
-import ua.uz.vopak.brb4.brb4.models.LabelInfo;
+import ua.uz.vopak.brb4.lib.models.LabelInfo;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
+import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 
 public class Worker
 {
@@ -30,7 +30,7 @@ public class Worker
     private String BarCode;
     BluetoothPrinter Printer = new BluetoothPrinter();
     GetDataHTTP Http = new GetDataHTTP();
-    public LabelInfo LI = new LabelInfo();
+    public LabelInfo LI = new LabelInfo(GlobalConfig.varApplicationContext);
     SQLiteAdapter mDbHelper;
 
     public void SetProgressBar(ProgressBar parProgressBar)

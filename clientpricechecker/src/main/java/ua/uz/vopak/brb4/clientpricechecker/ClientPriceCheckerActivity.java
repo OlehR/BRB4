@@ -20,7 +20,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-import ua.uz.vopak.brb4.lib.*;
+
+import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 import java.util.Timer;
 import java.util.TimerTask;

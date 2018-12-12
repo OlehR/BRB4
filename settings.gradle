@@ -1,1 +1,1 @@
-include ':app', ':clientpricechecker', ':lib'
+include ':app', ':clientpricechecker', ':share_lib'

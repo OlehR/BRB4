@@ -12,6 +12,7 @@ import ua.uz.vopak.brb4.brb4.R;
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncConfigPairAdd;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 
 public class AuterizationsHelper {
     GlobalConfig config = GlobalConfig.instance();

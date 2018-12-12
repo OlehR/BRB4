@@ -1,16 +1,18 @@
-package ua.uz.vopak.brb4.brb4.models;
+package ua.uz.vopak.brb4.lib.models;
 
-
+import android.content.Context;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import ua.uz.vopak.brb4.brb4.enums.TypeLanguagePrinter;
+
+//import javax.naming.Context;
+
+import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
 
 
 public class LabelInfo
@@ -37,12 +39,15 @@ public class LabelInfo
     public boolean Action  = false;
     public String  InfoPrinter = ""; //Стан принтера
     public String  InfoHTTP = "";//Стан HTTP
-    public LabelInfo()
+    private Context varApplicationContext;
+    public LabelInfo(Context parApplicationContext)
     {
+       varApplicationContext=parApplicationContext;
     }
-    public LabelInfo(String parData)
+    public LabelInfo(Context parApplicationContext,String parData)
     {
-     Init(parData);
+        varApplicationContext=parApplicationContext;
+        Init(parData);
     }
 
     public void Init(String parData)
@@ -76,9 +81,11 @@ public class LabelInfo
         PriceCoinOpt=0;
         QuantityOpt=0;
 
-        if(varData.length>=9 && varData[7].length()>1) {
-            String[] varPrice = varData[7].split(",");
-            QuantityOpt = Double.parseDouble(varData[7]);
+        if(varData.length>=10 && varData[8].length()>1) {
+            String[] varPrice = varData[8].split(",");
+            try {
+                QuantityOpt = Double.parseDouble(varData[9]);
+            }catch(Exception Ex){}
             if( QuantityOpt!=0) {
                 PriceBillOpt = Integer.parseInt(varPrice[0]);
                 PriceCoinOpt = Integer.parseInt(varPrice[1]);
@@ -117,7 +124,7 @@ public class LabelInfo
         String varPriceCoin=(PriceCoin<10?"0":"")+Integer.toString(PriceCoin).trim();
 
         String varPriceBill2=Integer.toString(PriceBillOpt).trim();
-        String varPriceCoin2=(PriceCoin<10?"0":"")+Integer.toString(PriceCoinOpt).trim();
+        String varPriceCoin2=(PriceCoinOpt<10?"0":"")+Integer.toString(PriceCoinOpt).trim();
 
 
         if(this.Name.length()<LengName)
@@ -161,7 +168,7 @@ public class LabelInfo
                 case 1:
                     OffsetBill = "50";
                     OffsetCoin = "110";
-                    OffsetBill2 = "170";
+                    OffsetBill2 = "160";
                     OffsetCoin2 = "240";
 
                     break;
@@ -192,8 +199,7 @@ public class LabelInfo
         }
         String Label="";
         try {
-
-            InputStream inputStream = GlobalConfig.varApplicationContext.getAssets().open("Label/" + "zpl_" + (PriceOpt==0?"1":"2"    ) + ".prn");
+            InputStream inputStream = varApplicationContext.getAssets().open("Label/" + "zpl_" + (PriceOpt==0?"1":"2"    ) + ".prn");
 
             BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder total = new StringBuilder();
