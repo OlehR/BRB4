@@ -19,7 +19,7 @@ public class GlobalConfig {
     public static SQLiteAdapter SQLiteAdapter;
     public static eTypeScaner TypeScaner = eTypeScaner.NotDefine;
     public static ua.uz.vopak.brb4.brb4.Scaner.Scaner Scaner;
-    private static Context varApplicationContext;
+    public static Context varApplicationContext;
     public static String GetLoginJson() {
         return "\"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"";
     }

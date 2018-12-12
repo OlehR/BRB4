@@ -155,6 +155,10 @@ public class SQLiteAdapter
                 if (varN == 0) {
                     sql = "UPDATE LogPrice SET is_send=-1 WHERE `rowid` IN (SELECT `rowid` FROM LogPrice WHERE is_send=0 LIMIT 100)";
                     mDb.execSQL(sql);
+                    ContentValues cv = new ContentValues();
+                    cv.put("is_send",-1);
+
+                    mDb.update("LogPrice",cv,"rowid  IN (SELECT rowid FROM LogPrice WHERE is_send=0 LIMIT 100)",null);
                 }
             }
 

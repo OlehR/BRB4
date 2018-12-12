@@ -1,6 +1,10 @@
 package ua.uz.vopak.brb4.brb4.models;
 
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,8 +20,15 @@ public class LabelInfo
     public String Name;
     public int Price;
     public int OldPrice;
+
+    public int PriceOpt;
+    public int OldPriceOpt;
+    public double QuantityOpt=1;
     public int PriceBill;
     public int PriceCoin;
+    public int PriceBillOpt;
+    public int PriceCoinOpt;
+
     public String Unit;
     public String Article;
     public String BarCode;
@@ -36,6 +47,8 @@ public class LabelInfo
 
     public void Init(String parData)
     {
+
+
         String [] varData = parData.split(";");
         if(varData.length<5)
             return;
@@ -58,17 +71,55 @@ public class LabelInfo
         BarCode = varData[5];
         if(varData[6]=="1")
             Action  = true;
+
+        PriceBillOpt=0;
+        PriceCoinOpt=0;
+        QuantityOpt=0;
+
+        if(varData.length>=9 && varData[7].length()>1) {
+            String[] varPrice = varData[7].split(",");
+            QuantityOpt = Double.parseDouble(varData[7]);
+            if( QuantityOpt!=0) {
+                PriceBillOpt = Integer.parseInt(varPrice[0]);
+                PriceCoinOpt = Integer.parseInt(varPrice[1]);
+            }
+
+        }
+
+        PriceOpt=PriceBillOpt*100+PriceCoinOpt;
+
+
     }
     public byte[] LevelForPrinter(TypeLanguagePrinter parTLP) throws UnsupportedEncodingException {
-        final int  LengName=25;
+
+        /*//Test Begin
+        PriceOpt=243199;
+        PriceBillOpt=2431;
+        PriceCoinOpt=99;
+        Price=242239;
+        PriceBill=2422;
+        PriceCoin=39;
+        //Test End*/
+
+        final int  LengName=(PriceOpt==0?25:32);
         byte [] res;
-        String Name1,Name2="", varUnit="грн/"+this.Unit,BarCodePrice;
+        String Name1,Name2="";
+        String varUnit="грн/"+this.Unit,BarCodePrice;
+        String UnitOpt="від "+ (Math.round(QuantityOpt)==(long) QuantityOpt? Long.toString((long)  QuantityOpt) : Double.toString(this.QuantityOpt)) +" " +this.Unit;
         String  OffsetBill="0",OffsetCoin="350";
+
+        String  OffsetBill2="0",OffsetCoin2="350";
         String Space="                                 ";
-        String  OffsetEndLine=(IsShort?"260":"247");
+        String OffsetEndLine=(IsShort?"260":"247");
         String LabelLength = (IsShort?"295":"280");
+
         String varPriceBill=Integer.toString(PriceBill).trim();
         String varPriceCoin=(PriceCoin<10?"0":"")+Integer.toString(PriceCoin).trim();
+
+        String varPriceBill2=Integer.toString(PriceBillOpt).trim();
+        String varPriceCoin2=(PriceCoin<10?"0":"")+Integer.toString(PriceCoinOpt).trim();
+
+
         if(this.Name.length()<LengName)
             Name1=this.Name;
         else
@@ -80,55 +131,94 @@ public class LabelInfo
                Name2=Space.substring(0,(LengName-Name2.length())/2) + Name2;
         }
         Name1=Space.substring(0,((LengName-Name1.length())/2)) + Name1;
-        BarCodePrice = Integer.toString(Code)+"-"+Integer.toString(Price);
+        BarCodePrice = Integer.toString(Code)+"-"+Integer.toString(Price)+(PriceOpt==0?"":"-"+Integer.toString(PriceOpt));
 
         DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
         Date today = Calendar.getInstance().getTime();
-        String CurentDate = df.format(today);
-
-        switch(varPriceBill.length())
+        String CurrentDate = df.format(today);
+        if(PriceOpt==0) {
+            switch (varPriceBill.length()) {
+                case 1:
+                    OffsetBill = "110";
+                    OffsetCoin = "225";
+                    break;
+                case 2:
+                    OffsetBill = "60";
+                    OffsetCoin = "280";
+                    break;
+                case 3:
+                    OffsetBill = "10";
+                    OffsetCoin = "335";
+                    break;
+                case 4:
+                    OffsetBill = "0";
+                    OffsetCoin = "350";
+                    break;
+            }
+        }else
         {
-            case 1:
-                OffsetBill="110";OffsetCoin="225";
-                break;
-            case 2:
-                OffsetBill="60"; OffsetCoin="280";
-                break;
-            case 3:
-                OffsetBill="10"; OffsetCoin="335";
-                break;
-            case 4:
-                OffsetBill="0";  OffsetCoin="350";
-                break;
+            switch (varPriceBill.length()) {
+                case 1:
+                    OffsetBill = "50";
+                    OffsetCoin = "110";
+                    OffsetBill2 = "170";
+                    OffsetCoin2 = "240";
+
+                    break;
+                case 2:
+                    OffsetBill = "10";
+                    OffsetCoin = "120";
+                    OffsetBill2 = "150";
+                    OffsetCoin2 = "315";
+
+                    break;
+                case 3:
+                    OffsetBill = "10";
+                    OffsetCoin = "170";
+                    OffsetBill2 = "50";
+                    OffsetCoin2 = "300";
+
+                    break;
+                case 4:
+                    OffsetBill = "50";
+                    OffsetCoin = "260";
+                    OffsetBill2 = "0";
+                    OffsetCoin2 = "320";
+
+                    break;
+            }
+
+
+        }
+        String Label="";
+        try {
+
+            InputStream inputStream = GlobalConfig.varApplicationContext.getAssets().open("Label/" + "zpl_" + (PriceOpt==0?"1":"2"    ) + ".prn");
+
+            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder total = new StringBuilder();
+            for (String line; (line = r.readLine()) != null; ) {
+                total.append(line).append('\n');
+            }
+            Label=total.toString();
+        }
+        catch (Exception ex)
+        {
+
         }
 
-
-
-        String Label="^XA\n" +
-                "^LL{LabelLength}\n" +
-                "\n" +
-                "^FO 0,11^A@N,20,20,B:904_MSSS_24.arf ^FD{Name1}^FS\n" +
-                "^FO 0,42^A@N,20,20,B:904_MSSS_24.arf ^FD{Name2}^FS\n" +
-                "\n" +
-                "^FO {OffsetBill}, 20^A@N,20,20,B:903_AB_120.arf ^FD{PriceBill}^FS\n" +
-                "^FO {OffsetCoin}, 55^A@N,20,20,B:901_AB_60.arf ^FD{PriceCoin}^FS\n" +
-                "^FO {OffsetCoin},150^A@N,20,20,B:904_MSSS_24.arf ^FD{Unit}^FS\n" +
-                "\n" +
-                "^FO  15,210^BY2 ^BCN,40,N,Y ^FD{BarCodePrice}^FS\n" +
-                "\n" +
-                "^FO  15,260^Ab ^FD{BarCode}^FS\n" +
-                "^FO 160,260^Ab ^FD{Article}^FS\n" +
-                "^FO 270,260^Ab ^FD{Date}^FS\n" +
-                "\n" +
-                // "^FO 0,{OffsetEndLine}^A@N,20,20,B:904_MSSS_24.arf ^FD-------------------------------------^FS\n" +
-                "^XZ";
 
         Label=Label.replace("{Name1}",Name1).replace("{Name2}",Name2).
                     replace("{OffsetBill}",OffsetBill).replace("{OffsetCoin}",OffsetCoin).replace("{Unit}",varUnit).
                     replace("{PriceBill}",varPriceBill).replace("{PriceCoin}",varPriceCoin).
+                    replace("{PriceBill2}",varPriceBill2).replace("{PriceCoin2}",varPriceCoin2).
                     replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode).
-                    replace("{Article}",this.Article).replace("{Date}",CurentDate).
-                replace("{OffsetEndLine}",OffsetEndLine).replace("{LabelLength}",LabelLength);
+                    replace("{Article}",this.Article).replace("{Date}",CurrentDate).
+                    replace("{OffsetBill2}",OffsetBill2).replace("{OffsetCoin2}",OffsetCoin2).
+                    replace("{OffsetEndLine}",OffsetEndLine).replace("{LabelLength}",LabelLength).
+                    replace("{UnitOpt}",UnitOpt).
+                    replace("{OffsetUnit}",Integer.toString(Integer.parseInt(OffsetCoin)+80));
+        ;
            res=Label.getBytes("Cp1251");
           return res;
 
