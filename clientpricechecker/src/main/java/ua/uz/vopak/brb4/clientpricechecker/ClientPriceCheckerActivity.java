@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.PowerManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -18,6 +19,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
+
+import ua.uz.vopak.brb4.lib.*;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,6 +37,8 @@ public class ClientPriceCheckerActivity extends Activity {
     TextView VideoWatermark;
     private Timer infoLayoutTimer;
     public Timer videoTimer;
+    PowerManager pm;
+    PowerManager.WakeLock wl;
     private InfoLayoutTimerTask infoLayoutTimerTask;
 
     @Override
@@ -115,6 +120,9 @@ public class ClientPriceCheckerActivity extends Activity {
                 new AsyncFileCheker(context).execute();
             }
         },9, 60000 * 60);
+
+        pm = (PowerManager) getSystemService(context.POWER_SERVICE);
+        wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "clientpriceckecker::client_priceckecker_sleep");
 
     }
 
@@ -239,4 +247,29 @@ public class ClientPriceCheckerActivity extends Activity {
             });
         }
     }
+
+    class SleepOrWakeUp extends  TimerTask{
+
+        @Override
+        public void run() {
+            if(!wl.isHeld()) {
+                if (videoTimer != null) {
+                    videoTimer.cancel();
+                }
+
+                if (PromoVideo.isPlaying()) {
+                    PromoVideo.stopPlayback();
+                    PromoVideo.setVisibility(View.INVISIBLE);
+                    VideoWatermark.setVisibility(View.INVISIBLE);
+                }
+
+                wl.acquire();
+            }else{
+                wl.release();
+                videoPlayback();
+            }
+        }
+
+    }
+
 }
