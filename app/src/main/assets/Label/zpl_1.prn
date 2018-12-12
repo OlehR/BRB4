@@ -1,0 +1,17 @@
+^XA
+^LL{LabelLength}
+                
+^FO 0,11^A@N,20,20,B:904_MSSS_24.arf ^FD{Name1}^FS
+^FO 0,42^A@N,20,20,B:904_MSSS_24.arf ^FD{Name2}^FS
+                
+^FO {OffsetBill}, 20^A@N,20,20,B:903_AB_120.arf ^FD{PriceBill}^FS
+^FO {OffsetCoin}, 55^A@N,20,20,B:901_AB_60.arf ^FD{PriceCoin}^FS
+^FO {OffsetCoin},150^A@N,20,20,B:904_MSSS_24.arf ^FD{Unit}^FS
+                
+^FO  15,210^BY2 ^BCN,40,N,Y ^FD{BarCodePrice}^FS
+
+^FO  15,260^Ab ^FD{BarCode}^FS
+^FO 160,260^Ab ^FD{Article}^FS
+^FO 270,260^Ab ^FD{Date}^FS
+^FO 1,{LabelLength} ^GB600
+^XZ

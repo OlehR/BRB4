@@ -20,7 +20,6 @@ import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 import ua.uz.vopak.brb4.brb4.models.LabelInfo;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
-
 public class Worker
 {
     GlobalConfig config = GlobalConfig.instance();
@@ -52,22 +51,27 @@ public class Worker
        if(BarCode.indexOf('-')>0)
        {
            String [] str =BarCode.split("-");
-           if (str.length ==2)
+           switch( str.length)
            {
-               CodeWares=str[0];
-               LI.OldPrice=Integer.parseInt(str[1]);
-           }
-           else
-           {
+              case 0:
+              case 1:
                CodeWares="";
                LI.OldPrice=0;
+               LI.OldPriceOpt=0;
                BarCode="";
+               break;
+               case 3:
+                   LI.OldPriceOpt=Integer.parseInt(str[2]);
+               case 2:
+                   CodeWares=str[0];
+                   LI.OldPrice=Integer.parseInt(str[1]);
+                   break;
            }
-
        }
        else {
            CodeWares="";
            LI.OldPrice = 0;
+           LI.OldPriceOpt=0;
        }
 
        if(BarCode.length()>7 || !CodeWares.isEmpty() )
@@ -81,7 +85,7 @@ public class Worker
            {
                LI.Init(resHttp);
                LI.AllScan++;
-               if(LI.OldPrice!=LI.Price)
+               if(LI.OldPrice!=LI.Price ||LI.OldPriceOpt!=LI.PriceOpt )
                {
                    LI.BadScan++;
                    byte[] b = new byte[0];
