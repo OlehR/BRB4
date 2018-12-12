@@ -31,8 +31,9 @@ public class ClientPriceCheckerActivity extends Activity {
     ClientPriceCheckerActivity context;
     LinearLayout ClientPriceChecker;
     EditText BarCode;
+    TextView VideoWatermark;
     private Timer infoLayoutTimer;
-    private Timer videoTimer;
+    public Timer videoTimer;
     private InfoLayoutTimerTask infoLayoutTimerTask;
 
     @Override
@@ -60,6 +61,7 @@ public class ClientPriceCheckerActivity extends Activity {
                         if(PromoVideo.isPlaying()){
                             PromoVideo.stopPlayback();
                             PromoVideo.setVisibility(View.INVISIBLE);
+                            VideoWatermark.setVisibility(View.INVISIBLE);
                         }
                         new AsyncPriceDataHelper(context).execute(barCode);
                     }
@@ -79,10 +81,11 @@ public class ClientPriceCheckerActivity extends Activity {
         Article = findViewById(R.id.Article);
         ActionView = findViewById(R.id.Action);
         PriceBill = findViewById(R.id.PriceBill);
-        PriceCoin = findViewById(R.id.PriceBill);
+        PriceCoin = findViewById(R.id.PriceCoin);
         Background = findViewById(R.id.Background);
         LogoLayout = findViewById(R.id.LogoLayout);
         PromoVideo = findViewById(R.id.PromoVideo);
+        VideoWatermark = findViewById(R.id.VideoWatermark);
 
         if(videoTimer != null){
             videoTimer.cancel();
@@ -105,6 +108,13 @@ public class ClientPriceCheckerActivity extends Activity {
                 }, 100L);
             }
         });
+
+        new Timer().schedule(new TimerTask(){
+            @Override
+            public void run() {
+                new AsyncFileCheker(context).execute();
+            }
+        },9, 60000 * 60);
 
     }
 
@@ -135,6 +145,7 @@ public class ClientPriceCheckerActivity extends Activity {
         if(PromoVideo.isPlaying()){
             PromoVideo.stopPlayback();
             PromoVideo.setVisibility(View.INVISIBLE);
+            VideoWatermark.setVisibility(View.INVISIBLE);
         }
 
         if (infoLayoutTimer != null) {
@@ -167,6 +178,7 @@ public class ClientPriceCheckerActivity extends Activity {
         Uri uri = Uri.parse(Environment.getExternalStorageDirectory()+"/Movies/promo.mp4");
         PromoVideo.setVideoURI(uri);
         PromoVideo.setVisibility(View.VISIBLE);
+        VideoWatermark.setVisibility(View.VISIBLE);
         PromoVideo.start();
         BarCode.requestFocus();
 
@@ -178,10 +190,24 @@ public class ClientPriceCheckerActivity extends Activity {
             @Override
             public void onCompletion(MediaPlayer mp) {
                 PromoVideo.setVisibility(View.INVISIBLE);
+                VideoWatermark.setVisibility(View.INVISIBLE);
                 videoTimer = new Timer();
                 videoTimer.schedule(new VideoPlaybackTimerTask(), 60000, 60000);
             }
         });
+
+        PromoVideo.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(MediaPlayer mp, int i, int j) {
+                PromoVideo.setVisibility(View.INVISIBLE);
+                VideoWatermark.setVisibility(View.INVISIBLE);
+                videoTimer = new Timer();
+                videoTimer.schedule(new VideoPlaybackTimerTask(), 60000, 60000);
+
+                return true;
+            }
+        });
+
     }
 
     class InfoLayoutTimerTask extends TimerTask {

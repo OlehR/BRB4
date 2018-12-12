@@ -11,7 +11,7 @@ public class AsyncPriceDataHelper extends AsyncTask<String , Void, LabelInfo>
         GetDataHTTP Http = new GetDataHTTP();
         LabelInfo LI = new LabelInfo();
         String BarCode = param[0].replace("\n","");
-        Config config = Config.instance();
+        Config config = Config.instance(activity);
 
         String resHttp=Http.GetData(config.getCodeWarehouse(),BarCode,"");
         resHttp=resHttp.replace("&amp;","&");
