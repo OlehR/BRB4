@@ -27,9 +27,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ClientPriceCheckerActivity extends Activity {
-    TextView Title, BarCodeView, Article, ActionView, PriceBill, PriceCoin;
+    TextView Title, BarCodeView, Article, ActionView, PriceBill, PriceCoin, PriceBillOpt, PriceCoinOpt, OptTitle;
     RelativeLayout InfoLayout;
-    LinearLayout LogoLayout;
+    LinearLayout LogoLayout, OptPriceBlock;
     ImageView Background;
     VideoView PromoVideo;
     ClientPriceCheckerActivity context;
@@ -88,10 +88,14 @@ public class ClientPriceCheckerActivity extends Activity {
         ActionView = findViewById(R.id.Action);
         PriceBill = findViewById(R.id.PriceBill);
         PriceCoin = findViewById(R.id.PriceCoin);
+        PriceBillOpt = findViewById(R.id.PriceBillOpt);
+        PriceCoinOpt = findViewById(R.id.PriceCoinOpt);
         Background = findViewById(R.id.Background);
         LogoLayout = findViewById(R.id.LogoLayout);
         PromoVideo = findViewById(R.id.PromoVideo);
         VideoWatermark = findViewById(R.id.VideoWatermark);
+        OptTitle = findViewById(R.id.OptTitle);
+        OptPriceBlock = findViewById(R.id.OptPriceBlock);
 
         if(videoTimer != null){
             videoTimer.cancel();
@@ -120,7 +124,7 @@ public class ClientPriceCheckerActivity extends Activity {
             public void run() {
                 new AsyncFileCheker(context).execute();
             }
-        },9, 60000 * 60);
+        },90000, 60000 * 60);
 
         pm = (PowerManager) getSystemService(context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "clientpriceckecker::client_priceckecker_sleep");
@@ -133,6 +137,15 @@ public class ClientPriceCheckerActivity extends Activity {
         Article.setText(Li.Article);
         PriceBill.setText(((Integer)Li.PriceBill).toString());
         PriceCoin.setText(((Integer)Li.PriceCoin).toString());
+        PriceBillOpt.setText(((Integer)Li.PriceBillOpt).toString());
+        PriceCoinOpt.setText(((Integer)Li.PriceCoinOpt).toString());
+        OptTitle.setText("від "+ (Math.round(Li.QuantityOpt)==(long) Li.QuantityOpt ? Long.toString((long)  Li.QuantityOpt) : Double.toString(Li.QuantityOpt)) + " " + Li.Unit);
+
+        if(Li.PriceBillOpt > 0 || Li.PriceCoinOpt > 0){
+            OptPriceBlock.setVisibility(View.VISIBLE);
+        }else{
+            OptPriceBlock.setVisibility(View.INVISIBLE);
+        }
 
         if(Li.Action){
             ActionView.setVisibility(View.VISIBLE);

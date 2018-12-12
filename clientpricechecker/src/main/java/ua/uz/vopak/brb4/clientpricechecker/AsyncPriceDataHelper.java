@@ -13,10 +13,22 @@ public class AsyncPriceDataHelper extends AsyncTask<String , Void, LabelInfo>
     {
         GetDataHTTP Http = new GetDataHTTP();
         LabelInfo LI = new LabelInfo(null);
-        String BarCode = param[0].replace("\n","");
+        String BarCode = param[0].replace("\n",""),CodeWares="";
+
+        if(BarCode.indexOf('-')>0)
+        {
+            String [] str =BarCode.split("-");
+            CodeWares=str[0];
+            BarCode="";
+
+        }
+
+
+
+
         Config config = Config.instance(activity);
 
-        String resHttp=Http.GetData(config.getCodeWarehouse(),BarCode,"");
+        String resHttp=Http.GetData(config.getCodeWarehouse(),BarCode,CodeWares);
         resHttp=resHttp.replace("&amp;","&");
 
         LI.InfoHTTP= Http.HttpState.name();
