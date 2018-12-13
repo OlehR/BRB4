@@ -40,6 +40,16 @@ public class LabelInfo
     public String  InfoPrinter = ""; //Стан принтера
     public String  InfoHTTP = "";//Стан HTTP
     private Context varApplicationContext;
+
+    String strPriceCoin() {
+        return (PriceCoin < 10 ? "0" : "") + Integer.toString(PriceCoin).trim();
+    }
+
+    String strPriceCoinOpt()
+    {
+        return (PriceCoinOpt<10?"0":"")+Integer.toString(PriceCoinOpt).trim();
+    }
+
     public LabelInfo(Context parApplicationContext)
     {
        varApplicationContext=parApplicationContext;
@@ -121,10 +131,10 @@ public class LabelInfo
         String LabelLength = (IsShort?"295":"280");
 
         String varPriceBill=Integer.toString(PriceBill).trim();
-        String varPriceCoin=(PriceCoin<10?"0":"")+Integer.toString(PriceCoin).trim();
+        //String varPriceCoin=(PriceCoin<10?"0":"")+Integer.toString(PriceCoin).trim();
 
         String varPriceBill2=Integer.toString(PriceBillOpt).trim();
-        String varPriceCoin2=(PriceCoinOpt<10?"0":"")+Integer.toString(PriceCoinOpt).trim();
+        //String varPriceCoin2=(PriceCoinOpt<10?"0":"")+Integer.toString(PriceCoinOpt).trim();
 
 
         if(this.Name.length()<LengName)
@@ -216,8 +226,8 @@ public class LabelInfo
 
         Label=Label.replace("{Name1}",Name1).replace("{Name2}",Name2).
                     replace("{OffsetBill}",OffsetBill).replace("{OffsetCoin}",OffsetCoin).replace("{Unit}",varUnit).
-                    replace("{PriceBill}",varPriceBill).replace("{PriceCoin}",varPriceCoin).
-                    replace("{PriceBill2}",varPriceBill2).replace("{PriceCoin2}",varPriceCoin2).
+                    replace("{PriceBill}",varPriceBill).replace("{PriceCoin}",strPriceCoin()).
+                    replace("{PriceBill2}",varPriceBill2).replace("{PriceCoin2}",strPriceCoinOpt()).
                     replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode).
                     replace("{Article}",this.Article).replace("{Date}",CurrentDate).
                     replace("{OffsetBill2}",OffsetBill2).replace("{OffsetCoin2}",OffsetCoin2).
