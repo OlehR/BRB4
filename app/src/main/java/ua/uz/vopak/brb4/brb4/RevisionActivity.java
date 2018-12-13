@@ -23,7 +23,7 @@ public class RevisionActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.revision_layout);
         tl = findViewById(R.id.RevisionsList);
-        new AsyncRevisionHelper(GlobalConfig.GetWorker(), this).execute();
+        new AsyncRevisionHelper(GlobalConfig.GetWorker(), this).execute(new String[] {"1","ПСЮ12345678"});//!!!TMP
     }
 
     @Override

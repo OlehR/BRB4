@@ -119,16 +119,16 @@ public class Worker
 
    }
 
-   public void LoadDataInventory()
+   public void LoadDataDoc(String parTypeDoc,String parNumberDoc)
    {
-       String data="{\"CodeData\":152,\"NumberInventory\":\"00006165\","+GlobalConfig.GetLoginJson()+"}";
+       String data="{\"CodeData\":152,\"TypeDoc\"="+parTypeDoc+ ",\"NumberDoc\":\"" +parNumberDoc+ "\","+GlobalConfig.GetLoginJson()+"}";
        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
        mDbHelper.LoadDataInventory(result);
    }
 
-    public void LoadRevisionsList(Activity context)
+    public void LoadListDoc(Activity context,String parTypeDoc)
     {
-        String data="{\"CodeData\":151,\"Warehouse\":"+config.CodeWarehouse+","+GlobalConfig.GetLoginJson()+"}";
+        String data="{\"CodeData\":151,\"Warehouse\":"+config.CodeWarehouse+",\"TypeDoc\"="+parTypeDoc+ ","+GlobalConfig.GetLoginJson()+"}";
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
         RevisionActivity activity = (RevisionActivity)context;

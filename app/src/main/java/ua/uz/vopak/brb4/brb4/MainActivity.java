@@ -172,7 +172,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.Revision:
                 Worker worker=GlobalConfig.GetWorker();
-                new AsyncLoadInventory(worker).execute();
+                new AsyncLoadInventory(worker).execute("1");
                 Intent i = new Intent(this, RevisionActivity.class);
                 startActivity(i);
                 break;
