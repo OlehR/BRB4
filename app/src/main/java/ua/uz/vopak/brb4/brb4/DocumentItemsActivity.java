@@ -5,59 +5,83 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import java.io.Serializable;
+import java.util.List;
 
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncRevisionHelper;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncInventories;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 
-public class RevisionActivity extends Activity implements View.OnClickListener {
+public class DocumentItemsActivity extends Activity implements View.OnClickListener {
     TableLayout tl;
+    Button btn;
+    String number;
+    List<InventoryModel> InventoryItems;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.revision_layout);
-        tl = findViewById(R.id.RevisionsList);
-        new AsyncRevisionHelper(GlobalConfig.GetWorker(), this).execute(new String[] {"1","ПСЮ12345678"});//!!!TMP
+        setContentView(R.layout.revision_items_layout);
+        tl = findViewById(R.id.InventoriesList);
+        Intent i = getIntent();
+        number = i.getStringExtra("number");
+        btn = findViewById(R.id.F4);
+        btn.setOnClickListener(this);
+        new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number);
     }
 
     @Override
     public void onClick(View v) {
-        TextView currentNumber = v.findViewWithTag("number_inv");
-        Intent i = new Intent(this, RevisionItemsActivity.class);
-        i.putExtra("number", currentNumber.getText());
-        startActivity(i);
-
+        switch (v.getId()){
+            case R.id.F4:
+                Intent i = new Intent(this, RevisionScannerActivity.class);
+                i.putExtra("inv_number",number);
+                i.putExtra("InventoryItems",(Serializable)InventoryItems);
+                startActivityForResult(i,1);
+                break;
+        }
     }
 
-    public void renderTable(final String result){
-        final RevisionActivity context = this;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number);
+    }
+
+    public void renderTable(final List<InventoryModel> model){
+        InventoryItems = model;
+        final DocumentItemsActivity context = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
                 try {
-                    JSONObject jObject = new JSONObject(result);
+                    int dpValue = 5;
+                    float d = context.getResources().getDisplayMetrics().density;
+                    int padding = (int)(dpValue * d);
 
-                    if (jObject.getInt("State") == 1) {
-                        JSONArray arrJson = jObject.getJSONArray("ListInventory");
-                        int dpValue = 10;
-                        float d = context.getResources().getDisplayMetrics().density;
-                        dpValue = 3;
-                        int padding = (int)(dpValue * d);
+                    if(model.size() == 0){
+                        TableRow tr = new TableRow(context);
+                        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
-                        for (int i = 0; i < arrJson.length(); i++) {
-                            JSONArray innerArr = arrJson.getJSONArray(i);
+                        TextView message = new TextView(context);
+                        message.setPadding(padding, padding, padding, padding);
+                        message.setTextSize(20 * d);
+                        message.setGravity(Gravity.CENTER);
+                        message.setText("Товар не знайдено");
 
-                            String date = innerArr.getString(0);
-                            String numberInv = innerArr.getString(1);
-                            String extInfo = innerArr.getString(2);
-                            String userName = innerArr.getString(4);
+                        tr.addView(message);
+                        tl.addView(tr);
+                    }
+                    else {
+                        padding = (int)(3 * d);
+                        for (InventoryModel item : model) {
 
                             TableLayout tl0 = new TableLayout(context);
                             tl0.setWeightSum(2f);
@@ -72,7 +96,7 @@ public class RevisionActivity extends Activity implements View.OnClickListener {
                             TableRow tr2 = new TableRow(context);
 
                             TextView Date = new TextView(context);
-                            Date.setText(date);
+                            Date.setText(item.Number);
                             Date.setTextColor(Color.parseColor("#000000"));
                             tr.addView(Date);
 
@@ -84,41 +108,52 @@ public class RevisionActivity extends Activity implements View.OnClickListener {
                             Date.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
                             TextView NumberInv = new TextView(context);
-                            NumberInv.setText(numberInv);
+                            NumberInv.setText(item.CodeWares);
                             NumberInv.setTextColor(Color.parseColor("#000000"));
                             NumberInv.setTag("number_inv");
                             tr.addView(NumberInv);
 
                             TableRow.LayoutParams params1 = (TableRow.LayoutParams)NumberInv.getLayoutParams();
-                            params.width = 0;
+                            params1.width = 0;
                             params1.weight = 1;
                             NumberInv.setLayoutParams(params1);
                             NumberInv.setPadding(padding, padding, padding, padding);
                             NumberInv.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
                             TextView ExtInfo = new TextView(context);
-                            ExtInfo.setText(extInfo);
+                            ExtInfo.setText(item.NameWares);
                             ExtInfo.setTextColor(Color.parseColor("#000000"));
                             tr1.addView(ExtInfo);
 
                             TableRow.LayoutParams params2 = (TableRow.LayoutParams)ExtInfo.getLayoutParams();
-                            params.width = 0;
                             params2.weight = 2;
                             ExtInfo.setLayoutParams(params2);
                             ExtInfo.setPadding(padding, padding, padding, padding);
                             ExtInfo.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
                             TextView UserName = new TextView(context);
-                            UserName.setText(userName);
+                            UserName.setText("к-ст: " + item.Quantity);
                             UserName.setTextColor(Color.parseColor("#000000"));
                             tr2.addView(UserName);
 
                             TableRow.LayoutParams params3 = (TableRow.LayoutParams)UserName.getLayoutParams();
-                            params.width = 0;
-                            params3.weight = 2;
-                            UserName.setLayoutParams(params);
+                            params3.width = 0;
+                            params3.weight = 1;
+                            UserName.setLayoutParams(params3);
                             UserName.setPadding(padding, padding, padding, padding);
                             UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
+
+                            TextView OldQuantity = new TextView(context);
+                            OldQuantity.setText("ст.к-сть: " + item.OldQuantity);
+                            OldQuantity.setTextColor(Color.parseColor("#000000"));
+                            tr2.addView(OldQuantity);
+
+                            TableRow.LayoutParams params4 = (TableRow.LayoutParams)OldQuantity.getLayoutParams();
+                            params4.width = 0;
+                            params4.weight = 1;
+                            OldQuantity.setLayoutParams(params4);
+                            OldQuantity.setPadding(padding, padding, padding, padding);
+                            OldQuantity.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
 
                             tl0.addView(tr);
                             tl0.addView(tr1);
@@ -136,7 +171,6 @@ public class RevisionActivity extends Activity implements View.OnClickListener {
                             tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
                         }
                     }
-
                 } catch (Exception e) {
                     e.getMessage();
                 }

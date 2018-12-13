@@ -3,12 +3,12 @@ package ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers;
 
 import android.os.AsyncTask;
 
-import ua.uz.vopak.brb4.brb4.RevisionActivity;
+import ua.uz.vopak.brb4.brb4.DocumentActivity;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 
-public class AsyncRevisionHelper extends AsyncTask<String , Void, Void> {
+public class AsyncLoadListDoc extends AsyncTask<String , Void, Void> {
     Worker varWorker;
-    RevisionActivity activity;
+    DocumentActivity activity;
     @Override
     protected Void doInBackground(String... param)
     {
@@ -17,7 +17,7 @@ public class AsyncRevisionHelper extends AsyncTask<String , Void, Void> {
     }
 
 
-    public AsyncRevisionHelper( Worker parWorker, RevisionActivity context)
+    public AsyncLoadListDoc( Worker parWorker, DocumentActivity context)
     {
         activity = context;
         varWorker = parWorker;

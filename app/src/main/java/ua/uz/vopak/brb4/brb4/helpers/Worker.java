@@ -9,8 +9,8 @@ import android.widget.ProgressBar;
 import com.google.gson.Gson;
 import org.json.JSONObject;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
-import ua.uz.vopak.brb4.brb4.RevisionActivity;
-import ua.uz.vopak.brb4.brb4.RevisionItemsActivity;
+import ua.uz.vopak.brb4.brb4.DocumentActivity;
+import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
 import ua.uz.vopak.brb4.brb4.RevisionScannerActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
 import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
@@ -131,7 +131,7 @@ public class Worker
         String data="{\"CodeData\":151,\"Warehouse\":"+config.CodeWarehouse+",\"TypeDoc\"="+parTypeDoc+ ","+GlobalConfig.GetLoginJson()+"}";
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
-        RevisionActivity activity = (RevisionActivity)context;
+        DocumentActivity activity = (DocumentActivity)context;
 
         activity.renderTable(result);
     }
@@ -214,7 +214,7 @@ public class Worker
     public void GetInventories(String number, Activity context){
         List<InventoryModel> model = mDbHelper.GetInventories(number);
 
-        RevisionItemsActivity activity = (RevisionItemsActivity)context;
+        DocumentItemsActivity activity = (DocumentItemsActivity)context;
 
         activity.renderTable(model);
     }

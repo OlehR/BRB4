@@ -4,7 +4,7 @@ package ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers;
 import android.os.AsyncTask;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 
-public class AsyncLoadInventory extends AsyncTask<String , Void, Void> {
+public class AsyncLoadDataDoc extends AsyncTask<String , Void, Void> {
     Worker varWorker;
     @Override
     protected Void doInBackground(String... param)
@@ -20,7 +20,7 @@ public class AsyncLoadInventory extends AsyncTask<String , Void, Void> {
     };*/
 
 
-    public AsyncLoadInventory( Worker parWorker)
+    public AsyncLoadDataDoc( Worker parWorker)
     {
         varWorker=parWorker;
     }
