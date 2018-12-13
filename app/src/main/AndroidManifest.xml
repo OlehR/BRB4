@@ -61,10 +61,10 @@
             android:name=".SettingsActivity"
             android:launchMode="singleTop"/>
         <activity
-            android:name=".RevisionActivity"
+            android:name=".DocumentActivity"
             android:launchMode="singleTop"/>
         <activity
-            android:name=".RevisionItemsActivity"
+            android:name=".DocumentItemsActivity"
             android:launchMode="singleTop"/>
         <activity
             android:name=".RevisionScannerActivity"

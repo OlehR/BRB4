@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadInventory;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSyncData;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
@@ -172,8 +171,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.Revision:
                 Worker worker=GlobalConfig.GetWorker();
-                new AsyncLoadInventory(worker).execute("1");
-                Intent i = new Intent(this, RevisionActivity.class);
+                Intent i = new Intent(this, DocumentActivity.class);
                 startActivity(i);
                 break;
         }
