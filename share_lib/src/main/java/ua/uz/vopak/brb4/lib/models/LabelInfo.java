@@ -41,11 +41,11 @@ public class LabelInfo
     public String  InfoHTTP = "";//Стан HTTP
     private Context varApplicationContext;
 
-    String strPriceCoin() {
+    public String strPriceCoin() {
         return (PriceCoin < 10 ? "0" : "") + Integer.toString(PriceCoin).trim();
     }
 
-    String strPriceCoinOpt()
+    public String strPriceCoinOpt()
     {
         return (PriceCoinOpt<10?"0":"")+Integer.toString(PriceCoinOpt).trim();
     }

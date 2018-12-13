@@ -172,6 +172,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             case R.id.Revision:
                 Worker worker=GlobalConfig.GetWorker();
                 Intent i = new Intent(this, DocumentActivity.class);
+                i.putExtra("document_type", "1");
                 startActivity(i);
                 break;
         }

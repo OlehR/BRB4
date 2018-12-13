@@ -136,9 +136,9 @@ public class ClientPriceCheckerActivity extends Activity {
         BarCodeView.setText(Li.BarCode);
         Article.setText(Li.Article);
         PriceBill.setText(((Integer)Li.PriceBill).toString());
-        PriceCoin.setText(((Integer)Li.PriceCoin).toString());
+        PriceCoin.setText(Li.strPriceCoin());
         PriceBillOpt.setText(((Integer)Li.PriceBillOpt).toString());
-        PriceCoinOpt.setText(((Integer)Li.PriceCoinOpt).toString());
+        PriceCoinOpt.setText(Li.strPriceCoinOpt());
         OptTitle.setText("від "+ (Math.round(Li.QuantityOpt)==(long) Li.QuantityOpt ? Long.toString((long)  Li.QuantityOpt) : Double.toString(Li.QuantityOpt)) + " " + Li.Unit);
 
         if(Li.PriceBillOpt > 0 || Li.PriceCoinOpt > 0){

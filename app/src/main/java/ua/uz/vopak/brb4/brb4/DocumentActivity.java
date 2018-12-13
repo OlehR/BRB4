@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -13,26 +14,36 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadDataDoc;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadListDoc;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class DocumentActivity extends Activity implements View.OnClickListener {
     TableLayout tl;
+    String DocumentType;
+    RelativeLayout Loader;
+    DocumentActivity context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.revision_layout);
+        setContentView(R.layout.document_layout);
         tl = findViewById(R.id.RevisionsList);
-        new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute("1");//!!!TMP
+        Loader = findViewById(R.id.RevisionLoader);
+        context = this;
+
+        Intent i = getIntent();
+        DocumentType = i.getStringExtra("document_type");
+
+        if(DocumentType.equals("1")){
+            new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute("1");
+        }
     }
 
     @Override
     public void onClick(View v) {
         TextView currentNumber = v.findViewWithTag("number_inv");
-        Intent i = new Intent(this, DocumentItemsActivity.class);
-        i.putExtra("number", currentNumber.getText());
-        startActivity(i);
-
+        new AsyncLoadDataDoc(GlobalConfig.GetWorker(),this).execute(new String[]{"0", currentNumber.getText().toString()});
+        Loader.setVisibility(View.VISIBLE);
     }
 
     public void renderTable(final String result){
@@ -141,6 +152,20 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                     e.getMessage();
                 }
 
+            }
+        });
+    }
+
+    public void AfterLoadData(final String CurentNumber){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+        Intent i = new Intent(context, DocumentItemsActivity.class);
+        i.putExtra("number", CurentNumber);
+        i.putExtra("document_type", DocumentType);
+        Loader.setVisibility(View.INVISIBLE);
+        startActivity(i);
             }
         });
     }

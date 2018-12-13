@@ -19,4 +19,17 @@
 
 </ScrollView>
 
+    <RelativeLayout
+        android:id="@+id/RevisionLoader"
+        android:background="#A0FFFFFF"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progressDrawable="@drawable/circular_progress_bar"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
 </LinearLayout>

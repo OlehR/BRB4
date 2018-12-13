@@ -121,14 +121,14 @@ public class Worker
 
    public void LoadDataDoc(String parTypeDoc,String parNumberDoc)
    {
-       String data="{\"CodeData\":152,\"TypeDoc\"="+parTypeDoc+ ",\"NumberDoc\":\"" +parNumberDoc+ "\","+GlobalConfig.GetLoginJson()+"}";
+       String data="{\"CodeData\":152,\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\"" +parNumberDoc.replace("ПСЮ","")+ "\","+GlobalConfig.GetLoginJson()+"}";
        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
        mDbHelper.LoadDataInventory(result);
    }
 
     public void LoadListDoc(Activity context,String parTypeDoc)
     {
-        String data="{\"CodeData\":151,\"Warehouse\":"+config.CodeWarehouse+",\"TypeDoc\"="+parTypeDoc+ ","+GlobalConfig.GetLoginJson()+"}";
+        String data="{\"CodeData\":151,\"Warehouse\":"+config.CodeWarehouse+",\"TypeDoc\":"+parTypeDoc+ ","+GlobalConfig.GetLoginJson()+"}";
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
         DocumentActivity activity = (DocumentActivity)context;

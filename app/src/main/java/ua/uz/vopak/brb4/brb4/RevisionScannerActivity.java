@@ -58,7 +58,7 @@ public class RevisionScannerActivity extends Activity   implements ScanCallBack 
         super.onCreate(savedInstanceState);
         d = this.getResources().getDisplayMetrics().density;
         padding = (int)(dpValue * d);
-        setContentView(R.layout.revision_scanner_activity);
+        setContentView(R.layout.document_scanner_activity);
 
         aContext = this;
 

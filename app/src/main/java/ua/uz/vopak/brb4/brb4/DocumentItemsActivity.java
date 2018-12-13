@@ -28,7 +28,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.revision_items_layout);
+        setContentView(R.layout.document_items_layout);
         tl = findViewById(R.id.InventoriesList);
         Intent i = getIntent();
         number = i.getStringExtra("number");
