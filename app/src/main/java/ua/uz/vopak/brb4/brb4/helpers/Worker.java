@@ -121,7 +121,7 @@ public class Worker
 
    public void LoadDataDoc(String parTypeDoc,String parNumberDoc)
    {
-       String data="{\"CodeData\":152,\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\"" +parNumberDoc.replace("ПСЮ","")+ "\","+GlobalConfig.GetLoginJson()+"}";
+       String data="{\"CodeData\":152,\"Warehouse\":"+ config.CodeWarehouse+",\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\"" +parNumberDoc.replace("ПСЮ","")+ "\","+GlobalConfig.GetLoginJson()+"}";
        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
        mDbHelper.LoadDataInventory(result);
    }
