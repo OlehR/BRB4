@@ -17,7 +17,7 @@ public class Config {
     public static String SmbPath;
     XmlResourceParser xrp;
 
-    public Config(Context parContext){
+    protected Config(Context parContext){
         context = parContext;
         xrp = context.getResources().getXml(R.xml.config);
 
