@@ -42,7 +42,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         TextView currentNumber = v.findViewWithTag("number_inv");
-        new AsyncLoadDataDoc(GlobalConfig.GetWorker(),this).execute(new String[]{"0", currentNumber.getText().toString()});
+        new AsyncLoadDataDoc(GlobalConfig.GetWorker(),this).execute(new String[]{"1", currentNumber.getText().toString()});
         Loader.setVisibility(View.VISIBLE);
     }
 

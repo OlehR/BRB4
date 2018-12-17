@@ -118,7 +118,9 @@ public class SQLiteAdapter
             String[] varS=parSQL.split(";;;");
             for(int i=0;i<varS.length;i++)
             {
-                mDb.execSQL(varS[i]);
+
+                //if(varS[i].trim() != null || !varS[i].trim().isEmpty())
+                    mDb.execSQL(varS[i]);
             }
 
 
