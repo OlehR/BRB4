@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 
 import ua.uz.vopak.brb4.brb4.DocumentActivity;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
-
+@Deprecated
 public class AsyncLoadDataDoc extends AsyncTask<String , Void, Void> {
     Worker varWorker;
     DocumentActivity activity;

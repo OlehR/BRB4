@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.brb4.models;
 
 import android.content.Context;
+import android.os.Build;
 import android.widget.ProgressBar;
 
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
@@ -16,6 +17,7 @@ public class GlobalConfig {
     public static String Login = "c";
     public static String Password = "c";
     public static Worker Worker;
+    public static String SN = Build.SERIAL;
     public static SQLiteAdapter SQLiteAdapter;
     public static eTypeScaner TypeScaner = eTypeScaner.NotDefine;
     public static ua.uz.vopak.brb4.brb4.Scaner.Scaner Scaner;

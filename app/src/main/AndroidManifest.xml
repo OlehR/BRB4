@@ -82,6 +82,8 @@
                         <action android:name="ua.uz.vopak.brb4.brb4.RECVR"/>
                     </intent-filter>
         </receiver>
+        <receiver android:name=".MainActivity$AlarmReceiver" >
+        </receiver>
 
 
         <!--        <receiver

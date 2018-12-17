@@ -11,11 +11,11 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadDataDoc;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadListDoc;
+import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class DocumentActivity extends Activity implements View.OnClickListener {
@@ -23,6 +23,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
     String DocumentType;
     RelativeLayout Loader;
     DocumentActivity context;
+    String LastSyncDate = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,9 +35,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
         Intent i = getIntent();
         DocumentType = i.getStringExtra("document_type");
 
-        if(DocumentType.equals("1")){
-            new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute("1");
-        }
+        new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute(DocumentType);
     }
 
     @Override
@@ -46,29 +45,24 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
         Loader.setVisibility(View.VISIBLE);
     }
 
-    public void renderTable(final String result){
+    public void renderTable(final List<DocumentModel> model){
         final DocumentActivity context = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
                 try {
-                    JSONObject jObject = new JSONObject(result);
-
-                    if (jObject.getInt("State") == 1) {
-                        JSONArray arrJson = jObject.getJSONArray("ListInventory");
                         int dpValue = 10;
                         float d = context.getResources().getDisplayMetrics().density;
                         dpValue = 3;
                         int padding = (int)(dpValue * d);
 
-                        for (int i = 0; i < arrJson.length(); i++) {
-                            JSONArray innerArr = arrJson.getJSONArray(i);
+                        for (DocumentModel item : model) {
 
-                            String date = innerArr.getString(0);
-                            String numberInv = innerArr.getString(1);
-                            String extInfo = innerArr.getString(2);
-                            String userName = innerArr.getString(4);
+                            String date = item.DateDoc;
+                            String numberInv = item.NumberDoc;
+                            String extInfo = item.ExtInfo;
+                            String userName = item.NameUser;
 
                             TableLayout tl0 = new TableLayout(context);
                             tl0.setWeightSum(2f);
@@ -146,7 +140,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
                             tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
                         }
-                    }
 
                 } catch (Exception e) {
                     e.getMessage();

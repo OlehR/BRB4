@@ -1,10 +1,14 @@
 package ua.uz.vopak.brb4.brb4;
 
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -12,14 +16,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadDocsData;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSyncData;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
-    GlobalConfig config = GlobalConfig.instance();
+    static GlobalConfig config = GlobalConfig.instance();
     //public  static Boolean isCreatedScaner = false;
     //public static EMDKWrapper emdkWrapper = null;
     Button[] menuItems = new Button[4];
@@ -35,22 +41,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         //Ініціалізація BD
         Context c=this.getApplicationContext();
         GlobalConfig.Init(c);
-        /*GlobalConfig.GetSQLiteAdapter(c);
-        GlobalConfig.GetWorker();
-        //Ініціалізація сканера
-        GlobalConfig.GetScaner();
-*/
-/*
-
-        String model = android.os.Build.MODEL;
-        if( model.equals("TC20")  && ( android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions")) ){
-            emdkWrapper  = new EMDKWrapper(getApplicationContext());
-        }
-
-        if(emdkWrapper != null){
-            isCreatedScaner=emdkWrapper.getEMDKManager(savedInstanceState);
-        }
-*/
 
         auth = new AuterizationsHelper();
 
@@ -61,6 +51,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
 
         setContentView(R.layout.main_layout);
+
+        setAlarm(0, 60 * 30);
 
         menuItems[0] = findViewById(R.id.PriceCheker);
         menuItems[1] = findViewById(R.id.Revision);
@@ -175,6 +167,26 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 i.putExtra("document_type", "1");
                 startActivity(i);
                 break;
+        }
+    }
+
+    public final void setAlarm(int start, int interval) {
+        // create the pending intent
+        Intent intent = new Intent(this, AlarmReceiver.class);
+        // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
+                intent, 0);
+        // get the alarm manager, and scedule an alarm that calls the receiver
+        ((AlarmManager) getSystemService(ALARM_SERVICE)).setRepeating(
+                AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + start
+                        * 1000,  interval
+                        * 1000,pendingIntent);
+    }
+
+    public static class AlarmReceiver extends BroadcastReceiver {
+        public void onReceive(Context context, Intent intent) {
+            if(config.getCodeWarehouse() != "")
+            new AsyncLoadDocsData(config.GetWorker()).execute("-1");
         }
     }
 

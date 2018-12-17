@@ -37,6 +37,7 @@ public class AsyncWaresHelper extends AsyncTask<String , Void, WareListHelper>
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 config.CodeWarehouse = wH.map.get(warList.getSelectedItem().toString());
+                new AsyncLoadDocsData(config.GetWorker()).execute("-1");
                 new AsyncConfigPairAdd(config.GetWorker()).execute("Warehouse", config.CodeWarehouse);
             }
             @Override

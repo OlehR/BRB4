@@ -11,6 +11,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
@@ -100,7 +101,7 @@ public class SQLiteAdapter
     }
         return varRes;
     }
-    public boolean LoadDataInventory(String parSQL)
+    public boolean LoadDataDoc(String parSQL)
     {
         int varN=mDb.getVersion();
         try {
@@ -241,6 +242,37 @@ public class SQLiteAdapter
                     inventory.OldQuantity = mCur.getString(4);
                     inventory.NameWares = mCur.getString(5);
                     model.add(inventory);
+                }
+            }
+        }catch (Exception e){
+            e.getMessage();
+        }
+
+
+        return model;
+    }
+
+    public List<DocumentModel> GetDocumentList(String type) {
+        List<DocumentModel> model = new ArrayList<DocumentModel>();
+        Cursor mCur;
+        String sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+type+"'";
+
+        try {
+            //mDb.delete("INVENTORY_WARES", null, null);
+            mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null && mCur.getCount() > 0) {
+                while (mCur.moveToNext()){
+                    DocumentModel document = new DocumentModel();
+                    document.DateDoc = mCur.getString(0);
+                    document.TypeDoc = mCur.getString(1);
+                    document.NumberDoc = mCur.getString(2);
+                    document.ExtInfo = mCur.getString(3);
+                    document.NameUser = mCur.getString(4);
+                    document.BarCode = mCur.getString(5);
+                    document.Description = mCur.getString(6);
+                    document.DateInsert = mCur.getString(7);
+                    document.State = mCur.getString(8);
+                    model.add(document);
                 }
             }
         }catch (Exception e){

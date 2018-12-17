@@ -13,6 +13,7 @@ import ua.uz.vopak.brb4.brb4.DocumentActivity;
 import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
 import ua.uz.vopak.brb4.brb4.RevisionScannerActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
+import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
@@ -119,21 +120,29 @@ public class Worker
 
    }
 
+   @Deprecated
    public void LoadDataDoc(String parTypeDoc,String parNumberDoc)
    {
        String data="{\"CodeData\":152,\"Warehouse\":"+ config.CodeWarehouse+",\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\"" +parNumberDoc.replace("ПСЮ","")+ "\","+GlobalConfig.GetLoginJson()+"}";
        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
-       mDbHelper.LoadDataInventory(result);
+       mDbHelper.LoadDataDoc(result);
    }
 
     public void LoadListDoc(Activity context,String parTypeDoc)
     {
-        String data="{\"CodeData\":151,\"Warehouse\":"+config.CodeWarehouse+",\"TypeDoc\":"+parTypeDoc+ ","+GlobalConfig.GetLoginJson()+"}";
-        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
+        List<DocumentModel> model = mDbHelper.GetDocumentList(parTypeDoc);
 
         DocumentActivity activity = (DocumentActivity)context;
 
-        activity.renderTable(result);
+        activity.renderTable(model);
+    }
+
+    public void LoadDocsData(String parTypeDoc)
+    {
+        String data="{\"CodeData\":150,\"SerialNumber\":"+config.SN+",\"Warehouse\":"+config.CodeWarehouse+",\"TypeDoc\":"+parTypeDoc+ ","+GlobalConfig.GetLoginJson()+"}";
+        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
+
+        mDbHelper.LoadDataDoc(result);
     }
 
    public void SendLogPrice()

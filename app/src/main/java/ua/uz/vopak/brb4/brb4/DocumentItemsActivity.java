@@ -69,6 +69,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     if(model.size() == 0){
                         TableRow tr = new TableRow(context);
                         tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                        tl.removeAllViews();
 
                         TextView message = new TextView(context);
                         message.setPadding(padding, padding, padding, padding);
@@ -80,6 +81,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                         tl.addView(tr);
                     }
                     else {
+                        tl.removeAllViews();
                         padding = (int)(3 * d);
                         for (InventoryModel item : model) {
 
