@@ -120,7 +120,7 @@ public class SQLiteAdapter
             for(int i=0;i<varS.length;i++)
             {
 
-                //if(varS[i].trim() != null || !varS[i].trim().isEmpty())
+                if(varS[i].trim() != null && !varS[i].trim().isEmpty() && varS[i].length()>10)
                     mDb.execSQL(varS[i]);
             }
 
