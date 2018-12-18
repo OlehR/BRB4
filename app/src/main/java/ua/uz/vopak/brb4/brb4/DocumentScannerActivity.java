@@ -32,14 +32,12 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
-public class RevisionScannerActivity extends Activity   implements ScanCallBack {
+public class DocumentScannerActivity extends Activity   implements ScanCallBack {
     EditText barCode, currentCount, inputCount, scannerCof, scannerCount, countInPosition;
     TextView scannerTitle, inPosition, nameUnit;
     ScrollView scrollView;
-    //EMDKWrapper emdkWrapper;
-    //static mScanerWrapper mScanerW;
     private final Handler mHandler = new Handler();
-    public static RevisionScannerActivity aContext;
+    public static DocumentScannerActivity aContext;
     static String InventoryNumber;
     static Integer scanNN = 0;
     RelativeLayout loader;
@@ -120,7 +118,12 @@ public class RevisionScannerActivity extends Activity   implements ScanCallBack 
                     if(scannerCof.getText() == null || !scannerCof.getText().equals(""))
                         scannerCof.setText("1");
                     float cof = Float.parseFloat(scannerCof.getText().toString());
-                    scannerCount.setText(String.format("%.3f",(input * cof)));
+                    String tag = nameUnit.getTag().toString();
+
+                    if(tag.equals("7"))
+                        scannerCount.setText(String.format("%.3f",(input * cof)));
+                    else
+                        scannerCount.setText(String.format("%.0f",(input * cof)));
                 }
             }
         });
@@ -175,7 +178,7 @@ public class RevisionScannerActivity extends Activity   implements ScanCallBack 
     }
 
     public void AfterSave(final ArrayList args){
-        final RevisionScannerActivity context = this;
+        final DocumentScannerActivity context = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -211,6 +214,7 @@ public class RevisionScannerActivity extends Activity   implements ScanCallBack 
                 scannerCof.setText(model.Coefficient);
                 scannerTitle.setText(model.NameWares);
                 nameUnit.setText(model.NameUnit + " X");
+                nameUnit.setTag(model.CodeUnit);
 
                 View similar = RevisionTable.findViewWithTag(codeWares);
 
@@ -378,76 +382,4 @@ public class RevisionScannerActivity extends Activity   implements ScanCallBack 
             }, 100L);
         }
     }
-/*
-    public static class ScanResultReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(mScanerW != null) {
-                if (ScanConst.INTENT_USERMSG.equals(intent.getAction())) {
-                    mScanerW.mScanner.aDecodeGetResult(mScanerW.mDecodeResult.recycle());
-                }else if (ScanConst.INTENT_EVENT.equals(intent.getAction())) {
-                    byte[] decodeBytesValue = intent.getByteArrayExtra(ScanConst.EXTRA_EVENT_DECODE_VALUE);
-                    if(decodeBytesValue != null) {
-                        String value = new String(decodeBytesValue);
-
-                        new AsyncRevisionScanHelper(worker, aContext).execute(value);
-                    }
-
-                }
-            }
-
-        }
-    }
-
-    private DecodeStateCallback mStateCallback = new DecodeStateCallback(mHandler) {
-        public void onChangedState(int state) {
-            switch (state) {
-                case ScanConst.STATE_ON:
-                case ScanConst.STATE_TURNING_ON:
-
-                    break;
-                case ScanConst.STATE_OFF:
-                case ScanConst.STATE_TURNING_OFF:
-
-                    break;
-            }
-        };
-    };
-
-    private void initScanner() {
-        if (mScanerW != null) {
-            mScanerW.mScanner.aRegisterDecodeStateCallback(mStateCallback);
-            mScanerW.mScanner.aDecodeSetResultType(ScanConst.ResultType.DCD_RESULT_USERMSG);
-        }
-    }
-
-    private Runnable mStartOnResume = new Runnable() {
-        @Override
-        public void run() {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    initScanner();
-                }
-            });
-        }
-    };
-
-    @Override
-    protected void onPause() {
-        if (mScanerW != null) {
-            mScanerW.mScanner.aUnregisterDecodeStateCallback(mStateCallback);
-        }
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (mScanerW != null) {
-            mScanerW = null;
-        }
-        super.onDestroy();
-    }
-
-    */
 }

@@ -24,6 +24,7 @@
         <uses-library android:name="com.symbol.emdk" android:required="false"/>
 
         <activity android:name=".MainActivity"
+            android:noHistory="true"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -67,7 +68,7 @@
             android:name=".DocumentItemsActivity"
             android:launchMode="singleTop"/>
         <activity
-            android:name=".RevisionScannerActivity"
+            android:name=".DocumentScannerActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop"/>
 

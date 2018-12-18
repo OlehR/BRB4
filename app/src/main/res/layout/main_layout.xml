@@ -1,55 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/PriceCheker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/selected_button"
+                android:text="Провірка ціни" >
+            </Button>
+
+            <Button
+                android:id="@+id/Revision"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:background="@drawable/selected_button"
+                android:enabled="true"
+                android:state_selected="false"
+                android:text="Ревізія" />
+
+            <Button
+                android:id="@+id/Incom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:state_selected="false"
+                android:background="@drawable/selected_button"
+                android:layout_margin="5dp"
+                android:enabled="true"
+                android:focusable="false"
+                android:text="Прийомка" />
+
+            <Button
+                android:id="@+id/Settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:state_selected="false"
+                android:layout_margin="5dp"
+                android:background="@drawable/selected_button"
+                android:enabled="false"
+                android:focusable="false"
+                android:text="Налаштування" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+    android:id="@+id/RevisionLoader"
+    android:background="#A0FFFFFF"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-<LinearLayout
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center">
+    android:visibility="invisible">
 
-    <Button
-        android:id="@+id/PriceCheker"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@drawable/selected_button"
-        android:text="Провірка ціни" >
-    </Button>
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progressDrawable="@drawable/circular_progress_bar"
+            android:layout_centerInParent="true"/>
 
-    <Button
-        android:id="@+id/Revision"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@drawable/selected_button"
-        android:enabled="true"
-        android:state_selected="false"
-        android:text="Ревізія" />
+    </RelativeLayout>
 
-    <Button
-        android:id="@+id/Incom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:state_selected="false"
-        android:background="@drawable/selected_button"
-        android:layout_margin="5dp"
-        android:enabled="false"
-        android:focusable="false"
-        android:text="Прийомка" />
-
-    <Button
-        android:id="@+id/Settings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:state_selected="false"
-        android:layout_margin="5dp"
-        android:background="@drawable/selected_button"
-        android:enabled="false"
-        android:focusable="false"
-        android:text="Налаштування" />
-</LinearLayout>
-</RelativeLayout>
+</FrameLayout>

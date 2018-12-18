@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -16,7 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadDocsData;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSyncData;
@@ -26,18 +25,17 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
     static GlobalConfig config = GlobalConfig.instance();
-    //public  static Boolean isCreatedScaner = false;
-    //public static EMDKWrapper emdkWrapper = null;
+    public RelativeLayout loader;
     Button[] menuItems = new Button[4];
     int current = 0;
     AuterizationsHelper auth;
-    //Worker varWorker;
+    static boolean isFirstRun = true;
+    boolean isReload = false;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //Ініціалізація BD
         Context c=this.getApplicationContext();
         GlobalConfig.Init(c);
@@ -46,13 +44,27 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
         if(!auth.isAutorized){
             Intent i = new Intent(this, AuthActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
+            finish();
+            return;
         }
 
 
         setContentView(R.layout.main_layout);
 
-        setAlarm(0, 60 * 30);
+        loader = findViewById(R.id.RevisionLoader);
+
+        Intent in = getIntent();
+        isReload = Boolean.parseBoolean(in.getStringExtra("isReload"));
+
+        if(isFirstRun || isReload){
+            ShowLoader();
+            new AsyncLoadDocsData(config.GetWorker(), this).execute("0");
+            if(!isReload)
+            setAlarm(60 * 30, 60 * 30);
+            isFirstRun = false;
+        }
 
         menuItems[0] = findViewById(R.id.PriceCheker);
         menuItems[1] = findViewById(R.id.Revision);
@@ -124,11 +136,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     }
 
-    /*@Override
-    protected void onPause() {
-        super.onPause();
-        auth.isAutorized = false;
-    }*/
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -154,7 +161,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-
+        Intent i;
 
         switch (v.getId()){
             case R.id.PriceCheker:
@@ -162,9 +169,13 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
                 break;
             case R.id.Revision:
-                Worker worker=GlobalConfig.GetWorker();
-                Intent i = new Intent(this, DocumentActivity.class);
+                i = new Intent(this, DocumentActivity.class);
                 i.putExtra("document_type", "1");
+                startActivity(i);
+                break;
+            case R.id.Incom:
+               i = new Intent(this, DocumentActivity.class);
+                i.putExtra("document_type", "2");
                 startActivity(i);
                 break;
         }
@@ -185,9 +196,30 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     public static class AlarmReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
-            if(config.getCodeWarehouse() != "")
-            new AsyncLoadDocsData(config.GetWorker()).execute("-1");
+
+            if(config.getCodeWarehouse() != "") {
+                new AsyncLoadDocsData(config.GetWorker(), null).execute("0");
+            }
+
         }
+    }
+
+    public void HideLoader(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loader.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    public void ShowLoader(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loader.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override

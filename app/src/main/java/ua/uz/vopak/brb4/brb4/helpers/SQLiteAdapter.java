@@ -283,6 +283,19 @@ public class SQLiteAdapter
         return model;
     }
 
+    public void UpdateDocState(String state, String number){
+        try {
+            SQLiteDatabase db = mDb;
+            ContentValues values = new ContentValues();
+            values.put("state", state);
+            db.update("DOC", values, "number_doc="+number,null);
+        }
+        catch (Exception e)
+        {
+            String s=e.getMessage();
+        }
+    }
+
     public RevisionItemModel GetRevisionScanData(String number) {
         RevisionItemModel model = new RevisionItemModel();
         Cursor mCur;

@@ -2,12 +2,12 @@ package ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers;
 
 import android.os.AsyncTask;
 
-import ua.uz.vopak.brb4.brb4.RevisionScannerActivity;
+import ua.uz.vopak.brb4.brb4.DocumentScannerActivity;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 
 public class AsyncSaveInventory extends AsyncTask<String , Void, Void> {
     Worker varWorker;
-    RevisionScannerActivity activity;
+    DocumentScannerActivity activity;
     @Override
     protected Void doInBackground(String... param)
     {
@@ -16,7 +16,7 @@ public class AsyncSaveInventory extends AsyncTask<String , Void, Void> {
     }
 
 
-    public AsyncSaveInventory(Worker parWorker, RevisionScannerActivity context)
+    public AsyncSaveInventory(Worker parWorker, DocumentScannerActivity context)
     {
         activity=context;
         varWorker = parWorker;

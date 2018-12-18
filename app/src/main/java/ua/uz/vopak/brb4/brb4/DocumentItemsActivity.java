@@ -2,6 +2,7 @@ package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -16,13 +17,14 @@ import java.io.Serializable;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncInventories;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncUpdateDocState;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener {
     TableLayout tl;
-    Button btn;
-    String number;
+    Button btn, btnSave;
+    String number, documentType;
     List<InventoryModel> InventoryItems;
 
     @Override
@@ -32,8 +34,11 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         tl = findViewById(R.id.InventoriesList);
         Intent i = getIntent();
         number = i.getStringExtra("number");
+        documentType = i.getStringExtra("document_type");
         btn = findViewById(R.id.F4);
+        btnSave = findViewById(R.id.F3);
         btn.setOnClickListener(this);
+        btnSave.setOnClickListener(this);
         new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number);
     }
 
@@ -41,10 +46,13 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.F4:
-                Intent i = new Intent(this, RevisionScannerActivity.class);
+                Intent i = new Intent(this, DocumentScannerActivity.class);
                 i.putExtra("inv_number",number);
                 i.putExtra("InventoryItems",(Serializable)InventoryItems);
                 startActivityForResult(i,1);
+                break;
+            case R.id.F3:
+                new AsyncUpdateDocState(GlobalConfig.instance().GetWorker(),this).execute("1",number,documentType);
                 break;
         }
     }
@@ -61,6 +69,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             @Override
             public void run() {
 
+                tl.removeAllViews();
+
                 try {
                     int dpValue = 5;
                     float d = context.getResources().getDisplayMetrics().density;
@@ -69,7 +79,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     if(model.size() == 0){
                         TableRow tr = new TableRow(context);
                         tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                        tl.removeAllViews();
 
                         TextView message = new TextView(context);
                         message.setPadding(padding, padding, padding, padding);
@@ -81,7 +90,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                         tl.addView(tr);
                     }
                     else {
-                        tl.removeAllViews();
                         padding = (int)(3 * d);
                         for (InventoryModel item : model) {
 
@@ -179,5 +187,11 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
             }
         });
+    }
+
+    public void AfterSave(String DocumentType){
+        Intent i = new Intent(this,DocumentActivity.class);
+        i.putExtra("document_type", DocumentType);
+        startActivity(i);
     }
 }

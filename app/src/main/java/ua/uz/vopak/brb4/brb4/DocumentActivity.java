@@ -13,7 +13,6 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadDataDoc;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadListDoc;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
@@ -21,15 +20,12 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 public class DocumentActivity extends Activity implements View.OnClickListener {
     TableLayout tl;
     String DocumentType;
-    RelativeLayout Loader;
     DocumentActivity context;
-    String LastSyncDate = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.document_layout);
         tl = findViewById(R.id.RevisionsList);
-        Loader = findViewById(R.id.RevisionLoader);
         context = this;
 
         Intent i = getIntent();
@@ -41,8 +37,10 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         TextView currentNumber = v.findViewWithTag("number_inv");
-        new AsyncLoadDataDoc(GlobalConfig.GetWorker(),this).execute(new String[]{"1", currentNumber.getText().toString()});
-        Loader.setVisibility(View.VISIBLE);
+        Intent i = new Intent(context, DocumentItemsActivity.class);
+        i.putExtra("number", currentNumber.getText().toString());
+        i.putExtra("document_type", DocumentType);
+        startActivity(i);
     }
 
     public void renderTable(final List<DocumentModel> model){
@@ -145,20 +143,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                     e.getMessage();
                 }
 
-            }
-        });
-    }
-
-    public void AfterLoadData(final String CurentNumber){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-
-        Intent i = new Intent(context, DocumentItemsActivity.class);
-        i.putExtra("number", CurentNumber);
-        i.putExtra("document_type", DocumentType);
-        Loader.setVisibility(View.INVISIBLE);
-        startActivity(i);
             }
         });
     }

@@ -5,13 +5,16 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.view.View;
 import android.widget.ProgressBar;
 import com.google.gson.Gson;
 import org.json.JSONObject;
+
+import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.DocumentActivity;
 import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
-import ua.uz.vopak.brb4.brb4.RevisionScannerActivity;
+import ua.uz.vopak.brb4.brb4.DocumentScannerActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
@@ -120,14 +123,6 @@ public class Worker
 
    }
 
-   @Deprecated
-   public void LoadDataDoc(String parTypeDoc,String parNumberDoc)
-   {
-       String data="{\"CodeData\":152,\"Warehouse\":"+ config.CodeWarehouse+",\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\"" +parNumberDoc.replace("ПСЮ","")+ "\","+GlobalConfig.GetLoginJson()+"}";
-       String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
-       mDbHelper.LoadDataDoc(result);
-   }
-
     public void LoadListDoc(Activity context,String parTypeDoc)
     {
         List<DocumentModel> model = mDbHelper.GetDocumentList(parTypeDoc);
@@ -137,12 +132,23 @@ public class Worker
         activity.renderTable(model);
     }
 
-    public void LoadDocsData(String parTypeDoc)
+    public void LoadDocsData(String parTypeDoc, MainActivity context)
     {
         String data="{\"CodeData\":150,\"SerialNumber\":"+config.SN+",\"Warehouse\":"+config.CodeWarehouse+",\"TypeDoc\":"+parTypeDoc+ ","+GlobalConfig.GetLoginJson()+"}";
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
         mDbHelper.LoadDataDoc(result);
+
+        if(context != null)
+        context.HideLoader();
+    }
+
+    public void UpdateDocState(String state, String number, String DocumentType, DocumentItemsActivity activity){
+
+       mDbHelper.UpdateDocState(state,number.replace("ПСЮ",""));
+
+       if(state.equals("1"))
+           activity.AfterSave(DocumentType);
     }
 
    public void SendLogPrice()
@@ -231,14 +237,14 @@ public class Worker
     public void GetRevisionScannerData(String BarCode, Activity context){
         RevisionItemModel model = mDbHelper.GetRevisionScanData(BarCode);
 
-        RevisionScannerActivity activity = (RevisionScannerActivity) context;
+        DocumentScannerActivity activity = (DocumentScannerActivity) context;
         activity.RenderData(model);
     }
 
     public void SaveRevisionData(String count, String scanNN, String CodeWares, String InventoryNumber, Activity context){
         ArrayList args = mDbHelper.SaveRevisionData(count, scanNN, CodeWares, InventoryNumber);
 
-        RevisionScannerActivity activity = (RevisionScannerActivity) context;
+        DocumentScannerActivity activity = (DocumentScannerActivity) context;
 
         activity.AfterSave(args);
 
