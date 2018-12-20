@@ -29,13 +29,12 @@ import java.util.TimerTask;
 public class ClientPriceCheckerActivity extends Activity {
     TextView Title, BarCodeView, Article, ActionView, PriceBill, PriceCoin, PriceBillOpt, PriceCoinOpt, OptTitle;
     RelativeLayout InfoLayout;
-    LinearLayout LogoLayout, OptPriceBlock;
+    LinearLayout LogoLayout, OptPriceBlock, VideoWatermark;
     ImageView Background;
     VideoView PromoVideo;
     ClientPriceCheckerActivity context;
     LinearLayout ClientPriceChecker;
     EditText BarCode;
-    TextView VideoWatermark;
     private Timer infoLayoutTimer;
     public Timer videoTimer;
     PowerManager pm;
