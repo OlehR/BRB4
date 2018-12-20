@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
@@ -26,19 +27,9 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     private Worker worker;
     private Scaner scaner;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
-            Network, CountData;
+            Network, CountData, NewPriceOpt, OldPriceOpt;
     Button ChangePrintType;
-/*
-    public  class ReceiverBarCode extends BroadcastReceiver {
-        public ReceiverBarCode(){};
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String varBarCode = intent.getStringExtra("BARCODE");
-            ExecuteWorker(varBarCode);
-        }
-
-    }
-    ReceiverBarCode cReceiverBarCode = new ReceiverBarCode();*/
+    TableRow optRow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,8 +37,6 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
 
         setContentView(R.layout.price_checker_layout);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        //btnRestart = findViewById(R.id.button);
-        //btnRestart.setOnClickListener(this);
         codeView = findViewById(R.id.code);
         perView  = findViewById(R.id.per);
         nameView  = findViewById(R.id.title);
@@ -60,6 +49,9 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         Network = findViewById(R.id.Network);
         CountData = findViewById(R.id.CountData);
         ChangePrintType = findViewById(R.id.ChangePrintType );
+        NewPriceOpt = findViewById(R.id.price_opt );
+        OldPriceOpt = findViewById(R.id.old_price_opt );
+        optRow = findViewById(R.id.tableRowOpt);
         ChangePrintType.setOnClickListener(this);
 
         ProgressBar progresBar = findViewById(R.id.progressBar);
@@ -75,43 +67,12 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         scaner=GlobalConfig.GetScaner();
         scaner.Init(this,savedInstanceState);
 
-//        this.registerReceiver(cReceiverBarCode, new IntentFilter("BRB4.BARCODE"));
-
-      //In case we have been launched by the DataWedge intent plug-in
-       // Intent i = getIntent();
-        //handleDecodeData(i);
     }
-/*    void initScanner() {
-        if (scaner != null) {
-            ScanerPM500.mScanner.aRegisterDecodeStateCallback(mStateCallback);
-            ScanerPM500.mScanner.aDecodeSetResultType(ScanConst.ResultType.DCD_RESULT_USERMSG);
-
-        }
-    }
-
-    private final Handler mHandler = new Handler();
-    private DecodeStateCallback mStateCallback = new DecodeStateCallback(mHandler) {
-        public void onChangedState(int state) {
-            switch (state) {
-                case ScanConst.STATE_ON:
-                case ScanConst.STATE_TURNING_ON:
-
-                    break;
-                case ScanConst.STATE_OFF:
-                case ScanConst.STATE_TURNING_OFF:
-
-                    break;
-            }
-        };
-    };
-
-*/
 
     @Override
         public void Run(String parBarCode) {
             ExecuteWorker(parBarCode);
         }
-        ;
 
 
     @Override
@@ -143,8 +104,6 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     @Override
     public void onNewIntent(Intent i) {
         GlobalConfig.GetScaner().handleDecodeData(i);
-        //sendBroadcast(i);
-//        handleDecodeData(i);
 
     }
 
@@ -179,6 +138,26 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             priceText.setTextColor(Color.parseColor("#3bb46e"));
         }
 
+        if(LI.OldPriceOpt != LI.PriceOpt){
+            OldPriceOpt.setTextColor(Color.parseColor("#ee4343"));
+            NewPriceOpt.setTextColor(Color.parseColor("#ee4343"));
+            OldPriceOpt.setTextColor(Color.parseColor("#ee4343"));
+            NewPriceOpt.setTextColor(Color.parseColor("#ee4343"));
+        }else {
+            OldPriceOpt.setTextColor(Color.parseColor("#3bb46e"));
+            NewPriceOpt.setTextColor(Color.parseColor("#3bb46e"));
+            OldPriceOpt.setTextColor(Color.parseColor("#3bb46e"));
+            NewPriceOpt.setTextColor(Color.parseColor("#3bb46e"));
+        }
+
+        if(LI.OldPriceOpt != 0 || LI.PriceOpt != 0){
+            OldPriceOpt.setText(String.format("%.2f",(double)LI.OldPriceOpt/100));
+            NewPriceOpt.setText(String.format("%.2f",(double)LI.PriceOpt/100));
+            optRow.setVisibility(View.VISIBLE);
+        }else{
+            optRow.setVisibility(View.INVISIBLE);
+        }
+
         oldPriceView.setText(String.format("%.2f",(double)LI.OldPrice/100));
         priceView.setText(String.format("%.2f",(double)LI.Price/100));
         textBarcodeView.setText(LI.BarCode);
@@ -205,10 +184,6 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     protected void onDestroy() {
         // TODO Auto-generated method stub
         super.onDestroy();
-/*        //Release the EMDKmanager on Application exit.
-        if (MainActivity.emdkWrapper != null) {
-            MainActivity.emdkWrapper.release();
-        }*/
     }
 
 }

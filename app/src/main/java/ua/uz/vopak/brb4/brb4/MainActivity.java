@@ -57,15 +57,17 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
         Intent in = getIntent();
         isReload = Boolean.parseBoolean(in.getStringExtra("isReload"));
-/* ---!!!!!TMP Not Load
-        if(isFirstRun || isReload){
+
+        //---!!!!!TMP Not Load
+        if((isFirstRun || isReload) && !config.getCodeWarehouse().equals("000000000")){
             ShowLoader();
             new AsyncLoadDocsData(config.GetWorker(), this).execute("0");
             if(!isReload)
             setAlarm(60 * 30, 60 * 30);
             isFirstRun = false;
         }
-*/
+        ////////////////////////////////
+
         menuItems[0] = findViewById(R.id.PriceCheker);
         menuItems[1] = findViewById(R.id.Revision);
         menuItems[2] = findViewById(R.id.Incom);
@@ -197,7 +199,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     public static class AlarmReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
 
-            if(config.getCodeWarehouse() != "") {
+            if(!config.getCodeWarehouse().equals("000000000")) {
                 new AsyncLoadDocsData(config.GetWorker(), null).execute("0");
             }
 

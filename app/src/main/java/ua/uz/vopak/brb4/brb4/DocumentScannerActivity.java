@@ -70,20 +70,6 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         scaner=GlobalConfig.GetScaner();
         scaner.Init(this);
 
-
-        /*String model = android.os.Build.MODEL;
-        if( model.equals("TC20") && ( android.os.Build.MANUFACTURER.contains("Zebra Technologies") || android.os.Build.MANUFACTURER.contains("Motorola Solutions")) ){
-            emdkWrapper  = new EMDKWrapper(getApplicationContext());
-        }
-
-        if( model.equals("PM550") && android.os.Build.MANUFACTURER.contains("Point Mobile Co., Ltd.")){
-            mScanerW  = new mScanerWrapper();
-            //mScanerW.mContext = this;
-            mScanerW.mScanner = new ScanManager();
-            mScanerW.mDecodeResult = new DecodeResult();
-            mScanerW.mScanner.aDecodeSetResultType(ScanConst.ResultType.DCD_RESULT_EVENT);
-        }*/
-
         barCode = findViewById(R.id.RevisionBarCode);
         currentCount = findViewById(R.id.RevisionScannerCurrentCount);
         inputCount = findViewById(R.id.RevisionInputCount);
@@ -112,19 +98,25 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                if(s.length() != 0){
-                    float input = Float.parseFloat(inputCount.getText().toString());
-                    String cofStr = scannerCof.getText().toString();
-                    if(scannerCof.getText() == null || !scannerCof.getText().equals(""))
-                        scannerCof.setText("1");
-                    float cof = Float.parseFloat(scannerCof.getText().toString());
-                    String tag = nameUnit.getTag().toString();
+                        if (s.length() != 0) {
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                            float input = Float.parseFloat(inputCount.getText().toString());
+                            String cofStr = scannerCof.getText().toString();
+                            if (scannerCof.getText() == null || scannerCof.getText().equals(""))
+                                scannerCof.setText("1");
+                            float cof = Float.parseFloat(scannerCof.getText().toString());
+                            String tag = nameUnit.getTag().toString();
 
-                    if(tag.equals("7"))
-                        scannerCount.setText(String.format("%.3f",(input * cof)));
-                    else
-                        scannerCount.setText(String.format("%.0f",(input * cof)));
-                }
+                            if (tag.equals("7"))
+                                scannerCount.setText(String.format("%.3f", (input * cof)));
+                            else
+                                scannerCount.setText(String.format("%.0f", (input * cof)));
+                                }
+                            });
+                        }
+
             }
         });
 
