@@ -123,7 +123,7 @@ public class Worker
        }
        try {
 
-           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price ? 1 : (this.Printer.varPrinterError!=PrinterError.None ?-1:0))));
+           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError!=PrinterError.None ?-1:0))));
            SetProgress(100);
        }
        catch (Exception e)
