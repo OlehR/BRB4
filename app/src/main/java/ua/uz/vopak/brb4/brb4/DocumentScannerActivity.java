@@ -50,6 +50,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     int dpValue = 3;
     float d;
     int padding;
+    String documentType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +63,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
         Intent i = getIntent();
         InventoryNumber = i.getStringExtra("inv_number");
+        documentType = i.getStringExtra("document_type");
         InventoryItems = (List<DocWaresModel>)i.getSerializableExtra("InventoryItems");
         if(InventoryItems.size() > 0)
         scanNN = Integer.parseInt(InventoryItems.get(InventoryItems.size() - 1).OrderDoc);
@@ -139,7 +141,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             else {
                 loader.setVisibility(View.VISIBLE);
                 scanNN++;
-                new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares,  InventoryNumber,"1" );//!!!!TMP Тип документа
+                new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares,  InventoryNumber, documentType);
             }
         }
 

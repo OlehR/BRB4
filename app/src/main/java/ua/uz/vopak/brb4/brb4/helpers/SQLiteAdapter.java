@@ -226,9 +226,9 @@ public class SQLiteAdapter
     public List<DocWaresModel> GetDocWares(String number,String DocType) {
         List<DocWaresModel> model = new ArrayList<DocWaresModel>();
         Cursor mCur;
-        String sql = "SELECT iw.number_doc,iw.code_wares,iw.order_doc,iw.quantity,iw.quantity_old, w.NAME_WARES FROM DOC_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE number_inventory = '"+number+"'"+
+        String sql = "SELECT iw.number_doc,iw.code_wares,iw.order_doc,iw.quantity,iw.quantity_old, w.NAME_WARES FROM DOC_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE iw.number_doc = '"+number+"'"+
                 "and type_doc="+DocType+
-                "order by iw.order_doc asc";
+                " order by iw.order_doc asc";
 
         try {
             //mDb.delete("INVENTORY_WARES", null, null);

@@ -48,6 +48,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 Intent i = new Intent(this, DocumentScannerActivity.class);
                 i.putExtra("inv_number",number);
                 i.putExtra("InventoryItems",(Serializable)InventoryItems);
+                i.putExtra("document_type",documentType);
                 startActivityForResult(i,1);
                 break;
             case R.id.F3:
@@ -58,7 +59,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number);
+        new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number,documentType);
     }
 
     public void renderTable(final List<DocWaresModel> model){
