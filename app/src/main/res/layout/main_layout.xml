@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/selected_button"
-                android:enabled="true"
+                android:enabled="false"
                 android:state_selected="false"
                 android:text="Ревізія" />
 
@@ -38,7 +38,7 @@
                 android:state_selected="false"
                 android:background="@drawable/selected_button"
                 android:layout_margin="5dp"
-                android:enabled="true"
+                android:enabled="false"
                 android:focusable="false"
                 android:text="Прийомка" />
 
