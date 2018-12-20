@@ -99,25 +99,23 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                         if (s.length() != 0) {
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
                             float input = Float.parseFloat(inputCount.getText().toString());
+                            float cof;
                             String cofStr = scannerCof.getText().toString();
-                            if (scannerCof.getText() == null || scannerCof.getText().equals(""))
+                            if (scannerCof.getText() == null || cofStr.equals("")) {
                                 scannerCof.setText("1");
-                            float cof = Float.parseFloat(scannerCof.getText().toString());
-                            String tag = nameUnit.getTag().toString();
+                                cof = 1f;
+                            }else{
+                                cof = Float.parseFloat(scannerCof.getText().toString());
+                            }
+                            Object tag = nameUnit.getTag();
 
-                            if (tag.equals("7"))
+                            if (tag != null && tag.toString().equals("7"))
                                 scannerCount.setText(String.format("%.3f", (input * cof)));
                             else
                                 scannerCount.setText(String.format("%.0f", (input * cof)));
                                 }
-                            });
                         }
-
-            }
         });
 
     }
@@ -135,7 +133,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
         if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
             String input = inputCount.getText().toString();
-            if(input.equals("") || Integer.parseInt(input) <= 0){
+            if(input.equals("") || Integer.parseInt(input) <= 0 || scannerTitle.getText().toString().equals("")){
                 RemoveItemFromTable();
             }
             else {
@@ -206,6 +204,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 scannerCof.setText(model.Coefficient);
                 scannerTitle.setText(model.NameWares);
                 nameUnit.setText(model.NameUnit + " X");
+                if(model.CodeUnit != null)
                 nameUnit.setTag(model.CodeUnit);
 
                 View similar = RevisionTable.findViewWithTag(codeWares);

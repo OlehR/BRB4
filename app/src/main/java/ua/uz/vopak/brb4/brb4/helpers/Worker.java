@@ -145,7 +145,7 @@ public class Worker
 
     public void LoadDocsData(String parTypeDoc, MainActivity context)
     {
-        String data="{\"CodeData\":150,\"SerialNumber\":"+config.SN+",\"Warehouse\":"+config.CodeWarehouse+",\"TypeDoc\":"+parTypeDoc+ ","+GlobalConfig.GetLoginJson()+"}";
+        String data="{\"CodeData\":150,\"SerialNumber\":\""+config.SN+"\",\"Warehouse\":"+config.CodeWarehouse+",\"TypeDoc\":"+parTypeDoc+ ","+GlobalConfig.GetLoginJson()+"}";
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
         mDbHelper.LoadDataDoc(result);

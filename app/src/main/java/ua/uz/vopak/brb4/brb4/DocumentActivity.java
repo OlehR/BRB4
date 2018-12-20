@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
@@ -63,16 +64,26 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             String userName = item.NameUser;
 
                             TableLayout tl0 = new TableLayout(context);
-                            tl0.setWeightSum(2f);
 
 
                             TableRow tr0 = new TableRow(context);
+                            tr0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
 
                             TableRow tr = new TableRow(context);
+                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr.setGravity(Gravity.CENTER);
+                            tr.setWeightSum(2);
 
                             TableRow tr1 = new TableRow(context);
+                            tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr1.setGravity(Gravity.CENTER);
+                            tr1.setWeightSum(2);
 
                             TableRow tr2 = new TableRow(context);
+
+                            tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            tr2.setGravity(Gravity.CENTER);
+                            tr2.setWeightSum(2);
 
                             TextView Date = new TextView(context);
                             Date.setText(date);
@@ -80,7 +91,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             tr.addView(Date);
 
                             TableRow.LayoutParams params = (TableRow.LayoutParams)Date.getLayoutParams();
-                            params.width = 0;
                             params.weight = 1;
                             Date.setLayoutParams(params);
                             Date.setPadding(padding, padding, padding, padding);
@@ -93,7 +103,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             tr.addView(NumberInv);
 
                             TableRow.LayoutParams params1 = (TableRow.LayoutParams)NumberInv.getLayoutParams();
-                            params.width = 0;
                             params1.weight = 1;
                             NumberInv.setLayoutParams(params1);
                             NumberInv.setPadding(padding, padding, padding, padding);
@@ -105,7 +114,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             tr1.addView(ExtInfo);
 
                             TableRow.LayoutParams params2 = (TableRow.LayoutParams)ExtInfo.getLayoutParams();
-                            params.width = 0;
                             params2.weight = 2;
                             ExtInfo.setLayoutParams(params2);
                             ExtInfo.setPadding(padding, padding, padding, padding);
@@ -117,7 +125,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             tr2.addView(UserName);
 
                             TableRow.LayoutParams params3 = (TableRow.LayoutParams)UserName.getLayoutParams();
-                            params.width = 0;
                             params3.weight = 2;
                             UserName.setLayoutParams(params);
                             UserName.setPadding(padding, padding, padding, padding);
@@ -131,12 +138,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             tr0.setOnClickListener(context);
 
                             tl.addView(tr0);
-
-                            tl0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                            tr0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                            tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                            tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
                         }
 
                 } catch (Exception e) {
