@@ -49,70 +49,81 @@ public class Worker
    public LabelInfo Start(String parBarCode)
    {
        //Call Progres 10%;
+       //parBarCode="116897-7700-";
+       boolean isError=false;
        SetProgress(10);
+       BarCode=parBarCode.trim();
+       LI.OldPrice=0;
+       LI.OldPriceOpt=0;
 
-       BarCode=parBarCode;
        if(BarCode.indexOf('-')>0)
        {
-           String [] str =BarCode.split("-");
-           switch( str.length)
+           try {
+               String[] str = BarCode.split("-");
+               switch (str.length) {
+                   case 0:
+                   case 1:
+                       CodeWares = "";
+                       BarCode = "";
+                       break;
+                   case 3:
+
+                       LI.OldPriceOpt = Integer.parseInt(str[2]);
+                   case 2:
+                       CodeWares = str[0];
+                       LI.OldPrice = Integer.parseInt(str[1]);
+                       break;
+               }
+           }
+           catch (Exception ex)
            {
-              case 0:
-              case 1:
-               CodeWares="";
-               LI.OldPrice=0;
-               LI.OldPriceOpt=0;
-               BarCode="";
-               break;
-               case 3:
-                   LI.OldPriceOpt=Integer.parseInt(str[2]);
-               case 2:
-                   CodeWares=str[0];
-                   LI.OldPrice=Integer.parseInt(str[1]);
-                   break;
+               isError=true;
            }
        }
        else {
            CodeWares="";
-           LI.OldPrice = 0;
-           LI.OldPriceOpt=0;
-       }
+          }
 
        if(BarCode.length()>7 || !CodeWares.isEmpty() )
        {
-           String resHttp=Http.GetData(config.getCodeWarehouse(),BarCode,CodeWares);
-           resHttp=resHttp.replace("&amp;","&");
-           //Call Progres 50%;
-           LI.InfoHTTP= Http.HttpState.name();
-           SetProgress(50);
-           if(resHttp!=null && !resHttp.isEmpty())
-           {
-               LI.Init(resHttp);
-               LI.AllScan++;
-               if(LI.OldPrice!=LI.Price ||LI.OldPriceOpt!=LI.PriceOpt )
-               {
-                   LI.BadScan++;
-                   byte[] b = new byte[0];
-                   try {
-                       b = LI.LevelForPrinter(TypeLanguagePrinter.ZPL);
-                   } catch (UnsupportedEncodingException e) {
-                       //e.printStackTrace();
+           try {
+               String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
+               resHttp = resHttp.replace("&amp;", "&");
+               //Call Progres 50%;
+               LI.InfoHTTP = Http.HttpState.name();
+               SetProgress(50);
+               if (resHttp != null && !resHttp.isEmpty()) {
+                   LI.Init(resHttp);
+                   LI.AllScan++;
+                   if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
+                       LI.BadScan++;
+                       byte[] b = new byte[0];
+                       try {
+                           b = LI.LevelForPrinter(TypeLanguagePrinter.ZPL);
+                       } catch (UnsupportedEncodingException e) {
+                           //e.printStackTrace();
+                       }
+                       try {
+                           Printer.sendData(b);
+                       } catch (IOException e) {
+                           //LI.InfoPrinter="Lost Connect";
+                           //e.printStackTrace();
+                       }
+                       if (Printer.varPrinterError != PrinterError.None)
+                           LI.InfoPrinter = Printer.varPrinterError.name();
                    }
-                   try{
-                     Printer.sendData(b);
-                   } catch (IOException e) {
-                       //LI.InfoPrinter="Lost Connect";
-                       //e.printStackTrace();
-                      }
-                   if(Printer.varPrinterError!=PrinterError.None)
-                       LI.InfoPrinter=Printer.varPrinterError.name();
-               }
 
+               }
            }
+           catch (Exception ex)
+           {
+               isError=true;
+           }
+
        }
        try {
 
-           mDbHelper.InsLogPrice(BarCode,(LI.OldPrice == LI.Price ? 1 : (this.Printer.varPrinterError!=PrinterError.None ?-1:0)));
+           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price ? 1 : (this.Printer.varPrinterError!=PrinterError.None ?-1:0))));
            SetProgress(100);
        }
        catch (Exception e)
