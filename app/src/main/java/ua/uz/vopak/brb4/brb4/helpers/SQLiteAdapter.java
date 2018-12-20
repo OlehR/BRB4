@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
-import ua.uz.vopak.brb4.brb4.models.InventoryModel;
+import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
 public class SQLiteAdapter
@@ -223,21 +223,21 @@ public class SQLiteAdapter
         return value;
     }
 
-    public List<InventoryModel> GetInventories(String number) {
-        List<InventoryModel> model = new ArrayList<InventoryModel>();
+    public List<DocWaresModel> GetInventories(String number) {
+        List<DocWaresModel> model = new ArrayList<DocWaresModel>();
         Cursor mCur;
-        String sql = "SELECT iw.number_inventory,iw.code_wares,iw.nn,iw.quantity,iw.quantity_old, w.NAME_WARES FROM INVENTORY_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE number_inventory = '"+number+"'"+
-                "order by iw.nn asc";
+        String sql = "SELECT iw.number_doc,iw.code_wares,iw.order_doc,iw.quantity,iw.quantity_old, w.NAME_WARES FROM DOC_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE number_inventory = '"+number+"'"+
+                "order by iw.order_doc asc";
 
         try {
             //mDb.delete("INVENTORY_WARES", null, null);
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null && mCur.getCount() > 0) {
                 while (mCur.moveToNext()){
-                    InventoryModel inventory = new InventoryModel();
+                    DocWaresModel inventory = new DocWaresModel();
                     inventory.Number = mCur.getString(0);
                     inventory.CodeWares = mCur.getString(1);
-                    inventory.NN = mCur.getString(2);
+                    inventory.OrderDoc = mCur.getString(2);
                     inventory.Quantity = mCur.getString(3);
                     inventory.OldQuantity = mCur.getString(4);
                     inventory.NameWares = mCur.getString(5);
@@ -296,7 +296,7 @@ public class SQLiteAdapter
         }
     }
 
-    public RevisionItemModel GetRevisionScanData(String number) {
+    public RevisionItemModel GetScanData(String number) {
         RevisionItemModel model = new RevisionItemModel();
         Cursor mCur;
         String sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.NAME_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +

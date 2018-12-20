@@ -2,7 +2,6 @@ package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -10,7 +9,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -20,13 +18,13 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncInventories;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncUpdateDocState;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
-import ua.uz.vopak.brb4.brb4.models.InventoryModel;
+import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener {
     LinearLayout tl;
     Button btn, btnSave;
     String number, documentType;
-    List<InventoryModel> InventoryItems;
+    List<DocWaresModel> InventoryItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +61,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number);
     }
 
-    public void renderTable(final List<InventoryModel> model){
+    public void renderTable(final List<DocWaresModel> model){
         InventoryItems = model;
         final DocumentItemsActivity context = this;
         runOnUiThread(new Runnable() {
@@ -92,7 +90,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     }
                     else {
                         padding = (int)(3 * d);
-                        for (InventoryModel item : model) {
+                        for (DocWaresModel item : model) {
 
                             LinearLayout tl0 = new LinearLayout(context);
                             tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));

@@ -29,7 +29,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
-import ua.uz.vopak.brb4.brb4.models.InventoryModel;
+import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
 public class DocumentScannerActivity extends Activity   implements ScanCallBack {
@@ -42,7 +42,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     static Integer scanNN = 0;
     RelativeLayout loader;
     static String codeWares;
-    List<InventoryModel> InventoryItems;
+    List<DocWaresModel> InventoryItems;
     RevisionItemModel InventoryItem;
     TableLayout RevisionTable;
     static Worker worker = GlobalConfig.instance().GetWorker();
@@ -62,9 +62,9 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
         Intent i = getIntent();
         InventoryNumber = i.getStringExtra("inv_number");
-        InventoryItems = (List<InventoryModel>)i.getSerializableExtra("InventoryItems");
+        InventoryItems = (List<DocWaresModel>)i.getSerializableExtra("InventoryItems");
         if(InventoryItems.size() > 0)
-        scanNN = Integer.parseInt(InventoryItems.get(InventoryItems.size() - 1).NN);
+        scanNN = Integer.parseInt(InventoryItems.get(InventoryItems.size() - 1).OrderDoc);
         codeWares = "";
 
         scaner=GlobalConfig.GetScaner();
@@ -311,14 +311,14 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     public void RenderTable(){
         LinearLayout.LayoutParams params;
 
-        for (InventoryModel item : InventoryItems) {
+        for (DocWaresModel item : InventoryItems) {
             TableRow tr = new TableRow(this);
             tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
             TextView Position = new TextView(this);
             Position.setPadding(padding, padding, padding, padding);
             Position.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            Position.setText(item.NN);
+            Position.setText(item.OrderDoc);
             Position.setTextColor(Color.parseColor("#000000"));
             Position.setTag(item.CodeWares);
             tr.addView(Position);

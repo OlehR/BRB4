@@ -5,7 +5,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
-import android.view.View;
 import android.widget.ProgressBar;
 import com.google.gson.Gson;
 import org.json.JSONObject;
@@ -19,7 +18,7 @@ import ua.uz.vopak.brb4.brb4.enums.PrinterError;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
-import ua.uz.vopak.brb4.brb4.models.InventoryModel;
+import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
@@ -238,7 +237,7 @@ public class Worker
     }
 
     public void GetInventories(String number, Activity context){
-        List<InventoryModel> model = mDbHelper.GetInventories(number);
+        List<DocWaresModel> model = mDbHelper.GetInventories(number);
 
         DocumentItemsActivity activity = (DocumentItemsActivity)context;
 
@@ -246,7 +245,7 @@ public class Worker
     }
 
     public void GetRevisionScannerData(String BarCode, Activity context){
-        RevisionItemModel model = mDbHelper.GetRevisionScanData(BarCode);
+        RevisionItemModel model = mDbHelper.GetScanData(BarCode);
 
         DocumentScannerActivity activity = (DocumentScannerActivity) context;
         activity.RenderData(model);
