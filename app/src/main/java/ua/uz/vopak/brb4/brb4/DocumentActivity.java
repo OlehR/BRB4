@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -19,7 +20,7 @@ import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class DocumentActivity extends Activity implements View.OnClickListener {
-    TableLayout tl;
+    LinearLayout tl;
     String DocumentType;
     DocumentActivity context;
     @Override
@@ -55,46 +56,49 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                         float d = context.getResources().getDisplayMetrics().density;
                         dpValue = 3;
                         int padding = (int)(dpValue * d);
+                        LinearLayout.LayoutParams lp;
 
                         for (DocumentModel item : model) {
 
                             String date = item.DateDoc;
                             String numberInv = item.NumberDoc;
-                            String extInfo = item.ExtInfo;
+                            String extInfo = item.Description;
                             String userName = item.NameUser;
 
-                            TableLayout tl0 = new TableLayout(context);
+                            LinearLayout tl0 = new LinearLayout(context);
+                            tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            tl0.setOrientation(LinearLayout.VERTICAL);
 
+                            LinearLayout tr0 = new LinearLayout(context);
+                            tr0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            tr0.setOrientation(LinearLayout.VERTICAL);
 
-                            TableRow tr0 = new TableRow(context);
-                            tr0.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                            LinearLayout tr = new LinearLayout(context);
+                            tr.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            tr.setOrientation(LinearLayout.HORIZONTAL);
+                            tr.setWeightSum(2f);
 
-                            TableRow tr = new TableRow(context);
-                            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                            tr.setGravity(Gravity.CENTER);
-                            tr.setWeightSum(2);
+                            LinearLayout tr1 = new LinearLayout(context);
+                            tr1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            tr1.setOrientation(LinearLayout.HORIZONTAL);
+                            tr1.setWeightSum(2f);
 
-                            TableRow tr1 = new TableRow(context);
-                            tr1.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                            tr1.setGravity(Gravity.CENTER);
-                            tr1.setWeightSum(2);
-
-                            TableRow tr2 = new TableRow(context);
-
-                            tr2.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
-                            tr2.setGravity(Gravity.CENTER);
-                            tr2.setWeightSum(2);
+                            LinearLayout tr2 = new LinearLayout(context);
+                            tr2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            tr2.setOrientation(LinearLayout.HORIZONTAL);
+                            tr2.setWeightSum(2f);
 
                             TextView Date = new TextView(context);
                             Date.setText(date);
                             Date.setTextColor(Color.parseColor("#000000"));
                             tr.addView(Date);
 
-                            TableRow.LayoutParams params = (TableRow.LayoutParams)Date.getLayoutParams();
-                            params.weight = 1;
-                            Date.setLayoutParams(params);
                             Date.setPadding(padding, padding, padding, padding);
                             Date.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+                            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)Date.getLayoutParams();
+                            params.width = 0;
+                            params.weight = 1;
+                            Date.setLayoutParams(params);
 
                             TextView NumberInv = new TextView(context);
                             NumberInv.setText(numberInv);
@@ -102,18 +106,20 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             NumberInv.setTag("number_inv");
                             tr.addView(NumberInv);
 
-                            TableRow.LayoutParams params1 = (TableRow.LayoutParams)NumberInv.getLayoutParams();
-                            params1.weight = 1;
-                            NumberInv.setLayoutParams(params1);
                             NumberInv.setPadding(padding, padding, padding, padding);
                             NumberInv.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+                            LinearLayout.LayoutParams params1 = (LinearLayout.LayoutParams)NumberInv.getLayoutParams();
+                            params1.width = 0;
+                            params1.weight = 1;
+                            NumberInv.setLayoutParams(params1);
 
                             TextView ExtInfo = new TextView(context);
                             ExtInfo.setText(extInfo);
                             ExtInfo.setTextColor(Color.parseColor("#000000"));
                             tr1.addView(ExtInfo);
 
-                            TableRow.LayoutParams params2 = (TableRow.LayoutParams)ExtInfo.getLayoutParams();
+                            LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)ExtInfo.getLayoutParams();
+                            params2.width = 0;
                             params2.weight = 2;
                             ExtInfo.setLayoutParams(params2);
                             ExtInfo.setPadding(padding, padding, padding, padding);
@@ -124,9 +130,10 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             UserName.setTextColor(Color.parseColor("#000000"));
                             tr2.addView(UserName);
 
-                            TableRow.LayoutParams params3 = (TableRow.LayoutParams)UserName.getLayoutParams();
+                            LinearLayout.LayoutParams params3 = (LinearLayout.LayoutParams)UserName.getLayoutParams();
+                            params3.width = 0;
                             params3.weight = 2;
-                            UserName.setLayoutParams(params);
+                            UserName.setLayoutParams(params3);
                             UserName.setPadding(padding, padding, padding, padding);
                             UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
 

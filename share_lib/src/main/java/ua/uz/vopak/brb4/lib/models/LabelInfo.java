@@ -104,7 +104,7 @@ public class LabelInfo
         }
 
         PriceOpt=PriceBillOpt*100+PriceCoinOpt;
-        if(Price>0 && PriceOpt=+-=Price)
+        if(Price>0 && PriceOpt==Price)
         {
             PriceOpt=0;
             PriceBillOpt=0;

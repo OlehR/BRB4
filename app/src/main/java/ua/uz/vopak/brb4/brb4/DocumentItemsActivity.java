@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -22,7 +23,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.InventoryModel;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener {
-    TableLayout tl;
+    LinearLayout tl;
     Button btn, btnSave;
     String number, documentType;
     List<InventoryModel> InventoryItems;
@@ -77,8 +78,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     int padding = (int)(dpValue * d);
 
                     if(model.size() == 0){
-                        TableRow tr = new TableRow(context);
-                        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.WRAP_CONTENT));
+                        LinearLayout tr = new LinearLayout(context);
+                        tr.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
                         TextView message = new TextView(context);
                         message.setPadding(padding, padding, padding, padding);
@@ -93,24 +94,35 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                         padding = (int)(3 * d);
                         for (InventoryModel item : model) {
 
-                            TableLayout tl0 = new TableLayout(context);
-                            tl0.setWeightSum(2f);
+                            LinearLayout tl0 = new LinearLayout(context);
+                            tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            tl0.setOrientation(LinearLayout.VERTICAL);
 
 
-                            TableRow tr0 = new TableRow(context);
+                            LinearLayout tr0 = new LinearLayout(context);
+                            tr0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            tr0.setOrientation(LinearLayout.VERTICAL);
 
-                            TableRow tr = new TableRow(context);
+                            LinearLayout tr = new LinearLayout(context);
+                            tr.setOrientation(LinearLayout.HORIZONTAL);
+                            tr.setWeightSum(2f);
 
-                            TableRow tr1 = new TableRow(context);
+                            LinearLayout tr1 = new LinearLayout(context);
+                            tr1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            tr1.setOrientation(LinearLayout.HORIZONTAL);
+                            tr1.setWeightSum(2f);
 
-                            TableRow tr2 = new TableRow(context);
+                            LinearLayout tr2 = new LinearLayout(context);
+                            tr2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            tr2.setOrientation(LinearLayout.HORIZONTAL);
+                            tr2.setWeightSum(2f);
 
                             TextView Date = new TextView(context);
                             Date.setText(item.Number);
                             Date.setTextColor(Color.parseColor("#000000"));
                             tr.addView(Date);
 
-                            TableRow.LayoutParams params = (TableRow.LayoutParams)Date.getLayoutParams();
+                            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)Date.getLayoutParams();
                             params.width = 0;
                             params.weight = 1;
                             Date.setLayoutParams(params);
@@ -123,7 +135,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             NumberInv.setTag("number_inv");
                             tr.addView(NumberInv);
 
-                            TableRow.LayoutParams params1 = (TableRow.LayoutParams)NumberInv.getLayoutParams();
+                            LinearLayout.LayoutParams params1 = (LinearLayout.LayoutParams)NumberInv.getLayoutParams();
                             params1.width = 0;
                             params1.weight = 1;
                             NumberInv.setLayoutParams(params1);
@@ -135,7 +147,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             ExtInfo.setTextColor(Color.parseColor("#000000"));
                             tr1.addView(ExtInfo);
 
-                            TableRow.LayoutParams params2 = (TableRow.LayoutParams)ExtInfo.getLayoutParams();
+                            LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)ExtInfo.getLayoutParams();
+                            params2.width = 0;
                             params2.weight = 2;
                             ExtInfo.setLayoutParams(params2);
                             ExtInfo.setPadding(padding, padding, padding, padding);
@@ -146,7 +159,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             UserName.setTextColor(Color.parseColor("#000000"));
                             tr2.addView(UserName);
 
-                            TableRow.LayoutParams params3 = (TableRow.LayoutParams)UserName.getLayoutParams();
+                            LinearLayout.LayoutParams params3 = (LinearLayout.LayoutParams)UserName.getLayoutParams();
                             params3.width = 0;
                             params3.weight = 1;
                             UserName.setLayoutParams(params3);
@@ -158,7 +171,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             OldQuantity.setTextColor(Color.parseColor("#000000"));
                             tr2.addView(OldQuantity);
 
-                            TableRow.LayoutParams params4 = (TableRow.LayoutParams)OldQuantity.getLayoutParams();
+                            LinearLayout.LayoutParams params4 = (LinearLayout.LayoutParams)OldQuantity.getLayoutParams();
                             params4.width = 0;
                             params4.weight = 1;
                             OldQuantity.setLayoutParams(params4);
@@ -170,7 +183,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             tl0.addView(tr2);
 
                             tr0.addView(tl0);
-                            tr0.setOnClickListener(context);
 
                             tl.addView(tr0);
 
