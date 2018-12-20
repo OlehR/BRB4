@@ -38,7 +38,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         btnSave = findViewById(R.id.F3);
         btn.setOnClickListener(this);
         btnSave.setOnClickListener(this);
-        new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number);
+        new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number,documentType);
     }
 
     @Override

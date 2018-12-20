@@ -236,8 +236,8 @@ public class Worker
         return mDbHelper.GetConfigPair(name);
     }
 
-    public void GetInventories(String number, Activity context){
-        List<DocWaresModel> model = mDbHelper.GetInventories(number);
+    public void GetDoc(String number,String DocType, Activity context){
+        List<DocWaresModel> model = mDbHelper.GetDocWares(number,DocType);
 
         DocumentItemsActivity activity = (DocumentItemsActivity)context;
 
@@ -251,8 +251,8 @@ public class Worker
         activity.RenderData(model);
     }
 
-    public void SaveRevisionData(String count, String scanNN, String CodeWares, String InventoryNumber, Activity context){
-        ArrayList args = mDbHelper.SaveRevisionData(count, scanNN, CodeWares, InventoryNumber);
+    public void SaveDocWares(String count, String scanNN, String CodeWares, String DocNumber,String TypeDoc , Activity context){
+        ArrayList args = mDbHelper.SaveDocWares(count, scanNN, CodeWares, DocNumber,TypeDoc);
 
         DocumentScannerActivity activity = (DocumentScannerActivity) context;
 

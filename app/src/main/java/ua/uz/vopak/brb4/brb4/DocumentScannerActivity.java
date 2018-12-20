@@ -24,7 +24,7 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncRevisionScanHelper;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSaveInventory;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncDocWares;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
@@ -139,7 +139,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             else {
                 loader.setVisibility(View.VISIBLE);
                 scanNN++;
-                new AsyncSaveInventory(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares, InventoryNumber);
+                new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares,  InventoryNumber,"1" );//!!!!TMP Тип документа
             }
         }
 

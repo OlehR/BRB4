@@ -11,7 +11,7 @@ public class AsyncInventories extends AsyncTask<String , Void, Void> {
     @Override
     protected Void doInBackground(String... param)
     {
-        varWorker.GetInventories(param[0],activity);
+        varWorker.GetDoc(param[0],param[1],activity);
         return null;
     }
 

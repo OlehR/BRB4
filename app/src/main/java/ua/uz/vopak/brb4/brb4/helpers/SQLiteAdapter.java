@@ -223,10 +223,11 @@ public class SQLiteAdapter
         return value;
     }
 
-    public List<DocWaresModel> GetInventories(String number) {
+    public List<DocWaresModel> GetDocWares(String number,String DocType) {
         List<DocWaresModel> model = new ArrayList<DocWaresModel>();
         Cursor mCur;
         String sql = "SELECT iw.number_doc,iw.code_wares,iw.order_doc,iw.quantity,iw.quantity_old, w.NAME_WARES FROM DOC_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE number_inventory = '"+number+"'"+
+                "and type_doc="+DocType+
                 "order by iw.order_doc asc";
 
         try {
@@ -234,14 +235,14 @@ public class SQLiteAdapter
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null && mCur.getCount() > 0) {
                 while (mCur.moveToNext()){
-                    DocWaresModel inventory = new DocWaresModel();
-                    inventory.Number = mCur.getString(0);
-                    inventory.CodeWares = mCur.getString(1);
-                    inventory.OrderDoc = mCur.getString(2);
-                    inventory.Quantity = mCur.getString(3);
-                    inventory.OldQuantity = mCur.getString(4);
-                    inventory.NameWares = mCur.getString(5);
-                    model.add(inventory);
+                    DocWaresModel WaresModel = new DocWaresModel();
+                    WaresModel.Number = mCur.getString(0);
+                    WaresModel.CodeWares = mCur.getString(1);
+                    WaresModel.OrderDoc = mCur.getString(2);
+                    WaresModel.Quantity = mCur.getString(3);
+                    WaresModel.OldQuantity = mCur.getString(4);
+                    WaresModel.NameWares = mCur.getString(5);
+                    model.add(WaresModel);
                 }
             }
         }catch (Exception e){
@@ -327,18 +328,19 @@ public class SQLiteAdapter
         return model;
     }
 
-    public ArrayList SaveRevisionData(String count, String scanNN, String codeWares, String invNumber){
+    public ArrayList SaveDocWares(String Quantity, String scanOrderDoc, String codeWares, String invNumber, String invTypeDoc){
         long result = -1;
         String s = "";
         try {
             SQLiteDatabase db = mDb;
             ContentValues values = new ContentValues();
-            values.put("number_inventory", invNumber);
+            values.put("type_doc", invTypeDoc);
+            values.put("number_doc", invNumber);
             values.put("code_wares", codeWares);
-            values.put("nn", scanNN);
-            values.put("quantity", count);
+            values.put("order_doc", scanOrderDoc);
+            values.put("quantity", Quantity);
             values.put("quantity_old", 0);
-            result = db.insert("INVENTORY_WARES", null, values);
+            result = db.insert("DOC_WARES", null, values);
         }
         catch (Exception e)
         {
