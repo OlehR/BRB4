@@ -57,7 +57,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
         Intent in = getIntent();
         isReload = Boolean.parseBoolean(in.getStringExtra("isReload"));
-
+/* ---!!!!!TMP Not Load
         if(isFirstRun || isReload){
             ShowLoader();
             new AsyncLoadDocsData(config.GetWorker(), this).execute("0");
@@ -65,7 +65,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             setAlarm(60 * 30, 60 * 30);
             isFirstRun = false;
         }
-
+*/
         menuItems[0] = findViewById(R.id.PriceCheker);
         menuItems[1] = findViewById(R.id.Revision);
         menuItems[2] = findViewById(R.id.Incom);
