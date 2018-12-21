@@ -16,6 +16,7 @@ import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
 import ua.uz.vopak.brb4.brb4.DocumentScannerActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
+import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
@@ -257,6 +258,14 @@ public class Worker
         DocumentScannerActivity activity = (DocumentScannerActivity) context;
 
         activity.AfterSave(args);
+
+    }
+
+    public void GetQuantity(String typeDoc, String numberDoc, String CodeWares , Activity context){
+        QuantityModel model = mDbHelper.GetQuantity(typeDoc, numberDoc, CodeWares);
+
+        DocumentScannerActivity activity = (DocumentScannerActivity) context;
+
 
     }
 

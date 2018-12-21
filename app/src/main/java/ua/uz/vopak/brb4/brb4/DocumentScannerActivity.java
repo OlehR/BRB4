@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncGetQuantity;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncRevisionScanHelper;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncDocWares;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
@@ -30,6 +31,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
+import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
 public class DocumentScannerActivity extends Activity   implements ScanCallBack {
@@ -51,6 +53,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     float d;
     int padding;
     String documentType;
+    private QuantityModel quantity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +87,13 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         loader = findViewById(R.id.RevisionLoader);
         RevisionTable = findViewById(R.id.RevisionScanItemsTable);
         scrollView = findViewById(R.id.RevisionScrollView);
+
+        if(documentType.equals("2")){
+            loader.setVisibility(View.VISIBLE);
+            inputCount.setEnabled(false);
+            //Додати виклик функції. Розібратися з отриманням CodeWares;
+            //AsyncGetQuantity(documentType, InventoryNumber, codeWares, this);
+        }
 
         RenderTable();
 
@@ -124,10 +134,8 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
     @Override
     public void Run(String parBarCode) {
-     //   ExecuteWorker(parBarCode);
         new AsyncRevisionScanHelper(worker, aContext).execute(parBarCode);
     }
-    ;
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
@@ -374,5 +382,12 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 }
             }, 100L);
         }
+    }
+
+    public void SetQuantity(QuantityModel model){
+        quantity = model;
+        loader.setVisibility(View.INVISIBLE);
+        inputCount.setEnabled(true);
+        inputCount.requestFocus();
     }
 }

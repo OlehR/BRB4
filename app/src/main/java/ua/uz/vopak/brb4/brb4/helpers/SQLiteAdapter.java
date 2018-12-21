@@ -13,6 +13,7 @@ import android.util.Log;
 
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
+import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 
 public class SQLiteAdapter
@@ -319,6 +320,30 @@ public class SQLiteAdapter
                 model.NameUnit = mCur.getString(4);
                 model.BarCode = mCur.getString(5);
                 model.BaseCodeUnit = mCur.getString(6);
+            }
+        }catch (Exception e){
+            e.getMessage();
+        }
+
+
+        return model;
+    }
+
+    public QuantityModel GetQuantity(String typeDoc, String numberDoc, String codeWares) {
+        QuantityModel model = new QuantityModel();
+        Cursor mCur;
+        String sql = "select quantity, quantity_min, quantity_max " +
+                "from DOC_WARES_sample" +
+                "where type_doc="+typeDoc+" and number_doc="+numberDoc+ " and code_wares="+codeWares;
+
+        try {
+            mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null && mCur.getCount() > 0) {
+                mCur.moveToFirst();
+
+                model.Quantity = Integer.parseInt(mCur.getString(0));
+                model.QuantityMin = Integer.parseInt(mCur.getString(1));
+                model.QuantityMax = Integer.parseInt(mCur.getString(2));
             }
         }catch (Exception e){
             e.getMessage();
