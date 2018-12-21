@@ -16,8 +16,8 @@ import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 
 public class AuterizationsHelper {
     GlobalConfig config = GlobalConfig.instance();
-    private static String token = null;
-    public static Boolean isAutorized = false;
+    //Заготовка для авторизації по токену
+    //private static String token = null;
     AuthActivity activity;
 
     public AuterizationsHelper Start(String data){
@@ -36,7 +36,7 @@ public class AuterizationsHelper {
             JSONObject jObject = new JSONObject(result);
 
             if(jObject.getInt("State") == 0){
-                isAutorized = true;
+                GlobalConfig.instance().isAutorized = true;
                 new AsyncConfigPairAdd(config.GetWorker()).execute("Login", config.Login);
                 Intent i = new Intent(activity,MainActivity.class);
                 activity.startActivity(i);

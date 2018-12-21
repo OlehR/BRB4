@@ -62,7 +62,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
 
                 new AsyncAuthHelper(aHelper).execute(data);
 
-                if(aHelper.isAutorized){
+                if(GlobalConfig.instance().isAutorized){
                     Intent i = new Intent(this, MainActivity.class);
                     startActivity(i);
                 }
@@ -80,7 +80,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         //SomeActivity - имя класса Activity для которой переопределяем onBackPressed();
-                        aHelper.isAutorized = false;
+                        GlobalConfig.instance().isAutorized = false;
                         finish();
                         moveTaskToBack(true);
                     }
