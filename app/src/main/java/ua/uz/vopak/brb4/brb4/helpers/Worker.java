@@ -166,7 +166,7 @@ public class Worker
             wares.add(war);
         }
 
-        String data="{\"CodeData\":153,\"SN\":"+ config.SN +",\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"],"+GlobalConfig.GetLoginJson()+"}";
+        String data="{\"CodeData\":153,\"SerialNumber\":"+ config.SN +",\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"],"+GlobalConfig.GetLoginJson()+"}";
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
         String a = new String();

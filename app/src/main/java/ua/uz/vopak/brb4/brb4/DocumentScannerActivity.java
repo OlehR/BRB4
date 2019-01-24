@@ -140,7 +140,14 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         String keyCode = String.valueOf(event.getKeyCode());
 
         if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
-            saveDocumentItem("false");
+            barCode.setFocusable(true);
+            Object tag = barCode.getTag();
+            barCode.setFocusable(false);
+            if(tag != null && tag.toString().equals("onBarCode")){
+                findWareByArticleOrCode();
+            }else {
+                saveDocumentItem("false");
+            }
         }
 
         if(keyCode.equals("131") && event.getAction() == KeyEvent.ACTION_UP){
@@ -210,6 +217,13 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 nameUnit.setText(model.NameUnit + " X");
                 if(model.CodeUnit != null)
                 nameUnit.setTag(model.CodeUnit);
+
+                if(!codeWares.equals("") && Integer.parseInt(codeWares) > 0){
+                    barCode.setTag(null);
+                    inputCount.setFocusableInTouchMode(true);
+                    inputCount.requestFocusFromTouch();
+                    inputCount.setFocusableInTouchMode(false);
+                }
 
                 CheckAlert();
 
@@ -299,7 +313,10 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             public void run() {
                 //replace this line to scroll up or down
                 scrollView.fullScroll(ScrollView.FOCUS_DOWN);
-                inputCount.requestFocus();
+                barCode.setTag("onBarCode");
+                barCode.setFocusableInTouchMode(true);
+                barCode.requestFocusFromTouch();
+                barCode.setFocusableInTouchMode(false);
             }
         }, 100L);
     }
@@ -364,7 +381,9 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 public void run() {
                     //replace this line to scroll up or down
                     scrollView.fullScroll(ScrollView.FOCUS_DOWN);
-                    inputCount.requestFocus();
+                    barCode.setFocusableInTouchMode(true);
+                    barCode.requestFocusFromTouch();
+                    barCode.setFocusableInTouchMode(false);
                 }
             }, 100L);
         }
@@ -401,6 +420,11 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             scanNN++;
             new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares,  InventoryNumber, documentType, isNullable);
         }
+
+        barCode.setTag("onBarCode");
+        barCode.setFocusableInTouchMode(true);
+        barCode.requestFocusFromTouch();
+        barCode.setFocusableInTouchMode(false);
     }
 
     private static ArrayList<View> getViewsByTag(ViewGroup root, String tag){
@@ -490,5 +514,9 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         if(tv.getText().toString().equals("")){
             rows.removeView(tr);
         }
+    }
+
+    private void  findWareByArticleOrCode(){
+        new AsyncRevisionScanHelper(worker, aContext).execute(barCode.getText().toString());
     }
 }

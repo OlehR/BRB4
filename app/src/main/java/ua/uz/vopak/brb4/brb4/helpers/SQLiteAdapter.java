@@ -301,12 +301,27 @@ public class SQLiteAdapter
     public RevisionItemModel GetScanData(String number) {
         RevisionItemModel model = new RevisionItemModel();
         Cursor mCur;
-        String sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.NAME_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
-                "from BAR_CODE bc " +
-                "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
-                "join wares w on w.CODE_WARES=bc.CODE_WARES " +
-                "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
-                "where bc.BAR_CODE="+number;
+        String sql;
+        Integer intNum;
+        if(number.length() <= 8) {
+            intNum = Integer.parseInt(number);
+            number = intNum.toString();
+        }
+        if(number.length() >= 8) {
+            sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.NAME_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
+                    "from BAR_CODE bc " +
+                    "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
+                    "join wares w on w.CODE_WARES=bc.CODE_WARES " +
+                    "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
+                    "where bc.BAR_CODE=" + number;
+        }else{
+            sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.NAME_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
+                    "from BAR_CODE bc " +
+                    "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
+                    "join wares w on w.CODE_WARES=bc.CODE_WARES " +
+                    "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
+                    "where w.ARTICL=" + number;
+        }
 
         try {
             mCur = mDb.rawQuery(sql, null);
