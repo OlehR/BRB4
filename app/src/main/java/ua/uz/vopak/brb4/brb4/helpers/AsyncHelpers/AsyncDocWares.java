@@ -11,7 +11,7 @@ public class AsyncDocWares extends AsyncTask<String , Void, Void> {
     @Override
     protected Void doInBackground(String... param)
     {
-        varWorker.SaveDocWares(param[0], param[1], param[2], param[3], param[4], activity);
+        varWorker.SaveDocWares(param[0], param[1], param[2], param[3], param[4],param[5], activity);
         return null;
     }
 

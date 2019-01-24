@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.text.TextUtils;
 import android.widget.ProgressBar;
 import com.google.gson.Gson;
 import org.json.JSONObject;
@@ -154,12 +155,34 @@ public class Worker
         context.HideLoader();
     }
 
+    public void SyncDocsData(String parTypeDoc, String NumberDoc, List<DocWaresModel> Wares)
+    {
+        List<String> wares = new ArrayList<String>();
+        for(DocWaresModel ware: Wares){
+            String war = "";
+            war += "[" + ware.OrderDoc+",";
+            war += ware.CodeWares+",";
+            war += ware.Quantity+"]";
+            wares.add(war);
+        }
+
+        String data="{\"CodeData\":153,\"SN\":"+ config.SN +",\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"],"+GlobalConfig.GetLoginJson()+"}";
+        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
+
+        String a = new String();
+
+    }
+
     public void UpdateDocState(String state, String number, String DocumentType, DocumentItemsActivity activity){
 
        mDbHelper.UpdateDocState(state,number.replace("ПСЮ",""));
 
-       if(state.equals("1"))
+        List<DocWaresModel> wares = mDbHelper.GetDocWares(number,DocumentType);
+
+       if(state.equals("1")) {
+           SyncDocsData(DocumentType, number, wares);
            activity.AfterSave(DocumentType);
+       }
     }
 
    public void SendLogPrice()
@@ -252,7 +275,11 @@ public class Worker
         activity.RenderData(model);
     }
 
-    public void SaveDocWares(String count, String scanNN, String CodeWares, String DocNumber,String TypeDoc , Activity context){
+    public void SaveDocWares(String count, String scanNN, String CodeWares, String DocNumber,String TypeDoc , String isNullable, Activity context){
+        if(isNullable.equals("true")){
+            mDbHelper.SetNullableWares(CodeWares);
+        }
+
         ArrayList args = mDbHelper.SaveDocWares(count, scanNN, CodeWares, DocNumber,TypeDoc);
 
         DocumentScannerActivity activity = (DocumentScannerActivity) context;

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -39,6 +40,25 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         btn.setOnClickListener(this);
         btnSave.setOnClickListener(this);
         new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number,documentType);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        String keyCode = String.valueOf(event.getKeyCode());
+
+        if(keyCode.equals("134") && event.getAction() == KeyEvent.ACTION_UP){
+            Intent i = new Intent(this, DocumentScannerActivity.class);
+            i.putExtra("inv_number",number);
+            i.putExtra("InventoryItems",(Serializable)InventoryItems);
+            i.putExtra("document_type",documentType);
+            startActivityForResult(i,1);
+        }
+
+        if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
+            new AsyncUpdateDocState(GlobalConfig.instance().GetWorker(),this).execute("1",number,documentType);
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 
     @Override

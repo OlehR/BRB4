@@ -353,6 +353,21 @@ public class SQLiteAdapter
         return model;
     }
 
+    public void SetNullableWares(String CodeWares){
+        long result = -1;
+        String s = "";
+        try {
+            SQLiteDatabase db = mDb;
+            ContentValues cv = new ContentValues();
+            cv.put("quantity",0);
+            mDb.update("DOC_WARES",cv,"code_wares = "+ CodeWares ,null);
+        }
+        catch (Exception e)
+        {
+            s=e.getMessage();
+        }
+    }
+
     public ArrayList SaveDocWares(String Quantity, String scanOrderDoc, String codeWares, String invNumber, String invTypeDoc){
         long result = -1;
         String s = "";

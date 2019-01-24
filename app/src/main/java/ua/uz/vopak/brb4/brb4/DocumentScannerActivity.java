@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncGetQuantity;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncRevisionScanHelper;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncDocWares;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
@@ -49,9 +48,8 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     TableLayout RevisionTable;
     static Worker worker = GlobalConfig.instance().GetWorker();
     private Scaner scaner;
-    int dpValue = 3;
-    float d;
-    int padding;
+    int dpValue = 3, padding;
+    float d, totalExistingCount;
     String documentType;
     private QuantityModel quantity;
 
@@ -142,15 +140,11 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         String keyCode = String.valueOf(event.getKeyCode());
 
         if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
-            String input = inputCount.getText().toString();
-            if(input.equals("") || Integer.parseInt(input) <= 0 || scannerTitle.getText().toString().equals("")){
-                RemoveItemFromTable();
-            }
-            else {
-                loader.setVisibility(View.VISIBLE);
-                scanNN++;
-                new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares,  InventoryNumber, documentType);
-            }
+            saveDocumentItem("false");
+        }
+
+        if(keyCode.equals("131") && event.getAction() == KeyEvent.ACTION_UP){
+            setNullToExistingPosition();
         }
 
         return super.dispatchKeyEvent(event);
@@ -217,6 +211,8 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 if(model.CodeUnit != null)
                 nameUnit.setTag(model.CodeUnit);
 
+                CheckAlert();
+
                 View similar = RevisionTable.findViewWithTag(codeWares);
 
                 if (similar != null){
@@ -227,6 +223,8 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     }
 
     public void RenderTableItem(boolean isAlert){
+            CheckEmptyValue();
+
             LinearLayout.LayoutParams params;
 
             TableRow tr = new TableRow(this);
@@ -293,19 +291,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
                 tr.setTag("alert");
 
-                ViewGroup rows = RevisionTable;
-                for (int i = 0; i < rows.getChildCount(); i++) {
-                    TableRow trc = (TableRow) rows.getChildAt(i);
-                    View v = trc.getChildAt(0);
-                    String tag = (String) v.getTag();
-                    if(tag != null && tag.equals(codeWares)){
-                        for (int j = 0; j < trc.getChildCount(); j++) {
-                            TextView vI = (TextView)trc.getChildAt(j);
-                            vI.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_alert));
-                            vI.setTextColor(getResources().getColor(R.color.messageAlert));
-                        }
-                    }
-                }
+                CheckAlert(tr);
             }
 
             scrollView.postDelayed(new Runnable() {
@@ -389,5 +375,120 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         loader.setVisibility(View.INVISIBLE);
         inputCount.setEnabled(true);
         inputCount.requestFocus();
+    }
+
+    public void setNullToExistingPosition(){
+        ArrayList<View> existPos = getViewsByTag(RevisionTable,"nullable");
+
+        for(View item: existPos){
+            if(item instanceof ViewGroup){
+                View tx = ((ViewGroup) item).getChildAt(2);
+                ((TextView)tx).setText("0");
+            }
+        }
+
+        saveDocumentItem("true");
+    }
+
+    private  void  saveDocumentItem(String isNullable){
+        String input = inputCount.getText().toString();
+
+        if(input.equals("") || Integer.parseInt(input) <= 0 || scannerTitle.getText().toString().equals("")){
+            RemoveItemFromTable();
+        }
+        else {
+            loader.setVisibility(View.VISIBLE);
+            scanNN++;
+            new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares,  InventoryNumber, documentType, isNullable);
+        }
+    }
+
+    private static ArrayList<View> getViewsByTag(ViewGroup root, String tag){
+        ArrayList<View> views = new ArrayList<View>();
+        final int childCount = root.getChildCount();
+        for (int i = 0; i < childCount; i++) {
+            final View child = root.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                views.addAll(getViewsByTag((ViewGroup) child, tag));
+            }
+
+            final Object tagObj = child.getTag();
+            if (tagObj != null && tagObj.equals(tag)) {
+                views.add(child);
+            }
+
+        }
+        return views;
+    }
+
+    private void CheckAlert(TableRow tr){
+        totalExistingCount = 0f;
+        ViewGroup rows = RevisionTable;
+        for (int i = 0; i < rows.getChildCount(); i++) {
+            TableRow trc = (TableRow) rows.getChildAt(i);
+            View v = trc.getChildAt(0);
+            String tag = (String) v.getTag();
+            if(tag != null && tag.equals(codeWares)){
+                if(!trc.equals(tr)){
+                    trc.setTag("nullable");
+                    totalExistingCount += Float.parseFloat(((TextView)trc.getChildAt(2)).getText().toString());
+                }else{
+                    trc.setTag(null);
+                }
+                for (int j = 0; j < trc.getChildCount(); j++) {
+                    TextView vI = (TextView)trc.getChildAt(j);
+                    vI.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_alert));
+                    vI.setTextColor(getResources().getColor(R.color.messageAlert));
+                }
+            }else{
+                for (int j = 0; j < trc.getChildCount(); j++) {
+                    TextView vI = (TextView)trc.getChildAt(j);
+                    vI.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+                    vI.setTextColor(Color.parseColor("#000000"));
+                }
+            }
+        }
+
+        Object tag = nameUnit.getTag();
+
+        if (tag != null && tag.toString().equals("7"))
+            currentCount.setText(String.format("%.3f", totalExistingCount));
+        else
+            currentCount.setText(String.format("%.0f", totalExistingCount));
+    }
+
+    private void CheckAlert(){
+        ViewGroup rows = RevisionTable;
+        for (int i = 0; i < rows.getChildCount(); i++) {
+            TableRow trc = (TableRow) rows.getChildAt(i);
+            View v = trc.getChildAt(0);
+            String tag = (String) v.getTag();
+            if(tag != null && tag.equals(codeWares)){
+                for (int j = 0; j < trc.getChildCount(); j++) {
+                    TextView vI = (TextView)trc.getChildAt(j);
+                    vI.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_alert));
+                    vI.setTextColor(getResources().getColor(R.color.messageAlert));
+                }
+            }else{
+                trc.setTag(null);
+                for (int j = 0; j < trc.getChildCount(); j++) {
+                    TextView vI = (TextView)trc.getChildAt(j);
+                    vI.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+                    vI.setTextColor(Color.parseColor("#000000"));
+                }
+            }
+        }
+
+        CheckEmptyValue();
+    }
+
+    private  void CheckEmptyValue(){
+        ViewGroup rows = RevisionTable;
+        TableRow tr = (TableRow) rows.getChildAt(rows.getChildCount() - 1);
+        TextView tv = (TextView)tr.getChildAt(2);
+        String a = tv.getText().toString();
+        if(tv.getText().toString().equals("")){
+            rows.removeView(tr);
+        }
     }
 }
