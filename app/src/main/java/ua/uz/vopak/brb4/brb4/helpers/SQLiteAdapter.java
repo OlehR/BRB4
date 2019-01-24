@@ -303,10 +303,13 @@ public class SQLiteAdapter
         Cursor mCur;
         String sql;
         Integer intNum = 0;
+        boolean isBarCode = true;
         if(number.length() <= 8) {
             intNum = Integer.parseInt(number);
+            isBarCode = intNum.toString().length() >= 8;
         }
-        if(intNum.toString().length() >= 8) {
+
+        if(isBarCode) {
             sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.NAME_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                     "from BAR_CODE bc " +
                     "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
@@ -318,7 +321,7 @@ public class SQLiteAdapter
                     "from WARES w " +
                     "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +
                     "join UNIT_DIMENSION ud on w.CODE_UNIT=ud.CODE_UNIT " +
-                    "where w.ARTICL=" + number;
+                    "where w.ARTICL='" + number+"'";
         }
 
         try {

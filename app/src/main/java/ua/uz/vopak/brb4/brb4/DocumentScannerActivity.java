@@ -186,6 +186,10 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 boolean isSave = (boolean) args.get(0);
                 String message = (String) args.get(1);
 
+                barCode.setFocusable(true);
+                barCode.setTag("onBarCode");
+                barCode.setFocusable(false);
+
                 if(isSave) {
                     RenderTableItem(false);
                     RemoveItemFromTable();
@@ -316,11 +320,17 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 //replace this line to scroll up or down
                 scrollView.fullScroll(ScrollView.FOCUS_DOWN);
                 barCode.setFocusable(true);
-                barCode.setTag("onBarCode");
+                Object tag = barCode.getTag();
                 barCode.setFocusable(false);
-                barCode.setFocusableInTouchMode(true);
-                barCode.requestFocusFromTouch();
-                barCode.setFocusableInTouchMode(false);
+                if(tag == null || !tag.toString().equals("onBarCode")) {
+                    inputCount.setFocusableInTouchMode(true);
+                    inputCount.requestFocusFromTouch();
+                    inputCount.setFocusableInTouchMode(false);
+                }else{
+                    barCode.setFocusableInTouchMode(true);
+                    barCode.requestFocusFromTouch();
+                    barCode.setFocusableInTouchMode(false);
+                }
             }
         }, 100L);
     }
