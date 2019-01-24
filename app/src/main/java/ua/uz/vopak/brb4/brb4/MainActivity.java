@@ -61,7 +61,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         //---!!!!!TMP Not Load
         if((isFirstRun || isReload) && !config.getCodeWarehouse().equals("000000000")){
             ShowLoader();
-            new AsyncLoadDocsData(config.GetWorker(), this).execute("0");
+            new AsyncLoadDocsData(config.GetWorker(), this).execute(isReload?"-1":"0");
             if(!isReload)
             setAlarm(60 * 30, 60 * 30);
             isFirstRun = false;

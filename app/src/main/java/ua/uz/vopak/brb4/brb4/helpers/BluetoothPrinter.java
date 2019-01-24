@@ -49,6 +49,7 @@ public class BluetoothPrinter {
                     String name=device.getName();
                     switch (name)
                     {
+                        case "Q320":
                         case "Argox 3230":
                         case "00:0A:3A:32:1B:F1":
                         case "Argox AME-3230B":
