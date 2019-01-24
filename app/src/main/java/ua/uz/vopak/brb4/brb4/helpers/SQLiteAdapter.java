@@ -302,12 +302,11 @@ public class SQLiteAdapter
         RevisionItemModel model = new RevisionItemModel();
         Cursor mCur;
         String sql;
-        Integer intNum;
+        Integer intNum = 0;
         if(number.length() <= 8) {
             intNum = Integer.parseInt(number);
-            number = intNum.toString();
         }
-        if(number.length() >= 8) {
+        if(intNum.toString().length() >= 8) {
             sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.NAME_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                     "from BAR_CODE bc " +
                     "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
@@ -315,11 +314,10 @@ public class SQLiteAdapter
                     "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
                     "where bc.BAR_CODE=" + number;
         }else{
-            sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.NAME_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
-                    "from BAR_CODE bc " +
-                    "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
-                    "join wares w on w.CODE_WARES=bc.CODE_WARES " +
-                    "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
+            sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.NAME_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
+                    "from WARES w " +
+                    "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +
+                    "join UNIT_DIMENSION ud on w.CODE_UNIT=ud.CODE_UNIT " +
                     "where w.ARTICL=" + number;
         }
 

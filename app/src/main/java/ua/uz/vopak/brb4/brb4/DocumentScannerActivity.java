@@ -219,7 +219,9 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 nameUnit.setTag(model.CodeUnit);
 
                 if(!codeWares.equals("") && Integer.parseInt(codeWares) > 0){
+                    barCode.setFocusable(true);
                     barCode.setTag(null);
+                    barCode.setFocusable(false);
                     inputCount.setFocusableInTouchMode(true);
                     inputCount.requestFocusFromTouch();
                     inputCount.setFocusableInTouchMode(false);
@@ -313,7 +315,9 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             public void run() {
                 //replace this line to scroll up or down
                 scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                barCode.setFocusable(true);
                 barCode.setTag("onBarCode");
+                barCode.setFocusable(false);
                 barCode.setFocusableInTouchMode(true);
                 barCode.requestFocusFromTouch();
                 barCode.setFocusableInTouchMode(false);
@@ -381,6 +385,9 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 public void run() {
                     //replace this line to scroll up or down
                     scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                    barCode.setFocusable(true);
+                    barCode.setTag("onBarCode");
+                    barCode.setFocusable(false);
                     barCode.setFocusableInTouchMode(true);
                     barCode.requestFocusFromTouch();
                     barCode.setFocusableInTouchMode(false);
@@ -421,7 +428,9 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares,  InventoryNumber, documentType, isNullable);
         }
 
+        barCode.setFocusable(true);
         barCode.setTag("onBarCode");
+        barCode.setFocusable(false);
         barCode.setFocusableInTouchMode(true);
         barCode.requestFocusFromTouch();
         barCode.setFocusableInTouchMode(false);
