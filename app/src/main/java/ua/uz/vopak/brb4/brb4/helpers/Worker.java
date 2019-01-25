@@ -146,7 +146,7 @@ public class Worker
 
     public void LoadDocsData(String parTypeDoc, MainActivity context)
     {
-        String data="{\"CodeData\":150,\"SerialNumber\":\""+config.SN+"\",\"Warehouse\":"+config.CodeWarehouse+",\"TypeDoc\":"+parTypeDoc+ ","+GlobalConfig.GetLoginJson()+"}";
+        String data=GlobalConfig.GetApiJson(150,"\"TypeDoc\":"+parTypeDoc);
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
         mDbHelper.LoadDataDoc(result);
@@ -165,11 +165,10 @@ public class Worker
             war += ware.Quantity+"]";
             wares.add(war);
         }
-
-        String data="{\"CodeData\":153,\"SerialNumber\":"+ config.SN +",\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"],"+GlobalConfig.GetLoginJson()+"}";
+        String data=GlobalConfig.GetApiJson(153,"\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"]");
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
-        String a = new String();
+//        String a = new String();
 
     }
 
@@ -193,7 +192,7 @@ public class Worker
 
        //Gson g= new Gson(stockArr).toJson(obj);
        String a = new Gson().toJson(list);
-       String data="{\"CodeData\":141,\"Warehouse\":\""+GlobalConfig.CodeWarehouse +"\","+ GlobalConfig.GetLoginJson()   +",\"LogPrice\":"+a+"}";
+       String data=GlobalConfig.GetApiJson(141,"\"LogPrice\":"+a);
 
        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 

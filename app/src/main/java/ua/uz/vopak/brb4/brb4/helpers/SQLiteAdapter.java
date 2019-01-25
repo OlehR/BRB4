@@ -315,7 +315,7 @@ public class SQLiteAdapter
                     "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
                     "join wares w on w.CODE_WARES=bc.CODE_WARES " +
                     "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
-                    "where bc.BAR_CODE=" + number;
+                    "where bc.BAR_CODE='" + number.trim()+"'";
         }else{
             sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.NAME_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                     "from WARES w " +

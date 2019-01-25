@@ -222,7 +222,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 if(model.CodeUnit != null)
                 nameUnit.setTag(model.CodeUnit);
 
-                if(!codeWares.equals("") && Integer.parseInt(codeWares) > 0){
+                if(codeWares!=null && !codeWares.equals("") && Integer.parseInt(codeWares) > 0){
                     barCode.setFocusable(true);
                     barCode.setTag(null);
                     barCode.setFocusable(false);
