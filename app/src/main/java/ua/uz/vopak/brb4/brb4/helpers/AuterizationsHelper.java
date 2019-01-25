@@ -36,7 +36,7 @@ public class AuterizationsHelper {
             JSONObject jObject = new JSONObject(result);
 
             if(jObject.getInt("State") == 0){
-                GlobalConfig.instance().isAutorized = true;
+                config.isAutorized = true;
                 new AsyncConfigPairAdd(config.GetWorker()).execute("Login", config.Login);
                 Intent i = new Intent(activity,MainActivity.class);
                 activity.startActivity(i);

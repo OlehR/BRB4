@@ -3,6 +3,7 @@ package ua.uz.vopak.brb4.brb4;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
@@ -163,7 +164,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
                             TextView ExtInfo = new TextView(context);
                             ExtInfo.setText(item.NameWares);
-                            ExtInfo.setTextColor(Color.parseColor("#000000"));
+                            ExtInfo.setTextColor(getResources().getColor(R.color.messageSuccess));
                             tr1.addView(ExtInfo);
 
                             LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)ExtInfo.getLayoutParams();

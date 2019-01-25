@@ -42,7 +42,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
         auth = new AuterizationsHelper();
 
-        if(!GlobalConfig.instance().isAutorized){
+        if(!config.isAutorized){
             Intent i = new Intent(this, AuthActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
@@ -125,7 +125,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     protected void onResume() {
         super.onResume();
 
-        if(!GlobalConfig.instance().isAutorized){
+        if(!config.isAutorized){
             Intent i = new Intent(this, AuthActivity.class);
             startActivity(i);
         }
@@ -233,7 +233,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         //SomeActivity - имя класса Activity для которой переопределяем onBackPressed();
-                        GlobalConfig.instance().isAutorized = false;
+                        config.isAutorized = false;
                         finish();
                         moveTaskToBack(true);
                     }

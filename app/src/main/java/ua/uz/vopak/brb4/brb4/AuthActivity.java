@@ -62,7 +62,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
 
                 new AsyncAuthHelper(aHelper).execute(data);
 
-                if(GlobalConfig.instance().isAutorized){
+                if(config.isAutorized){
                     Intent i = new Intent(this, MainActivity.class);
                     startActivity(i);
                 }

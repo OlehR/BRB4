@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadListDoc;
@@ -115,7 +117,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
 
                             TextView ExtInfo = new TextView(context);
                             ExtInfo.setText(extInfo);
-                            ExtInfo.setTextColor(Color.parseColor("#000000"));
+                            ExtInfo.setTextColor(getResources().getColor(R.color.messageSuccess));
                             tr1.addView(ExtInfo);
 
                             LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)ExtInfo.getLayoutParams();
@@ -143,6 +145,19 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
 
                             tr0.addView(tl0);
                             tr0.setOnClickListener(context);
+
+                            int index = model.indexOf(item);
+                            if((index % 2)==0) {
+                                ViewGroup rows = tl0;
+                                for (int i = 0; i < rows.getChildCount(); i++) {
+                                    LinearLayout trc = (LinearLayout) rows.getChildAt(i);
+
+                                    for(int j = 0; j < trc.getChildCount(); j++){
+                                        trc.getChildAt(j).setBackground(ContextCompat.getDrawable(context, R.drawable.odd_row_bordered));
+                                    }
+
+                                }
+                            }
 
                             tl.addView(tr0);
                         }
