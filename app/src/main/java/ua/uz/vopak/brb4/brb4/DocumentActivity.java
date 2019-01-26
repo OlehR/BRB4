@@ -5,13 +5,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -25,6 +21,9 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
     LinearLayout tl;
     String DocumentType;
     DocumentActivity context;
+    int current = 0;
+    List<View> menuItems = new ArrayList<View>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +144,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
 
                             tr0.addView(tl0);
                             tr0.setOnClickListener(context);
+                            menuItems.add(tr0);
 
                             int index = model.indexOf(item);
                             if((index % 2)==0) {
@@ -162,11 +162,38 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             tl.addView(tr0);
                         }
 
+                        selectItem();
+
                 } catch (Exception e) {
                     e.getMessage();
                 }
 
             }
         });
+    }
+
+    private void selectItem(){
+        ViewGroup selectedItem = tl.findViewWithTag("selected");
+
+        if(selectedItem != null){
+            setBackgroundToTableRow(selectedItem, R.drawable.table_cell_border, "#000000");
+        }
+        ViewGroup currentRows = (ViewGroup) menuItems.get(current);
+        menuItems.get(current).setTag("selected");
+        setBackgroundToTableRow(currentRows, R.drawable.table_cell_selected, "#ffffff");
+    }
+
+    private void setBackgroundToTableRow(ViewGroup rows, int backgroundId, String textColor){
+        for (int i = 0; i < rows.getChildCount(); i++) {
+            ViewGroup row = (ViewGroup) rows.getChildAt(i);
+            for(int k = 0; k < row.getChildCount(); k++) {
+                ViewGroup r = (ViewGroup) rows.getChildAt(i);
+                for (int j = 0; j < r.getChildCount(); j++) {
+                    TextView v = (TextView) r.getChildAt(j);
+                    v.setBackground(ContextCompat.getDrawable(context, backgroundId));
+                    v.setTextColor(Color.parseColor(textColor));
+                }
+            }
+        }
     }
 }

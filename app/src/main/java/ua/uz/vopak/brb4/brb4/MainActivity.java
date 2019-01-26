@@ -141,6 +141,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        Intent i;
         String keyCode = String.valueOf(event.getKeyCode());
 
         if((keyCode.equals("19") || keyCode.equals("20")) && event.getAction() == KeyEvent.ACTION_UP){
@@ -158,6 +159,23 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             menuItems[current].callOnClick();
         }
 
+        if(keyCode.equals("131") && event.getAction() == KeyEvent.ACTION_UP){
+            i = new Intent(this, PriceCheckerActivity.class);
+            startActivity(i);
+        }
+
+        if(keyCode.equals("132") && event.getAction() == KeyEvent.ACTION_UP){
+            i = new Intent(this, DocumentActivity.class);
+            i.putExtra("document_type", "1");
+            startActivity(i);
+        }
+
+        if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
+            i = new Intent(this, DocumentActivity.class);
+            i.putExtra("document_type", "2");
+            startActivity(i);
+        }
+
         return super.dispatchKeyEvent(event);
     }
 
@@ -165,10 +183,10 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View v) {
         Intent i;
 
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.PriceCheker:
-                Intent intent = new Intent(this, PriceCheckerActivity.class);
-                startActivity(intent);
+                i = new Intent(this, PriceCheckerActivity.class);
+                startActivity(i);
                 break;
             case R.id.Revision:
                 i = new Intent(this, DocumentActivity.class);
@@ -176,7 +194,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(i);
                 break;
             case R.id.Incom:
-               i = new Intent(this, DocumentActivity.class);
+                i = new Intent(this, DocumentActivity.class);
                 i.putExtra("document_type", "2");
                 startActivity(i);
                 break;

@@ -390,20 +390,21 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
             RevisionTable.addView(tr);
 
-            scrollView.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    //replace this line to scroll up or down
-                    scrollView.fullScroll(ScrollView.FOCUS_DOWN);
-                    barCode.setFocusable(true);
-                    barCode.setTag("onBarCode");
-                    barCode.setFocusable(false);
-                    barCode.setFocusableInTouchMode(true);
-                    barCode.requestFocusFromTouch();
-                    barCode.setFocusableInTouchMode(false);
-                }
-            }, 100L);
         }
+
+        scrollView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //replace this line to scroll up or down
+                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+                barCode.setFocusable(true);
+                barCode.setTag("onBarCode");
+                barCode.setFocusable(false);
+                barCode.setFocusableInTouchMode(true);
+                barCode.requestFocusFromTouch();
+                barCode.setFocusableInTouchMode(false);
+            }
+        }, 100L);
     }
 
     public void SetQuantity(QuantityModel model){

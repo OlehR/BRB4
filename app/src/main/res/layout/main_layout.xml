@@ -18,7 +18,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/selected_button"
-                android:text="Провірка ціни" >
+                android:text="f1-Провірка ціни" >
             </Button>
 
             <Button
@@ -29,7 +29,7 @@
                 android:background="@drawable/selected_button"
                 android:enabled="true"
                 android:state_selected="false"
-                android:text="Ревізія" />
+                android:text="f2-Ревізія" />
 
             <Button
                 android:id="@+id/Incom"
@@ -40,7 +40,7 @@
                 android:layout_margin="5dp"
                 android:enabled="true"
                 android:focusable="false"
-                android:text="Прийомка" />
+                android:text="f3-Прийомка" />
 
             <Button
                 android:id="@+id/Settings"
