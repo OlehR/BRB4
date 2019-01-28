@@ -218,7 +218,7 @@
             android:layout_width="0dp"
             android:orientation="horizontal"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="2">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -232,7 +232,35 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageAlert"
                     android:textSize="18dp"
-                    android:text="обнулити знайдені позиції"/>
+                    android:text="обнулити"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp"
+                    android:text=" f2-"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp"
+                    android:text="↑"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp"
+                    android:text=" f3-"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp"
+                    android:text="↓"/>
 
         </LinearLayout>
 

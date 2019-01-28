@@ -1,8 +1,11 @@
 package ua.uz.vopak.brb4.brb4;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.ContextCompat;
@@ -152,6 +155,14 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
         if(keyCode.equals("131") && event.getAction() == KeyEvent.ACTION_UP){
             setNullToExistingPosition();
+        }
+
+        if(keyCode.equals("132") && event.getAction() == KeyEvent.ACTION_UP){
+            focusOnView("up");
+        }
+
+        if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
+            focusOnView("down");
         }
 
         return super.dispatchKeyEvent(event);
@@ -538,5 +549,27 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
     private void  findWareByArticleOrCode(){
         new AsyncRevisionScanHelper(worker, aContext).execute(barCode.getText().toString());
+    }
+
+    private final void focusOnView(final String prevent){
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                Rect scrollBounds = new Rect();
+                scrollView.getDrawingRect(scrollBounds);
+
+                switch (prevent) {
+                    case "up":
+                        //scrollView.scrollTo(0, scrollView.getScrollY());
+                        ObjectAnimator.ofInt(scrollView, "scrollY",  (scrollView.getScrollY()-30)).setDuration(100).start();
+                        break;
+                    case "down":
+                        //scrollView.scrollTo(0, scrollView.getScrollY());
+                        ObjectAnimator.ofInt(scrollView, "scrollY",  (scrollView.getScrollY()+30)).setDuration(100).start();
+                        break;
+                }
+
+            }
+        });
     }
 }

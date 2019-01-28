@@ -38,20 +38,20 @@
                 android:state_selected="false"
                 android:background="@drawable/selected_button"
                 android:layout_margin="5dp"
-                android:enabled="true"
+                android:enabled="false"
                 android:focusable="false"
                 android:text="f3-Прийомка" />
 
             <Button
-                android:id="@+id/Settings"
+                android:id="@+id/Moving"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:state_selected="false"
                 android:layout_margin="5dp"
                 android:background="@drawable/selected_button"
-                android:enabled="false"
+                android:enabled="true"
                 android:focusable="false"
-                android:text="Налаштування" />
+                android:text="f4-Переміщення" />
 
         </LinearLayout>
 

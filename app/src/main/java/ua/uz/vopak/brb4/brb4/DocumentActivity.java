@@ -3,11 +3,14 @@ package ua.uz.vopak.brb4.brb4;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,6 +22,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class DocumentActivity extends Activity implements View.OnClickListener {
     LinearLayout tl;
+    ScrollView documentList;
     String DocumentType;
     DocumentActivity context;
     int current = 0;
@@ -29,6 +33,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.document_layout);
         tl = findViewById(R.id.RevisionsList);
+        documentList = findViewById(R.id.DocumentList);
         context = this;
 
         Intent i = getIntent();
@@ -44,6 +49,27 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
         i.putExtra("number", currentNumber.getText().toString());
         i.putExtra("document_type", DocumentType);
         startActivity(i);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        String keyCode = String.valueOf(event.getKeyCode());
+
+        if(keyCode.equals("15") && event.getAction() == KeyEvent.ACTION_UP){
+            selectNext();
+            selectItem();
+        }
+
+        if(keyCode.equals("9") && event.getAction() == KeyEvent.ACTION_UP){
+            selectPrev();
+            selectItem();
+        }
+
+        if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
+            tl.findViewWithTag("selected").callOnClick();
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 
     public void renderTable(final List<DocumentModel> model){
@@ -116,6 +142,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
 
                             TextView ExtInfo = new TextView(context);
                             ExtInfo.setText(extInfo);
+                            ExtInfo.setTag("extInfo");
                             ExtInfo.setTextColor(getResources().getColor(R.color.messageSuccess));
                             tr1.addView(ExtInfo);
 
@@ -176,24 +203,76 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
         ViewGroup selectedItem = tl.findViewWithTag("selected");
 
         if(selectedItem != null){
-            setBackgroundToTableRow(selectedItem, R.drawable.table_cell_border, "#000000");
+            int index = menuItems.indexOf(selectedItem);
+            if((index % 2)==0) {
+                setBackgroundToTableRow(selectedItem, R.drawable.odd_row_bordered, "#000000");
+            }else {
+                setBackgroundToTableRow(selectedItem, R.drawable.table_cell_border, "#000000");
+            }
+            selectedItem.setTag(null);
         }
         ViewGroup currentRows = (ViewGroup) menuItems.get(current);
         menuItems.get(current).setTag("selected");
         setBackgroundToTableRow(currentRows, R.drawable.table_cell_selected, "#ffffff");
     }
 
-    private void setBackgroundToTableRow(ViewGroup rows, int backgroundId, String textColor){
-        for (int i = 0; i < rows.getChildCount(); i++) {
-            ViewGroup row = (ViewGroup) rows.getChildAt(i);
-            for(int k = 0; k < row.getChildCount(); k++) {
-                ViewGroup r = (ViewGroup) rows.getChildAt(i);
-                for (int j = 0; j < r.getChildCount(); j++) {
-                    TextView v = (TextView) r.getChildAt(j);
-                    v.setBackground(ContextCompat.getDrawable(context, backgroundId));
+    private void setBackgroundToTableRow(ViewGroup rows, int backgroundId, String textColor) {
+        ViewGroup tr = (ViewGroup) rows.getChildAt(0);
+        for (int i = 0; i < tr.getChildCount(); i++) {
+            ViewGroup row = (ViewGroup) tr.getChildAt(i);
+            for (int j = 0; j < row.getChildCount(); j++) {
+                TextView v = (TextView) row.getChildAt(j);
+                v.setBackground(ContextCompat.getDrawable(context, backgroundId));
+                if(v.getTag() != null && v.getTag().toString().equals("extInfo") && backgroundId != R.drawable.table_cell_selected) {
+                    v.setTextColor(getResources().getColor(R.color.messageSuccess));
+                }else{
                     v.setTextColor(Color.parseColor(textColor));
                 }
             }
         }
+    }
+
+    private void selectNext(){
+        if(current < menuItems.size()-1){
+            current++;
+            focusOnView("next");
+        }
+    }
+
+    private void selectPrev(){
+        if(current > 0){
+            current--;
+            focusOnView("prev");
+        }
+    }
+
+    private final void focusOnView(final String prevent){
+        documentList.post(new Runnable() {
+            @Override
+            public void run() {
+                Rect scrollBounds = new Rect();
+                documentList.getDrawingRect(scrollBounds);
+
+                float top = menuItems.get(current).getY();
+                float bottom = top + menuItems.get(current).getHeight();
+
+                if (scrollBounds.top < top && scrollBounds.bottom > bottom) {
+                }else{
+                    switch (prevent){
+                        case "next":
+                            int dpValue = 30;
+                            float d = context.getResources().getDisplayMetrics().density;
+                            int padding = (int)(dpValue * d);
+                            float invisiblePart = bottom - scrollBounds.bottom;
+                            documentList.scrollTo(0, (documentList.getScrollY() + (int)invisiblePart + padding));
+                            break;
+                        case "prev":
+                            documentList.scrollTo(0, menuItems.get(current).getTop());
+                            break;
+                    }
+                }
+
+            }
+        });
     }
 }

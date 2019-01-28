@@ -176,6 +176,12 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             startActivity(i);
         }
 
+        if(keyCode.equals("134") && event.getAction() == KeyEvent.ACTION_UP){
+            i = new Intent(this, DocumentActivity.class);
+            i.putExtra("document_type", "3");
+            startActivity(i);
+        }
+
         return super.dispatchKeyEvent(event);
     }
 
@@ -196,6 +202,11 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             case R.id.Incom:
                 i = new Intent(this, DocumentActivity.class);
                 i.putExtra("document_type", "2");
+                startActivity(i);
+                break;
+            case R.id.Moving:
+                i = new Intent(this, DocumentActivity.class);
+                i.putExtra("document_type", "3");
                 startActivity(i);
                 break;
         }
