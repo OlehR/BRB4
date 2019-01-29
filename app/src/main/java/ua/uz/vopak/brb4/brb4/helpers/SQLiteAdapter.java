@@ -262,7 +262,8 @@ public class SQLiteAdapter
         LoadDataDoc(result);
         List<DocumentModel> model = new ArrayList<DocumentModel>();
         Cursor mCur;
-        String sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+type+"'";
+        String sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+type+"'"+
+                     " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)";
 
         try {
             //mDb.delete("INVENTORY_WARES", null, null);

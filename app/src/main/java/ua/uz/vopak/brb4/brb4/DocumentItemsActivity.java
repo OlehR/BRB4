@@ -91,7 +91,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 i.putExtra("inv_number",number);
                 i.putExtra("InventoryItems",(Serializable)InventoryItems);
                 i.putExtra("document_type",documentType);
-                startActivityForResult(i,1);
+                startActivity(i);
                 break;
             case R.id.F3:
                 new AsyncUpdateDocState(GlobalConfig.instance().GetWorker(),this).execute("1",number,documentType);
@@ -262,6 +262,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     public void AfterSave(String DocumentType){
         Intent i = new Intent(this,DocumentActivity.class);
         i.putExtra("document_type", DocumentType);
+        this.finish();
         startActivity(i);
     }
 

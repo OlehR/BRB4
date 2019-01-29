@@ -53,6 +53,39 @@
                 android:focusable="false"
                 android:text="f4-Переміщення" />
 
+            <Button
+                android:id="@+id/Write-off"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:state_selected="false"
+                android:layout_margin="5dp"
+                android:background="@drawable/selected_button"
+                android:enabled="true"
+                android:focusable="false"
+                android:text="f5-Списання" />
+
+            <Button
+                android:id="@+id/Returning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:state_selected="false"
+                android:layout_margin="5dp"
+                android:background="@drawable/selected_button"
+                android:enabled="true"
+                android:focusable="false"
+                android:text="f6-Повернення" />
+
+            <Button
+                android:id="@+id/Expenditure"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:state_selected="false"
+                android:layout_margin="5dp"
+                android:background="@drawable/selected_button"
+                android:enabled="true"
+                android:focusable="false"
+                android:text="f7-Розхідна" />
+
         </LinearLayout>
 
     </RelativeLayout>

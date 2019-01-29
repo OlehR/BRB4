@@ -26,7 +26,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
     static GlobalConfig config = GlobalConfig.instance();
     public RelativeLayout loader;
-    Button[] menuItems = new Button[4];
+    Button[] menuItems = new Button[7];
     int current = 0;
     AuterizationsHelper auth;
     static boolean isFirstRun = true;
@@ -72,6 +72,9 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         menuItems[1] = findViewById(R.id.Revision);
         menuItems[2] = findViewById(R.id.Incom);
         menuItems[3] = findViewById(R.id.Moving);
+        menuItems[4] = findViewById(R.id.Write_off);
+        menuItems[5] = findViewById(R.id.Returning);
+        menuItems[6] = findViewById(R.id.Expenditure);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
@@ -182,6 +185,24 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             startActivity(i);
         }
 
+        if(keyCode.equals("135") && event.getAction() == KeyEvent.ACTION_UP){
+            i = new Intent(this, DocumentActivity.class);
+            i.putExtra("document_type", "4");
+            startActivity(i);
+        }
+
+        if(keyCode.equals("136") && event.getAction() == KeyEvent.ACTION_UP){
+            i = new Intent(this, DocumentActivity.class);
+            i.putExtra("document_type", "5");
+            startActivity(i);
+        }
+
+        if(keyCode.equals("137") && event.getAction() == KeyEvent.ACTION_UP){
+            i = new Intent(this, DocumentActivity.class);
+            i.putExtra("document_type", "6");
+            startActivity(i);
+        }
+
         return super.dispatchKeyEvent(event);
     }
 
@@ -207,6 +228,21 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             case R.id.Moving:
                 i = new Intent(this, DocumentActivity.class);
                 i.putExtra("document_type", "3");
+                startActivity(i);
+                break;
+            case R.id.Write_off:
+                i = new Intent(this, DocumentActivity.class);
+                i.putExtra("document_type", "4");
+                startActivity(i);
+                break;
+            case R.id.Returning:
+                i = new Intent(this, DocumentActivity.class);
+                i.putExtra("document_type", "5");
+                startActivity(i);
+                break;
+            case R.id.Expenditure:
+                i = new Intent(this, DocumentActivity.class);
+                i.putExtra("document_type", "6");
                 startActivity(i);
                 break;
         }
