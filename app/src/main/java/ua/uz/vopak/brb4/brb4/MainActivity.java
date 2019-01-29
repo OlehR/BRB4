@@ -71,7 +71,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         menuItems[0] = findViewById(R.id.PriceCheker);
         menuItems[1] = findViewById(R.id.Revision);
         menuItems[2] = findViewById(R.id.Incom);
-        menuItems[3] = findViewById(R.id.Settings);
+        menuItems[3] = findViewById(R.id.Moving);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 

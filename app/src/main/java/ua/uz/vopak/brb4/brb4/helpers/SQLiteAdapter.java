@@ -13,8 +13,10 @@ import android.util.Log;
 
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
+import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
+import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 
 public class SQLiteAdapter
 {
@@ -255,6 +257,9 @@ public class SQLiteAdapter
     }
 
     public List<DocumentModel> GetDocumentList(String type) {
+        String data=GlobalConfig.GetApiJson(150,"\"TypeDoc\":"+type);
+        String result = new GetDataHTTP().HTTPRequest(GlobalConfig.instance().ApiUrl, data);
+        LoadDataDoc(result);
         List<DocumentModel> model = new ArrayList<DocumentModel>();
         Cursor mCur;
         String sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+type+"'";
