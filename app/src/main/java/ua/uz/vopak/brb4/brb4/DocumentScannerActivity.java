@@ -182,7 +182,8 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
             if (v instanceof TableRow) {
                 TableRow row = (TableRow) v;
-                if(row.getTag() != null && row.getTag().toString().equals("alert")) {
+                Object tag = row.getTag();
+                if(tag != null && tag.toString().equals("alert")) {
                     RevisionTable.removeView(row);
                 }
             }
@@ -223,6 +224,21 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
+                if(model == null){
+                    currentCount.setText("0");
+                    scannerCof.setText("");
+                    scannerTitle.setText("Товар не знайдено");
+                    nameUnit.setText("");
+                    barCode.setFocusable(true);
+                    barCode.setTag("onBarCode");
+                    barCode.setFocusable(false);
+                    barCode.setFocusableInTouchMode(true);
+                    barCode.requestFocusFromTouch();
+                    barCode.setFocusableInTouchMode(false);
+                    return;
+                }
+
                 InventoryItem = model;
                 codeWares = model.CodeWares;
                 barCode.setText(model.BarCode);
@@ -438,24 +454,28 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         saveDocumentItem("true");
     }
 
-    private  void  saveDocumentItem(String isNullable){
+    private  void  saveDocumentItem(String isNullable) {
         String input = inputCount.getText().toString();
 
-        if(input.equals("") || Integer.parseInt(input) <= 0 || scannerTitle.getText().toString().equals("")){
+        if (input.equals("") || Integer.parseInt(input) <= 0 || scannerTitle.getText().toString().equals("")) {
             RemoveItemFromTable();
-        }
-        else {
+        } else {
             loader.setVisibility(View.VISIBLE);
             scanNN++;
-            new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares,  InventoryNumber, documentType, isNullable);
+            new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares, InventoryNumber, documentType, isNullable);
         }
 
-        barCode.setFocusable(true);
-        barCode.setTag("onBarCode");
-        barCode.setFocusable(false);
-        barCode.setFocusableInTouchMode(true);
-        barCode.requestFocusFromTouch();
-        barCode.setFocusableInTouchMode(false);
+        scrollView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                barCode.setFocusable(true);
+                barCode.setTag("onBarCode");
+                barCode.setFocusable(false);
+                barCode.setFocusableInTouchMode(true);
+                barCode.requestFocusFromTouch();
+                barCode.setFocusableInTouchMode(false);
+            }
+        }, 100L);
     }
 
     private static ArrayList<View> getViewsByTag(ViewGroup root, String tag){
@@ -488,6 +508,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                     trc.setTag("nullable");
                     totalExistingCount += Float.parseFloat(((TextView)trc.getChildAt(2)).getText().toString());
                 }else{
+                    if(trc.getTag() == null || !trc.getTag().toString().equals("alert"))
                     trc.setTag(null);
                 }
                 for (int j = 0; j < trc.getChildCount(); j++) {

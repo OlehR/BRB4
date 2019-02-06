@@ -305,12 +305,12 @@ public class SQLiteAdapter
     }
 
     public RevisionItemModel GetScanData(String number) {
-        RevisionItemModel model = new RevisionItemModel();
+        RevisionItemModel model = null;
         Cursor mCur;
         String sql;
         Integer intNum = 0;
         boolean isBarCode = true;
-        if(number.length() <= 8) {
+        if(number.length() <= 8 && ! number.equals("")) {
             intNum = Integer.parseInt(number);
             isBarCode = intNum.toString().length() >= 8;
         }
@@ -334,6 +334,7 @@ public class SQLiteAdapter
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null && mCur.getCount() > 0) {
                 mCur.moveToFirst();
+                model = new RevisionItemModel();
 
                 model.CodeWares = mCur.getString(0);
                 model.NameWares = mCur.getString(1);
