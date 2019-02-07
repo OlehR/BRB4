@@ -38,7 +38,7 @@
                 android:state_selected="false"
                 android:background="@drawable/selected_button"
                 android:layout_margin="5dp"
-                android:enabled="false"
+                android:enabled="true"
                 android:focusable="false"
                 android:text="f3-Прийомка" />
 

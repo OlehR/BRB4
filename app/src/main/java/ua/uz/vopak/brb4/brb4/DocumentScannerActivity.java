@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncGetQuantity;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncRevisionScanHelper;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncDocWares;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
@@ -54,7 +55,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     int dpValue = 3, padding;
     float d, totalExistingCount;
     String documentType;
-    private QuantityModel quantity;
+    private QuantityModel quantity = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,13 +89,6 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         loader = findViewById(R.id.RevisionLoader);
         RevisionTable = findViewById(R.id.RevisionScanItemsTable);
         scrollView = findViewById(R.id.RevisionScrollView);
-
-        if(documentType.equals("2")){
-            loader.setVisibility(View.VISIBLE);
-            inputCount.setEnabled(false);
-            //Додати виклик функції. Розібратися з отриманням CodeWares;
-            //AsyncGetQuantity(documentType, InventoryNumber, codeWares, this);
-        }
 
         RenderTable();
 
@@ -237,6 +231,12 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                     barCode.requestFocusFromTouch();
                     barCode.setFocusableInTouchMode(false);
                     return;
+                }
+
+                if(documentType.equals("2")){
+                    loader.setVisibility(View.VISIBLE);
+                    inputCount.setEnabled(false);
+                    new AsyncGetQuantity(worker, aContext).execute(documentType, InventoryNumber, model.CodeWares);
                 }
 
                 InventoryItem = model;
@@ -436,9 +436,12 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
     public void SetQuantity(QuantityModel model){
         quantity = model;
-        loader.setVisibility(View.INVISIBLE);
-        inputCount.setEnabled(true);
-        inputCount.requestFocus();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                loader.setVisibility(View.INVISIBLE);
+            }
+        });
     }
 
     public void setNullToExistingPosition(){

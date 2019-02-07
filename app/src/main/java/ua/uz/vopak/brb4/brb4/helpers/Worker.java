@@ -16,6 +16,7 @@ import ua.uz.vopak.brb4.brb4.DocumentActivity;
 import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
 import ua.uz.vopak.brb4.brb4.DocumentScannerActivity;
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
+import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
@@ -260,11 +261,19 @@ public class Worker
     }
 
     public void GetDoc(String number,String DocType, Activity context){
-        List<DocWaresModel> model = mDbHelper.GetDocWares(number,DocType);
+       if(DocType.equals("2")){
+           List<DocWaresModelIncome> model = mDbHelper.GetDocWaresIncome(number);
 
-        DocumentItemsActivity activity = (DocumentItemsActivity)context;
+           DocumentItemsActivity activity = (DocumentItemsActivity)context;
 
-        activity.renderTable(model);
+           activity.RenderTableIncome(model);
+       }else{
+           List<DocWaresModel> model = mDbHelper.GetDocWares(number,DocType);
+
+           DocumentItemsActivity activity = (DocumentItemsActivity)context;
+
+           activity.renderTable(model);
+       }
     }
 
     public void GetRevisionScannerData(String BarCode, Activity context){
@@ -291,6 +300,8 @@ public class Worker
         QuantityModel model = mDbHelper.GetQuantity(typeDoc, numberDoc, CodeWares);
 
         DocumentScannerActivity activity = (DocumentScannerActivity) context;
+
+        activity.SetQuantity(model);
 
 
     }

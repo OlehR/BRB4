@@ -11,6 +11,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
@@ -256,6 +257,36 @@ public class SQLiteAdapter
         return model;
     }
 
+    public List<DocWaresModelIncome> GetDocWaresIncome(String number) {
+        List<DocWaresModelIncome> model = new ArrayList<DocWaresModelIncome>();
+        Cursor mCur;
+        String sql = "select w.CODE_WARES,w.NAME_WARES,dws.quantity,dw.quantity from DOC_WARES_sample dws" +
+                " join wares w on dws.code_wares = w.code_wares " +
+                " left join (select code_wares, sum(quantity) as quantity  from doc_wares dw where dw.number_doc=286811 group by code_wares) dw on dws.code_wares = dw.code_wares " +
+                " where dws.number_doc="+number +
+                " order by dws.order_doc";
+
+        try {
+            //mDb.delete("INVENTORY_WARES", null, null);
+            mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null && mCur.getCount() > 0) {
+                while (mCur.moveToNext()){
+                    DocWaresModelIncome WaresModel = new DocWaresModelIncome();
+                    WaresModel.CodeWares = mCur.getString(0);
+                    WaresModel.NameWares = mCur.getString(1);
+                    WaresModel.QuantityOrdered = mCur.getInt(2);
+                    WaresModel.QuantityIncoming = mCur.getInt(3);
+                    model.add(WaresModel);
+                }
+            }
+        }catch (Exception e){
+            e.getMessage();
+        }
+
+
+        return model;
+    }
+
     public List<DocumentModel> GetDocumentList(String type) {
         String data=GlobalConfig.GetApiJson(150,"\"TypeDoc\":"+type);
         String result = new GetDataHTTP().HTTPRequest(GlobalConfig.instance().ApiUrl, data);
@@ -357,7 +388,7 @@ public class SQLiteAdapter
         Cursor mCur;
         String sql = "select quantity, quantity_min, quantity_max " +
                 "from DOC_WARES_sample" +
-                "where type_doc="+typeDoc+" and number_doc="+numberDoc+ " and code_wares="+codeWares;
+                " where type_doc='"+typeDoc+"' and number_doc='"+numberDoc+ "' and code_wares='"+codeWares+"'";
 
         try {
             mCur = mDb.rawQuery(sql, null);

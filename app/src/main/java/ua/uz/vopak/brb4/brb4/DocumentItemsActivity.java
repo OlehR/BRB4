@@ -24,6 +24,7 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncInventories;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncUpdateDocState;
+import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 
@@ -251,6 +252,28 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
                         selectItem();
                     }
+                } catch (Exception e) {
+                    e.getMessage();
+                }
+
+            }
+        });
+    }
+
+    public void RenderTableIncome(final List<DocWaresModelIncome> model){
+        final DocumentItemsActivity context = this;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                tl.removeAllViews();
+
+                try {
+                    int dpValue = 5;
+                    float d = context.getResources().getDisplayMetrics().density;
+                    int padding = (int)(dpValue * d);
+
+
                 } catch (Exception e) {
                     e.getMessage();
                 }
