@@ -262,7 +262,7 @@ public class SQLiteAdapter
         Cursor mCur;
         String sql = "select w.CODE_WARES,w.NAME_WARES,dws.quantity,dw.quantity from DOC_WARES_sample dws" +
                 " join wares w on dws.code_wares = w.code_wares " +
-                " left join (select code_wares, sum(quantity) as quantity  from doc_wares dw where dw.number_doc=286811 group by code_wares) dw on dws.code_wares = dw.code_wares " +
+                " left join (select code_wares, sum(quantity) as quantity  from doc_wares dw where dw.number_doc="+ number +" group by code_wares) dw on dws.code_wares = dw.code_wares " +
                 " where dws.number_doc="+number +
                 " order by dws.order_doc";
 

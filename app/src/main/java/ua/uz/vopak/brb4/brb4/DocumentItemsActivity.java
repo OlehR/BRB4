@@ -13,6 +13,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableRow;
@@ -30,6 +31,7 @@ import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener {
     LinearLayout tl;
+    FrameLayout documentItemsFrame;
     ScrollView documentList;
     Context context;
     Button btn, btnSave;
@@ -44,6 +46,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         setContentView(R.layout.document_items_layout);
         context = this;
         documentList = findViewById(R.id.DocumentItemsList);
+        documentItemsFrame = findViewById(R.id.DocumentItemsFrame);
         tl = findViewById(R.id.InventoriesList);
         Intent i = getIntent();
         number = i.getStringExtra("number");
@@ -260,18 +263,177 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         });
     }
 
-    public void RenderTableIncome(final List<DocWaresModelIncome> model){
+    public void RenderTableIncome(final List<DocWaresModelIncome> model, List<DocWaresModel> inventoryModel){
         final DocumentItemsActivity context = this;
+        InventoryItems = inventoryModel;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
+                int dpValue = 3;
+                float d = context.getResources().getDisplayMetrics().density;
+                int padding = (int)(dpValue * d);
+
                 tl.removeAllViews();
 
+                LinearLayout tlTitle = new LinearLayout(context);
+                tlTitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                tlTitle.setOrientation(LinearLayout.VERTICAL);
+
+                LinearLayout trT = new LinearLayout(context);
+                trT.setOrientation(LinearLayout.HORIZONTAL);
+                trT.setWeightSum(7f);
+
+                LinearLayout tr1T = new LinearLayout(context);
+                tr1T.setOrientation(LinearLayout.HORIZONTAL);
+                tr1T.setWeightSum(7f);
+
+                TextView CodeWaresT = new TextView(context);
+                CodeWaresT.setText("Код");
+                CodeWaresT.setTextColor(Color.parseColor("#000000"));
+                trT.addView(CodeWaresT);
+
+                LinearLayout.LayoutParams paramsT = (LinearLayout.LayoutParams)CodeWaresT.getLayoutParams();
+                paramsT.width = 0;
+                paramsT.weight = 3;
+                CodeWaresT.setLayoutParams(paramsT);
+                CodeWaresT.setPadding(padding, padding, padding, padding);
+                CodeWaresT.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
+                TextView QuantityOrderedT = new TextView(context);
+                QuantityOrderedT.setText("Замовлено");
+                QuantityOrderedT.setTextColor(Color.parseColor("#000000"));
+                trT.addView(QuantityOrderedT);
+
+                LinearLayout.LayoutParams params1T = (LinearLayout.LayoutParams)QuantityOrderedT.getLayoutParams();
+                params1T.width = 0;
+                params1T.weight = 2;
+                QuantityOrderedT.setLayoutParams(params1T);
+                QuantityOrderedT.setPadding(padding, padding, padding, padding);
+                QuantityOrderedT.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
+                TextView QuantityIncomedT = new TextView(context);
+                QuantityIncomedT.setText("Прийнято");
+                QuantityIncomedT.setTextColor(Color.parseColor("#000000"));
+                trT.addView(QuantityIncomedT);
+
+                LinearLayout.LayoutParams params2T = (LinearLayout.LayoutParams)QuantityIncomedT.getLayoutParams();
+                params2T.width = 0;
+                params2T.weight = 2;
+                QuantityIncomedT.setLayoutParams(params2T);
+                QuantityIncomedT.setPadding(padding, padding, padding, padding);
+                QuantityIncomedT.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
+                TextView NameWaresT = new TextView(context);
+                NameWaresT.setText("Назва");
+                NameWaresT.setTextColor(Color.parseColor("#000000"));
+                tr1T.addView(NameWaresT);
+
+                LinearLayout.LayoutParams params3T = (LinearLayout.LayoutParams)NameWaresT.getLayoutParams();
+                params3T.width = 0;
+                params3T.weight = 7;
+                NameWaresT.setLayoutParams(params3T);
+                NameWaresT.setPadding(padding, padding, padding, padding);
+                NameWaresT.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
+                tlTitle.addView(tr1T);
+                tlTitle.addView(trT);
+
+                documentList.setPadding((int)(d * 5  ), (int)(d * 54  ),(int)(d * 5  ),(int)(d * 25  ));
+
+                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) tlTitle.getLayoutParams();
+                layoutParams.setMargins((int)(d * 5  ),(int)(d * 5  ),(int)(d * 5  ),0 );
+                tlTitle.setLayoutParams(layoutParams);
+
+                documentItemsFrame.addView(tlTitle);
+
+
                 try {
-                    int dpValue = 5;
-                    float d = context.getResources().getDisplayMetrics().density;
-                    int padding = (int)(dpValue * d);
+
+                    for (DocWaresModelIncome item : model) {
+
+                        LinearLayout tl0 = new LinearLayout(context);
+                        tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                        tl0.setOrientation(LinearLayout.VERTICAL);
+
+                        LinearLayout tr = new LinearLayout(context);
+                        tr.setOrientation(LinearLayout.HORIZONTAL);
+                        tr.setWeightSum(7f);
+
+                        LinearLayout tr1 = new LinearLayout(context);
+                        tr1.setOrientation(LinearLayout.HORIZONTAL);
+                        tr1.setWeightSum(7f);
+
+                        TextView CodeWares = new TextView(context);
+                        CodeWares.setText(item.CodeWares);
+                        CodeWares.setTextColor(Color.parseColor("#000000"));
+                        tr.addView(CodeWares);
+
+                        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)CodeWares.getLayoutParams();
+                        params.width = 0;
+                        params.weight = 3;
+                        CodeWares.setLayoutParams(params);
+                        CodeWares.setPadding(padding, padding, padding, padding);
+                        CodeWares.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
+                        TextView QuantityOrdered = new TextView(context);
+                        QuantityOrdered.setText(item.QuantityOrdered.toString());
+                        QuantityOrdered.setTextColor(Color.parseColor("#000000"));
+                        tr.addView(QuantityOrdered);
+
+                        LinearLayout.LayoutParams params1 = (LinearLayout.LayoutParams)QuantityOrdered.getLayoutParams();
+                        params1.width = 0;
+                        params1.weight = 2;
+                        QuantityOrdered.setLayoutParams(params1);
+                        QuantityOrdered.setPadding(padding, padding, padding, padding);
+                        QuantityOrdered.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
+                        TextView QuantityIncomed = new TextView(context);
+                        QuantityIncomed.setText(item.QuantityIncoming.toString());
+                        QuantityIncomed.setTextColor(Color.parseColor("#000000"));
+                        tr.addView(QuantityIncomed);
+
+                        LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)QuantityOrdered.getLayoutParams();
+                        params2.width = 0;
+                        params2.weight = 2;
+                        QuantityIncomed.setLayoutParams(params2);
+                        QuantityIncomed.setPadding(padding, padding, padding, padding);
+                        QuantityIncomed.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
+                        TextView NameWares = new TextView(context);
+                        NameWares.setText(item.NameWares);
+                        NameWares.setTextColor(Color.parseColor("#000000"));
+                        tr1.addView(NameWares);
+
+                        LinearLayout.LayoutParams params3 = (LinearLayout.LayoutParams)NameWares.getLayoutParams();
+                        params3.width = 0;
+                        params3.weight = 7;
+                        NameWares.setLayoutParams(params3);
+                        NameWares.setPadding(padding, padding, padding, padding);
+                        NameWares.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+
+                        tl0.addView(tr1);
+                        tl0.addView(tr);
+
+                        menuItems.add(tl0);
+
+                        int index = model.indexOf(item);
+                        if((index % 2)==0) {
+                            ViewGroup rows = tl0;
+                            for (int i = 0; i < rows.getChildCount(); i++) {
+                                LinearLayout trc = (LinearLayout) rows.getChildAt(i);
+
+                                for(int j = 0; j < trc.getChildCount(); j++){
+                                    trc.getChildAt(j).setBackground(ContextCompat.getDrawable(context, R.drawable.odd_row_bordered));
+                                }
+
+                            }
+                        }
+
+                        tl.addView(tl0);
+                    }
+
+                    selectItem();
 
 
                 } catch (Exception e) {
@@ -307,7 +469,13 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     }
 
     private void setBackgroundToTableRow(ViewGroup rows, int backgroundId, String textColor) {
-        ViewGroup tr = (ViewGroup) rows.getChildAt(0);
+        ViewGroup tr;
+
+        if(documentType.equals("2")){
+            tr = rows;
+        }else{
+            tr = (ViewGroup) rows.getChildAt(0);
+        }
         for (int i = 0; i < tr.getChildCount(); i++) {
             ViewGroup row = (ViewGroup) tr.getChildAt(i);
             for (int j = 0; j < row.getChildCount(); j++) {
@@ -340,21 +508,26 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         documentList.post(new Runnable() {
             @Override
             public void run() {
+                float d = context.getResources().getDisplayMetrics().density;
                 Rect scrollBounds = new Rect();
                 documentList.getDrawingRect(scrollBounds);
 
                 float top = menuItems.get(current).getY();
+
                 float bottom = top + menuItems.get(current).getHeight();
 
+                if(documentType.equals("2"))
+                    bottom = bottom + (int) (53 * d);
                 if (scrollBounds.top < top && scrollBounds.bottom > bottom) {
-                }else{
-                    switch (prevent){
+                } else {
+                    switch (prevent) {
                         case "next":
                             int dpValue = 30;
-                            float d = context.getResources().getDisplayMetrics().density;
-                            int padding = (int)(dpValue * d);
+                            int padding = (int) (dpValue * d);
                             float invisiblePart = bottom - scrollBounds.bottom;
-                            documentList.scrollTo(0, (documentList.getScrollY() + (int)invisiblePart + padding));
+                            /*if(documentType.equals("2"))
+                                padding = (int) (84 * d);*/
+                            documentList.scrollTo(0, (documentList.getScrollY() + (int) invisiblePart + padding));
                             break;
                         case "prev":
                             documentList.scrollTo(0, menuItems.get(current).getTop());

@@ -263,10 +263,11 @@ public class Worker
     public void GetDoc(String number,String DocType, Activity context){
        if(DocType.equals("2")){
            List<DocWaresModelIncome> model = mDbHelper.GetDocWaresIncome(number);
+           List<DocWaresModel> inventoryModel = mDbHelper.GetDocWares(number,DocType);
 
            DocumentItemsActivity activity = (DocumentItemsActivity)context;
 
-           activity.RenderTableIncome(model);
+           activity.RenderTableIncome(model, inventoryModel);
        }else{
            List<DocWaresModel> model = mDbHelper.GetDocWares(number,DocType);
 
