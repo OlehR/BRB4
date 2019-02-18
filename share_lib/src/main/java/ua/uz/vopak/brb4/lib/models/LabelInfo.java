@@ -39,6 +39,7 @@ public class LabelInfo
     public boolean Action  = false;
     public String  InfoPrinter = ""; //Стан принтера
     public String  InfoHTTP = "";//Стан HTTP
+    public double Rest;
     private Context varApplicationContext;
 
     public String strPriceCoin() {
@@ -90,6 +91,7 @@ public class LabelInfo
         PriceBillOpt=0;
         PriceCoinOpt=0;
         QuantityOpt=0;
+        Rest=0;
 
         if(varData.length>=10 && varData[8].length()>1) {
             String[] varPrice = varData[8].split(",");
@@ -101,6 +103,12 @@ public class LabelInfo
                 PriceCoinOpt = Integer.parseInt(varPrice[1]);
             }
 
+        }
+        if(varData.length>=11)
+        {
+            try {
+                Rest = Double.parseDouble(varData[10]);
+            }catch(Exception Ex){}
         }
 
         PriceOpt=PriceBillOpt*100+PriceCoinOpt;
