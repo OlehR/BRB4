@@ -44,10 +44,9 @@
         android:padding="10dp">
 
         <TableLayout
-            android:id="@+id/tableLayout1"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:stretchColumns="0,1,2,3">
+            android:stretchColumns="0,1,2,3,4,5">
 
             <TableRow
                 android:id="@+id/tableRow1"
@@ -68,16 +67,35 @@
                     android:textSize="7pt"></TextView>
 
                 <TextView
-                    android:id="@+id/per_text"
+                    android:id="@+id/rest_text"
                     android:layout_column="2"
+                    android:text="Зал:"
+                    android:textSize="7pt"></TextView>
+
+                <TextView
+                    android:id="@+id/rest"
+                    android:layout_column="3"
+                    android:textSize="7pt"></TextView>
+
+                <TextView
+                    android:id="@+id/per_text"
+                    android:layout_column="4"
                     android:text="Од:"
                     android:textSize="7pt"></TextView>
 
                 <TextView
                     android:id="@+id/per"
-                    android:layout_column="3"
+                    android:layout_column="5"
                     android:textSize="7pt"></TextView>
             </TableRow>
+
+        </TableLayout>
+
+        <TableLayout
+            android:id="@+id/tableLayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="0,1,2,3">
 
             <TableRow
                 android:id="@+id/tableRow3"

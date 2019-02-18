@@ -27,7 +27,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     private Worker worker;
     private Scaner scaner;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
-            Network, CountData, NewPriceOpt, OldPriceOpt;
+            Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
     Button ChangePrintType;
     TableRow optRow;
 
@@ -53,6 +53,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         OldPriceOpt = findViewById(R.id.old_price_opt );
         optRow = findViewById(R.id.tableRowOpt);
         ChangePrintType.setOnClickListener(this);
+        Rest = findViewById(R.id.rest);
 
         ProgressBar progresBar = findViewById(R.id.progressBar);
         worker = GlobalConfig.GetWorker(progresBar);
@@ -161,6 +162,8 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         oldPriceView.setText(String.format("%.2f",(double)LI.OldPrice/100));
         priceView.setText(String.format("%.2f",(double)LI.Price/100));
         textBarcodeView.setText(LI.BarCode);
+
+        Rest.setText(String.format("%.2f",LI.Rest));
 
 
         if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
