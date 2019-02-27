@@ -101,7 +101,7 @@ public class Worker
                        LI.BadScan++;
                        byte[] b = new byte[0];
                        try {
-                           b = LI.LevelForPrinter(TypeLanguagePrinter.ZPL);
+                           b = LI.LevelForPrinter( Printer.GetTypeLanguagePrinter());
                        } catch (UnsupportedEncodingException e) {
                            //e.printStackTrace();
                        }
@@ -202,6 +202,9 @@ public class Worker
 
            if(jObject.getInt("State") == 0){
                mDbHelper.AfterSendData();
+               int[] varRes=mDbHelper.GetCountScanCode();
+               LI.AllScan=varRes[0];
+               LI.BadScan=varRes[1];
            }
 
        }catch (Exception e){

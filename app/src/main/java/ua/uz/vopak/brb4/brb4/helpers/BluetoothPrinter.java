@@ -10,6 +10,7 @@ import android.os.Handler;
 
 import ua.uz.vopak.brb4.brb4.enums.PrinterError;
 import ua.uz.vopak.brb4.brb4.enums.TypePrinter;
+import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
 
 public class BluetoothPrinter {
     BluetoothAdapter mBluetoothAdapter;
@@ -25,6 +26,30 @@ public class BluetoothPrinter {
     byte[] readBuffer;
     int readBufferPosition;
     volatile boolean stopWorker;
+
+    TypeLanguagePrinter GetTypeLanguagePrinter()
+    {
+        if(varTypePrinter==TypePrinter.Argox_3230)
+            return TypeLanguagePrinter.ZPL;
+        if(varTypePrinter==TypePrinter.Zebra_QLn320)
+            return TypeLanguagePrinter.ZPL_ZEBRA;
+        if(varTypePrinter==TypePrinter.Godex_MX20)
+            return TypeLanguagePrinter.EZPL;
+        return TypeLanguagePrinter.NotDefined;
+
+        /*switch (varTypePrinter) {
+            case TypePrinter.Argox_3230:
+                return TypeLanguagePrinter.ZPL;
+            case TypePrinter.Zebra_QLn320:
+                return TypeLanguagePrinter.ZPL_ZEBRA;
+            case TypePrinter.Godex_MX20:
+                return TypeLanguagePrinter.EZPL;
+            default:
+                return TypeLanguagePrinter.NotDefined;
+
+        }*/
+    }
+
     public void findBT() {
 
         try {
@@ -49,7 +74,7 @@ public class BluetoothPrinter {
                     String name=device.getName();
                     switch (name)
                     {
-                        case "Q320":
+
                         case "Argox 3230":
                         case "00:0A:3A:32:1B:F1":
                         case "Argox AME-3230B":
@@ -58,8 +83,9 @@ public class BluetoothPrinter {
                         case "Godex MX20":
                             varTypePrinter=TypePrinter.Godex_MX20;
                             break;
+                        case "QLn320":
                         default:
-                            varTypePrinter=TypePrinter.NotDefined;
+                            varTypePrinter=TypePrinter.Zebra_QLn320;
 
                     }
 
