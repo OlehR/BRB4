@@ -5,6 +5,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
+import android.content.Context;
 import android.text.TextUtils;
 import android.widget.ProgressBar;
 import com.google.gson.Gson;
@@ -263,20 +264,15 @@ public class Worker
         return mDbHelper.GetConfigPair(name);
     }
 
-    public void GetDoc(String number,String DocType, Activity context){
+    public void GetDoc(String number,String DocType, IIncomeRender context){
        if(DocType.equals("2")){
            List<DocWaresModelIncome> model = mDbHelper.GetDocWaresIncome(number);
            List<DocWaresModel> inventoryModel = mDbHelper.GetDocWares(number,DocType);
 
-           DocumentItemsActivity activity = (DocumentItemsActivity)context;
-
-           activity.RenderTableIncome(model, inventoryModel);
+           context.RenderTableIncome(model, inventoryModel);
        }else{
            List<DocWaresModel> model = mDbHelper.GetDocWares(number,DocType);
-
-           DocumentItemsActivity activity = (DocumentItemsActivity)context;
-
-           activity.renderTable(model);
+           context.renderTable(model);
        }
     }
 

@@ -10,4 +10,5 @@ public class DocumentModel {
     public String Description;
     public String DateInsert;
     public String State;
+    public String WaresType;
 }

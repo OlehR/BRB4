@@ -25,11 +25,12 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncInventories;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncUpdateDocState;
+import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 
-public class DocumentItemsActivity extends Activity implements View.OnClickListener {
+public class DocumentItemsActivity extends Activity implements View.OnClickListener, IIncomeRender {
     LinearLayout tl;
     FrameLayout documentItemsFrame;
     ScrollView documentList;

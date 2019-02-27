@@ -1,13 +1,15 @@
 package ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers;
 
+import android.content.Context;
 import android.os.AsyncTask;
 
 import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
+import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 
 public class AsyncInventories extends AsyncTask<String , Void, Void> {
     Worker varWorker;
-    DocumentItemsActivity activity;
+    IIncomeRender activity;
     @Override
     protected Void doInBackground(String... param)
     {
@@ -16,7 +18,7 @@ public class AsyncInventories extends AsyncTask<String , Void, Void> {
     }
 
 
-    public AsyncInventories( Worker parWorker, DocumentItemsActivity context)
+    public AsyncInventories( Worker parWorker, IIncomeRender context)
     {
         activity = context;
         varWorker = parWorker;

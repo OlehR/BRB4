@@ -309,13 +309,18 @@ public class SQLiteAdapter
                     document.NameUser = mCur.getString(4);
                     document.BarCode = mCur.getString(5);
                     document.Description = mCur.getString(6);
+
+                    //Костиль для вагового товару.
+                    document.WaresType = document.Description.substring(0,1);
+                    document.Description = document.Description.replace(document.WaresType,"");
+
                     document.DateInsert = mCur.getString(7);
                     document.State = mCur.getString(8);
                     model.add(document);
                 }
             }
         }catch (Exception e){
-            e.getMessage();
+;            e.getMessage();
         }
 
 

@@ -45,7 +45,13 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         TextView currentNumber = v.findViewWithTag("number_inv");
-        Intent i = new Intent(context, DocumentItemsActivity.class);
+        Intent i;
+        Object tag = ((ViewGroup)v).getChildAt(0).getTag();
+        if(tag != null && tag.toString().equals("2")){
+            i = new Intent(context, DocumentWeightActivity.class);
+        }else{
+          i = new Intent(context, DocumentItemsActivity.class);
+        }
         i.putExtra("number", currentNumber.getText().toString());
         i.putExtra("document_type", DocumentType);
         startActivity(i);
@@ -168,6 +174,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
                             tl0.addView(tr);
                             tl0.addView(tr1);
                             tl0.addView(tr2);
+                            tl0.setTag(item.WaresType);
 
                             tr0.addView(tl0);
                             tr0.setOnClickListener(context);
