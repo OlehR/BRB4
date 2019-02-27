@@ -5,7 +5,10 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -50,6 +53,17 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
     }
 
     @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        String keyCode = String.valueOf(event.getKeyCode());
+
+        if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
+            loginBtn.callOnClick();
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.LoginButton:
@@ -85,5 +99,24 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
                         moveTaskToBack(true);
                     }
                 }).create().show();
+    }
+
+    public void setLogin(final String LastLogin) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        EditText edit = (EditText) findViewById(R.id.Login);
+                        EditText editpass = (EditText) findViewById(R.id.Password);
+                        edit.setText(LastLogin);
+                        //editpass.requestFocus();
+                        editpass.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                        editpass.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+                    }
+                }, 100);
+            }
+        });
     }
 }

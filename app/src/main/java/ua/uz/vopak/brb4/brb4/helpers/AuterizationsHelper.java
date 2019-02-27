@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
 import android.content.Intent;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import org.json.JSONObject;
@@ -58,8 +59,7 @@ public class AuterizationsHelper {
 
     public void GetLastLogin(){
         String LastLogin = config.GetWorker().GetConfigPair("Login");
-        EditText edit = (EditText)activity.findViewById(R.id.Login);
-        edit.setText(LastLogin);
+        activity.setLogin(LastLogin);
     }
 
     public AuterizationsHelper(){
