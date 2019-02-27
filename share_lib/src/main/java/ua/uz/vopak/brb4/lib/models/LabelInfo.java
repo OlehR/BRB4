@@ -121,6 +121,16 @@ public class LabelInfo
 
 
     }
+    public String ToHexZebra(String parStr)
+    {
+        byte[] varByte = parStr.getBytes();
+        String Res="";
+        for(int i =0 ;i<varByte.length; i++) {
+            Res+="_"+Integer.toString(varByte[i],16);
+        }
+        return Res;
+    }
+
     public byte[] LevelForPrinter(TypeLanguagePrinter parTLP) throws UnsupportedEncodingException {
 
         /*//Test Begin
@@ -149,7 +159,7 @@ public class LabelInfo
 
         String varPriceBill2=Integer.toString(PriceBillOpt).trim();
         //String varPriceCoin2=(PriceCoinOpt<10?"0":"")+Integer.toString(PriceCoinOpt).trim();
-
+        String varWidthBill ="150";
 
         if(this.Name.length()<LengName)
             Name1=this.Name;
@@ -180,10 +190,12 @@ public class LabelInfo
                 case 3:
                     OffsetBill = "10";
                     OffsetCoin = "335";
+                    varWidthBill = "100";
                     break;
                 case 4:
                     OffsetBill = "0";
                     OffsetCoin = "350";
+                    varWidthBill = "75";
                     break;
             }
         }else
@@ -218,12 +230,22 @@ public class LabelInfo
 
                     break;
             }
+        }
 
+        if(parTLP==TypeLanguagePrinter.ZPL_ZEBRA)
+        {
+            OffsetCoin = "220";
+            OffsetBill = (varPriceBill.length()>1?"10":"100");
+            Name1=ToHexZebra(Name1);
+            Name2=ToHexZebra(Name2);
+            varUnit=ToHexZebra(varUnit);
 
         }
+
         String Label="";
         try {
-            InputStream inputStream = varApplicationContext.getAssets().open("Label/" + "zpl_" + (PriceOpt==0?"1":"2"    ) + ".prn");
+            String varName_file = parTLP.toString().toLowerCase();
+            InputStream inputStream = varApplicationContext.getAssets().open("Label/" + varName_file /*"zpl_"*/ +"_"+ (PriceOpt==0?"1":"2"    ) + ".prn");
 
             BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
             StringBuilder total = new StringBuilder();
@@ -241,14 +263,17 @@ public class LabelInfo
         Label=Label.replace("{Name1}",Name1).replace("{Name2}",Name2).
                     replace("{OffsetBill}",OffsetBill).replace("{OffsetCoin}",OffsetCoin).replace("{Unit}",varUnit).
                     replace("{PriceBill}",varPriceBill).replace("{PriceCoin}",strPriceCoin()).
+                    replace("{WidthBill}",varWidthBill).
                     replace("{PriceBill2}",varPriceBill2).replace("{PriceCoin2}",strPriceCoinOpt()).
                     replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode).
                     replace("{Article}",this.Article).replace("{Date}",CurrentDate).
                     replace("{OffsetBill2}",OffsetBill2).replace("{OffsetCoin2}",OffsetCoin2).
-                    replace("{OffsetEndLine}",OffsetEndLine).replace("{LabelLength}",LabelLength).
+                    replace("{OffsetEndLine}",OffsetEndLine).
+                    replace("{LabelLength}",LabelLength).replace("{LabelLength_1}",Integer.toString(Integer.parseInt(LabelLength)-1)).
                     replace("{UnitOpt}",UnitOpt).
                     replace("{OffsetUnit}",Integer.toString(Integer.parseInt(OffsetCoin)+80));
         ;
+        //byte[] ptext = String.getBytes("UTF-8")
            res=Label.getBytes("Cp1251");
           return res;
 
