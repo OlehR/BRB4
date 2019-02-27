@@ -1,13 +1,13 @@
 ^XA
 ^LL{LabelLength}
+^PW480
 ^CI28
-^FO 0,25^A@N,31,31,E:MIC000.TTF ^FH^FD{Name1}^FS
-^FO 0,65^A@N,31,31,E:MIC000.TTF ^FH^FD{Name2}^FS
+^FO 0,25^A@N,32,32,E:MIC000.TTF ^FH^FD{Name1}^FS
+^FO 0,65^A@N,32,32,E:MIC000.TTF ^FH^FD{Name2}^FS
 
 ^FO {OffsetBill},110^A@N,160,{WidthBill},E:ARI001.TTF^FD{PriceBill}^FS
 ^FO {OffsetCoin},110^A@N,80,80,E:ARI001.TTF ^FD{PriceCoin}^FS
-^FO {OffsetCoin},180^A@N,30,30,E:MIC000.TTF ^FH^{Unit}^FS
-
+^FO {OffsetCoin},180^A@N,30,30,E:MIC000.TTF ^FH^FD{Unit}^FS
 
 ^FO 330,110^BY2 ^BQN,2,5^FDMM,A{BarCodePrice}^FS
 

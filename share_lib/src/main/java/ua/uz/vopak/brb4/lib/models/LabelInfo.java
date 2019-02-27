@@ -121,14 +121,18 @@ public class LabelInfo
 
 
     }
-    public String ToHexZebra(String parStr)
+    public String ToHexZebra( byte[] varByte)
     {
-        byte[] varByte = parStr.getBytes();
-        String Res="";
+        StringBuilder sb = new StringBuilder(varByte.length * 3);
+        for(byte b: varByte)
+            sb.append("_"+String.format("%02x", b));
+        return sb.toString();
+
+    /*    String Res="";
         for(int i =0 ;i<varByte.length; i++) {
-            Res+="_"+Integer.toString(varByte[i],16);
+            Res+="_"+ Integer.toString(varByte[i],16);
         }
-        return Res;
+        return Res;*/
     }
 
     public byte[] LevelForPrinter(TypeLanguagePrinter parTLP) throws UnsupportedEncodingException {
@@ -155,7 +159,7 @@ public class LabelInfo
         String LabelLength = (IsShort?"295":"280");
 
         String varPriceBill=Integer.toString(PriceBill).trim();
-        //String varPriceCoin=(PriceCoin<10?"0":"")+Integer.toString(PriceCoin).trim();
+        //varPriceBill="8";
 
         String varPriceBill2=Integer.toString(PriceBillOpt).trim();
         //String varPriceCoin2=(PriceCoinOpt<10?"0":"")+Integer.toString(PriceCoinOpt).trim();
@@ -236,9 +240,9 @@ public class LabelInfo
         {
             OffsetCoin = "220";
             OffsetBill = (varPriceBill.length()>1?"10":"100");
-            Name1=ToHexZebra(Name1);
-            Name2=ToHexZebra(Name2);
-            varUnit=ToHexZebra(varUnit);
+            Name1=ToHexZebra(Name1.getBytes("UTF-8"));
+            Name2=ToHexZebra(Name2.getBytes("UTF-8"));
+            varUnit=ToHexZebra(varUnit.getBytes("UTF-8"));
 
         }
 
@@ -274,7 +278,7 @@ public class LabelInfo
                     replace("{OffsetUnit}",Integer.toString(Integer.parseInt(OffsetCoin)+80));
         ;
         //byte[] ptext = String.getBytes("UTF-8")
-           res=Label.getBytes("Cp1251");
+               res=Label.getBytes("Cp1251");
           return res;
 
     }
