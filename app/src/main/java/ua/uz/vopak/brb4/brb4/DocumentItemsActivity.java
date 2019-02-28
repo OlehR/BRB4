@@ -394,7 +394,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                         QuantityIncomed.setTextColor(Color.parseColor("#000000"));
                         tr.addView(QuantityIncomed);
 
-                        LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)QuantityOrdered.getLayoutParams();
+                        LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)QuantityIncomed.getLayoutParams();
                         params2.width = 0;
                         params2.weight = 2;
                         QuantityIncomed.setLayoutParams(params2);

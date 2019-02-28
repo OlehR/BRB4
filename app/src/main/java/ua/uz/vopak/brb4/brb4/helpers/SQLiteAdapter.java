@@ -274,8 +274,8 @@ public class SQLiteAdapter
                     DocWaresModelIncome WaresModel = new DocWaresModelIncome();
                     WaresModel.CodeWares = mCur.getString(0);
                     WaresModel.NameWares = mCur.getString(1);
-                    WaresModel.QuantityOrdered = mCur.getInt(2);
-                    WaresModel.QuantityIncoming = mCur.getInt(3);
+                    WaresModel.QuantityOrdered = mCur.getFloat(2);
+                    WaresModel.QuantityIncoming = mCur.getFloat(3);
                     model.add(WaresModel);
                 }
             }
