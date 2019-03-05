@@ -170,8 +170,6 @@ public class Worker
         String data=GlobalConfig.GetApiJson(153,"\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"]");
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
-//        String a = new String();
-
     }
 
     public void UpdateDocState(String state, String number, String DocumentType, DocumentItemsActivity activity){
