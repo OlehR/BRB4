@@ -1,7 +1,11 @@
 package ua.uz.vopak.brb4.brb4;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
@@ -10,6 +14,7 @@ import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -29,13 +34,13 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
     Button ChangePrintType;
-    TableRow optRow;
+    LinearLayout optRow;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.price_checker_layout);
+        setContentView(R.layout.price_checker_layout_new);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         codeView = findViewById(R.id.code);
         perView  = findViewById(R.id.per);
@@ -128,6 +133,13 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         CountData.setTextColor(Color.parseColor("#856404"));
 
         if(LI.OldPrice != LI.Price){
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                //deprecated in API 26
+                v.vibrate(500);
+            }
             oldPriceView.setTextColor(Color.parseColor("#ee4343"));
             priceView.setTextColor(Color.parseColor("#ee4343"));
             oldPriceText.setTextColor(Color.parseColor("#ee4343"));
@@ -140,6 +152,13 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
 
         if(LI.OldPriceOpt != LI.PriceOpt){
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                //deprecated in API 26
+                v.vibrate(500);
+            }
             OldPriceOpt.setTextColor(Color.parseColor("#ee4343"));
             NewPriceOpt.setTextColor(Color.parseColor("#ee4343"));
             OldPriceOpt.setTextColor(Color.parseColor("#ee4343"));
@@ -157,6 +176,16 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             optRow.setVisibility(View.VISIBLE);
         }else{
             optRow.setVisibility(View.INVISIBLE);
+        }
+
+        if(LI.Action){
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                v.vibrate(VibrationEffect.createOneShot(1500, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                //deprecated in API 26
+                v.vibrate(1500);
+            }
         }
 
         oldPriceView.setText(String.format("%.2f",(double)LI.OldPrice/100));

@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="5dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.25">
+
+        <fragment
+            android:id="@+id/scan_fragment"
+            android:name="ua.uz.vopak.brb4.brb4.fragments.ScanFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/scan_fragment" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="0.75">
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:id="@+id/ChangePrintTypeVertical"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="0.25"
+                android:text=" " />
+
+            <Button
+                android:id="@+id/ChangePrintType"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="0.25"
+                android:text=" " />
+
+            <Button
+                android:id="@+id/AddPrintBlock"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="0.25"
+                android:text=" " />
+
+        </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            android:layout_marginTop="5dp"
+            android:progress="0"
+            android:max="100"
+            android:progressDrawable="@drawable/progresbar" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/code_text"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="Код:"
+                android:textSize="7pt"></TextView>
+
+            <TextView
+                android:id="@+id/code"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="7pt"></TextView>
+
+            <TextView
+                android:id="@+id/rest_text"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="Зал:"
+                android:textSize="7pt"></TextView>
+
+            <TextView
+                android:id="@+id/rest"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="7pt"></TextView>
+
+            <TextView
+                android:id="@+id/per_text"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="Од:"
+                android:textSize="7pt"></TextView>
+
+            <TextView
+                android:id="@+id/per"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="7pt"></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:weightSum="6"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/old_price_text"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:text="Ціна с:"
+                android:textSize="7pt"></TextView>
+
+            <TextView
+                android:id="@+id/old_price"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:textSize="10pt"></TextView>
+
+            <TextView
+                android:id="@+id/price_text"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:text="Ціна н:"
+                android:textSize="7pt"></TextView>
+
+            <TextView
+                android:id="@+id/price"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:textSize="10pt"></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/tableRowOpt"
+            android:orientation="horizontal"
+            android:weightSum="6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="invisible">
+
+            <TextView
+                android:id="@+id/old_price_text_opt"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:text="Ціна с. опт:"
+                android:textSize="7pt"></TextView>
+
+            <TextView
+                android:id="@+id/old_price_opt"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:textSize="10pt"></TextView>
+
+            <TextView
+                android:id="@+id/price_text_opt"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:text="Ціна н. опт:"
+                android:textSize="7pt"></TextView>
+
+            <TextView
+                android:id="@+id/price_opt"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="1.5"
+                android:textSize="10pt"></TextView>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="6"
+                android:layout_span="3"
+                android:text=""
+                android:textSize="10pt"></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/bar_code_text"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:text="Штрих код:"
+                android:textSize="7pt"></TextView>
+
+            <TextView
+                android:id="@+id/bar_code"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="4"
+                android:layout_span="3"
+                android:text=""
+                android:textSize="8pt"></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="6">
+
+            <TextView
+                android:id="@+id/Printer"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:text="None"
+                android:textSize="6pt"></TextView>
+
+            <TextView
+                android:id="@+id/Network"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:text="None"
+                android:textSize="6pt"></TextView>
+
+            <TextView
+                android:id="@+id/CountData"
+                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:text="None"
+                android:textSize="6pt"></TextView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
