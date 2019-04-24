@@ -16,12 +16,15 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncDocWares;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncInventories;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncUpdateDocState;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
@@ -35,11 +38,14 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
     List<DocWaresModelIncome> Model;
     int position = 0;
     EditText searchField;
+    static Integer scanNN = 0;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.document_weight_layout);
+        context = this;
         Intent i = getIntent();
         number = i.getStringExtra("number");
         documentType = i.getStringExtra("document_type");
@@ -67,7 +73,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
         String keyCode = String.valueOf(event.getKeyCode());
 
         if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
-            moveNext();
+            syncData();
         }
 
         return super.dispatchKeyEvent(event);
@@ -130,13 +136,12 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
                         QuantityIncomed.setText(String.format("%.3f", item.QuantityIncoming));
                         QuantityIncomed.setTextColor(Color.parseColor("#000000"));
                         QuantityIncomed.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
-                        QuantityIncomed.setCursorVisible(false);
                         QuantityIncomed.setOnKeyListener(new View.OnKeyListener() {
                             public boolean onKey(View v, int keyCode, KeyEvent event) {
                                 // If the event is a key-down event on the "enter" button
                                 if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
                                         (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                                    moveNext();
+                                    savePosition();
                                     return true;
                                 }
                                 return false;
@@ -223,8 +228,21 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
         if (v.getText().toString().equals("") || PrevValues.get(index) == Float.parseFloat(v.getText().toString())) {
             v.setText(String.format("%.3f", PrevValues.get(index)));
         } else {
+            PrevValues.set(index,Float.parseFloat(v.getText().toString()));
             data.put(index, Model.get(index));
         }
+    }
+
+    private void savePosition(){
+        ViewGroup row = (ViewGroup) tl.getChildAt(position);
+        ViewGroup innerRow = (ViewGroup) row.getChildAt(1);
+        EditText v = (EditText) innerRow.getChildAt(1);
+        String value = v.getText().toString();
+        if(!value.equals("") && Float.parseFloat(value) != 0){
+            scanNN++;
+            new AsyncDocWares(GlobalConfig.GetWorker(), this).execute(value, scanNN.toString(), Model.get(position).CodeWares, number, documentType, "true");
+        }
+        moveNext();
     }
 
     private void moveNext(){
@@ -232,7 +250,9 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
             ViewGroup row = (ViewGroup) tl.getChildAt(position+1);
             ViewGroup innerRow = (ViewGroup) row.getChildAt(1);
             EditText v = (EditText) innerRow.getChildAt(1);
+            v.setFocusableInTouchMode(true);
             v.requestFocusFromTouch();
+            v.setFocusableInTouchMode(false);
         }
     }
 
@@ -252,5 +272,19 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
                 row.setVisibility(View.GONE);
             }
         }
+    }
+
+    private void syncData(){
+        new AsyncUpdateDocState(GlobalConfig.GetWorker(),this).execute("1",number,documentType);
+    }
+
+    public void AfterSave(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, "Документ успішно збережено!",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

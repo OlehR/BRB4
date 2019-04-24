@@ -1,5 +1,6 @@
 package ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 
 import ua.uz.vopak.brb4.brb4.DocumentScannerActivity;
@@ -7,7 +8,7 @@ import ua.uz.vopak.brb4.brb4.helpers.Worker;
 
 public class AsyncDocWares extends AsyncTask<String , Void, Void> {
     Worker varWorker;
-    DocumentScannerActivity activity;
+    Activity activity;
     @Override
     protected Void doInBackground(String... param)
     {
@@ -16,7 +17,7 @@ public class AsyncDocWares extends AsyncTask<String , Void, Void> {
     }
 
 
-    public AsyncDocWares(Worker parWorker, DocumentScannerActivity context)
+    public AsyncDocWares(Worker parWorker, Activity context)
     {
         activity=context;
         varWorker = parWorker;

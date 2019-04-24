@@ -11,6 +11,7 @@ import android.widget.ProgressBar;
 import com.google.gson.Gson;
 import org.json.JSONObject;
 
+import ua.uz.vopak.brb4.brb4.DocumentWeightActivity;
 import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.DocumentActivity;
@@ -172,7 +173,7 @@ public class Worker
 
     }
 
-    public void UpdateDocState(String state, String number, String DocumentType, DocumentItemsActivity activity){
+    public void UpdateDocState(String state, String number, String DocumentType, Activity activity){
 
        mDbHelper.UpdateDocState(state,number.replace("ПСЮ",""));
 
@@ -180,7 +181,10 @@ public class Worker
 
        if(state.equals("1")) {
            SyncDocsData(DocumentType, number, wares);
-           activity.AfterSave(DocumentType);
+           if(activity instanceof  DocumentItemsActivity)
+               ((DocumentItemsActivity)activity).AfterSave(DocumentType);
+           if(activity instanceof DocumentWeightActivity)
+               ((DocumentWeightActivity)activity).AfterSave();
        }
     }
 
@@ -288,9 +292,11 @@ public class Worker
 
         ArrayList args = mDbHelper.SaveDocWares(count, scanNN, CodeWares, DocNumber,TypeDoc);
 
-        DocumentScannerActivity activity = (DocumentScannerActivity) context;
+        if(context instanceof DocumentScannerActivity) {
+            DocumentScannerActivity activity = (DocumentScannerActivity) context;
 
-        activity.AfterSave(args);
+            activity.AfterSave(args);
+        }
 
     }
 
