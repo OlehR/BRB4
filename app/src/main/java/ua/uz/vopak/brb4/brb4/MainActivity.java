@@ -17,13 +17,15 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 
+import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
+import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadDocsData;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSyncData;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
-public class  MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class  MainActivity extends AppCompatActivity implements View.OnClickListener, ScanCallBack {
     static GlobalConfig config = GlobalConfig.instance();
     public RelativeLayout loader;
     Button[] menuItems = new Button[7];
@@ -31,7 +33,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     AuterizationsHelper auth;
     static boolean isFirstRun = true;
     boolean isReload = false;
-
+    private Scaner scaner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,9 +96,29 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
             menuItems[i].setOnClickListener(this);
         }
+        scaner=GlobalConfig.GetScaner();
+        scaner.Init(this);
     }
 
-
+    @Override
+    public void Run(String parBarCode)
+    {
+        String varNumber=null;
+        String varDocType=null;
+        //Якщо внутрішне переміщення
+        if(parBarCode.length()==13&& parBarCode.substring(0,2).equals("28")) {
+            varDocType="9";
+            varNumber=parBarCode.substring(2,8);
+        }
+        if(varNumber!=null&&varDocType!=null) {
+            Intent i;
+            i = new Intent(this, DocumentItemsActivity.class);
+            i.putExtra("number", varNumber);
+            i.putExtra("document_type", varDocType);
+            startActivity(i);
+        }
+    }
+    ;
 
     @Override
     protected void onStart() {

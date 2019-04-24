@@ -12,3 +12,4 @@
 /.idea
 /clientpricechecker/src/main/res/xml/
 /clientpricechecker/src/main/res/xml/config.xml
+/app/release/*.aab
