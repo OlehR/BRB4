@@ -39,7 +39,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
     Button ChangePrintType;
-    LinearLayout optRow, BarcodeImage;
+    LinearLayout optRow, PriceCheckerInfoLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +64,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         optRow = findViewById(R.id.tableRowOpt);
         ChangePrintType.setOnClickListener(this);
         Rest = findViewById(R.id.rest);
+        PriceCheckerInfoLayout = findViewById(R.id.PricecheckerInfoLayout);
 
         ProgressBar progresBar = findViewById(R.id.progressBar);
         worker = GlobalConfig.GetWorker(progresBar);

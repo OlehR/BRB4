@@ -26,6 +26,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/PricecheckerInfoLayout"
         android:padding="5dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
