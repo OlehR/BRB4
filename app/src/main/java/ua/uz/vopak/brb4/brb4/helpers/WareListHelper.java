@@ -31,7 +31,7 @@ public class WareListHelper {
         try {
             JSONObject jObject = new JSONObject(result);
 
-            if(jObject.getInt("State") == 1){
+            if(jObject.getInt("State") == 0){
                 JSONArray arrJson = jObject.getJSONArray("Warehouse");
                 String[] path = new String[arrJson.length()];
 
