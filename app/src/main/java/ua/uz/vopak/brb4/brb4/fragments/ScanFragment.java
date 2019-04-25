@@ -65,6 +65,8 @@ public class ScanFragment extends Fragment {
             barcodeView.setVisibility(View.INVISIBLE);
         }
 
+        GlobalConfig.BarcodeImageLayout = view.findViewById(R.id.BarcodeImageLayout);
+
         //Приклад відправки повідомлення користувачу
         //sendMessage("Блютуз не підключено!","StackTrace:...", MessageType.ErrorMessage);
 

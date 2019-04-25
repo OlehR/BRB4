@@ -3,25 +3,22 @@ package ua.uz.vopak.brb4.brb4;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
-import android.view.LayoutInflater;
 import android.view.View;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
@@ -135,18 +132,33 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
 
         if(LI.InfoPrinter.equals("CanNotOpen")) {
             Printer.setTextColor(getResources().getColor(R.color.messageError));
-            //Drawable dw = BarcodeImage.getBackground();
-            //dw.setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
         }
         else {
             Printer.setTextColor(Color.parseColor("#856404"));
         }
 
         Network.setText(LI.InfoHTTP);
-        if(!LI.InfoHTTP.equals("HTTP_OK"))
+        if(!LI.InfoHTTP.equals("HTTP_OK")) {
             Network.setTextColor(getResources().getColor(R.color.messageError));
-        else
-        Network.setTextColor(Color.parseColor("#856404"));
+        }
+        else {
+            Network.setTextColor(Color.parseColor("#856404"));
+        }
+
+        boolean isProblem = false;
+        if(LI.InfoPrinter.equals("CanNotOpen") || !LI.InfoHTTP.equals("HTTP_OK")){
+            if(GlobalConfig.BarcodeImageLayout != null){
+                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+                dw.setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
+                isProblem = true;
+            }
+        }else{
+            if(GlobalConfig.BarcodeImageLayout != null){
+                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+                dw.clearColorFilter();
+            }
+        }
+
         String PercentData = (LI.AllScan==0?"100":Integer.toString ( 100*(LI.AllScan - LI.BadScan) / LI.AllScan));
         CountData.setText(Integer.toString (LI.BadScan) +"/"+ Integer.toString (LI.AllScan)+" ("+ PercentData + "%)");
         CountData.setTextColor(Color.parseColor("#856404"));
@@ -197,13 +209,24 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             optRow.setVisibility(View.INVISIBLE);
         }
 
-        if(LI.Action){
+        if(LI.ActionType == 1){
             Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 v.vibrate(VibrationEffect.createOneShot(1500, VibrationEffect.DEFAULT_AMPLITUDE));
             } else {
                 //deprecated in API 26
                 v.vibrate(1500);
+            }
+
+            if(GlobalConfig.BarcodeImageLayout != null && !isProblem){
+                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+                dw.clearColorFilter();
+                dw.setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
+            }
+        }else{
+            if(GlobalConfig.BarcodeImageLayout != null && !isProblem){
+                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+                dw.clearColorFilter();
             }
         }
 

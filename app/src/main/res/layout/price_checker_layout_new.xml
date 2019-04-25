@@ -10,7 +10,6 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:padding="5dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -279,6 +278,12 @@
             android:layout_weight="2"
             android:text="None"
             android:textSize="6pt"></TextView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     </LinearLayout>
 

@@ -37,6 +37,7 @@ public class LabelInfo
     public int AllScan=0; //Кількість відсканованих позицій
     public int BadScan=0;//Кількість позицій, які друкувались
     public boolean Action  = false;
+    public int ActionType  = 0; //0 - без акції, 1 - жовтий цінник
     public String  InfoPrinter = ""; //Стан принтера
     public String  InfoHTTP = "";//Стан HTTP
     public double Rest;
