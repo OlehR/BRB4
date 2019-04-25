@@ -178,6 +178,7 @@ public class SQLiteAdapter
                     row.add(mCur.getString(0));
                     row.add(mCur.getInt(1));
                     row.add(mCur.getString(2));
+                    row.add(GlobalConfig.NumberPackege);
 
                     list.add(row);
                 }

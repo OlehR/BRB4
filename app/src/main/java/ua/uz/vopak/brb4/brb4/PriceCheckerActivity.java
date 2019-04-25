@@ -38,7 +38,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     private Scaner scaner;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
-    Button ChangePrintType;
+    Button ChangePrintType,AddPrintBlock;
     LinearLayout optRow, PriceCheckerInfoLayout;
 
     @Override
@@ -65,6 +65,10 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         ChangePrintType.setOnClickListener(this);
         Rest = findViewById(R.id.rest);
         PriceCheckerInfoLayout = findViewById(R.id.PricecheckerInfoLayout);
+
+        AddPrintBlock = findViewById(R.id.AddPrintBlock);
+        AddPrintBlock.setOnClickListener(this);
+        AddPrintBlock.setText(GlobalConfig.NumberPackege.toString());
 
         ProgressBar progresBar = findViewById(R.id.progressBar);
         worker = GlobalConfig.GetWorker(progresBar);
@@ -102,6 +106,9 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                 worker.LI.IsShort=!worker.LI.IsShort;
                 ChangePrintType.setText(worker.LI.IsShort?"Коротка":"Стандартна");
                 break;
+            case R.id.AddPrintBlock:
+                GlobalConfig.NumberPackege++;
+                AddPrintBlock.setText(GlobalConfig.NumberPackege.toString());
         }
 
         if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
@@ -128,8 +135,8 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
 
         if(LI.InfoPrinter.equals("CanNotOpen")) {
             Printer.setTextColor(getResources().getColor(R.color.messageError));
-            Drawable dw = BarcodeImage.getBackground();
-            dw.setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
+            //Drawable dw = BarcodeImage.getBackground();
+            //dw.setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
         }
         else {
             Printer.setTextColor(Color.parseColor("#856404"));
