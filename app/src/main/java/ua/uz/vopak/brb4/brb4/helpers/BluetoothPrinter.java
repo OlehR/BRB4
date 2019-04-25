@@ -8,7 +8,7 @@ import java.util.*;
 import android.bluetooth.*;
 import android.os.Handler;
 
-import ua.uz.vopak.brb4.brb4.enums.PrinterError;
+import ua.uz.vopak.brb4.brb4.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.enums.TypePrinter;
 import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
 
@@ -17,7 +17,7 @@ public class BluetoothPrinter {
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice = null;
     public TypePrinter varTypePrinter = TypePrinter.NotDefined;
-    public PrinterError varPrinterError=PrinterError.NotInit;
+    public ePrinterError varPrinterError= ePrinterError.NotInit;
     // needed for communication to bluetooth device / network
     OutputStream mmOutputStream;
     InputStream mmInputStream;
@@ -57,7 +57,7 @@ public class BluetoothPrinter {
 
             if(mBluetoothAdapter == null) {
                 // myLabel.setText("No bluetooth adapter available");
-                varPrinterError=PrinterError.TurnOffBluetooth;
+                varPrinterError= ePrinterError.TurnOffBluetooth;
                 return;
             }
 
@@ -102,7 +102,7 @@ public class BluetoothPrinter {
             // myLabel.setText("Bluetooth device found.");
 
         }catch(Exception e){
-            varPrinterError=PrinterError.TurnOffBluetooth;
+            varPrinterError= ePrinterError.TurnOffBluetooth;
             e.printStackTrace();
         }
     }
@@ -123,10 +123,10 @@ public class BluetoothPrinter {
             beginListenForData();
 
             //myLabel.setText("Bluetooth Opened");
-            varPrinterError=PrinterError.None;
+            varPrinterError= ePrinterError.None;
         } catch (Exception e) {
             e.printStackTrace();
-            varPrinterError=PrinterError.CanNotOpen;
+            varPrinterError= ePrinterError.CanNotOpen;
         }
     }
     /*
@@ -189,7 +189,7 @@ public class BluetoothPrinter {
 
                         } catch (IOException ex) {
                             stopWorker = true;
-                            varPrinterError=PrinterError.CanNotOpen;
+                            varPrinterError= ePrinterError.CanNotOpen;
                         }
 
                     }
@@ -205,13 +205,13 @@ public class BluetoothPrinter {
 
     public void sendData(byte[] msg) throws IOException {
         try {
-            if(varTypePrinter != TypePrinter.NotDefined && varPrinterError==PrinterError.None)
+            if(varTypePrinter != TypePrinter.NotDefined && varPrinterError== ePrinterError.None)
                 mmOutputStream.write(msg);
             // tell the user data were sent
             //myLabel.setText("Data sent.");
 
         } catch (Exception e) {
-            varPrinterError=PrinterError.ErrorSendData;
+            varPrinterError= ePrinterError.ErrorSendData;
         }
     }
 
@@ -223,7 +223,7 @@ public class BluetoothPrinter {
             mmSocket.close();
             //myLabel.setText("Bluetooth Closed");
         } catch (Exception e) {
-            varPrinterError=PrinterError.CanNotOpen;
+            varPrinterError= ePrinterError.CanNotOpen;
             //e.printStackTrace();
         }
     }

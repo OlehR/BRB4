@@ -3,7 +3,6 @@ package ua.uz.vopak.brb4.brb4;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,18 +20,27 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+import ua.uz.vopak.brb4.brb4.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncConfigPairAdd;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncWorker;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack{
     private Worker worker;
     private Scaner scaner;
+//    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
     Button ChangePrintType,AddPrintBlock;
@@ -105,6 +113,10 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                 break;
             case R.id.AddPrintBlock:
                 GlobalConfig.NumberPackege++;
+                DateFormat df = new SimpleDateFormat("yyyyMMdd");
+                Date today = Calendar.getInstance().getTime();
+                String todayAsString = df.format(today);
+                new AsyncConfigPairAdd(worker).execute("NumberPackege",todayAsString+GlobalConfig.NumberPackege.toString());
                 AddPrintBlock.setText(GlobalConfig.NumberPackege.toString());
         }
 
@@ -130,7 +142,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         nameView.setText(LI.Name);
         Printer.setText(LI.InfoPrinter);
 
-        if(LI.InfoPrinter.equals("CanNotOpen")) {
+        if( worker.Printer.varPrinterError != ePrinterError.None) {
             Printer.setTextColor(getResources().getColor(R.color.messageError));
         }
         else {
@@ -138,7 +150,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
 
         Network.setText(LI.InfoHTTP);
-        if(!LI.InfoHTTP.equals("HTTP_OK")) {
+        if( worker.Http.HttpState != eStateHTTP.HTTP_OK ) {
             Network.setTextColor(getResources().getColor(R.color.messageError));
         }
         else {
@@ -146,7 +158,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
 
         boolean isProblem = false;
-        if(LI.InfoPrinter.equals("CanNotOpen") || !LI.InfoHTTP.equals("HTTP_OK")){
+        if( worker.Printer.varPrinterError != ePrinterError.None || worker.Http.HttpState != eStateHTTP.HTTP_OK){
             if(GlobalConfig.BarcodeImageLayout != null){
                 Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
                 dw.setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
@@ -164,13 +176,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         CountData.setTextColor(Color.parseColor("#856404"));
 
         if(LI.OldPrice != LI.Price){
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-            } else {
-                //deprecated in API 26
-                v.vibrate(500);
-            }
+
             oldPriceView.setTextColor(Color.parseColor("#ee4343"));
             priceView.setTextColor(Color.parseColor("#ee4343"));
             oldPriceText.setTextColor(Color.parseColor("#ee4343"));
@@ -183,13 +189,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
 
         if(LI.OldPriceOpt != LI.PriceOpt){
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-            } else {
-                //deprecated in API 26
-                v.vibrate(500);
-            }
+
             OldPriceOpt.setTextColor(Color.parseColor("#ee4343"));
             NewPriceOpt.setTextColor(Color.parseColor("#ee4343"));
             OldPriceOpt.setTextColor(Color.parseColor("#ee4343"));
@@ -209,15 +209,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             optRow.setVisibility(View.INVISIBLE);
         }
 
-        if(LI.ActionType == 1){
-            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                v.vibrate(VibrationEffect.createOneShot(1500, VibrationEffect.DEFAULT_AMPLITUDE));
-            } else {
-                //deprecated in API 26
-                v.vibrate(1500);
-            }
-
+        if(LI.ActionType == 2){
             if(GlobalConfig.BarcodeImageLayout != null && !isProblem){
                 Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
                 dw.clearColorFilter();
@@ -259,5 +251,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         // TODO Auto-generated method stub
         super.onDestroy();
     }
+
+
 
 }

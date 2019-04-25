@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import android.app.Activity;
 import android.content.Context;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.text.TextUtils;
 import android.widget.ProgressBar;
 import com.google.gson.Gson;
@@ -17,11 +20,10 @@ import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.DocumentActivity;
 import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
 import ua.uz.vopak.brb4.brb4.DocumentScannerActivity;
-import ua.uz.vopak.brb4.brb4.enums.PrinterError;
+import ua.uz.vopak.brb4.brb4.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.QuantityModel;
-import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
@@ -36,10 +38,12 @@ public class Worker
     public PriceCheckerActivity priceCheckerActivity;
     private String CodeWares;
     private String BarCode;
-    BluetoothPrinter Printer = new BluetoothPrinter();
-    GetDataHTTP Http = new GetDataHTTP();
+    public BluetoothPrinter Printer = new BluetoothPrinter();
+    public GetDataHTTP Http = new GetDataHTTP();
     public LabelInfo LI = new LabelInfo(GlobalConfig.varApplicationContext);
     SQLiteAdapter mDbHelper;
+
+    Vibrator v = (Vibrator) GlobalConfig.varApplicationContext.getSystemService(Context.VIBRATOR_SERVICE);
 
     public void SetProgressBar(ProgressBar parProgressBar)
     {
@@ -100,6 +104,7 @@ public class Worker
                    LI.Init(resHttp);
                    LI.AllScan++;
                    if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
+                       Vibrate(500);
                        LI.BadScan++;
                        byte[] b = new byte[0];
                        try {
@@ -113,11 +118,17 @@ public class Worker
                            //LI.InfoPrinter="Lost Connect";
                            //e.printStackTrace();
                        }
-                       if (Printer.varPrinterError != PrinterError.None)
+                       if (Printer.varPrinterError != ePrinterError.None)
                            LI.InfoPrinter = Printer.varPrinterError.name();
                    }
+                   else
+                       Vibrate(100);
+                   if(LI.ActionType != 0)
+                       Vibrate(1000);
 
                }
+               else
+                   Vibrate(500);
            }
            catch (Exception ex)
            {
@@ -127,7 +138,7 @@ public class Worker
        }
        try {
 
-           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError!=PrinterError.None ?-1:0))));
+           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError!= ePrinterError.None ?-1:0))));
            SetProgress(100);
        }
        catch (Exception e)
@@ -227,7 +238,7 @@ public class Worker
       /*Printer.findBT();
       try {
           Printer.openBT();
-          LI.InfoPrinter= (Printer.varPrinterError==PrinterError.None? Printer.varTypePrinter.name():Printer.varPrinterError.name());
+          LI.InfoPrinter= (Printer.varPrinterError==ePrinterError.None? Printer.varTypePrinter.name():Printer.varPrinterError.name());
       } catch (IOException e) {
           e.printStackTrace();
           LI.InfoPrinter="Error";
@@ -238,7 +249,7 @@ public class Worker
       LI.BadScan=varRes[1];
   }
   public void ReInitBT(){
-       if(Printer.varPrinterError == PrinterError.CanNotOpen || Printer.varPrinterError == PrinterError.TurnOffBluetooth ||  Printer.varPrinterError == PrinterError.ErrorSendData ) {
+       if(Printer.varPrinterError == ePrinterError.CanNotOpen || Printer.varPrinterError == ePrinterError.TurnOffBluetooth ||  Printer.varPrinterError == ePrinterError.ErrorSendData ) {
            try {
                Printer.closeBT();
            } catch (IOException e) {
@@ -251,10 +262,10 @@ public class Worker
         Printer.findBT();
         try {
             Printer.openBT();
-            LI.InfoPrinter= (Printer.varPrinterError==PrinterError.None? Printer.varTypePrinter.name():Printer.varPrinterError.name());
+            LI.InfoPrinter= (Printer.varPrinterError== ePrinterError.None? Printer.varTypePrinter.name():Printer.varPrinterError.name());
         } catch (IOException e) {
          //   e.printStackTrace();
-            LI.InfoPrinter= PrinterError.CanNotOpen.name();
+            LI.InfoPrinter= ePrinterError.CanNotOpen.name();
         }
     }
 
@@ -330,5 +341,12 @@ public class Worker
 
     }
 
-
+    protected void Vibrate(int time){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(time, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            //deprecated in API 26
+            v.vibrate(time);
+        }
+    }
 }

@@ -87,7 +87,12 @@ public class LabelInfo
         Article = varData[4];
         BarCode = varData[5];
         if(varData[6]=="1")
-            Action  = true;
+           Action  = true;
+        ActionType=0;
+
+        try {
+            ActionType = Integer.parseInt(varData[6]);
+        }catch(Exception Ex){}
 
         PriceBillOpt=0;
         PriceCoinOpt=0;
