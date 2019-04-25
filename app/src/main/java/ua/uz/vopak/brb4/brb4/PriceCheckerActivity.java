@@ -2,18 +2,23 @@ package ua.uz.vopak.brb4.brb4;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.FragmentActivity;
+import android.view.LayoutInflater;
 import android.view.View;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TableRow;
@@ -34,7 +39,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
     Button ChangePrintType;
-    LinearLayout optRow;
+    LinearLayout optRow, BarcodeImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,10 +124,16 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         perView.setText(LI.Unit);
         nameView.setText(LI.Name);
         Printer.setText(LI.InfoPrinter);
-        if(LI.InfoPrinter.equals("CanNotOpen"))
+
+        if(LI.InfoPrinter.equals("CanNotOpen")) {
             Printer.setTextColor(getResources().getColor(R.color.messageError));
-        else
+            Drawable dw = BarcodeImage.getBackground();
+            dw.setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
+        }
+        else {
             Printer.setTextColor(Color.parseColor("#856404"));
+        }
+
         Network.setText(LI.InfoHTTP);
         if(!LI.InfoHTTP.equals("HTTP_OK"))
             Network.setTextColor(getResources().getColor(R.color.messageError));
