@@ -24,7 +24,7 @@ public class GlobalConfig {
     public static ua.uz.vopak.brb4.brb4.Scaner.Scaner Scaner;
     public static Context varApplicationContext;
     public static boolean isAutorized;
-
+    public static Integer NumberPackege = 0;
     public static String GetApiJson(int parCodeData, String parData) {
         return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData==null?"":","+parData )+"}";
