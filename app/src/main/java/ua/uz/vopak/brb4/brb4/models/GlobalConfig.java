@@ -27,6 +27,8 @@ public class GlobalConfig {
     public static boolean isAutorized;
     public static Integer NumberPackege = 0;
     public static View BarcodeImageLayout;
+    public static Integer connectionPrinterType;
+    public static boolean yellowAutoPrint;
     public static String GetApiJson(int parCodeData, String parData) {
         return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData==null?"":","+parData )+"}";
@@ -50,6 +52,27 @@ public class GlobalConfig {
         GetSQLiteAdapter(varApplicationContext);
         //Worker
         GetWorker();
+
+        new AsyncHelper(new IAsyncHelper() {
+            @Override
+            public void Invoke() {
+                String printerConnectionType = Worker.GetConfigPair("connectionPrinterType");
+
+                if(printerConnectionType.equals("")){
+                    connectionPrinterType = 0;
+                }else{
+                    connectionPrinterType = Integer.parseInt(printerConnectionType);
+                }
+
+                String parYellowAutoPrint = Worker.GetConfigPair("yellowAutoPrint");
+
+                if(parYellowAutoPrint.equals("")){
+                    yellowAutoPrint = false;
+                }else{
+                    yellowAutoPrint = Boolean.parseBoolean(parYellowAutoPrint);
+                }
+            }
+        }).execute();
     }
 
     public static Scaner GetScaner() {
@@ -79,6 +102,7 @@ public class GlobalConfig {
         if (Instance == null) {
             Instance = new GlobalConfig();
         }
+
         return Instance;
     }
 

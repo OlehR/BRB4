@@ -54,15 +54,6 @@ public class WareListHelper {
         return  this;
     }
 
-    public static Object getKeyFromValue(Map hm, Object value) {
-        for (Object o : hm.keySet()) {
-            if (hm.get(o).equals(value)) {
-                return o;
-            }
-        }
-        return null;
-    }
-
     public WareListHelper(SettingsActivity context){
         activity = context;
     }

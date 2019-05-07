@@ -6,6 +6,7 @@ import android.widget.AdapterView;
 import android.widget.Spinner;
 
 import ua.uz.vopak.brb4.brb4.R;
+import ua.uz.vopak.brb4.brb4.helpers.HashMapHelper;
 import ua.uz.vopak.brb4.brb4.helpers.WareListHelper;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
@@ -29,7 +30,7 @@ public class AsyncWaresHelper extends AsyncTask<String , Void, WareListHelper>
         warList.setAdapter(wH.adapter);
         warList.setPrompt("Склад");
         try {
-            warList.setSelection(wH.adapter.getPosition(wH.getKeyFromValue(wH.map, config.CodeWarehouse).toString()));
+            warList.setSelection(wH.adapter.getPosition(HashMapHelper.getKeyFromValue(wH.map, config.CodeWarehouse).toString()));
         }
         catch (Exception e)
         {};

@@ -8,7 +8,7 @@
         android:id="@+id/textView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12pt"
+        android:textSize="10pt"
         android:text="Склад" />
 
     <Spinner
@@ -23,6 +23,31 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:text="ЗАВАНТАЖИТИ ДАНІ"/>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:text="Підключення принтера" />
+
+    <Spinner
+        android:id="@+id/connectionPrinterType"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/textView1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:text="Автоматичний друк жовтих цінників" />
+
+    <CheckBox
+        android:id="@+id/yellowAutoPrint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/SN"
