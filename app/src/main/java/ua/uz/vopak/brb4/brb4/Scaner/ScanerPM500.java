@@ -18,6 +18,7 @@ public class ScanerPM500 extends Scaner {
     private final Handler mHandler = new Handler();
     public static ScanManager mScanner;
     public static DecodeResult mDecodeResult;
+    GlobalConfig config = GlobalConfig.instance();
 
 
     public ScanerPM500(Context parApplicationContext)
@@ -39,7 +40,7 @@ public class ScanerPM500 extends Scaner {
     @Override
     public void Close()
     {
-        GlobalConfig.Scaner=null;
+        config.Scaner=null;
 
     }
 

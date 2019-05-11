@@ -40,10 +40,10 @@ public class Worker
     private String BarCode;
     public BluetoothPrinter Printer = new BluetoothPrinter();
     public GetDataHTTP Http = new GetDataHTTP();
-    public LabelInfo LI = new LabelInfo(GlobalConfig.varApplicationContext);
+    public LabelInfo LI = new LabelInfo(config.varApplicationContext);
     SQLiteAdapter mDbHelper;
 
-    Vibrator v = (Vibrator) GlobalConfig.varApplicationContext.getSystemService(Context.VIBRATOR_SERVICE);
+    Vibrator v = (Vibrator) config.varApplicationContext.getSystemService(Context.VIBRATOR_SERVICE);
 
     public void SetProgressBar(ProgressBar parProgressBar)
     {
@@ -160,7 +160,7 @@ public class Worker
 
     public void LoadDocsData(String parTypeDoc, MainActivity context)
     {
-        String data=GlobalConfig.GetApiJson(150,"\"TypeDoc\":"+parTypeDoc);
+        String data=config.GetApiJson(150,"\"TypeDoc\":"+parTypeDoc);
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
         mDbHelper.LoadDataDoc(result);
@@ -179,7 +179,7 @@ public class Worker
             war += ware.Quantity+"]";
             wares.add(war);
         }
-        String data=GlobalConfig.GetApiJson(153,"\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"]");
+        String data=config.GetApiJson(153,"\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"]");
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
     }
@@ -207,7 +207,7 @@ public class Worker
 
        //Gson g= new Gson(stockArr).toJson(obj);
        String a = new Gson().toJson(list);
-       String data=GlobalConfig.GetApiJson(141,"\"LogPrice\":"+a);
+       String data=config.GetApiJson(141,"\"LogPrice\":"+a);
 
        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
@@ -243,7 +243,7 @@ public class Worker
           e.printStackTrace();
           LI.InfoPrinter="Error";
       }*/
-      mDbHelper = GlobalConfig.GetSQLiteAdapter();
+      mDbHelper = config.GetSQLiteAdapter();
       int[] varRes=mDbHelper.GetCountScanCode();
       LI.AllScan=varRes[0];
       LI.BadScan=varRes[1];

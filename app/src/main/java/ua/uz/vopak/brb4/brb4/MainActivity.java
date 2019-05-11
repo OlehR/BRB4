@@ -40,9 +40,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Ініціалізація BD
-        Context c =this.getApplicationContext();
-        GlobalConfig.Init(c);
         context = this;
 
         auth = new AuterizationsHelper();
@@ -106,7 +103,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
             menuItems[i].setOnClickListener(this);
         }
-        scaner=GlobalConfig.GetScaner();
+        scaner=config.GetScaner();
         scaner.Init(this);
     }
 
@@ -165,7 +162,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             startActivity(i);
         }
         else {
-            Worker worker=GlobalConfig.GetWorker();
             //new AsyncSyncData(worker).execute();
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override

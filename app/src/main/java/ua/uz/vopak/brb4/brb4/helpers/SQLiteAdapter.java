@@ -26,6 +26,7 @@ public class SQLiteAdapter
     private final Context mContext;
     private SQLiteDatabase mDb;
     private DataBaseHelper mDbHelper;
+    GlobalConfig config = GlobalConfig.instance();
 
     public SQLiteAdapter(Context context)
     {
@@ -178,7 +179,7 @@ public class SQLiteAdapter
                     row.add(mCur.getString(0));
                     row.add(mCur.getInt(1));
                     row.add(mCur.getString(2));
-                    row.add(GlobalConfig.NumberPackege);
+                    row.add(config.NumberPackege);
 
                     list.add(row);
                 }
@@ -289,8 +290,8 @@ public class SQLiteAdapter
     }
 
     public List<DocumentModel> GetDocumentList(String type) {
-        String data=GlobalConfig.GetApiJson(150,"\"TypeDoc\":"+type);
-        String result = new GetDataHTTP().HTTPRequest(GlobalConfig.instance().ApiUrl, data);
+        String data=config.GetApiJson(150,"\"TypeDoc\":"+type);
+        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
         LoadDataDoc(result);
         List<DocumentModel> model = new ArrayList<DocumentModel>();
         Cursor mCur;

@@ -2,6 +2,7 @@ package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -32,6 +33,10 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Ініціалізація BD
+        Context c =this.getApplicationContext();
+        config.Init(c);
+
         setContentView(R.layout.auth_layout);
 
         loginBtn = findViewById(R.id.LoginButton);
@@ -69,15 +74,14 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
                 Date today = Calendar.getInstance().getTime();
                 String todayAsString = df.format(today);
 
-                Worker varWorker =GlobalConfig.GetWorker();
-                String var  = varWorker.GetConfigPair("NumberPackege");
+                String var  = config.Worker.GetConfigPair("NumberPackege");
                 String varNumberPackege="1";
                 if(var.length()>8 && var.substring(0,8).equals(todayAsString))
                 {
                     varNumberPackege = var.substring(8);
                 }
                 else
-                    varWorker.AddConfigPair("NumberPackege",todayAsString+ varNumberPackege);
+                    config.Worker.AddConfigPair("NumberPackege",todayAsString+ varNumberPackege);
 
                 config.NumberPackege=Integer.valueOf(varNumberPackege);
                 return null;
@@ -144,8 +148,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-                        //SomeActivity - имя класса Activity для которой переопределяем onBackPressed();
-                        GlobalConfig.instance().isAutorized = false;
+                        config.isAutorized = false;
                         finish();
                         moveTaskToBack(true);
                     }

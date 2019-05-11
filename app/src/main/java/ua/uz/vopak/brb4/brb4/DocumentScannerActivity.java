@@ -74,7 +74,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         scanNN = Integer.parseInt(InventoryItems.get(InventoryItems.size() - 1).OrderDoc);
         codeWares = "";
 
-        scaner=GlobalConfig.GetScaner();
+        scaner = config.GetScaner();
         scaner.Init(this);
 
         barCode = findViewById(R.id.RevisionBarCode);

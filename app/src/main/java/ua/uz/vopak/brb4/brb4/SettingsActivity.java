@@ -82,7 +82,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                 }).execute();
 
         SN = findViewById(R.id.SN);
-        SN.setText("SN: " + GlobalConfig.instance().SN);
+        SN.setText("SN: " + config.SN);
         loadDocsData = findViewById(R.id.LoadDocumentsData);
         loadDocsData.setOnClickListener(this);
         connectionPrinterType = findViewById(R.id.connectionPrinterType);

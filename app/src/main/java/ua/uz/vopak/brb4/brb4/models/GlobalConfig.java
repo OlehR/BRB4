@@ -13,37 +13,44 @@ import ua.uz.vopak.brb4.brb4.helpers.*;
 
 public class GlobalConfig {
     private static GlobalConfig Instance = null;
-    public static String CodeWarehouse = "0";
-    public static String ApiUrl = "http://znp.vopak.local/api/api_v1_utf8.php";
-    public static String Login = "c";
-    public static String Password = "c";
-    public static Worker Worker;
-    public static String SN = Build.SERIAL;
-    public static String NameDCT = Build.USER;
-    public static SQLiteAdapter SQLiteAdapter;
-    public static eTypeScaner TypeScaner = eTypeScaner.NotDefine;
-    public static ua.uz.vopak.brb4.brb4.Scaner.Scaner Scaner;
-    public static Context varApplicationContext;
-    public static boolean isAutorized;
-    public static Integer NumberPackege = 0;
-    public static View BarcodeImageLayout;
-    public static Integer connectionPrinterType;
-    public static boolean yellowAutoPrint;
-    public static String GetApiJson(int parCodeData, String parData) {
-        return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
+    public String CodeWarehouse = "0";
+    public String ApiUrl = "http://znp.vopak.local/api/api_v1_utf8.php";
+    public String Login = "c";
+    public String Password = "c";
+    public Worker Worker;
+    public String SN = Build.SERIAL;
+    public String NameDCT = Build.USER;
+    public SQLiteAdapter SQLiteAdapter;
+    public eTypeScaner TypeScaner = eTypeScaner.NotDefine;
+    public ua.uz.vopak.brb4.brb4.Scaner.Scaner Scaner;
+    public Context varApplicationContext;
+    public boolean isAutorized;
+    public Integer NumberPackege = 0;
+    public View BarcodeImageLayout;
+    public Integer connectionPrinterType;
+    public boolean yellowAutoPrint;
+    public String GetApiJson(int parCodeData, String parData) {
+        return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+this.getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData==null?"":","+parData )+"}";
     }
 
-    public static String getCodeWarehouse() {
+    public String getCodeWarehouse() {
         String code = "000000000" + CodeWarehouse;
         return code.substring(code.length() - 9);
     }
 
     protected GlobalConfig() {
-//        String NameDCT = Build.ID;
     }
 
-    public static void Init(Context parApplicationContext)
+    public static GlobalConfig instance() {
+        if (Instance == null) {
+            Instance = new GlobalConfig();
+        }
+
+        return Instance;
+    }
+
+    public void Init(Context parApplicationContext)
     {
         varApplicationContext=parApplicationContext;
         //Визначаємо тип Сканера
@@ -77,7 +84,7 @@ public class GlobalConfig {
         }).execute();
     }
 
-    public static Scaner GetScaner() {
+    public Scaner GetScaner() {
 
         if(Scaner!=null)
             return Scaner;
@@ -100,29 +107,19 @@ public class GlobalConfig {
         return Scaner;
     }
 
-    public static GlobalConfig instance() {
-        if (Instance == null) {
-            Instance = new GlobalConfig();
-        }
-
-        return Instance;
-    }
-
-    public static Worker GetWorker(ProgressBar varProgressBar) {
-        Worker = GetWorker();
+    public void SetProgressBar(ProgressBar varProgressBar) {
         if (Worker != null)
             Worker.SetProgressBar(varProgressBar);
-        return Worker;
     }
 
-    public static Worker GetWorker() {
+    public Worker GetWorker() {
         if (Worker == null) {
             Worker = new Worker();
         }
         return Worker;
     }
 
-    public static SQLiteAdapter GetSQLiteAdapter(Context c) {
+    public SQLiteAdapter GetSQLiteAdapter(Context c) {
         if (SQLiteAdapter == null) {
             SQLiteAdapter = new SQLiteAdapter(c);
             SQLiteAdapter.createDatabase();
@@ -131,11 +128,11 @@ public class GlobalConfig {
         return SQLiteAdapter;
     }
 
-    public static SQLiteAdapter GetSQLiteAdapter() {
+    public SQLiteAdapter GetSQLiteAdapter() {
         return SQLiteAdapter;
     }
 
-    static eTypeScaner GetTypeScaner(Context parApplicationContext) {
+    eTypeScaner GetTypeScaner(Context parApplicationContext) {
         if(parApplicationContext==null)
             return eTypeScaner.None;
         String model = android.os.Build.MODEL;

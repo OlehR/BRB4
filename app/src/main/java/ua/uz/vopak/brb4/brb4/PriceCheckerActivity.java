@@ -39,7 +39,6 @@ import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack{
-    private Worker worker;
     private Scaner scaner;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
@@ -74,19 +73,19 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
 
         AddPrintBlock = findViewById(R.id.AddPrintBlock);
         AddPrintBlock.setOnClickListener(this);
-        AddPrintBlock.setText(GlobalConfig.NumberPackege.toString());
+        AddPrintBlock.setText(config.NumberPackege.toString());
 
         ProgressBar progresBar = findViewById(R.id.progressBar);
-        worker = GlobalConfig.GetWorker(progresBar);
-        worker.SetPriceCheckerActivity(this);
-        worker.ReInitBT();
-        ChangePrintType.setText(worker.LI.IsShort?"Коротка":"Стандартна");
+        config.SetProgressBar(progresBar);
+        config.Worker.SetPriceCheckerActivity(this);
+        config.Worker.ReInitBT();
+        ChangePrintType.setText(config.Worker.LI.IsShort?"Коротка":"Стандартна");
 
-        setScanResult(worker.LI);
+        setScanResult(config.Worker.LI);
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setBeepEnabled(true);
 
-        scaner=GlobalConfig.GetScaner();
+        scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
 
     }
@@ -109,11 +108,11 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
       int Id= v.getId();
         switch (Id){
             case R.id.ChangePrintType:
-                worker.LI.IsShort=!worker.LI.IsShort;
-                ChangePrintType.setText(worker.LI.IsShort?"Коротка":"Стандартна");
+                config.Worker.LI.IsShort=!config.Worker.LI.IsShort;
+                ChangePrintType.setText(config.Worker.LI.IsShort?"Коротка":"Стандартна");
                 break;
             case R.id.AddPrintBlock:
-                GlobalConfig.NumberPackege++;
+                config.NumberPackege++;
                 DateFormat df = new SimpleDateFormat("yyyyMMdd");
                 Date today = Calendar.getInstance().getTime();
                 final String todayAsString = df.format(today);
@@ -121,14 +120,14 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                 new AsyncHelper<Void>(new IAsyncHelper() {
                     @Override
                     public Void Invoke() {
-                        config.Worker.AddConfigPair("NumberPackege",todayAsString+GlobalConfig.NumberPackege.toString());
+                        config.Worker.AddConfigPair("NumberPackege",todayAsString+config.NumberPackege.toString());
                         return null;
                     }
                 }).execute();
-                AddPrintBlock.setText(GlobalConfig.NumberPackege.toString());
+                AddPrintBlock.setText(config.NumberPackege.toString());
         }
 
-        if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
+        if(config.TypeScaner==eTypeScaner.Camera) {
             BarcodeView barcodeView = findViewById(R.id.barcode_scanner);
             barcodeView.resume();
 
@@ -139,7 +138,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     //Необхідно для Zebta  TC20 Оскільки повідомлення приходять саме так. !!!TMP Можливо перероблю через повідомлення
     @Override
     public void onNewIntent(Intent i) {
-        GlobalConfig.GetScaner().handleDecodeData(i);
+        config.GetScaner().handleDecodeData(i);
 
     }
 
@@ -150,7 +149,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         nameView.setText(LI.Name);
         Printer.setText(LI.InfoPrinter);
 
-        if( worker.Printer.varPrinterError != ePrinterError.None) {
+        if( config.Worker.Printer.varPrinterError != ePrinterError.None) {
             Printer.setTextColor(getResources().getColor(R.color.messageError));
         }
         else {
@@ -158,7 +157,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
 
         Network.setText(LI.InfoHTTP);
-        if( worker.Http.HttpState != eStateHTTP.HTTP_OK ) {
+        if( config.Worker.Http.HttpState != eStateHTTP.HTTP_OK ) {
             Network.setTextColor(getResources().getColor(R.color.messageError));
         }
         else {
@@ -166,15 +165,15 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
 
         boolean isProblem = false;
-        if( worker.Printer.varPrinterError != ePrinterError.None || worker.Http.HttpState != eStateHTTP.HTTP_OK){
-            if(GlobalConfig.BarcodeImageLayout != null){
-                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+        if( config.Worker.Printer.varPrinterError != ePrinterError.None || config.Worker.Http.HttpState != eStateHTTP.HTTP_OK){
+            if(config.BarcodeImageLayout != null){
+                Drawable dw = config.BarcodeImageLayout.getBackground();
                 dw.setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
                 isProblem = true;
             }
         }else{
-            if(GlobalConfig.BarcodeImageLayout != null){
-                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+            if(config.BarcodeImageLayout != null){
+                Drawable dw = config.BarcodeImageLayout.getBackground();
                 dw.clearColorFilter();
             }
         }
@@ -218,14 +217,14 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
 
         if(LI.ActionType == 2){
-            if(GlobalConfig.BarcodeImageLayout != null && !isProblem){
-                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+            if(config.BarcodeImageLayout != null && !isProblem){
+                Drawable dw = config.BarcodeImageLayout.getBackground();
                 dw.clearColorFilter();
                 dw.setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
             }
         }else{
-            if(GlobalConfig.BarcodeImageLayout != null && !isProblem){
-                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+            if(config.BarcodeImageLayout != null && !isProblem){
+                Drawable dw = config.BarcodeImageLayout.getBackground();
                 dw.clearColorFilter();
             }
         }
@@ -237,7 +236,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         Rest.setText(String.format("%.2f",LI.Rest));
 
 
-        if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
+        if(config.TypeScaner==eTypeScaner.Camera) {
             BarcodeView barcodeView = (BarcodeView) findViewById(R.id.barcode_scanner);
             barcodeView.resume();
         }
