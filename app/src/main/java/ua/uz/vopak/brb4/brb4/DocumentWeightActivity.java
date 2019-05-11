@@ -22,9 +22,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncDocWares;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncInventories;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncUpdateDocState;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
@@ -39,7 +38,8 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
     int position = 0;
     EditText searchField;
     static Integer scanNN = 0;
-    Context context;
+    GlobalConfig config = GlobalConfig.instance();
+    Activity context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,14 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
         Intent i = getIntent();
         number = i.getStringExtra("number");
         documentType = i.getStringExtra("document_type");
-        new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number, documentType);
+        //new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number, documentType);
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.GetDoc(number,documentType,(IIncomeRender) context);
+                return null;
+            }
+        }).execute();
 
         tl = findViewById(R.id.ItemsTable);
         searchField = findViewById(R.id.searchFild);
@@ -237,10 +244,17 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
         ViewGroup row = (ViewGroup) tl.getChildAt(position);
         ViewGroup innerRow = (ViewGroup) row.getChildAt(1);
         EditText v = (EditText) innerRow.getChildAt(1);
-        String value = v.getText().toString();
+        final String value = v.getText().toString();
         if(!value.equals("") && Float.parseFloat(value) != 0){
             scanNN++;
-            new AsyncDocWares(GlobalConfig.GetWorker(), this).execute(value, scanNN.toString(), Model.get(position).CodeWares, number, documentType, "true");
+            //new AsyncDocWares(GlobalConfig.GetWorker(), this).execute(value, scanNN.toString(), Model.get(position).CodeWares, number, documentType, "true");
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    config.Worker.SaveDocWares(value, scanNN.toString(), Model.get(position).CodeWares, number, documentType,"true", context);
+                    return null;
+                }
+            }).execute();
         }
         moveNext();
     }
@@ -275,7 +289,14 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
     }
 
     private void syncData(){
-        new AsyncUpdateDocState(GlobalConfig.GetWorker(),this).execute("1",number,documentType);
+        //new AsyncUpdateDocState(GlobalConfig.GetWorker(),this).execute("1",number,documentType);
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.UpdateDocState("1",number, documentType,(Activity) context);
+                return null;
+            }
+        }).execute();
     }
 
     public void AfterSave(){

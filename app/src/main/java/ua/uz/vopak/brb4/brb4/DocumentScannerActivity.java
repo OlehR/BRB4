@@ -26,11 +26,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncGetQuantity;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncRevisionScanHelper;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncDocWares;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
+import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
@@ -41,7 +40,6 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     EditText barCode, currentCount, inputCount, scannerCof, scannerCount, countInPosition;
     TextView scannerTitle, inPosition, nameUnit;
     ScrollView scrollView;
-    private final Handler mHandler = new Handler();
     public static DocumentScannerActivity aContext;
     static String InventoryNumber;
     static Integer scanNN = 0;
@@ -50,16 +48,18 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     List<DocWaresModel> InventoryItems;
     RevisionItemModel InventoryItem;
     TableLayout RevisionTable;
-    static Worker worker = GlobalConfig.instance().GetWorker();
     private Scaner scaner;
     int dpValue = 3, padding;
     float d, totalExistingCount;
     String documentType;
     private QuantityModel quantity = null;
+    GlobalConfig config = GlobalConfig.instance();
+    Activity context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         d = this.getResources().getDisplayMetrics().density;
         padding = (int)(dpValue * d);
         setContentView(R.layout.document_scanner_activity);
@@ -128,8 +128,16 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     }
 
     @Override
-    public void Run(String parBarCode) {
-        new AsyncRevisionScanHelper(worker, aContext).execute(parBarCode);
+    public void Run(final String parBarCode) {
+        //new AsyncRevisionScanHelper(worker, aContext).execute(parBarCode);
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.GetRevisionScannerData(parBarCode, context);
+                return null;
+            }
+        }).execute();
     }
 
     @Override
@@ -236,7 +244,14 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 if(documentType.equals("2")){
                     loader.setVisibility(View.VISIBLE);
                     inputCount.setEnabled(false);
-                    new AsyncGetQuantity(worker, aContext).execute(documentType, InventoryNumber, model.CodeWares);
+                    //new AsyncGetQuantity(worker, aContext).execute(documentType, InventoryNumber, model.CodeWares);
+                    new AsyncHelper<Void>(new IAsyncHelper() {
+                        @Override
+                        public Void Invoke() {
+                            config.Worker.GetQuantity(documentType, InventoryNumber, model.CodeWares, context);
+                            return null;
+                        }
+                    }).execute();
                 }
 
                 InventoryItem = model;
@@ -457,7 +472,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         saveDocumentItem("true");
     }
 
-    private  void  saveDocumentItem(String isNullable) {
+    private  void  saveDocumentItem(final String isNullable) {
         String input = inputCount.getText().toString();
 
         if (input.equals("") || Integer.parseInt(input) <= 0 || scannerTitle.getText().toString().equals("")) {
@@ -465,7 +480,14 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         } else {
             loader.setVisibility(View.VISIBLE);
             scanNN++;
-            new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares, InventoryNumber, documentType, isNullable);
+            //new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares, InventoryNumber, documentType, isNullable);
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    config.Worker.SaveDocWares(scannerCount.getText().toString(), scanNN.toString(), codeWares, InventoryNumber, documentType,isNullable, context);
+                    return null;
+                }
+            }).execute();
         }
 
         scrollView.postDelayed(new Runnable() {
@@ -572,7 +594,15 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     }
 
     private void  findWareByArticleOrCode(){
-        new AsyncRevisionScanHelper(worker, aContext).execute(barCode.getText().toString());
+        //new AsyncRevisionScanHelper(worker, aContext).execute(barCode.getText().toString());
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.GetRevisionScannerData(barCode.getText().toString(), context);
+                return null;
+            }
+        }).execute();
     }
 
     private final void focusOnView(final String prevent){

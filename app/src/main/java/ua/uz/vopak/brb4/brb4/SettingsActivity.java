@@ -17,9 +17,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncWaresHelper;
 import ua.uz.vopak.brb4.brb4.helpers.HashMapHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.brb4.helpers.IPostResult;
 import ua.uz.vopak.brb4.brb4.helpers.WareListHelper;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
@@ -27,6 +27,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
     Button loadDocsData;
     TextView SN;
     Spinner connectionPrinterType;
+    Spinner warList;
     CheckBox yellowpriceAutoprint;
     public Map<String, String> printerConnectionMap = new HashMap<String, String>();
     public ArrayAdapter<String> printerConnectionAdapter;
@@ -39,7 +40,46 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.settings_layout);
         context = this;
 
-        new AsyncWaresHelper(new WareListHelper(this)).execute();
+        //new AsyncWaresHelper(new WareListHelper(this)).execute();
+
+        new AsyncHelper<WareListHelper>(
+                new IAsyncHelper<WareListHelper>() {
+                    @Override
+                    public WareListHelper Invoke() {
+                        return new WareListHelper((SettingsActivity) context).getWares();
+                    }
+                },
+                new IPostResult<WareListHelper>() {
+                    @Override
+                    public void Invoke(final WareListHelper wH) {
+                        warList = wH.activity.findViewById(R.id.wares);
+
+                        warList.setAdapter(wH.adapter);
+                        warList.setPrompt("Склад");
+                        try {
+                            warList.setSelection(wH.adapter.getPosition(HashMapHelper.getKeyFromValue(wH.map, config.CodeWarehouse).toString()));
+                        }
+                        catch (Exception e)
+                        {};
+                        warList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                config.CodeWarehouse = wH.map.get(warList.getSelectedItem().toString());
+                                //new AsyncConfigPairAdd(config.GetWorker()).execute("Warehouse", config.CodeWarehouse);
+                                new AsyncHelper<Void>(new IAsyncHelper() {
+                                    @Override
+                                    public Void Invoke() {
+                                        config.Worker.AddConfigPair("Warehouse",config.CodeWarehouse);
+                                        return null;
+                                    }
+                                }).execute();
+                            }
+                            @Override
+                            public void onNothingSelected(AdapterView<?> arg0) {
+                            }
+                        });
+                    }
+                }).execute();
 
         SN = findViewById(R.id.SN);
         SN.setText("SN: " + GlobalConfig.instance().SN);
@@ -68,10 +108,11 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
 
                 config.connectionPrinterType = Integer.parseInt(printerConnectionMap.get(connectionPrinterType.getSelectedItem().toString()));
 
-                new AsyncHelper(new IAsyncHelper() {
+                new AsyncHelper<Void>(new IAsyncHelper() {
                     @Override
-                    public void Invoke() {
+                    public Void Invoke() {
                         config.Worker.AddConfigPair("connectionPrinterType", config.connectionPrinterType.toString());
+                        return null;
                     }
                 }).execute();
 
@@ -93,21 +134,23 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    new AsyncHelper(new IAsyncHelper() {
+                    new AsyncHelper<Void>(new IAsyncHelper() {
                         @Override
-                        public void Invoke() {
+                        public Void Invoke() {
                             config.yellowAutoPrint = true;
                             config.Worker.AddConfigPair("yellowAutoPrint", "true");
                             yellowpriceAutoprint.setChecked(config.yellowAutoPrint);
+                            return null;
                         }
                     }).execute();
                 } else {
-                    new AsyncHelper(new IAsyncHelper() {
+                    new AsyncHelper<Void>(new IAsyncHelper() {
                         @Override
-                        public void Invoke() {
+                        public Void Invoke() {
                             config.yellowAutoPrint = false;
                             config.Worker.AddConfigPair("yellowAutoPrint", "false");
                             yellowpriceAutoprint.setChecked(config.yellowAutoPrint);
+                            return null;
                         }
                     }).execute();
                 }

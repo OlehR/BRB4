@@ -53,9 +53,9 @@ public class GlobalConfig {
         //Worker
         GetWorker();
 
-        new AsyncHelper(new IAsyncHelper() {
+        new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
-            public void Invoke() {
+            public Void Invoke() {
                 String printerConnectionType = Worker.GetConfigPair("connectionPrinterType");
 
                 if(printerConnectionType.equals("")){
@@ -71,6 +71,8 @@ public class GlobalConfig {
                 }else{
                     yellowAutoPrint = Boolean.parseBoolean(parYellowAutoPrint);
                 }
+
+                return null;
             }
         }).execute();
     }

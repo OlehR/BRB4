@@ -1,17 +1,13 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
 import android.content.Intent;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 
 import org.json.JSONObject;
 
 import ua.uz.vopak.brb4.brb4.AuthActivity;
 import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.MessageActivity;
-import ua.uz.vopak.brb4.brb4.R;
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncConfigPairAdd;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 
@@ -38,7 +34,14 @@ public class AuterizationsHelper {
 
             if(jObject.getInt("State") == 0){
                 config.isAutorized = true;
-                new AsyncConfigPairAdd(config.GetWorker()).execute("Login", config.Login);
+                //new AsyncConfigPairAdd(config.GetWorker()).execute("Login", config.Login);
+                new AsyncHelper<Void>(new IAsyncHelper() {
+                    @Override
+                    public Void Invoke() {
+                        config.Worker.AddConfigPair("Login",config.Login);
+                        return null;
+                    }
+                }).execute();
                 Intent i = new Intent(activity,MainActivity.class);
                 activity.startActivity(i);
 

@@ -27,10 +27,11 @@ import java.util.Date;
 
 import ua.uz.vopak.brb4.brb4.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncConfigPairAdd;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncWorker;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
+import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.brb4.helpers.IPostResult;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
@@ -40,11 +41,11 @@ import ua.uz.vopak.brb4.lib.models.LabelInfo;
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack{
     private Worker worker;
     private Scaner scaner;
-//    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
     Button ChangePrintType,AddPrintBlock;
     LinearLayout optRow, PriceCheckerInfoLayout;
+    GlobalConfig config = GlobalConfig.instance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,8 +116,15 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                 GlobalConfig.NumberPackege++;
                 DateFormat df = new SimpleDateFormat("yyyyMMdd");
                 Date today = Calendar.getInstance().getTime();
-                String todayAsString = df.format(today);
-                new AsyncConfigPairAdd(worker).execute("NumberPackege",todayAsString+GlobalConfig.NumberPackege.toString());
+                final String todayAsString = df.format(today);
+                //new AsyncConfigPairAdd(worker).execute("NumberPackege",todayAsString+GlobalConfig.NumberPackege.toString());
+                new AsyncHelper<Void>(new IAsyncHelper() {
+                    @Override
+                    public Void Invoke() {
+                        config.Worker.AddConfigPair("NumberPackege",todayAsString+GlobalConfig.NumberPackege.toString());
+                        return null;
+                    }
+                }).execute();
                 AddPrintBlock.setText(GlobalConfig.NumberPackege.toString());
         }
 
@@ -241,9 +249,23 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         progresBar.setProgress(progres);
     }
 
-    public void ExecuteWorker(String parBarCode){
-        AsyncWorker aW =  new AsyncWorker(worker);
-        aW.execute(parBarCode);
+    public void ExecuteWorker(final String parBarCode){
+        //AsyncWorker aW =  new AsyncWorker(worker);
+        //aW.execute(parBarCode);
+
+        new AsyncHelper<LabelInfo>(
+                new IAsyncHelper<LabelInfo>() {
+                    @Override
+                    public LabelInfo Invoke() {
+                        return config.Worker.Start(parBarCode);
+                    }
+                },
+                new IPostResult<LabelInfo>() {
+                    @Override
+                    public void Invoke(LabelInfo parLI) {
+                        config.Worker.priceCheckerActivity.setScanResult(parLI);
+                    }
+                }).execute();
     }
 
     @Override

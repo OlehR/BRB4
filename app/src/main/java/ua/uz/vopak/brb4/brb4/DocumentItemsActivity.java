@@ -23,8 +23,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncInventories;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncUpdateDocState;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
@@ -40,6 +40,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     List<DocWaresModel> InventoryItems;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
+    GlobalConfig config = GlobalConfig.instance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +57,14 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         btnSave = findViewById(R.id.F3);
         btn.setOnClickListener(this);
         btnSave.setOnClickListener(this);
-        new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number,documentType);
+        //new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number,documentType);
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.GetDoc(number,documentType,(IIncomeRender) context);
+                return null;
+            }
+        }).execute();
     }
 
     @Override
@@ -72,7 +80,14 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         }
 
         if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
-            new AsyncUpdateDocState(GlobalConfig.instance().GetWorker(),this).execute("1",number,documentType);
+            //new AsyncUpdateDocState(GlobalConfig.instance().GetWorker(),this).execute("1",number,documentType);
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    config.Worker.UpdateDocState("1",number, documentType,(Activity) context);
+                    return null;
+                }
+            }).execute();
         }
 
         if(keyCode.equals("15") && event.getAction() == KeyEvent.ACTION_UP){
@@ -99,14 +114,28 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 startActivity(i);
                 break;
             case R.id.F3:
-                new AsyncUpdateDocState(GlobalConfig.instance().GetWorker(),this).execute("1",number,documentType);
+                //new AsyncUpdateDocState(GlobalConfig.instance().GetWorker(),this).execute("1",number,documentType);
+                new AsyncHelper<Void>(new IAsyncHelper() {
+                    @Override
+                    public Void Invoke() {
+                        config.Worker.UpdateDocState("1",number, documentType,(Activity) context);
+                        return null;
+                    }
+                }).execute();
                 break;
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number,documentType);
+        //new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number,documentType);
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.GetDoc(number,documentType,(IIncomeRender) context);
+                return null;
+            }
+        }).execute();
     }
 
     public void renderTable(final List<DocWaresModel> model){
@@ -265,6 +294,10 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     }
 
     public void RenderTableIncome(final List<DocWaresModelIncome> model, List<DocWaresModel> inventoryModel){
+
+        if(model.size() == 0)
+            return;
+
         final DocumentItemsActivity context = this;
         InventoryItems = inventoryModel;
         runOnUiThread(new Runnable() {

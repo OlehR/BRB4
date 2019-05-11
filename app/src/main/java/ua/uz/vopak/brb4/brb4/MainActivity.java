@@ -1,5 +1,6 @@
 package ua.uz.vopak.brb4.brb4;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -19,9 +20,9 @@ import android.widget.RelativeLayout;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadDocsData;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncSyncData;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
+import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
@@ -34,13 +35,15 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     static boolean isFirstRun = true;
     boolean isReload = false;
     private Scaner scaner;
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //Ініціалізація BD
-        Context c=this.getApplicationContext();
+        Context c =this.getApplicationContext();
         GlobalConfig.Init(c);
+        context = this;
 
         auth = new AuterizationsHelper();
 
@@ -63,7 +66,14 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         //---!!!!!TMP Not Load
         if((isFirstRun || isReload) && !config.getCodeWarehouse().equals("000000000")){
             ShowLoader();
-            new AsyncLoadDocsData(config.GetWorker(), this).execute(isReload?"-1":"0");
+            //new AsyncLoadDocsData(config.GetWorker(), this).execute(isReload?"-1":"0");
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    config.Worker.LoadDocsData(isReload?"-1":"0",(MainActivity) context);
+                    return null;
+                }
+            }).execute();
             if(!isReload)
             setAlarm(60 * 30, 60 * 30);
             isFirstRun = false;
@@ -156,7 +166,14 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         }
         else {
             Worker worker=GlobalConfig.GetWorker();
-            new AsyncSyncData(worker).execute();
+            //new AsyncSyncData(worker).execute();
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    config.Worker.SendLogPrice();
+                    return null;
+                }
+            }).execute();
         }
 
 
@@ -285,9 +302,15 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     public static class AlarmReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
-
             if(!config.getCodeWarehouse().equals("000000000")) {
-                new AsyncLoadDocsData(config.GetWorker(), null).execute("0");
+                //new AsyncLoadDocsData(config.GetWorker(), null).execute("0");
+                new AsyncHelper<Void>(new IAsyncHelper() {
+                    @Override
+                    public Void Invoke() {
+                        config.Worker.LoadDocsData("0", null);
+                        return null;
+                    }
+                }).execute();
             }
 
         }

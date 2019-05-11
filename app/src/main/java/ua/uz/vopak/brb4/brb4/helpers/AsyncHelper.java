@@ -2,14 +2,21 @@ package ua.uz.vopak.brb4.brb4.helpers;
 
 import android.os.AsyncTask;
 
-public class AsyncHelper extends AsyncTask<Void,Void,Void> {
+public class AsyncHelper<T> extends AsyncTask<Void,Void,T> {
 
-    IAsyncHelper delegate;
+    IAsyncHelper<T> BackgroundDelegate;
+    IPostResult<T> PostResultDelegate;
     @Override
-    protected Void doInBackground(Void... voids) {
-        delegate.Invoke();
-        return null;
+    protected T doInBackground(Void... voids) {
+        return BackgroundDelegate.Invoke();
     }
 
-    public AsyncHelper(IAsyncHelper dlg){ delegate = dlg;}
+    @Override
+    protected void onPostExecute(T t) {
+        if(t != null && !(t instanceof Void))
+        PostResultDelegate.Invoke(t);
+    }
+
+    public AsyncHelper(IAsyncHelper dlg){ BackgroundDelegate = dlg;}
+    public AsyncHelper(IAsyncHelper bDlg, IPostResult pDlg){ BackgroundDelegate = bDlg; PostResultDelegate = pDlg;}
 }
