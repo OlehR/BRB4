@@ -8,16 +8,22 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.text.DateFormat;
@@ -27,6 +33,7 @@ import java.util.Date;
 
 import ua.uz.vopak.brb4.brb4.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
+import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
@@ -42,9 +49,11 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     private Scaner scaner;
     TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
-    Button ChangePrintType,AddPrintBlock;
-    LinearLayout optRow, PriceCheckerInfoLayout;
+    Button ChangePrintType,AddPrintBlock,ChangePrintColorType;
+    LinearLayout optRow, PriceCheckerInfoLayout,priceCheckerLinearLayout;
     GlobalConfig config = GlobalConfig.instance();
+    Spinner ChangePrintBlockNumber;
+    Integer PrintType = 0,currentPrintBlock=1; //Колір чека 0-звичайнийб 1-жовтий
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,9 +79,13 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         ChangePrintType.setOnClickListener(this);
         Rest = findViewById(R.id.rest);
         PriceCheckerInfoLayout = findViewById(R.id.PricecheckerInfoLayout);
+        priceCheckerLinearLayout = findViewById(R.id.priceCheckerLinearLayout);
+        ChangePrintColorType = findViewById(R.id.ChangePrintColorType);
+        ChangePrintBlockNumber = findViewById(R.id.ChangePrintBlockNumber);
 
         AddPrintBlock = findViewById(R.id.AddPrintBlock);
         AddPrintBlock.setOnClickListener(this);
+        ChangePrintColorType.setOnClickListener(this);
         AddPrintBlock.setText(config.NumberPackege.toString());
 
         ProgressBar progresBar = findViewById(R.id.progressBar);
@@ -87,6 +100,38 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
 
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
+
+        setSpinner();
+
+        if(config.NumberPackege>0){
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    String val = config.Worker.GetConfigPair("currentPrintBlock");
+                    if(!val.equals(""))
+                    currentPrintBlock = Integer.parseInt(val);
+                    ChangePrintBlockNumber.setSelection(currentPrintBlock-1);
+                    return null;
+                }
+            }).execute();
+        }
+
+        ChangePrintBlockNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                currentPrintBlock = Integer.parseInt(ChangePrintBlockNumber.getSelectedItem().toString());
+                new AsyncHelper<Void>(new IAsyncHelper() {
+                    @Override
+                    public Void Invoke() {
+                        config.Worker.AddConfigPair("currentPrintBlock",currentPrintBlock.toString());
+                        return null;
+                    }
+                }).execute();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
 
     }
 
@@ -125,6 +170,10 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                     }
                 }).execute();
                 AddPrintBlock.setText(config.NumberPackege.toString());
+                break;
+            case R.id.ChangePrintColorType:
+                ChangePrintColorType();
+                break;
         }
 
         if(config.TypeScaner==eTypeScaner.Camera) {
@@ -132,6 +181,44 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             barcodeView.resume();
 
         }
+    }
+
+    private void setSpinner(){
+        String[] path = new String[config.NumberPackege];
+        Integer j=0;
+        for(int i=0;i<config.NumberPackege;i++){
+            j++;
+            path[i] = j.toString();
+        }
+        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,path);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        ChangePrintBlockNumber.setAdapter(adapter);
+    }
+
+    private void ChangePrintColorType(){
+        if(ChangePrintColorType.getTag() == null){
+            ChangePrintColorType.setTag("ChangePrintColorType");
+            ChangePrintColorType.setText("Жовтий");
+            PrintType = 0;
+            setBgColor(priceCheckerLinearLayout,"#ffff00");
+        }else {
+            ChangePrintColorType.setTag(null);
+            ChangePrintColorType.setText("Звичайний");
+            PrintType = 1;
+            setBgColor(priceCheckerLinearLayout,"#ffffff");
+        }
+    }
+
+    private void setBgColor(ViewGroup vG, String color){
+        for(int i=0;i<vG.getChildCount();i++){
+            View v = vG.getChildAt(i);
+            v.setBackgroundColor(Color.parseColor(color));
+            if(v instanceof ViewGroup && !(v.getId() != R.id.scan_fragment) && ((ViewGroup)v).getChildCount() > 0 && !(v instanceof Button)){
+                setBgColor((ViewGroup)v,color);
+            }
+        }
+        return;
     }
 
     //We need to handle any incoming intents, so let override the onNewIntent method

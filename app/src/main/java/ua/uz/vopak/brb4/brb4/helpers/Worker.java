@@ -95,13 +95,16 @@ public class Worker
        if(BarCode.length()>7 || !CodeWares.isEmpty() )
        {
            try {
-               String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
-               resHttp = resHttp.replace("&amp;", "&");
+               //String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
+               String _codeWares = !CodeWares.equals("") ? ",\"CodeWares\":\""+CodeWares+ "\"" : "";
+               String data=config.GetApiJson(154,"\"BarCode\":\""+BarCode +"\""+ _codeWares);
+               String resHttp = Http.HTTPRequest(config.ApiUrl, data);
+               //resHttp = resHttp.replace("&amp;", "&");
                //Call Progres 50%;
                LI.InfoHTTP = Http.HttpState.name();
                SetProgress(50);
                if (resHttp != null && !resHttp.isEmpty()) {
-                   LI.Init(resHttp);
+                   LI.Init(new JSONObject(resHttp),BarCode);
                    LI.AllScan++;
                    if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
                        Vibrate(500);
