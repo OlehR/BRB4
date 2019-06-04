@@ -90,15 +90,18 @@ public class Worker
            }
        }
        else {
-           CodeWares="";
-          }
+           if (parBarCode.trim().length() <= 8 && !parBarCode.equals("")) {
+               CodeWares = parBarCode.trim();
+           } else
+               CodeWares = "";
+       }
 
        if(BarCode.length()>7 || !CodeWares.isEmpty() )
        {
            try {
                //String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
                String _codeWares = !CodeWares.equals("") ? "\"CodeWares\":\""+CodeWares+ "\"" : "";
-               String _barCode = !BarCode.equals("") ? "\"BarCode\":\""+BarCode +"\"" : "";
+               String _barCode = !BarCode.equals("") && BarCode.length() > 7 ? "\"BarCode\":\""+BarCode +"\"" : "";
                String data=config.GetApiJson(154,_barCode + _codeWares);
                String resHttp = Http.HTTPRequest(config.ApiUrl, data);
                //resHttp = resHttp.replace("&amp;", "&");
@@ -143,7 +146,7 @@ public class Worker
        }
        try {
 
-           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError!= ePrinterError.None ?-1:0))),LI.ActionType,config.NumberPackege);
+           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError!= ePrinterError.None ?-1:0))),LI.ActionType,config.NumberPackege+1);
            SetProgress(100);
        }
        catch (Exception e)
@@ -230,6 +233,10 @@ public class Worker
 
        }
 
+   }
+
+   public List<String> getPrintBlockItemsCount(String packages){
+       return mDbHelper.getPrintBlockItemsCount(packages);
    }
 
     private void SetProgress(int parProgress)

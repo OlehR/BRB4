@@ -10,6 +10,8 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -32,6 +34,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
@@ -57,11 +60,13 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     GlobalConfig config = GlobalConfig.instance();
     Spinner ChangePrintBlockNumber;
     Integer PrintType = 0,currentPrintBlock=1; //Колір чека 0-звичайнийб 1-жовтий
+    Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        context = this;
         setContentView(R.layout.price_checker_layout_new);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         codeView = findViewById(R.id.code);
@@ -89,6 +94,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         AddPrintBlock = findViewById(R.id.AddPrintBlock);
         AddPrintBlock.setOnClickListener(this);
         ChangePrintColorType.setOnClickListener(this);
+        textBarcodeView.setOnClickListener(this);
         AddPrintBlock.setText(config.NumberPackege.toString());
 
         ProgressBar progresBar = findViewById(R.id.progressBar);
@@ -104,7 +110,8 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
 
-        setSpinner();
+        textBarcodeView.setFocusableInTouchMode(false);
+        textBarcodeView.setFocusable(false);
 
         if(config.NumberPackege>0){
             new AsyncHelper<Void>(new IAsyncHelper() {
@@ -136,6 +143,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             }
         });
 
+        setSpinner();
     }
 
     @Override
@@ -203,6 +211,14 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             case R.id.PrintBlock:
                 config.Worker.printPackage(PrintType,currentPrintBlock);
                 break;
+            case R.id.bar_code:
+                textBarcodeView.setFocusable(true);
+                textBarcodeView.setFocusableInTouchMode(true);
+                textBarcodeView.requestFocus();
+                textBarcodeView.requestFocusFromTouch();
+                textBarcodeView.setText("");
+                textBarcodeView.setFocusableInTouchMode(false);
+                break;
         }
 
         if(config.TypeScaner==eTypeScaner.Camera) {
@@ -213,16 +229,34 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     }
 
     private void setSpinner(){
-        String[] path = new String[config.NumberPackege];
-        Integer j=0;
-        for(int i=0;i<config.NumberPackege;i++){
-            j++;
-            path[i] = j.toString();
-        }
-        ArrayAdapter adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item,path);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        new AsyncHelper<Void>(
+                new IAsyncHelper<Void>() {
+                    @Override
+                    public Void Invoke() {
+                        String[] path = new String[config.NumberPackege];
+                        Integer j=0;
+                        for(int i=0;i<config.NumberPackege;i++){
+                            j++;
+                            path[i] = j.toString();
+                        }
 
-        ChangePrintBlockNumber.setAdapter(adapter);
+                        String packages = TextUtils.join(",",path);
+                        final String[] fPath;
+
+                        List<String> counts = config.Worker.getPrintBlockItemsCount(packages);
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                ArrayAdapter adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item,fPath);
+                                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                                ChangePrintBlockNumber.setAdapter(adapter);
+                            }
+                        });
+                        return null;
+                    }
+                }).execute();
     }
 
     private void ChangePrintColorType(){
@@ -230,7 +264,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             ChangePrintColorType.setTag("ChangePrintColorType");
             ChangePrintColorType.setText("Жовтий");
             PrintType = 0;
-            setBgColor(priceCheckerLinearLayout,"#ffff00");
+            setBgColor(priceCheckerLinearLayout,"#3fffff00");
         }else {
             ChangePrintColorType.setTag(null);
             ChangePrintColorType.setText("Звичайний");
@@ -348,6 +382,10 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         oldPriceView.setText(String.format("%.2f",(double)LI.OldPrice/100));
         priceView.setText(String.format("%.2f",(double)LI.Price/100));
         textBarcodeView.setText(LI.BarCode);
+        if(LI.Action)
+            textBarcodeView.setBackground(ContextCompat.getDrawable(this,R.drawable.input_style_yellow));
+        else
+            textBarcodeView.setBackground(ContextCompat.getDrawable(this,R.drawable.input_style));
 
         Rest.setText(String.format("%.2f",LI.Rest));
 

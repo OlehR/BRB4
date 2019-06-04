@@ -432,6 +432,24 @@ public class SQLiteAdapter
         }
     }
 
+    public List<String> getPrintBlockItemsCount(String packages){
+        List<String> data = new ArrayList<String>();
+        Cursor mCur;
+
+        String sql = "select count(package_number) from LogPrice WHERE is_good < 0 AND package_number IN("+packages+") GROUP BY package_number";
+
+        mCur = mDb.rawQuery(sql, null);
+
+        if(mCur != null){
+            mCur.moveToFirst();
+            while (mCur.moveToNext()){
+                data.add(mCur.getString(0));
+            }
+        }
+
+        return data;
+    }
+
     public ArrayList SaveDocWares(String Quantity, String scanOrderDoc, String codeWares, String invNumber, String invTypeDoc){
         long result = -1;
         String s = "";
