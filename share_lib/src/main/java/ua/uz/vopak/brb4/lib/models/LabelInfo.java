@@ -1,6 +1,9 @@
 package ua.uz.vopak.brb4.lib.models;
 
 import android.content.Context;
+
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -60,6 +63,69 @@ public class LabelInfo
     {
         varApplicationContext=parApplicationContext;
         Init(parData);
+    }
+
+    public void Init(JSONObject parData)
+    {
+
+
+        if(parData.length() == 0)
+            return;
+
+        try {
+            Code = parData.getInt("Code");
+            Name = parData.getString("Name");
+            if (parData.getString("Price").length() > 1) {
+                String[] varPrice = parData.getString("Price").split("\\.");
+                PriceBill = Integer.parseInt(varPrice[0]);
+                if(varPrice[1].length() == 1)
+                    varPrice[1] = varPrice[1] + "0";
+                PriceCoin = Integer.parseInt(varPrice[1]);
+            } else {
+                PriceBill = 0;
+                PriceCoin = 0;
+            }
+            Price = PriceBill * 100 + PriceCoin;
+
+            Unit = parData.getString("Unit");
+            Article =  parData.getString("Article");
+            BarCode = parData.getString("BarCodes");
+            ActionType = parData.getInt("ActionType");
+            if (ActionType == 1 || ActionType ==2)
+                Action = true;
+
+            PriceBillOpt = 0;
+            PriceCoinOpt = 0;
+            QuantityOpt = 0;
+            Rest = 0;
+
+            if (parData.has("QuantityOpt") && parData.has("PriceOpt")) {
+                    QuantityOpt = parData.getDouble("QuantityOpt");
+                if (QuantityOpt != 0) {
+                    String[] varPrice = parData.getString("PriceOpt").split(",");
+                    PriceBillOpt = Integer.parseInt(varPrice[0]);
+                    PriceCoinOpt = Integer.parseInt(varPrice[1]);
+                }
+
+            }
+            if (parData.has("Rest")) {
+
+                Rest = parData.getDouble("Rest");
+
+            }
+
+            PriceOpt = PriceBillOpt * 100 + PriceCoinOpt;
+            if (Price > 0 && PriceOpt == Price) {
+                PriceOpt = 0;
+                PriceBillOpt = 0;
+                PriceCoinOpt = 0;
+            }
+
+        }catch (Exception e){
+            e.getMessage();
+        }
+
+
     }
 
     public void Init(String parData)

@@ -80,6 +80,7 @@ public class Worker
                    case 2:
                        CodeWares = str[0];
                        LI.OldPrice = Integer.parseInt(str[1]);
+                       BarCode = "";
                        break;
                }
            }
@@ -95,13 +96,17 @@ public class Worker
        if(BarCode.length()>7 || !CodeWares.isEmpty() )
        {
            try {
-               String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
-               resHttp = resHttp.replace("&amp;", "&");
+               //String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
+               String _codeWares = !CodeWares.equals("") ? "\"CodeWares\":\""+CodeWares+ "\"" : "";
+               String _barCode = !BarCode.equals("") ? "\"BarCode\":\""+BarCode +"\"" : "";
+               String data=config.GetApiJson(154,_barCode + _codeWares);
+               String resHttp = Http.HTTPRequest(config.ApiUrl, data);
+               //resHttp = resHttp.replace("&amp;", "&");
                //Call Progres 50%;
                LI.InfoHTTP = Http.HttpState.name();
                SetProgress(50);
                if (resHttp != null && !resHttp.isEmpty()) {
-                   LI.Init(resHttp);
+                   LI.Init(new JSONObject(resHttp));
                    LI.AllScan++;
                    if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
                        Vibrate(500);
@@ -138,7 +143,7 @@ public class Worker
        }
        try {
 
-           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError!= ePrinterError.None ?-1:0))));
+           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError!= ePrinterError.None ?-1:0))),LI.ActionType,config.NumberPackege);
            SetProgress(100);
        }
        catch (Exception e)
@@ -319,6 +324,20 @@ public class Worker
         activity.SetQuantity(model);
 
 
+    }
+
+    public void printPackage(final Integer actionType, final Integer packageNumber) {
+        new AsyncHelper<Void>(new IAsyncHelper<Void>() {
+            @Override
+            public Void Invoke() {
+                List<String> barCodes = mDbHelper.getPrintPackageBarcodes(actionType, packageNumber);
+                for (String barCode : barCodes) {
+                    config.Worker.Start(barCode);
+                }
+
+                return null;
+            }
+        });
     }
 
 

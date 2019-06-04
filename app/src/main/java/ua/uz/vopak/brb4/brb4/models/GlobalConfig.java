@@ -30,7 +30,7 @@ public class GlobalConfig {
     public Integer connectionPrinterType;
     public boolean yellowAutoPrint;
     public String GetApiJson(int parCodeData, String parData) {
-        return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+this.getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
+        return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+this.getCodeWarehouse()+"\", \"CodeWarehouse\":\""+this.getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData==null?"":","+parData )+"}";
     }
 
