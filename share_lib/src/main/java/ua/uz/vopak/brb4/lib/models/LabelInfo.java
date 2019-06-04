@@ -285,6 +285,8 @@ public class LabelInfo
         ;
         //byte[] ptext = String.getBytes("UTF-8")
                res=Label.getBytes("Cp1251");
+
+        //if(parTLP==TypeLanguagePrinter.CPCL_SEWOO)
           return res;
 
     }
