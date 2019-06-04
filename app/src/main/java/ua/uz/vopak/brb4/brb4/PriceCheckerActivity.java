@@ -10,6 +10,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.KeyEvent;
 import android.view.View;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -20,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -47,8 +49,9 @@ import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack{
     private Scaner scaner;
-    TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
+    TextView codeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
+    EditText textBarcodeView;
     Button ChangePrintType,AddPrintBlock,ChangePrintColorType;
     LinearLayout optRow, PriceCheckerInfoLayout,priceCheckerLinearLayout;
     GlobalConfig config = GlobalConfig.instance();
@@ -136,6 +139,29 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     }
 
     @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        String keyCode = String.valueOf(event.getKeyCode());
+
+        if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
+            new AsyncHelper<LabelInfo>(
+                    new IAsyncHelper<LabelInfo>() {
+                        @Override
+                        public LabelInfo Invoke() {
+                            return config.Worker.Start(textBarcodeView.getText().toString());
+                        }
+                    },
+                    new IPostResult<LabelInfo>() {
+                        @Override
+                        public void Invoke(LabelInfo parLI) {
+                            config.Worker.priceCheckerActivity.setScanResult(parLI);
+                        }
+                    }).execute();
+        }
+
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
         public void Run(String parBarCode) {
             ExecuteWorker(parBarCode);
         }
@@ -173,6 +199,9 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                 break;
             case R.id.ChangePrintColorType:
                 ChangePrintColorType();
+                break;
+            case R.id.PrintBlock:
+                config.Worker.printPackage(PrintType,currentPrintBlock);
                 break;
         }
 

@@ -18,6 +18,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
+import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class SQLiteAdapter
 {
@@ -70,12 +71,14 @@ public class SQLiteAdapter
     }
 
 
-    public void InsLogPrice(String parBarCode,Integer parIsGood) {
+    public void InsLogPrice(String parBarCode,Integer parIsGood, Integer actionType, Integer packageNumber) {
         try {
             SQLiteDatabase db = mDb;
             ContentValues values = new ContentValues();
             values.put("bar_code", parBarCode);
             values.put("is_good", parIsGood);
+            values.put("action_type", actionType);
+            values.put("package_number", packageNumber);
             db.insert("LogPrice", null, values);
             //db.close();
         }
@@ -455,6 +458,22 @@ public class SQLiteAdapter
             add(status);
             add(msg);
         }};
+    }
+
+    public List<String> getPrintPackageBarcodes(Integer packageNumber, Integer actionType){
+        Cursor mCur;
+        List<String> data = new ArrayList<String>();
+
+        String sql =   "SELECT bar_code FROM LogPrice WHERE package_number ="+packageNumber+" AND action_type ="+actionType;
+
+        mCur = mDb.rawQuery(sql, null);
+        if (mCur!=null && mCur.getCount() > 0) {
+            while (mCur.moveToNext()){
+                data.add(mCur.getString(0));
+            }
+        }
+
+        return data;
     }
 
 }

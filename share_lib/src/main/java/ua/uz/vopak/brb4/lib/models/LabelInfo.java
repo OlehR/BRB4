@@ -65,7 +65,7 @@ public class LabelInfo
         Init(parData);
     }
 
-    public void Init(JSONObject parData, String parBarCode)
+    public void Init(JSONObject parData)
     {
 
 
@@ -76,8 +76,10 @@ public class LabelInfo
             Code = parData.getInt("Code");
             Name = parData.getString("Name");
             if (parData.getString("Price").length() > 1) {
-                String[] varPrice = parData.getString("Price").split(",");
+                String[] varPrice = parData.getString("Price").split("\\.");
                 PriceBill = Integer.parseInt(varPrice[0]);
+                if(varPrice[1].length() == 1)
+                    varPrice[1] = varPrice[1] + "0";
                 PriceCoin = Integer.parseInt(varPrice[1]);
             } else {
                 PriceBill = 0;
@@ -87,7 +89,7 @@ public class LabelInfo
 
             Unit = parData.getString("Unit");
             Article =  parData.getString("Article");
-            BarCode = parBarCode;
+            BarCode = parData.getString("BarCodes");
             ActionType = parData.getInt("ActionType");
             if (ActionType == 1 || ActionType ==2)
                 Action = true;
