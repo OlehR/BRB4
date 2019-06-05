@@ -27,6 +27,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -34,6 +35,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.enums.ePrinterError;
@@ -55,12 +57,13 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     TextView codeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
     EditText textBarcodeView;
-    Button ChangePrintType,AddPrintBlock,ChangePrintColorType;
+    Button ChangePrintType,AddPrintBlock,ChangePrintColorType, PrintBlock;
     LinearLayout optRow, PriceCheckerInfoLayout,priceCheckerLinearLayout;
     GlobalConfig config = GlobalConfig.instance();
     Spinner ChangePrintBlockNumber;
     Integer PrintType = 0,currentPrintBlock=1; //Колір чека 0-звичайнийб 1-жовтий
     Context context;
+    public RelativeLayout loader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,11 +93,14 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         priceCheckerLinearLayout = findViewById(R.id.priceCheckerLinearLayout);
         ChangePrintColorType = findViewById(R.id.ChangePrintColorType);
         ChangePrintBlockNumber = findViewById(R.id.ChangePrintBlockNumber);
+        PrintBlock = findViewById(R.id.PrintBlock);
+        loader = findViewById(R.id.RevisionLoader);
 
         AddPrintBlock = findViewById(R.id.AddPrintBlock);
         AddPrintBlock.setOnClickListener(this);
         ChangePrintColorType.setOnClickListener(this);
         textBarcodeView.setOnClickListener(this);
+        PrintBlock.setOnClickListener(this);
         AddPrintBlock.setText(config.NumberPackege.toString());
 
         ProgressBar progresBar = findViewById(R.id.progressBar);
@@ -120,7 +126,12 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                     String val = config.Worker.GetConfigPair("currentPrintBlock");
                     if(!val.equals(""))
                     currentPrintBlock = Integer.parseInt(val);
-                    ChangePrintBlockNumber.setSelection(currentPrintBlock-1);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ChangePrintBlockNumber.setSelection(currentPrintBlock-1);
+                        }
+                    });
                     return null;
                 }
             }).execute();
@@ -129,7 +140,13 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         ChangePrintBlockNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                currentPrintBlock = Integer.parseInt(ChangePrintBlockNumber.getSelectedItem().toString());
+                String selectedItem = ChangePrintBlockNumber.getSelectedItem().toString();
+                if(selectedItem.indexOf("/")>0) {
+                    String[] selected = selectedItem.split("/");
+                    currentPrintBlock = Integer.parseInt(selected[0].trim());
+                }
+                else
+                    currentPrintBlock = Integer.parseInt(selectedItem.trim());
                 new AsyncHelper<Void>(new IAsyncHelper() {
                     @Override
                     public Void Invoke() {
@@ -155,7 +172,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                     new IAsyncHelper<LabelInfo>() {
                         @Override
                         public LabelInfo Invoke() {
-                            return config.Worker.Start(textBarcodeView.getText().toString());
+                            return config.Worker.Start(textBarcodeView.getText().toString(), true);
                         }
                     },
                     new IPostResult<LabelInfo>() {
@@ -192,6 +209,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                 break;
             case R.id.AddPrintBlock:
                 config.NumberPackege++;
+                setSpinner();
                 DateFormat df = new SimpleDateFormat("yyyyMMdd");
                 Date today = Calendar.getInstance().getTime();
                 final String todayAsString = df.format(today);
@@ -228,27 +246,34 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
     }
 
-    private void setSpinner(){
+    public void setSpinner() {
         new AsyncHelper<Void>(
                 new IAsyncHelper<Void>() {
                     @Override
                     public Void Invoke() {
                         String[] path = new String[config.NumberPackege];
-                        Integer j=0;
-                        for(int i=0;i<config.NumberPackege;i++){
+                        Integer j = 0;
+                        for (int i = 0; i < config.NumberPackege; i++) {
                             j++;
                             path[i] = j.toString();
                         }
 
-                        String packages = TextUtils.join(",",path);
-                        final String[] fPath;
+                        String packages = TextUtils.join(",", path);
+                        final String[] fPath = new String[path.length];
 
-                        List<String> counts = config.Worker.getPrintBlockItemsCount(packages);
+                        HashMap<String, String> counts = config.Worker.getPrintBlockItemsCount(packages);
+                        for (int i = 0; i < path.length; i++) {
+                            if (counts.get(path[i]) != null)
+                                fPath[i] = path[i] + "/" + counts.get(path[i]);
+                            else {
+                                fPath[i] = path[i] + "/0";
+                            }
+                        }
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
 
-                                ArrayAdapter adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item,fPath);
+                                ArrayAdapter adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, fPath);
                                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                                 ChangePrintBlockNumber.setAdapter(adapter);
@@ -263,12 +288,12 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         if(ChangePrintColorType.getTag() == null){
             ChangePrintColorType.setTag("ChangePrintColorType");
             ChangePrintColorType.setText("Жовтий");
-            PrintType = 0;
+            PrintType = 1;
             setBgColor(priceCheckerLinearLayout,"#3fffff00");
         }else {
             ChangePrintColorType.setTag(null);
             ChangePrintColorType.setText("Звичайний");
-            PrintType = 1;
+            PrintType = 0;
             setBgColor(priceCheckerLinearLayout,"#ffffff");
         }
     }
@@ -394,6 +419,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             BarcodeView barcodeView = (BarcodeView) findViewById(R.id.barcode_scanner);
             barcodeView.resume();
         }
+
     }
 
 
@@ -410,7 +436,9 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                 new IAsyncHelper<LabelInfo>() {
                     @Override
                     public LabelInfo Invoke() {
-                        return config.Worker.Start(parBarCode);
+                        LabelInfo LI = config.Worker.Start(parBarCode, false);
+                        setSpinner();
+                        return LI;
                     }
                 },
                 new IPostResult<LabelInfo>() {

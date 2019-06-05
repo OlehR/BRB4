@@ -2,6 +2,7 @@ package ua.uz.vopak.brb4.brb4.helpers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -71,7 +72,7 @@ public class SQLiteAdapter
     }
 
 
-    public void InsLogPrice(String parBarCode,Integer parIsGood, Integer actionType, Integer packageNumber) {
+    public void InsLogPrice(String parBarCode,Integer parIsGood, Integer actionType, Integer packageNumber, Integer codeWarees) {
         try {
             SQLiteDatabase db = mDb;
             ContentValues values = new ContentValues();
@@ -79,6 +80,7 @@ public class SQLiteAdapter
             values.put("is_good", parIsGood);
             values.put("action_type", actionType);
             values.put("package_number", packageNumber);
+            values.put("code_wares", codeWarees);
             db.insert("LogPrice", null, values);
             //db.close();
         }
@@ -432,18 +434,17 @@ public class SQLiteAdapter
         }
     }
 
-    public List<String> getPrintBlockItemsCount(String packages){
-        List<String> data = new ArrayList<String>();
+    public HashMap<String,String> getPrintBlockItemsCount(String packages){
+        HashMap<String,String> data = new HashMap<String,String>();
         Cursor mCur;
 
-        String sql = "select count(package_number) from LogPrice WHERE is_good < 0 AND package_number IN("+packages+") GROUP BY package_number";
+        String sql = "select package_number,count(DISTINCT code_wares) from LogPrice WHERE is_good < 0 AND package_number IN("+packages+") AND date(DT_insert) > date('now','-1 day') GROUP BY package_number";
 
         mCur = mDb.rawQuery(sql, null);
 
         if(mCur != null){
-            mCur.moveToFirst();
             while (mCur.moveToNext()){
-                data.add(mCur.getString(0));
+                data.put(mCur.getString(0),mCur.getString(1));
             }
         }
 
@@ -478,11 +479,17 @@ public class SQLiteAdapter
         }};
     }
 
-    public List<String> getPrintPackageBarcodes(Integer packageNumber, Integer actionType){
+    public List<String> getPrintPackageBarcodes(Integer actionType,Integer packageNumber){
         Cursor mCur;
         List<String> data = new ArrayList<String>();
+        String _actionType = "";
 
-        String sql =   "SELECT bar_code FROM LogPrice WHERE package_number ="+packageNumber+" AND action_type ="+actionType;
+        if(actionType == 0)
+            _actionType = "NOT IN(1,2)";
+        else
+            _actionType = "IN(1,2)";
+
+        String sql =   "SELECT DISTINCT code_wares FROM LogPrice WHERE package_number ="+packageNumber+" AND is_good < 0 AND date(DT_insert) > date('now','-1 day') AND action_type "+_actionType;
 
         mCur = mDb.rawQuery(sql, null);
         if (mCur!=null && mCur.getCount() > 0) {
