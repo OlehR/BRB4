@@ -36,7 +36,7 @@ public class BluetoothPrinter {
         if(varTypePrinter==TypePrinter.Godex_MX20)
             return TypeLanguagePrinter.EZPL;
         if(varTypePrinter==TypePrinter.Sewoo_LK_P34)
-            return TypeLanguagePrinter.CPCL_SEWOO //ZPL_ZEBRA;//TypeLanguagePrinter.CPCL_SEWOO;
+            return TypeLanguagePrinter.CPCL_SEWOO; //ZPL_ZEBRA;//TypeLanguagePrinter.CPCL_SEWOO;
         return TypeLanguagePrinter.NotDefined;
 
 

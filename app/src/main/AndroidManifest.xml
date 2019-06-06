@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="com.symbol.emdk.permission.EMDK" />
     <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <permission
         android:name="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
         android:protectionLevel="normal" />

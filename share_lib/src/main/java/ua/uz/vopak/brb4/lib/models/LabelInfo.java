@@ -1,12 +1,16 @@
 package ua.uz.vopak.brb4.lib.models;
 
 import android.content.Context;
+import android.content.res.AssetManager;
+import android.os.Environment;
 
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -223,7 +227,7 @@ public class LabelInfo
 
         final int  LengName=(PriceOpt==0?25:32);
         byte [] res;
-        String Name1,Name2="";
+        String Name1,Name2="  ";
         String varUnit="грн/"+this.Unit,BarCodePrice;
         String UnitOpt="від "+ (Math.round(QuantityOpt)==(long) QuantityOpt? Long.toString((long)  QuantityOpt) : Double.toString(this.QuantityOpt)) +" " +this.Unit;
         String  OffsetBill="0",OffsetCoin="350";
@@ -331,12 +335,15 @@ public class LabelInfo
             for (String line; (line = r.readLine()) != null; ) {
                 total.append(line).append('\n');
             }
-            Label=total.toString(Decode);
+            Label=total.toString();
         }
         catch (Exception ex)
         {
 
         }
+
+        //Name1="АБВГД ЮЯ";
+        //Name2=Name1.toLowerCase();
 
 
         Label=Label.replace("{Name1}",Name1).replace("{Name2}",Name2).
@@ -357,27 +364,45 @@ public class LabelInfo
         //Магія для кодових сторінок SEWOO в режимі CPCL
         if(parTLP==TypeLanguagePrinter.CPCL_SEWOO)
         {
-            if(DecodeChar == null)
-            {
+            if(DecodeChar == null) {
                 try {
-                    InputStream inputStream = varApplicationContext.getAssets().open("1251_to_SEWOO_LK_P34.map");
-                    BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+                    AssetManager aa = varApplicationContext.getAssets();
+                    InputStream inputStream = varApplicationContext.getAssets().open("Label/" + "cpcl_sewoo_1.prn");
+                    inputStream = varApplicationContext.getAssets().open("Label/" + "to_sewoo_lk.map");
+
+                    //BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
                     DecodeChar = new byte[128];
                     inputStream.read(DecodeChar);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
+                    String er = ex.getMessage();
 
                 }
-                if(DecodeChar!=null)
+            }
+             if(DecodeChar!=null)
                     for(int i=0;i<res.length;i++)
                     {
-                        if(res[i]>=128)
-                            res[i]=DecodeChar[128+res[i]];
+
+                        if(res[i]<0&&DecodeChar[128+res[i]]!=0) {
+/*                            byte s = res[i];
+                            byte ch = DecodeChar[128 + res[i]];
+                            ch = DecodeChar[-res[i]];*/
+                            res[i] = DecodeChar[128 + res[i]];
+                        }
                     }
 
+
+            String path=Environment.getExternalStorageDirectory()+"/Download/label.prn";
+            try (FileOutputStream stream = new FileOutputStream(path)) {
+                stream.write(res);
             }
+            catch (Exception ex)
+            {
+                String r=ex.getMessage();
+
+            }
+
         }
+
           return res;
 
     }
