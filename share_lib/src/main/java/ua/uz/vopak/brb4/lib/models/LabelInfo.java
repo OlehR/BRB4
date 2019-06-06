@@ -92,8 +92,10 @@ public class LabelInfo
             Article =  parData.getString("Article");
             BarCode = parData.getString("BarCodes");
             ActionType = parData.getInt("ActionType");
-            if (ActionType == 1 || ActionType ==2)
+            if (ActionType == 1 || ActionType == 2)
                 Action = true;
+            else
+                Action = false;
 
             PriceBillOpt = 0;
             PriceCoinOpt = 0;
