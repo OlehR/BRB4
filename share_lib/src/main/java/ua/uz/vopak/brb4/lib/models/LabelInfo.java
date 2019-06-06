@@ -45,6 +45,7 @@ public class LabelInfo
     public String  InfoHTTP = "";//Стан HTTP
     public double Rest;
     private Context varApplicationContext;
+    byte [] DecodeChar;
 
     public String strPriceCoin() {
         return (PriceCoin < 10 ? "0" : "") + Integer.toString(PriceCoin).trim();
@@ -328,7 +329,7 @@ public class LabelInfo
             for (String line; (line = r.readLine()) != null; ) {
                 total.append(line).append('\n');
             }
-            Label=total.toString();
+            Label=total.toString(Decode);
         }
         catch (Exception ex)
         {
@@ -351,8 +352,30 @@ public class LabelInfo
         ;
         //byte[] ptext = String.getBytes("UTF-8")
                res=Label.getBytes("Cp1251");
+        //Магія для кодових сторінок SEWOO в режимі CPCL
+        if(parTLP==TypeLanguagePrinter.CPCL_SEWOO)
+        {
+            if(DecodeChar == null)
+            {
+                try {
+                    InputStream inputStream = varApplicationContext.getAssets().open("1251_to_SEWOO_LK_P34.map");
+                    BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+                    DecodeChar = new byte[128];
+                    inputStream.read(DecodeChar);
+                }
+                catch (Exception ex)
+                {
 
-        //if(parTLP==TypeLanguagePrinter.CPCL_SEWOO)
+                }
+                if(DecodeChar!=null)
+                    for(int i=0;i<res.length;i++)
+                    {
+                        if(res[i]>=128)
+                            res[i]=DecodeChar[128+res[i]];
+                    }
+
+            }
+        }
           return res;
 
     }
