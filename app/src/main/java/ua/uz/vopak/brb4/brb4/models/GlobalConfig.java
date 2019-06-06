@@ -29,6 +29,7 @@ public class GlobalConfig {
     public View BarcodeImageLayout;
     public Integer connectionPrinterType;
     public boolean yellowAutoPrint;
+    public Integer printType = 0;//Колір чека 0-звичайнийб 1-жовтий
     public String GetApiJson(int parCodeData, String parData) {
         return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+this.getCodeWarehouse()+"\", \"CodeWarehouse\":\""+this.getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData==null?"":","+parData )+"}";

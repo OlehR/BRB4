@@ -61,7 +61,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
     LinearLayout optRow, PriceCheckerInfoLayout,priceCheckerLinearLayout;
     GlobalConfig config = GlobalConfig.instance();
     Spinner ChangePrintBlockNumber;
-    Integer PrintType = 0,currentPrintBlock=1; //Колір чека 0-звичайнийб 1-жовтий
+    Integer currentPrintBlock=1;
     Context context;
     public RelativeLayout loader;
 
@@ -141,8 +141,8 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedItem = ChangePrintBlockNumber.getSelectedItem().toString();
-                if(selectedItem.indexOf("/")>0) {
-                    String[] selected = selectedItem.split("/");
+                if(selectedItem.indexOf("-")>0) {
+                    String[] selected = selectedItem.split("-");
                     currentPrintBlock = Integer.parseInt(selected[0].trim());
                 }
                 else
@@ -227,7 +227,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                 ChangePrintColorType();
                 break;
             case R.id.PrintBlock:
-                config.Worker.printPackage(PrintType,currentPrintBlock);
+                config.Worker.printPackage(config.printType,currentPrintBlock);
                 break;
             case R.id.bar_code:
                 textBarcodeView.setFocusable(true);
@@ -261,12 +261,12 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
                         String packages = TextUtils.join(",", path);
                         final String[] fPath = new String[path.length];
 
-                        HashMap<String, String> counts = config.Worker.getPrintBlockItemsCount(packages);
+                        HashMap<String, String[]> counts = config.Worker.getPrintBlockItemsCount(packages);
                         for (int i = 0; i < path.length; i++) {
                             if (counts.get(path[i]) != null)
-                                fPath[i] = path[i] + "/" + counts.get(path[i]);
+                                fPath[i] = path[i] + "-" + counts.get(path[i])[0] + "/" + counts.get(path[i])[1];
                             else {
-                                fPath[i] = path[i] + "/0";
+                                fPath[i] = path[i] + "-0/0";
                             }
                         }
                         runOnUiThread(new Runnable() {
@@ -288,12 +288,12 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         if(ChangePrintColorType.getTag() == null){
             ChangePrintColorType.setTag("ChangePrintColorType");
             ChangePrintColorType.setText("Жовтий");
-            PrintType = 1;
+            config.printType = 1;
             setBgColor(priceCheckerLinearLayout,"#3fffff00");
         }else {
             ChangePrintColorType.setTag(null);
             ChangePrintColorType.setText("Звичайний");
-            PrintType = 0;
+            config.printType = 0;
             setBgColor(priceCheckerLinearLayout,"#ffffff");
         }
     }
@@ -391,26 +391,24 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             optRow.setVisibility(View.INVISIBLE);
         }
 
-        if(LI.ActionType == 2){
+        if(LI.Action){
             if(config.BarcodeImageLayout != null && !isProblem){
                 Drawable dw = config.BarcodeImageLayout.getBackground();
                 dw.clearColorFilter();
                 dw.setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
+                textBarcodeView.setBackground(ContextCompat.getDrawable(this,R.drawable.input_style_yellow));
             }
         }else{
             if(config.BarcodeImageLayout != null && !isProblem){
                 Drawable dw = config.BarcodeImageLayout.getBackground();
                 dw.clearColorFilter();
+                textBarcodeView.setBackground(ContextCompat.getDrawable(this,R.drawable.input_style));
             }
         }
 
         oldPriceView.setText(String.format("%.2f",(double)LI.OldPrice/100));
         priceView.setText(String.format("%.2f",(double)LI.Price/100));
         textBarcodeView.setText(LI.BarCode);
-        if(LI.Action)
-            textBarcodeView.setBackground(ContextCompat.getDrawable(this,R.drawable.input_style_yellow));
-        else
-            textBarcodeView.setBackground(ContextCompat.getDrawable(this,R.drawable.input_style));
 
         Rest.setText(String.format("%.2f",LI.Rest));
 

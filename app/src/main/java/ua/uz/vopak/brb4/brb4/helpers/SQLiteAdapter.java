@@ -434,17 +434,20 @@ public class SQLiteAdapter
         }
     }
 
-    public HashMap<String,String> getPrintBlockItemsCount(String packages){
-        HashMap<String,String> data = new HashMap<String,String>();
+    public HashMap<String,String[]> getPrintBlockItemsCount(String packages){
+        HashMap<String,String[]> data = new HashMap<String,String[]>();
         Cursor mCur;
 
-        String sql = "select package_number,count(DISTINCT code_wares) from LogPrice WHERE is_good < 0 AND package_number IN("+packages+") AND date(DT_insert) > date('now','-1 day') GROUP BY package_number";
+        String sql = "select package_number,count(DISTINCT case when action_type in (1,2) then null else code_wares end) as normal,count(DISTINCT case when action_type in (1,2) then code_wares end) as yellow " +
+                "from LogPrice WHERE is_good < 0 AND package_number IN("+packages+") " +
+                "AND date(DT_insert) > date('now','-1 day')" +
+                "GROUP BY package_number";
 
         mCur = mDb.rawQuery(sql, null);
 
         if(mCur != null){
             while (mCur.moveToNext()){
-                data.put(mCur.getString(0),mCur.getString(1));
+                data.put(mCur.getString(0),new String[]{mCur.getString(1),mCur.getString(2)});
             }
         }
 

@@ -116,6 +116,10 @@ public class Worker
                    LI.AllScan++;
                    if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
                        Vibrate(500);
+                       if(LI.Action && config.printType != 1)
+                           return LI;
+                       if(!LI.Action && config.printType != 0)
+                           return LI;
                        LI.BadScan++;
                        byte[] b = new byte[0];
                        try {
@@ -133,11 +137,11 @@ public class Worker
                            LI.InfoPrinter = Printer.varPrinterError.name();
                    } else
                        Vibrate(100);
-                   if (LI.ActionType != 0)
-                       Vibrate(1000);
+                   if (LI.Action)
+                       Vibrate(500);
 
                } else
-                   Vibrate(500);
+                   Vibrate(200);
            } catch (Exception ex) {
                isError = true;
            }
@@ -274,7 +278,7 @@ public class Worker
 
    }
 
-   public HashMap<String,String> getPrintBlockItemsCount(String packages){
+   public HashMap<String,String[]> getPrintBlockItemsCount(String packages){
        return mDbHelper.getPrintBlockItemsCount(packages);
    }
 
