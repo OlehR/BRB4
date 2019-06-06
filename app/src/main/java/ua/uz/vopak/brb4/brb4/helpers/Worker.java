@@ -3,6 +3,7 @@ package ua.uz.vopak.brb4.brb4.helpers;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ProgressBar;
 import com.google.gson.Gson;
 import org.json.JSONObject;
@@ -54,18 +56,16 @@ public class Worker
         priceCheckerActivity=parPriceCheckerActivity;
     };
 
-   public LabelInfo Start(String parBarCode)
-   {
+   public LabelInfo Start(String parBarCode, boolean isHandInput) {
        //Call Progres 10%;
        //parBarCode="116897-7700-";
-       boolean isError=false;
+       boolean isError = false;
        SetProgress(10);
-       BarCode=parBarCode.trim();
-       LI.OldPrice=0;
-       LI.OldPriceOpt=0;
+       BarCode = parBarCode.trim();
+       LI.OldPrice = 0;
+       LI.OldPriceOpt = 0;
 
-       if(BarCode.indexOf('-')>0)
-       {
+       if (BarCode.indexOf('-') > 0) {
            try {
                String[] str = BarCode.split("-");
                switch (str.length) {
@@ -80,26 +80,32 @@ public class Worker
                    case 2:
                        CodeWares = str[0];
                        LI.OldPrice = Integer.parseInt(str[1]);
-                       BarCode = "";
                        break;
                }
+           } catch (Exception ex) {
+               isError = true;
            }
-           catch (Exception ex)
-           {
-               isError=true;
-           }
+       } else {
+           if (parBarCode.trim().length() <= 8 && !parBarCode.equals("")) {
+               CodeWares = parBarCode.trim();
+           } else
+               CodeWares = "";
        }
-       else {
-           CodeWares="";
-          }
 
-       if(BarCode.length()>7 || !CodeWares.isEmpty() )
-       {
+       if (BarCode.length() > 7 || !CodeWares.isEmpty()) {
            try {
                //String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
-               String _codeWares = !CodeWares.equals("") ? "\"CodeWares\":\""+CodeWares+ "\"" : "";
-               String _barCode = !BarCode.equals("") ? "\"BarCode\":\""+BarCode +"\"" : "";
-               String data=config.GetApiJson(154,_barCode + _codeWares);
+               String _codeWares = "";
+               String _article = "";
+               int index = BarCode.indexOf("-");
+               String _barCode = !BarCode.equals("") && BarCode.length() > 8 && BarCode.indexOf("-") == -1 ? "\"BarCode\":\"" + BarCode + "\"" : "";
+
+               if (!isHandInput)
+                   _codeWares = !CodeWares.equals("") ? "\"CodeWares\":\"" + CodeWares + "\"" : "";
+               else
+                   _article = "\"Article\":\"" + CodeWares + "\"";
+
+               String data = config.GetApiJson(154, _barCode + _codeWares + _article);
                String resHttp = Http.HTTPRequest(config.ApiUrl, data);
                //resHttp = resHttp.replace("&amp;", "&");
                //Call Progres 50%;
@@ -113,7 +119,7 @@ public class Worker
                        LI.BadScan++;
                        byte[] b = new byte[0];
                        try {
-                           b = LI.LevelForPrinter( Printer.GetTypeLanguagePrinter());
+                           b = LI.LevelForPrinter(Printer.GetTypeLanguagePrinter());
                        } catch (UnsupportedEncodingException e) {
                            //e.printStackTrace();
                        }
@@ -125,34 +131,70 @@ public class Worker
                        }
                        if (Printer.varPrinterError != ePrinterError.None)
                            LI.InfoPrinter = Printer.varPrinterError.name();
-                   }
-                   else
+                   } else
                        Vibrate(100);
-                   if(LI.ActionType != 0)
+                   if (LI.ActionType != 0)
                        Vibrate(1000);
 
-               }
-               else
+               } else
                    Vibrate(500);
-           }
-           catch (Exception ex)
-           {
-               isError=true;
+           } catch (Exception ex) {
+               isError = true;
            }
 
        }
        try {
-
-           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError!= ePrinterError.None ?-1:0))),LI.ActionType,config.NumberPackege);
+           mDbHelper.InsLogPrice(parBarCode, (isError ? -9 : (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError != ePrinterError.None ? -1 : 0))), LI.ActionType, config.NumberPackege, LI.Code);
            SetProgress(100);
-       }
-       catch (Exception e)
-       {
+       } catch (Exception e) {
 
        }
        return LI;
 
    }
+
+    public void printPackage(String codeWares) {
+        boolean isError = false;
+        if (codeWares == null)
+            return;
+        CodeWares = codeWares.trim();
+
+        try {
+            //String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
+            String _codeWares = !CodeWares.equals("") ? "\"CodeWares\":\"" + CodeWares + "\"" : "";
+            String data = config.GetApiJson(154, _codeWares);
+            String resHttp = Http.HTTPRequest(config.ApiUrl, data);
+            //resHttp = resHttp.replace("&amp;", "&");
+            LI.InfoHTTP = Http.HttpState.name();
+            if (resHttp != null && !resHttp.isEmpty()) {
+                LI.Init(new JSONObject(resHttp));
+                if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
+                    LI.BadScan++;
+                    byte[] b = new byte[0];
+                    try {
+                        b = LI.LevelForPrinter(Printer.GetTypeLanguagePrinter());
+                    } catch (UnsupportedEncodingException e) {
+                        //e.printStackTrace();
+                    }
+                    try {
+                        Printer.sendData(b);
+                    } catch (IOException e) {
+                        //LI.InfoPrinter="Lost Connect";
+                        //e.printStackTrace();
+                    }
+                    if (Printer.varPrinterError != ePrinterError.None)
+                        LI.InfoPrinter = Printer.varPrinterError.name();
+                }
+
+            }
+
+        } catch (Exception ex) {
+            isError = true;
+        }
+
+        return;
+
+    }
 
     public void LoadListDoc(Activity context,String parTypeDoc)
     {
@@ -230,6 +272,10 @@ public class Worker
 
        }
 
+   }
+
+   public HashMap<String,String> getPrintBlockItemsCount(String packages){
+       return mDbHelper.getPrintBlockItemsCount(packages);
    }
 
     private void SetProgress(int parProgress)
@@ -331,13 +377,26 @@ public class Worker
             @Override
             public Void Invoke() {
                 List<String> barCodes = mDbHelper.getPrintPackageBarcodes(actionType, packageNumber);
+                config.Worker.priceCheckerActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        config.Worker.priceCheckerActivity.loader.setVisibility(View.VISIBLE);
+                    }
+                });
+
                 for (String barCode : barCodes) {
-                    config.Worker.Start(barCode);
+                    config.Worker.printPackage(barCode);
                 }
 
+                config.Worker.priceCheckerActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        config.Worker.priceCheckerActivity.loader.setVisibility(View.INVISIBLE);
+                    }
+                });
                 return null;
             }
-        });
+        }).execute();
     }
 
 
