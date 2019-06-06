@@ -35,7 +35,11 @@ public class BluetoothPrinter {
             return TypeLanguagePrinter.ZPL_ZEBRA;
         if(varTypePrinter==TypePrinter.Godex_MX20)
             return TypeLanguagePrinter.EZPL;
+        if(varTypePrinter==TypePrinter.Sewoo_LK_P34)
+            return TypeLanguagePrinter.ZPL_ZEBRA;//TypeLanguagePrinter.CPCL_SEWOO;
         return TypeLanguagePrinter.NotDefined;
+
+
 
         /*switch (varTypePrinter) {
             case TypePrinter.Argox_3230:
@@ -83,6 +87,9 @@ public class BluetoothPrinter {
                         case "Godex MX20":
                             varTypePrinter=TypePrinter.Godex_MX20;
                             break;
+                        case "LK-P34":
+                            varTypePrinter=TypePrinter.Sewoo_LK_P34;
+                            break;
                         case "QLn320":
                         default:
                             varTypePrinter=TypePrinter.Zebra_QLn320;
@@ -98,6 +105,7 @@ public class BluetoothPrinter {
                     }
                 }
             }
+            mBluetoothAdapter.cancelDiscovery();
 
             // myLabel.setText("Bluetooth device found.");
 
@@ -110,11 +118,16 @@ public class BluetoothPrinter {
         try {
 
             // Standard SerialPortService ID
-            //UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+            UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
             Method m = mmDevice.getClass().getMethod("createRfcommSocket",new Class[] { int.class });
-            mmSocket = (BluetoothSocket)m.invoke(mmDevice, Integer.valueOf(1));
-            //mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+
+            //mmSocket = (BluetoothSocket)m.invoke(mmDevice, Integer.valueOf(1));
+            //Гребана магія з принтером Sewoo_LK_P34
+            if(varTypePrinter==TypePrinter.Sewoo_LK_P34)
+              mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+            else
+              mmSocket = (BluetoothSocket)m.invoke(mmDevice, Integer.valueOf(1));
 
             mmSocket.connect();
             mmOutputStream = mmSocket.getOutputStream();
