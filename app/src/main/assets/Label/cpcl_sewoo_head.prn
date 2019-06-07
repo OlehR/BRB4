@@ -1,0 +1,8 @@
+! 0 200 200 90 1
+TONE 200
+SPEED 5
+PAGE-WIDTH  500
+
+BMP 0 50 !<{Logo}.bmp
+TEXT 7 0 220 55 {Date}
+PRINT

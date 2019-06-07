@@ -42,7 +42,10 @@ public class GlobalConfig extends AbstractConfig {
         String code = "000000000" + CodeWarehouse;
         return code.substring(code.length() - 9);
     }
-
+    public boolean isSPAR() {
+        String code = "000000000" + CodeWarehouse;
+        return Integer.parseInt(CodeWarehouse)>50;
+    }
     protected GlobalConfig() {
         super("http://znp.vopak.local/api/api_v1_utf8.php");
     }
