@@ -28,6 +28,7 @@ import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
+import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
@@ -62,57 +63,13 @@ public class Worker
        boolean isError = false;
        SetProgress(10);
        BarCode = parBarCode.trim();
-       LI.OldPrice = 0;
-       LI.OldPriceOpt = 0;
-
-       if (BarCode.indexOf('-') > 0) {
-           try {
-               String[] str = BarCode.split("-");
-               switch (str.length) {
-                   case 0:
-                   case 1:
-                       CodeWares = "";
-                       BarCode = "";
-                       break;
-                   case 3:
-
-                       LI.OldPriceOpt = Integer.parseInt(str[2]);
-                   case 2:
-                       CodeWares = str[0];
-                       LI.OldPrice = Integer.parseInt(str[1]);
-                       break;
-               }
-           } catch (Exception ex) {
-               isError = true;
-           }
-       } else {
-           if (parBarCode.trim().length() <= 8 && !parBarCode.equals("")) {
-               CodeWares = parBarCode.trim();
-           } else
-               CodeWares = "";
-       }
 
        if (BarCode.length() > 7 || !CodeWares.isEmpty()) {
            try {
-               //String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
-               String _codeWares = "";
-               String _article = "";
-               int index = BarCode.indexOf("-");
-               String _barCode = !BarCode.equals("") && BarCode.length() > 8 && BarCode.indexOf("-") == -1 ? "\"BarCode\":\"" + BarCode + "\"" : "";
-
-               if (!isHandInput)
-                   _codeWares = !CodeWares.equals("") ? "\"CodeWares\":\"" + CodeWares + "\"" : "";
-               else
-                   _article = "\"Article\":\"" + CodeWares + "\"";
-
-               String data = config.GetApiJson(154, _barCode + _codeWares + _article);
-               String resHttp = Http.HTTPRequest(config.ApiUrl, data);
-               //resHttp = resHttp.replace("&amp;", "&");
-               //Call Progres 50%;
-               LI.InfoHTTP = Http.HttpState.name();
+               LI = new PricecheckerHelper().getPriceCheckerData(LI,BarCode,isHandInput,config);
                SetProgress(50);
-               if (resHttp != null && !resHttp.isEmpty()) {
-                   LI.Init(new JSONObject(resHttp));
+               if (LI.resHttp != null && !LI.resHttp.isEmpty()) {
+                   LI.Init(new JSONObject(LI.resHttp));
                    LI.AllScan++;
                    if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
                        Vibrate(500);
@@ -164,14 +121,9 @@ public class Worker
         CodeWares = codeWares.trim();
 
         try {
-            //String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
-            String _codeWares = !CodeWares.equals("") ? "\"CodeWares\":\"" + CodeWares + "\"" : "";
-            String data = config.GetApiJson(154, _codeWares);
-            String resHttp = Http.HTTPRequest(config.ApiUrl, data);
-            //resHttp = resHttp.replace("&amp;", "&");
-            LI.InfoHTTP = Http.HttpState.name();
-            if (resHttp != null && !resHttp.isEmpty()) {
-                LI.Init(new JSONObject(resHttp));
+            LI = new PricecheckerHelper().getPriceCheckerData(LI,BarCode,false,config);
+            if (LI.resHttp != null && !LI.resHttp.isEmpty()) {
+                LI.Init(new JSONObject(LI.resHttp));
                 if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
                     LI.BadScan++;
                     byte[] b = new byte[0];
