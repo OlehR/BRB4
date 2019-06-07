@@ -7,7 +7,7 @@ android {
 
     defaultConfig {
         applicationId "ua.uz.vopak.brb4.clientpricechecker"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"

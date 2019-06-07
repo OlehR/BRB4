@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+<LinearLayout
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/ClientPriceCheckerLayout">
@@ -366,3 +374,19 @@
     </FrameLayout>
 
 </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:weight="0.5"></LinearLayout>
+
+</RelativeLayout>
+
+    <Button
+        android:id="@+id/HiddenInfoBtn"
+        android:layout_width="120dp"
+        android:background="#00FFFFFF"
+        android:layout_height="120dp" />
+
+</FrameLayout>

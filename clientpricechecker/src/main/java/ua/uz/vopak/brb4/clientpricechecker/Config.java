@@ -2,14 +2,20 @@ package ua.uz.vopak.brb4.clientpricechecker;
 
 import android.content.Context;
 import android.content.res.XmlResourceParser;
+import android.os.Build;
 
 import org.xmlpull.v1.XmlPullParser;
 
-public class Config {
+import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
+
+public class Config extends AbstractConfig {
     private static Context context;
     private static Config Instance = null;
     public static String CodeWarehouse;
     public static String Login;
+    public String SN = Build.SERIAL;
+    public String NameDCT = Build.USER;
+    public String ApiUrl = "http://znp.vopak.local/api/api_v1_utf8.php";
     public static String Password;
     public static String SmbDomain;
     public static String SmbUser;
@@ -18,6 +24,7 @@ public class Config {
     XmlResourceParser xrp;
 
     protected Config(Context parContext){
+        super("http://znp.vopak.local/api/api_v1_utf8.php");
         context = parContext;
         xrp = context.getResources().getXml(R.xml.config);
 
@@ -57,10 +64,13 @@ public class Config {
         }
     }
 
-    public static String GetLoginJson() {
-        return "\"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"";
+    @Override
+    public String GetApiJson(int parCodeData, String parData) {
+        return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+this.getCodeWarehouse()+"\", \"CodeWarehouse\":\""+this.getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
+                (parData==null?"":","+parData )+"}";
     }
 
+    @Override
     public String getCodeWarehouse() {
         String code = "000000000" + CodeWarehouse;
         return code.substring(code.length() - 9);

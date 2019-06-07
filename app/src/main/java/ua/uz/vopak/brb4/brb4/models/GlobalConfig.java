@@ -10,8 +10,9 @@ import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerTC20;
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
 import ua.uz.vopak.brb4.brb4.helpers.*;
+import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 
-public class GlobalConfig {
+public class GlobalConfig extends AbstractConfig {
     private static GlobalConfig Instance = null;
     public String CodeWarehouse = "0";
     public String ApiUrl = "http://znp.vopak.local/api/api_v1_utf8.php";
@@ -30,17 +31,20 @@ public class GlobalConfig {
     public Integer connectionPrinterType;
     public boolean yellowAutoPrint;
     public Integer printType = 0;//Колір чека 0-звичайнийб 1-жовтий
+    @Override
     public String GetApiJson(int parCodeData, String parData) {
         return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+this.getCodeWarehouse()+"\", \"CodeWarehouse\":\""+this.getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData==null?"":","+parData )+"}";
     }
 
+    @Override
     public String getCodeWarehouse() {
         String code = "000000000" + CodeWarehouse;
         return code.substring(code.length() - 9);
     }
 
     protected GlobalConfig() {
+        super("http://znp.vopak.local/api/api_v1_utf8.php");
     }
 
     public static GlobalConfig instance() {
