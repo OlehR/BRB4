@@ -4,9 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+
 <LinearLayout
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -375,18 +373,30 @@
 
 </LinearLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:weight="0.5"></LinearLayout>
-
-</RelativeLayout>
-
     <Button
         android:id="@+id/HiddenInfoBtn"
         android:layout_width="120dp"
         android:background="#00FFFFFF"
         android:layout_height="120dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:background="#ffffff"
+        android:id="@+id/HideInfoLayout"
+        android:layout_gravity="right"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:layout_weight="1">
+
+    </LinearLayout>
+
+    </LinearLayout>
 
 </FrameLayout>

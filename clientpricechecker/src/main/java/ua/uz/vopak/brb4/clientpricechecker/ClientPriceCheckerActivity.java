@@ -7,12 +7,16 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.PowerManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,15 +25,20 @@ import android.widget.TextView;
 import android.widget.VideoView;
 
 
+import org.json.JSONObject;
+
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class ClientPriceCheckerActivity extends Activity {
     TextView Title, BarCodeView, Article, ActionView, PriceBill, PriceCoin, PriceBillOpt, PriceCoinOpt, OptTitle;
     RelativeLayout InfoLayout;
-    LinearLayout LogoLayout, OptPriceBlock, VideoWatermark;
+    LinearLayout LogoLayout, OptPriceBlock, VideoWatermark, HideInfoLayout;
     ImageView Background;
     VideoView PromoVideo;
     ClientPriceCheckerActivity context;
@@ -40,6 +49,7 @@ public class ClientPriceCheckerActivity extends Activity {
     PowerManager pm;
     PowerManager.WakeLock wl;
     private InfoLayoutTimerTask infoLayoutTimerTask;
+    Button HideInfoBTN;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +62,8 @@ public class ClientPriceCheckerActivity extends Activity {
 
         ClientPriceChecker = findViewById(R.id.ClientPriceCheckerLayout);
         BarCode = findViewById(R.id.BarCode);
+        HideInfoBTN = findViewById(R.id.HiddenInfoBtn);
+        HideInfoLayout = findViewById(R.id.HideInfoLayout);
         BarCode.addTextChangedListener(new TextWatcher() {
 
             // the user's changes are saved here
@@ -128,6 +140,50 @@ public class ClientPriceCheckerActivity extends Activity {
         pm = (PowerManager) getSystemService(context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "clientpriceckecker::client_priceckecker_sleep");
 
+        HideInfoBTN.setOnTouchListener(new View.OnTouchListener() {
+            Handler handler = new Handler();
+
+            int numberOfTaps = 0;
+            long lastTapTimeMs = 0;
+            long touchDownMs = 0;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        touchDownMs = System.currentTimeMillis();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        handler.removeCallbacksAndMessages(null);
+
+                        if ((System.currentTimeMillis() - touchDownMs) > ViewConfiguration.getTapTimeout()) {
+                            //it was not a tap
+
+                            numberOfTaps = 0;
+                            lastTapTimeMs = 0;
+                            break;
+                        }
+
+                        if (numberOfTaps > 0
+                                && (System.currentTimeMillis() - lastTapTimeMs) < ViewConfiguration.getDoubleTapTimeout()) {
+                            numberOfTaps += 1;
+                        } else {
+                            numberOfTaps = 1;
+                        }
+
+                        lastTapTimeMs = System.currentTimeMillis();
+
+                        if (numberOfTaps == 3) {
+                            if(InfoLayout.getVisibility() == View.VISIBLE)
+                            HideInfoLayout.setVisibility(View.VISIBLE);
+                        }
+                }
+
+                return true;
+            }
+        });
+
     }
 
     public void setScanResult(LabelInfo Li){
@@ -135,7 +191,7 @@ public class ClientPriceCheckerActivity extends Activity {
         BarCodeView.setText(Li.BarCode);
         Article.setText(Li.Article);
         PriceBill.setText(((Integer)Li.PriceBill).toString());
-        PriceCoin.setText(Li.strPriceCoin());
+        PriceCoin.setText(Li.strPriceCoin() + " " + Li.Unit);
         PriceBillOpt.setText(((Integer)Li.PriceBillOpt).toString());
         PriceCoinOpt.setText(Li.strPriceCoinOpt());
         OptTitle.setText("від "+ (Math.round(Li.QuantityOpt)==(long) Li.QuantityOpt ? Long.toString((long)  Li.QuantityOpt) : Double.toString(Li.QuantityOpt)) + " " + Li.Unit);
@@ -178,10 +234,31 @@ public class ClientPriceCheckerActivity extends Activity {
 
         infoLayoutTimer.schedule(infoLayoutTimerTask, 30000);
 
+        HideInfoLayout.removeAllViews();
+        try {
+            JSONObject fields = new JSONObject(Li.resHttp);
+            Iterator keys = fields.keys();
+            int dpValue = 18;
+            float d = context.getResources().getDisplayMetrics().density;
+            int textSize = (int)(dpValue * d);
+            while (keys.hasNext()) {
+                String key = (String) keys.next();
+
+                TextView label = new TextView(this);
+                label.setText(key+" : "+fields.get(key));
+                label.setTextSize(textSize);
+                HideInfoLayout.addView(label);
+            }
+        }catch (Exception ex){
+
+        }
+
     }
 
     public void hideInfo(){
         InfoLayout.setVisibility(View.INVISIBLE);
+        HideInfoLayout.removeAllViews();
+        HideInfoLayout.setVisibility(View.INVISIBLE);
         LogoLayout.setVisibility(View.VISIBLE);
         Resources res = getResources();
         Drawable background = res.getDrawable(R.drawable.background_4);
