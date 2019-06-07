@@ -51,6 +51,7 @@ public class LabelInfo
     public double Rest;
     private Context varApplicationContext;
     byte [] DecodeChar;
+    String LogoPicture;
 
     public String strPriceCoin() {
         return (PriceCoin < 10 ? "0" : "") + Integer.toString(PriceCoin).trim();
@@ -69,6 +70,7 @@ public class LabelInfo
     {
         varApplicationContext=parApplicationContext;
         isSpar=parIsSpar;
+        LogoPicture= GetStringFromAssetsFile("Label/" + (isSpar?"spar":"vopak") + ".prn");
     }
     public LabelInfo(Context parApplicationContext,String parData)
     {
@@ -231,7 +233,8 @@ public class LabelInfo
         PriceCoin=39;
         //Test End*/
 
-        final int  LengName=(PriceOpt==0?25:32);
+
+        final int  LengName=(PriceOpt==0?26:32);
         byte [] res;
         String Name1,Name2="  ";
         String varUnit="грн/"+this.Unit,BarCodePrice;
@@ -262,8 +265,8 @@ public class LabelInfo
         }
         Name1=Space.substring(0,((LengName-Name1.length())/2)) + Name1;
         BarCodePrice = Integer.toString(Code)+"-"+Integer.toString(Price)+(PriceOpt==0?"":"-"+Integer.toString(PriceOpt));
-        if(Name2.length()>LengName+2)
-          Name2=Name2.substring(0,LengName+2);
+        if(Name2.length()>LengName+3)
+          Name2=Name2.substring(0,LengName+3);
         DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Date today = Calendar.getInstance().getTime();
         String CurrentDate = df.format(today);
@@ -321,7 +324,8 @@ public class LabelInfo
                     break;
             }
         }
-        if(parTLP==TypeLanguagePrinter.CPCL_SEWOO)
+
+        if(parTLP==TypeLanguagePrinter.ZPL_SEWOO || parTLP==TypeLanguagePrinter.CPCL_SEWOO )
         {
             switch (varPriceBill.length()) {
                 case 1:
@@ -344,8 +348,7 @@ public class LabelInfo
 
         }
 
-
-        if(parTLP==TypeLanguagePrinter.ZPL_ZEBRA)
+        if(parTLP==TypeLanguagePrinter.ZPL_ZEBRA||parTLP==TypeLanguagePrinter.ZPL_SEWOO )
         {
             OffsetCoin = "220";
             OffsetBill = (varPriceBill.length()>1?"10":"100");
@@ -372,14 +375,14 @@ public class LabelInfo
                     replace("{PriceBill}",varPriceBill).replace("{PriceCoin}",strPriceCoin()).
                     replace("{WidthBill}",varWidthBill).
                     replace("{PriceBill2}",varPriceBill2).replace("{PriceCoin2}",strPriceCoinOpt()).
-                    replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode).
+                    replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode.substring(0,13)).
                     replace("{Article}",this.Article).replace("{Date}",CurrentDate).
                     replace("{OffsetBill2}",OffsetBill2).replace("{OffsetCoin2}",OffsetCoin2).
                     replace("{OffsetEndLine}",OffsetEndLine).
                     replace("{LabelLength}",LabelLength).replace("{LabelLength_1}",Integer.toString(Integer.parseInt(LabelLength)-1)).
                     replace("{UnitOpt}",UnitOpt).
                     replace("{OffsetUnit}",Integer.toString(Integer.parseInt(OffsetCoin)+80)).
-                    replace("{Logo}",isSpar?"SPAR":"VOPAK");
+                    replace("{Logo}",LogoPicture);//isSpar?"SPAR":"VOPAK"
         ;
         //byte[] ptext = String.getBytes("UTF-8")
                res=Label.getBytes("Cp1251");
