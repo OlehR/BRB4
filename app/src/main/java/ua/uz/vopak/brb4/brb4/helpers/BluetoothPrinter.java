@@ -216,6 +216,7 @@ public class BluetoothPrinter {
         }
     }
 
+
     public void sendData(byte[] msg) throws IOException {
         try {
             if(varTypePrinter != TypePrinter.NotDefined && varPrinterError== ePrinterError.None)

@@ -42,7 +42,7 @@ public class Worker
     private String BarCode;
     public BluetoothPrinter Printer = new BluetoothPrinter();
     public GetDataHTTP Http = new GetDataHTTP();
-    public LabelInfo LI = new LabelInfo(config.varApplicationContext);
+    public LabelInfo LI = new LabelInfo(config.varApplicationContext,config.isSPAR());
     SQLiteAdapter mDbHelper;
 
     Vibrator v = (Vibrator) config.varApplicationContext.getSystemService(Context.VIBRATOR_SERVICE);

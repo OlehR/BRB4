@@ -39,7 +39,10 @@ public class GlobalConfig {
         String code = "000000000" + CodeWarehouse;
         return code.substring(code.length() - 9);
     }
-
+    public boolean isSPAR() {
+        String code = "000000000" + CodeWarehouse;
+        return Integer.parseInt(CodeWarehouse)>50;
+    }
     protected GlobalConfig() {
     }
 

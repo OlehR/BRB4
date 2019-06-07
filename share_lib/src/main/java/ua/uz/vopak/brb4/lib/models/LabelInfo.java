@@ -21,9 +21,10 @@ import java.util.Date;
 
 import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
 
-
 public class LabelInfo
 {
+    boolean isSpar=false;
+    boolean isInit=false;
     public boolean IsShort=false;
     public int Code;
     public String Name;
@@ -63,6 +64,11 @@ public class LabelInfo
     public LabelInfo(Context parApplicationContext)
     {
        varApplicationContext=parApplicationContext;
+    }
+    public LabelInfo(Context parApplicationContext,boolean parIsSpar)
+    {
+        varApplicationContext=parApplicationContext;
+        isSpar=parIsSpar;
     }
     public LabelInfo(Context parApplicationContext,String parData)
     {
@@ -256,8 +262,9 @@ public class LabelInfo
         }
         Name1=Space.substring(0,((LengName-Name1.length())/2)) + Name1;
         BarCodePrice = Integer.toString(Code)+"-"+Integer.toString(Price)+(PriceOpt==0?"":"-"+Integer.toString(PriceOpt));
-
-        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        if(Name2.length()>LengName+2)
+          Name2=Name2.substring(0,LengName+2);
+        DateFormat df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
         Date today = Calendar.getInstance().getTime();
         String CurrentDate = df.format(today);
         if(PriceOpt==0) {
@@ -314,6 +321,29 @@ public class LabelInfo
                     break;
             }
         }
+        if(parTLP==TypeLanguagePrinter.CPCL_SEWOO)
+        {
+            switch (varPriceBill.length()) {
+                case 1:
+                    OffsetBill = "100";
+                    varWidthBill = "225";
+                    break;
+                case 2:
+                    OffsetBill = "0";
+                    varWidthBill = "225";
+                    break;
+                case 3:
+                    OffsetBill = "0";
+                    varWidthBill = "150";
+                    break;
+                case 4:
+                    OffsetBill = "0";
+                    varWidthBill = "110";
+                    break;
+            }
+
+        }
+
 
         if(parTLP==TypeLanguagePrinter.ZPL_ZEBRA)
         {
@@ -324,27 +354,18 @@ public class LabelInfo
             varUnit=ToHexZebra(varUnit.getBytes("UTF-8"));
 
         }
-
         String Label="";
-        try {
-            String varName_file = parTLP.toString().toLowerCase();
-            InputStream inputStream = varApplicationContext.getAssets().open("Label/" + varName_file /*"zpl_"*/ +"_"+ (PriceOpt==0?"1":"2"    ) + ".prn");
-
-            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
-            StringBuilder total = new StringBuilder();
-            for (String line; (line = r.readLine()) != null; ) {
-                total.append(line).append('\n');
-            }
-            Label=total.toString();
+        String varName_file = parTLP.toString().toLowerCase();
+        if(parTLP==TypeLanguagePrinter.CPCL_SEWOO && !isInit) {
+            isInit=true;
+            Label=GetStringFromAssetsFile("Label/" + varName_file +"_head"+ ".prn");
         }
-        catch (Exception ex)
-        {
 
-        }
+
+        Label=Label+GetStringFromAssetsFile("Label/" + varName_file /*"zpl_"*/ +"_"+ (PriceOpt==0?"1":"2"    ) + ".prn");
 
         //Name1="АБВГД ЮЯ";
         //Name2=Name1.toLowerCase();
-
 
         Label=Label.replace("{Name1}",Name1).replace("{Name2}",Name2).
                     replace("{OffsetBill}",OffsetBill).replace("{OffsetCoin}",OffsetCoin).replace("{Unit}",varUnit).
@@ -357,7 +378,8 @@ public class LabelInfo
                     replace("{OffsetEndLine}",OffsetEndLine).
                     replace("{LabelLength}",LabelLength).replace("{LabelLength_1}",Integer.toString(Integer.parseInt(LabelLength)-1)).
                     replace("{UnitOpt}",UnitOpt).
-                    replace("{OffsetUnit}",Integer.toString(Integer.parseInt(OffsetCoin)+80));
+                    replace("{OffsetUnit}",Integer.toString(Integer.parseInt(OffsetCoin)+80)).
+                    replace("{Logo}",isSpar?"SPAR":"VOPAK");
         ;
         //byte[] ptext = String.getBytes("UTF-8")
                res=Label.getBytes("Cp1251");
@@ -367,8 +389,7 @@ public class LabelInfo
             if(DecodeChar == null) {
                 try {
                     AssetManager aa = varApplicationContext.getAssets();
-                    InputStream inputStream = varApplicationContext.getAssets().open("Label/" + "cpcl_sewoo_1.prn");
-                    inputStream = varApplicationContext.getAssets().open("Label/" + "to_sewoo_lk.map");
+                    InputStream inputStream = varApplicationContext.getAssets().open("Label/" + "to_sewoo_lk.map");
 
                     //BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
                     DecodeChar = new byte[128];
@@ -390,7 +411,7 @@ public class LabelInfo
                         }
                     }
 
-
+/*
             String path=Environment.getExternalStorageDirectory()+"/Download/label.prn";
             try (FileOutputStream stream = new FileOutputStream(path)) {
                 stream.write(res);
@@ -398,13 +419,30 @@ public class LabelInfo
             catch (Exception ex)
             {
                 String r=ex.getMessage();
-
-            }
+            }*/
 
         }
 
           return res;
 
+    }
+    String GetStringFromAssetsFile(String parPath)
+    {
+        String Label="";
+        try {
+            InputStream inputStream = varApplicationContext.getAssets().open(parPath);
+            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+            StringBuilder total = new StringBuilder();
+            for (String line; (line = r.readLine()) != null; ) {
+                total.append(line).append('\n');
+            }
+            Label=total.toString();
+        }
+        catch (Exception ex)
+        {
+
+        }
+     return Label;
     }
 
 }
