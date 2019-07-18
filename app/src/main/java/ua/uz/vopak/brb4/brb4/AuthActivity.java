@@ -60,8 +60,12 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
+
                 config.CodeWarehouse = config.Worker.GetConfigPair("Warehouse");
+                if(config.GetWorker().LI!=null)
+                  config.GetWorker().LI.SetTypeShop(config.isSPAR());
                 return null;
+
             }
         }).execute();
 

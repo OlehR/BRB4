@@ -65,6 +65,9 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                             @Override
                             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                 config.CodeWarehouse = wH.map.get(warList.getSelectedItem().toString());
+                                if(config.GetWorker().LI!=null)
+                                    config.GetWorker().LI.SetTypeShop(config.isSPAR());
+
                                 //new AsyncConfigPairAdd(config.GetWorker()).execute("Warehouse", config.CodeWarehouse);
                                 new AsyncHelper<Void>(new IAsyncHelper() {
                                     @Override

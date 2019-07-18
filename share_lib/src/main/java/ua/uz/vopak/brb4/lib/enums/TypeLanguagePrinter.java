@@ -7,6 +7,7 @@ public enum TypeLanguagePrinter
     ZPL_ZEBRA,
     EZPL,
     CPCL_SEWOO,
-    ZPL_SEWOO
+    ZPL_SEWOO,
+    ZPL_ARGOX
 
 }

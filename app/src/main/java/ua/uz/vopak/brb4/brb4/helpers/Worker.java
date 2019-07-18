@@ -73,25 +73,29 @@ public class Worker
                    LI.AllScan++;
                    if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
                        Vibrate(500);
-                       if(LI.Action && config.printType != 1)
-                           return LI;
-                       if(!LI.Action && config.printType != 0)
-                           return LI;
                        LI.BadScan++;
-                       byte[] b = new byte[0];
-                       try {
-                           b = LI.LevelForPrinter(Printer.GetTypeLanguagePrinter());
-                       } catch (UnsupportedEncodingException e) {
-                           //e.printStackTrace();
+                       //Папір не відповідає ціннику
+                       if((LI.Action && config.printType != 1 )|| (!LI.Action && config.printType != 0))
+                       {
+                           isError = true;
                        }
-                       try {
-                           Printer.sendData(b);
-                       } catch (IOException e) {
-                           //LI.InfoPrinter="Lost Connect";
-                           //e.printStackTrace();
+                       else {//Друкуємо
+
+                           byte[] b = new byte[0];
+                           try {
+                               b = LI.LevelForPrinter(Printer.GetTypeLanguagePrinter());
+                           } catch (UnsupportedEncodingException e) {
+                               //e.printStackTrace();
+                           }
+                           try {
+                               Printer.sendData(b);
+                           } catch (IOException e) {
+                               //LI.InfoPrinter="Lost Connect";
+                               //e.printStackTrace();
+                           }
+                           if (Printer.varPrinterError != ePrinterError.None)
+                               LI.InfoPrinter = Printer.varPrinterError.name();
                        }
-                       if (Printer.varPrinterError != ePrinterError.None)
-                           LI.InfoPrinter = Printer.varPrinterError.name();
                    } else
                        Vibrate(100);
                    if (LI.Action)
@@ -121,7 +125,7 @@ public class Worker
         CodeWares = codeWares.trim();
 
         try {
-            LI = new PricecheckerHelper().getPriceCheckerData(LI,BarCode,false,config);
+            LI = new PricecheckerHelper().getPriceCheckerData(LI,CodeWares,false,config);
             if (LI.resHttp != null && !LI.resHttp.isEmpty()) {
                 LI.Init(new JSONObject(LI.resHttp));
                 if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {

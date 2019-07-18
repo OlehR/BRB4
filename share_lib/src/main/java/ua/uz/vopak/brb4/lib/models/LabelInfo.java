@@ -73,6 +73,14 @@ public class LabelInfo
         isSpar=parIsSpar;
         LogoPicture= GetStringFromAssetsFile("Label/" + (isSpar?"spar":"vopak") + ".prn");
     }
+
+    public void SetTypeShop(boolean parIsSpar)
+    {
+        isSpar=parIsSpar;
+        LogoPicture= GetStringFromAssetsFile("Label/" + (isSpar?"spar":"vopak") + ".prn");
+    }
+
+
     public LabelInfo(Context parApplicationContext,String parData)
     {
         varApplicationContext=parApplicationContext;
@@ -233,7 +241,7 @@ public class LabelInfo
         PriceBill=2422;
         PriceCoin=39;
         //Test End*/
-
+        //PriceBill=7;
 
         final int  LengName=(PriceOpt==0?26:32);
         byte [] res;
@@ -325,6 +333,31 @@ public class LabelInfo
                     break;
             }
         }
+
+        if(parTLP==TypeLanguagePrinter.ZPL_ARGOX )
+        {
+            switch (varPriceBill.length()) {
+                case 1:
+                    OffsetBill = "110";
+                    OffsetCoin = "180";
+                    break;
+                case 2:
+                    OffsetBill = "70";
+                    OffsetCoin = "200";
+                    break;
+                case 3:
+                    OffsetBill = "20";
+                    OffsetCoin = "200";
+                    break;
+                case 4:
+                    OffsetBill = "0";
+                    OffsetCoin = "250";
+                    break;
+            }
+
+        }
+
+
 
         if(parTLP==TypeLanguagePrinter.ZPL_SEWOO || parTLP==TypeLanguagePrinter.CPCL_SEWOO )
         {

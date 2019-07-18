@@ -30,7 +30,7 @@ public class BluetoothPrinter {
     TypeLanguagePrinter GetTypeLanguagePrinter()
     {
         if(varTypePrinter==TypePrinter.Argox_3230)
-            return TypeLanguagePrinter.ZPL;
+            return  TypeLanguagePrinter.ZPL_ARGOX; //TypeLanguagePrinter.ZPL;
         if(varTypePrinter==TypePrinter.Zebra_QLn320)
             return TypeLanguagePrinter.ZPL_ZEBRA;
         if(varTypePrinter==TypePrinter.Godex_MX20)

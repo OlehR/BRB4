@@ -7,6 +7,7 @@ public class PricecheckerHelper {
     public LabelInfo getPriceCheckerData(LabelInfo LI, String BarCode, boolean isHandInput, AbstractConfig config){
         String CodeWares = "";
 
+        LI.OldPrice =0;
         if (BarCode.indexOf('-') > 0) {
             try {
                 String[] str = BarCode.split("-");
