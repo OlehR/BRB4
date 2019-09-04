@@ -29,20 +29,25 @@ public class PricecheckerHelper {
                 ex.getMessage();
             }
         } else {
-            if (BarCode.trim().length() <= 8 && !BarCode.equals("")) {
+            if ((BarCode.trim().length() < 8 && !BarCode.equals("")) || (BarCode.trim().length() == 8 && BarCode.trim().substring(0,2).equals("00") ))
+            {
                 CodeWares = BarCode.trim();
+                BarCode="";
             } else
                 CodeWares = "";
         }
 
         String _codeWares = "";
         String _article = "";
-        int index = BarCode.indexOf("-");
-        String _barCode = !BarCode.equals("") && BarCode.length() > 8 && BarCode.indexOf("-") == -1 ? "\"BarCode\":\"" + BarCode + "\"" : "";
+        String _barCode="";
+        //int index = BarCode.indexOf("-");
+        if( !BarCode.equals(""))
+         _barCode =  "\"BarCode\":\"" + BarCode + "\"" ;
 
-        if (!isHandInput)
-            _codeWares = !CodeWares.equals("") ? "\"CodeWares\":\"" + CodeWares + "\"" : "";
-        else
+        if(!CodeWares.equals(""))
+         if (!isHandInput)
+            _codeWares ="\"CodeWares\":\"" + CodeWares + "\"" ;
+         else
             _article = "\"Article\":\"" + CodeWares + "\"";
 
         String data = config.GetApiJson(154, _barCode + _codeWares + _article);

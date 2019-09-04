@@ -382,6 +382,34 @@ public class LabelInfo
 
         }
 
+        if(parTLP==TypeLanguagePrinter.EZPL )
+        {
+            switch (varPriceBill.length()) {
+                case 1:
+                    OffsetBill = "70";
+                    OffsetCoin = "180";
+                    varWidthBill ="155";
+                    break;
+                case 2:
+                    OffsetBill = "0";
+                    OffsetCoin = "180";
+                    varWidthBill ="135";
+                    break;
+                case 3:
+                    OffsetBill = "0";
+                    OffsetCoin = "180";
+                    varWidthBill ="90";
+
+                    break;
+                case 4:
+                    OffsetBill = "0";
+                    OffsetCoin = "190";
+                    varWidthBill ="72";
+
+            }
+
+        }
+
         if(parTLP==TypeLanguagePrinter.ZPL_ZEBRA||parTLP==TypeLanguagePrinter.ZPL_SEWOO )
         {
             OffsetCoin = "220";
@@ -391,6 +419,7 @@ public class LabelInfo
             varUnit=ToHexZebra(varUnit.getBytes("UTF-8"));
 
         }
+
         String Label="";
         String varName_file = parTLP.toString().toLowerCase();
         if(parTLP==TypeLanguagePrinter.CPCL_SEWOO && !isInit) {
@@ -409,7 +438,7 @@ public class LabelInfo
                     replace("{PriceBill}",varPriceBill).replace("{PriceCoin}",strPriceCoin()).
                     replace("{WidthBill}",varWidthBill).
                     replace("{PriceBill2}",varPriceBill2).replace("{PriceCoin2}",strPriceCoinOpt()).
-                    replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode.substring(0,13)).
+                    replace("{BarCodePrice}",BarCodePrice).replace("{BarCode}",this.BarCode.substring(0,this.BarCode.length()>=13?13:this.BarCode.length())).
                     replace("{Article}",this.Article).replace("{Date}",CurrentDate).
                     replace("{OffsetBill2}",OffsetBill2).replace("{OffsetCoin2}",OffsetCoin2).
                     replace("{OffsetEndLine}",OffsetEndLine).
@@ -419,7 +448,11 @@ public class LabelInfo
                     replace("{Logo}",LogoPicture);//isSpar?"SPAR":"VOPAK"
         ;
         //byte[] ptext = String.getBytes("UTF-8")
-               res=Label.getBytes("Cp1251");
+        if(parTLP==TypeLanguagePrinter.EZPL)
+            res=Label.getBytes();//("UTF-8");
+          else
+            res=Label.getBytes("Cp1251");
+
         //Магія для кодових сторінок SEWOO в режимі CPCL
         if(parTLP==TypeLanguagePrinter.CPCL_SEWOO)
         {
@@ -448,19 +481,20 @@ public class LabelInfo
                         }
                     }
 
-/*
-            String path=Environment.getExternalStorageDirectory()+"/Download/label.prn";
-            try (FileOutputStream stream = new FileOutputStream(path)) {
-                stream.write(res);
-            }
-            catch (Exception ex)
-            {
-                String r=ex.getMessage();
-            }*/
+
 
         }
+        String path=Environment.getExternalStorageDirectory()+"/Download/label.prn";
+        try (FileOutputStream stream = new FileOutputStream(path)) {
+            stream.write(res);
+        }
+        catch (Exception ex)
+        {
+            String r=ex.getMessage();
+        }
 
-          return res;
+
+        return res;
 
     }
     String GetStringFromAssetsFile(String parPath)

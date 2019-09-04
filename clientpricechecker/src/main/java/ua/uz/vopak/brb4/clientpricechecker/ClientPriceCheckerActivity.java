@@ -53,6 +53,7 @@ public class ClientPriceCheckerActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         super.onCreate(savedInstanceState);
         context = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -338,6 +339,11 @@ public class ClientPriceCheckerActivity extends Activity {
         }
     }
 
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
+    };
     class SleepOrWakeUp extends  TimerTask{
 
         @Override

@@ -43,7 +43,9 @@ public class GlobalConfig extends AbstractConfig {
         return code.substring(code.length() - 9);
     }
     public boolean isSPAR() {
-        String code = "000000000" + CodeWarehouse;
+        //String code = "000000000" + CodeWarehouse;
+        if(CodeWarehouse==null|| CodeWarehouse=="")
+            return false;
         return Integer.parseInt(CodeWarehouse)>50;
     }
     protected GlobalConfig() {

@@ -64,7 +64,7 @@ public class Worker
        SetProgress(10);
        BarCode = parBarCode.trim();
 
-       if (BarCode.length() > 7 || !CodeWares.isEmpty()) {
+       if (BarCode!=null &&  BarCode.length() > 0 ) {
            try {
                LI = new PricecheckerHelper().getPriceCheckerData(LI,BarCode,isHandInput,config);
                SetProgress(50);
