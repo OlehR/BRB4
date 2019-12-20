@@ -150,7 +150,7 @@ public class GlobalConfig extends AbstractConfig {
 
         if (model.equals("TC20") && (manufacturer.contains("Zebra Technologies") || manufacturer.contains("Motorola Solutions")))
             return eTypeScaner.ZebraTC20;
-        if (model.equals("PM550") && manufacturer.contains("Point Mobile Co., Ltd."))
+        if (model.equals("PM550") && (manufacturer.contains("POINTMOBILE")|| manufacturer.contains("Point Mobile Co., Ltd.")))
             return eTypeScaner.PM550;
 
         return eTypeScaner.Camera;

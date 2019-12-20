@@ -23,6 +23,7 @@ public class PricecheckerHelper {
                     case 2:
                         CodeWares = str[0];
                         LI.OldPrice = Integer.parseInt(str[1]);
+                        BarCode="";
                         break;
                 }
             } catch (Exception ex) {

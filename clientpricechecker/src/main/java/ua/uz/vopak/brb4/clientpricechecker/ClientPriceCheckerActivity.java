@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
@@ -39,7 +40,7 @@ public class ClientPriceCheckerActivity extends Activity {
     TextView Title, BarCodeView, Article, ActionView, PriceBill, PriceCoin, PriceBillOpt, PriceCoinOpt, OptTitle;
     RelativeLayout InfoLayout;
     LinearLayout LogoLayout, OptPriceBlock, VideoWatermark, HideInfoLayout;
-    ImageView Background;
+    ImageView Background,Logo,Logo2;
     VideoView PromoVideo;
     ClientPriceCheckerActivity context;
     LinearLayout ClientPriceChecker;
@@ -50,13 +51,14 @@ public class ClientPriceCheckerActivity extends Activity {
     PowerManager.WakeLock wl;
     private InfoLayoutTimerTask infoLayoutTimerTask;
     Button HideInfoBTN;
-
+    ua.uz.vopak.brb4.clientpricechecker.Config config;
+    Resources res;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         super.onCreate(savedInstanceState);
         context = this;
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.client_price_checker_layout);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -92,7 +94,8 @@ public class ClientPriceCheckerActivity extends Activity {
             public void afterTextChanged(Editable s) {
             }
         });
-
+        config = ua.uz.vopak.brb4.clientpricechecker.Config.instance(this.getApplicationContext());
+        res = getResources();
         InfoLayout = findViewById(R.id.InfoLayout);
         Title = findViewById(R.id.Title);
         BarCodeView = findViewById(R.id.BarCodeView);
@@ -108,10 +111,20 @@ public class ClientPriceCheckerActivity extends Activity {
         VideoWatermark = findViewById(R.id.VideoWatermark);
         OptTitle = findViewById(R.id.OptTitle);
         OptPriceBlock = findViewById(R.id.OptPriceBlock);
+        Logo=findViewById(R.id.Logo);
+        Logo2=findViewById(R.id.Logo2);
+        Resources res = getResources();
 
+        Drawable background = res.getDrawable(config.IsSpar?R.drawable.background2spar:R.drawable.background2vopak);
+        Background.setBackground(background);
+        background = res.getDrawable(config.IsSpar?R.drawable.logo1spar:R.drawable.logo1vopak);
+        Logo.setBackground(background);
+        background = res.getDrawable(config.IsSpar?R.drawable.logo2spar:R.drawable.logo2vopak);
+        Logo2.setBackground(background);
         if(videoTimer != null){
             videoTimer.cancel();
         }
+
 
         videoTimer = new Timer();
         videoTimer.schedule(new VideoPlaybackTimerTask(), 60000, 60000);
@@ -209,10 +222,10 @@ public class ClientPriceCheckerActivity extends Activity {
             ActionView.setVisibility(View.INVISIBLE);
         }
 
-        Resources res = getResources();
-        Drawable background = res.getDrawable(R.drawable.background_3);
 
+        Drawable background = res.getDrawable(config.IsSpar?R.drawable.background1spar:R.drawable.background1vopak);
         Background.setBackground(background);
+
         LogoLayout.setVisibility(View.INVISIBLE);
         InfoLayout.setVisibility(View.VISIBLE);
 
@@ -261,8 +274,8 @@ public class ClientPriceCheckerActivity extends Activity {
         HideInfoLayout.removeAllViews();
         HideInfoLayout.setVisibility(View.INVISIBLE);
         LogoLayout.setVisibility(View.VISIBLE);
-        Resources res = getResources();
-        Drawable background = res.getDrawable(R.drawable.background_4);
+
+        Drawable background = res.getDrawable(config.IsSpar?R.drawable.background2spar:R.drawable.background2vopak);
         Background.setBackground(background);
 
         if(videoTimer != null){

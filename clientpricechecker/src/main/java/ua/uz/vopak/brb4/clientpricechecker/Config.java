@@ -21,6 +21,7 @@ public class Config extends AbstractConfig {
     public static String SmbUser;
     public static String SmbPassword;
     public static String SmbPath;
+    public static boolean IsSpar;
     XmlResourceParser xrp;
 
     protected Config(Context parContext){
@@ -36,6 +37,7 @@ public class Config extends AbstractConfig {
                     switch (xrp.getName()){
                         case "CodeWarehouse" :
                             CodeWarehouse = xrp.getAttributeValue(null,"value");
+                            IsSpar= (Integer.valueOf(CodeWarehouse)>30);
                             break;
                         case "Login" :
                             Login = xrp.getAttributeValue(null,"value");

@@ -226,7 +226,16 @@ public class BluetoothPrinter {
             //myLabel.setText("Data sent.");
 
         } catch (Exception e) {
-            varPrinterError= ePrinterError.ErrorSendData;
+            try
+            {
+                closeBT();
+                Thread.sleep(100);
+                openBT();
+                Thread.sleep(100);
+                mmOutputStream.write(msg);
+            } catch (Exception ex) {
+                varPrinterError = ePrinterError.ErrorSendData;
+            }
         }
     }
 

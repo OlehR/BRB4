@@ -126,8 +126,11 @@ public class LabelInfo
             if (parData.has("QuantityOpt") && parData.has("PriceOpt")) {
                     QuantityOpt = parData.getDouble("QuantityOpt");
                 if (QuantityOpt != 0) {
-                    String[] varPrice = parData.getString("PriceOpt").split(",");
+                    String pr=parData.getString("PriceOpt");
+                    String[] varPrice = pr.split("\\.");
                     PriceBillOpt = Integer.parseInt(varPrice[0]);
+                    if(varPrice[1].length() == 1)
+                        varPrice[1] = varPrice[1] + "0";
                     PriceCoinOpt = Integer.parseInt(varPrice[1]);
                 }
 
@@ -448,8 +451,11 @@ public class LabelInfo
                     replace("{Logo}",LogoPicture);//isSpar?"SPAR":"VOPAK"
         ;
         //byte[] ptext = String.getBytes("UTF-8")
-        if(parTLP==TypeLanguagePrinter.EZPL)
-            res=Label.getBytes();//("UTF-8");
+        if(parTLP==TypeLanguagePrinter.EZPL) {
+            Label=Label.replace("\n","\r\n");
+            res = Label.getBytes();//("UTF-8");
+
+        }
           else
             res=Label.getBytes("Cp1251");
 
