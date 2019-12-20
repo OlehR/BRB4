@@ -30,12 +30,16 @@ public class BluetoothPrinter {
     TypeLanguagePrinter GetTypeLanguagePrinter()
     {
         if(varTypePrinter==TypePrinter.Argox_3230)
-            return TypeLanguagePrinter.ZPL;
+            return  TypeLanguagePrinter.ZPL_ARGOX; //TypeLanguagePrinter.ZPL;
         if(varTypePrinter==TypePrinter.Zebra_QLn320)
             return TypeLanguagePrinter.ZPL_ZEBRA;
         if(varTypePrinter==TypePrinter.Godex_MX20)
             return TypeLanguagePrinter.EZPL;
+        if(varTypePrinter==TypePrinter.Sewoo_LK_P34)
+            return TypeLanguagePrinter.ZPL_SEWOO;//CPCL_SEWOO; //ZPL_ZEBRA;//TypeLanguagePrinter.CPCL_SEWOO;
         return TypeLanguagePrinter.NotDefined;
+
+
 
         /*switch (varTypePrinter) {
             case TypePrinter.Argox_3230:
@@ -80,8 +84,12 @@ public class BluetoothPrinter {
                         case "Argox AME-3230B":
                             varTypePrinter=TypePrinter.Argox_3230;
                             break;
+                        case "MX20":
                         case "Godex MX20":
                             varTypePrinter=TypePrinter.Godex_MX20;
+                            break;
+                        case "LK-P34":
+                            varTypePrinter=TypePrinter.Sewoo_LK_P34;
                             break;
                         case "QLn320":
                         default:
@@ -98,6 +106,7 @@ public class BluetoothPrinter {
                     }
                 }
             }
+            mBluetoothAdapter.cancelDiscovery();
 
             // myLabel.setText("Bluetooth device found.");
 
@@ -110,11 +119,16 @@ public class BluetoothPrinter {
         try {
 
             // Standard SerialPortService ID
-            //UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
+            UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
 
             Method m = mmDevice.getClass().getMethod("createRfcommSocket",new Class[] { int.class });
-            mmSocket = (BluetoothSocket)m.invoke(mmDevice, Integer.valueOf(1));
-            //mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+
+            //mmSocket = (BluetoothSocket)m.invoke(mmDevice, Integer.valueOf(1));
+            //Гребана магія з принтером Sewoo_LK_P34
+            if(varTypePrinter==TypePrinter.Sewoo_LK_P34)
+              mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+            else
+              mmSocket = (BluetoothSocket)m.invoke(mmDevice, Integer.valueOf(1));
 
             mmSocket.connect();
             mmOutputStream = mmSocket.getOutputStream();
@@ -203,6 +217,7 @@ public class BluetoothPrinter {
         }
     }
 
+
     public void sendData(byte[] msg) throws IOException {
         try {
             if(varTypePrinter != TypePrinter.NotDefined && varPrinterError== ePrinterError.None)
@@ -211,7 +226,16 @@ public class BluetoothPrinter {
             //myLabel.setText("Data sent.");
 
         } catch (Exception e) {
-            varPrinterError= ePrinterError.ErrorSendData;
+            try
+            {
+                closeBT();
+                Thread.sleep(100);
+                openBT();
+                Thread.sleep(100);
+                mmOutputStream.write(msg);
+            } catch (Exception ex) {
+                varPrinterError = ePrinterError.ErrorSendData;
+            }
         }
     }
 

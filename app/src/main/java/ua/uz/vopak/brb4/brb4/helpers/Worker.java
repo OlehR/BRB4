@@ -3,6 +3,7 @@ package ua.uz.vopak.brb4.brb4.helpers;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.ProgressBar;
 import com.google.gson.Gson;
 import org.json.JSONObject;
@@ -26,6 +28,7 @@ import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
+import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
@@ -40,10 +43,10 @@ public class Worker
     private String BarCode;
     public BluetoothPrinter Printer = new BluetoothPrinter();
     public GetDataHTTP Http = new GetDataHTTP();
-    public LabelInfo LI = new LabelInfo(GlobalConfig.varApplicationContext);
+    public LabelInfo LI = new LabelInfo(config.varApplicationContext,config.isSPAR());
     SQLiteAdapter mDbHelper;
 
-    Vibrator v = (Vibrator) GlobalConfig.varApplicationContext.getSystemService(Context.VIBRATOR_SERVICE);
+    Vibrator v = (Vibrator) config.varApplicationContext.getSystemService(Context.VIBRATOR_SERVICE);
 
     public void SetProgressBar(ProgressBar parProgressBar)
     {
@@ -54,100 +57,104 @@ public class Worker
         priceCheckerActivity=parPriceCheckerActivity;
     };
 
-   public LabelInfo Start(String parBarCode)
-   {
+   public LabelInfo Start(String parBarCode, boolean isHandInput) {
        //Call Progres 10%;
        //parBarCode="116897-7700-";
-       boolean isError=false;
+       boolean isError = false;
        SetProgress(10);
-       BarCode=parBarCode.trim();
-       LI.OldPrice=0;
-       LI.OldPriceOpt=0;
+       BarCode = parBarCode.trim();
 
-       if(BarCode.indexOf('-')>0)
-       {
+       if (BarCode!=null &&  BarCode.length() > 0 ) {
            try {
-               String[] str = BarCode.split("-");
-               switch (str.length) {
-                   case 0:
-                   case 1:
-                       CodeWares = "";
-                       BarCode = "";
-                       break;
-                   case 3:
-
-                       LI.OldPriceOpt = Integer.parseInt(str[2]);
-                   case 2:
-                       CodeWares = str[0];
-                       LI.OldPrice = Integer.parseInt(str[1]);
-                       break;
-               }
-           }
-           catch (Exception ex)
-           {
-               isError=true;
-           }
-       }
-       else {
-           CodeWares="";
-          }
-
-       if(BarCode.length()>7 || !CodeWares.isEmpty() )
-       {
-           try {
-               String resHttp = Http.GetData(config.getCodeWarehouse(), BarCode, CodeWares);
-               resHttp = resHttp.replace("&amp;", "&");
-               //Call Progres 50%;
-               LI.InfoHTTP = Http.HttpState.name();
+               LI = new PricecheckerHelper().getPriceCheckerData(LI,BarCode,isHandInput,config);
                SetProgress(50);
-               if (resHttp != null && !resHttp.isEmpty()) {
-                   LI.Init(resHttp);
+               if (LI.resHttp != null && !LI.resHttp.isEmpty()) {
+                   LI.Init(new JSONObject(LI.resHttp));
                    LI.AllScan++;
                    if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
                        Vibrate(500);
                        LI.BadScan++;
-                       byte[] b = new byte[0];
-                       try {
-                           b = LI.LevelForPrinter( Printer.GetTypeLanguagePrinter());
-                       } catch (UnsupportedEncodingException e) {
-                           //e.printStackTrace();
+                       //Папір не відповідає ціннику
+                       if((LI.Action && config.printType != 1 )|| (!LI.Action && config.printType != 0))
+                       {
+                           isError = true;
                        }
-                       try {
-                           Printer.sendData(b);
-                       } catch (IOException e) {
-                           //LI.InfoPrinter="Lost Connect";
-                           //e.printStackTrace();
-                       }
-                       if (Printer.varPrinterError != ePrinterError.None)
-                           LI.InfoPrinter = Printer.varPrinterError.name();
-                   }
-                   else
-                       Vibrate(100);
-                   if(LI.ActionType != 0)
-                       Vibrate(1000);
+                       else {//Друкуємо
 
-               }
-               else
-                   Vibrate(500);
-           }
-           catch (Exception ex)
-           {
-               isError=true;
+                           byte[] b = new byte[0];
+                           try {
+                               b = LI.LevelForPrinter(Printer.GetTypeLanguagePrinter());
+                           } catch (UnsupportedEncodingException e) {
+                               //e.printStackTrace();
+                           }
+                           try {
+                               Printer.sendData(b);
+                           } catch (IOException e) {
+                               //LI.InfoPrinter="Lost Connect";
+                               //e.printStackTrace();
+                           }
+                           if (Printer.varPrinterError != ePrinterError.None)
+                               LI.InfoPrinter = Printer.varPrinterError.name();
+                       }
+                   } else
+                       Vibrate(100);
+                   if (LI.Action)
+                       Vibrate(500);
+
+               } else
+                   Vibrate(200);
+           } catch (Exception ex) {
+               isError = true;
            }
 
        }
        try {
-
-           mDbHelper.InsLogPrice(BarCode,(isError?-9: (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError!= ePrinterError.None ?-1:0))));
+           mDbHelper.InsLogPrice(parBarCode, (isError ? -9 : (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError != ePrinterError.None ? -1 : 0))), LI.ActionType, config.NumberPackege, LI.Code);
            SetProgress(100);
-       }
-       catch (Exception e)
-       {
+       } catch (Exception e) {
 
        }
        return LI;
 
    }
+
+    public void printPackage(String codeWares) {
+        boolean isError = false;
+        if (codeWares == null)
+            return;
+        CodeWares = codeWares.trim();
+
+        try {
+            LI = new PricecheckerHelper().getPriceCheckerData(LI,CodeWares,false,config);
+            if (LI.resHttp != null && !LI.resHttp.isEmpty()) {
+                LI.Init(new JSONObject(LI.resHttp));
+                if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
+                    LI.BadScan++;
+                    byte[] b = new byte[0];
+                    try {
+                        b = LI.LevelForPrinter(Printer.GetTypeLanguagePrinter());
+                    } catch (UnsupportedEncodingException e) {
+                        //e.printStackTrace();
+                    }
+                    try {
+                        Printer.sendData(b);
+                    } catch (IOException e) {
+                        //LI.InfoPrinter="Lost Connect";
+                        //e.printStackTrace();
+                    }
+                    if (Printer.varPrinterError != ePrinterError.None)
+                        LI.InfoPrinter = Printer.varPrinterError.name();
+                }
+
+            }
+
+        } catch (Exception ex) {
+            isError = true;
+        }
+
+        return;
+
+    }
 
     public void LoadListDoc(Activity context,String parTypeDoc)
     {
@@ -160,7 +167,7 @@ public class Worker
 
     public void LoadDocsData(String parTypeDoc, MainActivity context)
     {
-        String data=GlobalConfig.GetApiJson(150,"\"TypeDoc\":"+parTypeDoc);
+        String data=config.GetApiJson(150,"\"TypeDoc\":"+parTypeDoc);
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
         mDbHelper.LoadDataDoc(result);
@@ -179,7 +186,7 @@ public class Worker
             war += ware.Quantity+"]";
             wares.add(war);
         }
-        String data=GlobalConfig.GetApiJson(153,"\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"]");
+        String data=config.GetApiJson(153,"\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"]");
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
     }
@@ -207,7 +214,7 @@ public class Worker
 
        //Gson g= new Gson(stockArr).toJson(obj);
        String a = new Gson().toJson(list);
-       String data=GlobalConfig.GetApiJson(141,"\"LogPrice\":"+a);
+       String data=config.GetApiJson(141,"\"LogPrice\":"+a);
 
        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
 
@@ -227,6 +234,10 @@ public class Worker
 
    }
 
+   public HashMap<String,String[]> getPrintBlockItemsCount(String packages){
+       return mDbHelper.getPrintBlockItemsCount(packages);
+   }
+
     private void SetProgress(int parProgress)
     {
         if(Progress!=null)
@@ -243,7 +254,7 @@ public class Worker
           e.printStackTrace();
           LI.InfoPrinter="Error";
       }*/
-      mDbHelper = GlobalConfig.GetSQLiteAdapter();
+      mDbHelper = config.GetSQLiteAdapter();
       int[] varRes=mDbHelper.GetCountScanCode();
       LI.AllScan=varRes[0];
       LI.BadScan=varRes[1];
@@ -319,6 +330,33 @@ public class Worker
         activity.SetQuantity(model);
 
 
+    }
+
+    public void printPackage(final Integer actionType, final Integer packageNumber) {
+        new AsyncHelper<Void>(new IAsyncHelper<Void>() {
+            @Override
+            public Void Invoke() {
+                List<String> barCodes = mDbHelper.getPrintPackageBarcodes(actionType, packageNumber);
+                config.Worker.priceCheckerActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        config.Worker.priceCheckerActivity.loader.setVisibility(View.VISIBLE);
+                    }
+                });
+
+                for (String barCode : barCodes) {
+                    config.Worker.printPackage(barCode);
+                }
+
+                config.Worker.priceCheckerActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        config.Worker.priceCheckerActivity.loader.setVisibility(View.INVISIBLE);
+                    }
+                });
+                return null;
+            }
+        }).execute();
     }
 
 

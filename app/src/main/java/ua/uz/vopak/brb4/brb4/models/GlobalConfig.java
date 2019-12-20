@@ -10,38 +10,57 @@ import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerTC20;
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
 import ua.uz.vopak.brb4.brb4.helpers.*;
+import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 
-public class GlobalConfig {
+public class GlobalConfig extends AbstractConfig {
     private static GlobalConfig Instance = null;
-    public static String CodeWarehouse = "0";
-    public static String ApiUrl = "http://znp.vopak.local/api/api_v1_utf8.php";
-    public static String Login = "c";
-    public static String Password = "c";
-    public static Worker Worker;
-    public static String SN = Build.SERIAL;
-    public static String NameDCT = Build.USER;
-    public static SQLiteAdapter SQLiteAdapter;
-    public static eTypeScaner TypeScaner = eTypeScaner.NotDefine;
-    public static ua.uz.vopak.brb4.brb4.Scaner.Scaner Scaner;
-    public static Context varApplicationContext;
-    public static boolean isAutorized;
-    public static Integer NumberPackege = 0;
-    public static View BarcodeImageLayout;
-    public static String GetApiJson(int parCodeData, String parData) {
-        return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
+    public String CodeWarehouse = "0";
+    public String ApiUrl = "http://znp.vopak.local/api/api_v1_utf8.php";
+    public String Login = "c";
+    public String Password = "c";
+    public Worker Worker;
+    public String SN = Build.SERIAL;
+    public String NameDCT = Build.USER;
+    public SQLiteAdapter SQLiteAdapter;
+    public eTypeScaner TypeScaner = eTypeScaner.NotDefine;
+    public ua.uz.vopak.brb4.brb4.Scaner.Scaner Scaner;
+    public Context varApplicationContext;
+    public boolean isAutorized;
+    public Integer NumberPackege = 0;
+    public View BarcodeImageLayout;
+    public Integer connectionPrinterType;
+    public boolean yellowAutoPrint;
+    public Integer printType = 0;//Колір чека 0-звичайнийб 1-жовтий
+    @Override
+    public String GetApiJson(int parCodeData, String parData) {
+        return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+this.getCodeWarehouse()+"\", \"CodeWarehouse\":\""+this.getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData==null?"":","+parData )+"}";
     }
 
-    public static String getCodeWarehouse() {
+    @Override
+    public String getCodeWarehouse() {
         String code = "000000000" + CodeWarehouse;
         return code.substring(code.length() - 9);
     }
-
+    public boolean isSPAR() {
+        //String code = "000000000" + CodeWarehouse;
+        if(CodeWarehouse==null|| CodeWarehouse=="")
+            return false;
+        return Integer.parseInt(CodeWarehouse)>50;
+    }
     protected GlobalConfig() {
-//        String NameDCT = Build.ID;
+        super("http://znp.vopak.local/api/api_v1_utf8.php");
     }
 
-    public static void Init(Context parApplicationContext)
+    public static GlobalConfig instance() {
+        if (Instance == null) {
+            Instance = new GlobalConfig();
+        }
+
+        return Instance;
+    }
+
+    public void Init(Context parApplicationContext)
     {
         varApplicationContext=parApplicationContext;
         //Визначаємо тип Сканера
@@ -50,9 +69,32 @@ public class GlobalConfig {
         GetSQLiteAdapter(varApplicationContext);
         //Worker
         GetWorker();
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                String printerConnectionType = Worker.GetConfigPair("connectionPrinterType");
+
+                if(printerConnectionType.equals("")){
+                    connectionPrinterType = 0;
+                }else{
+                    connectionPrinterType = Integer.parseInt(printerConnectionType);
+                }
+
+                String parYellowAutoPrint = Worker.GetConfigPair("yellowAutoPrint");
+
+                if(parYellowAutoPrint.equals("")){
+                    yellowAutoPrint = false;
+                }else{
+                    yellowAutoPrint = Boolean.parseBoolean(parYellowAutoPrint);
+                }
+
+                return null;
+            }
+        }).execute();
     }
 
-    public static Scaner GetScaner() {
+    public Scaner GetScaner() {
 
         if(Scaner!=null)
             return Scaner;
@@ -75,28 +117,19 @@ public class GlobalConfig {
         return Scaner;
     }
 
-    public static GlobalConfig instance() {
-        if (Instance == null) {
-            Instance = new GlobalConfig();
-        }
-        return Instance;
-    }
-
-    public static Worker GetWorker(ProgressBar varProgressBar) {
-        Worker = GetWorker();
+    public void SetProgressBar(ProgressBar varProgressBar) {
         if (Worker != null)
             Worker.SetProgressBar(varProgressBar);
-        return Worker;
     }
 
-    public static Worker GetWorker() {
+    public Worker GetWorker() {
         if (Worker == null) {
             Worker = new Worker();
         }
         return Worker;
     }
 
-    public static SQLiteAdapter GetSQLiteAdapter(Context c) {
+    public SQLiteAdapter GetSQLiteAdapter(Context c) {
         if (SQLiteAdapter == null) {
             SQLiteAdapter = new SQLiteAdapter(c);
             SQLiteAdapter.createDatabase();
@@ -105,11 +138,11 @@ public class GlobalConfig {
         return SQLiteAdapter;
     }
 
-    public static SQLiteAdapter GetSQLiteAdapter() {
+    public SQLiteAdapter GetSQLiteAdapter() {
         return SQLiteAdapter;
     }
 
-    static eTypeScaner GetTypeScaner(Context parApplicationContext) {
+    eTypeScaner GetTypeScaner(Context parApplicationContext) {
         if(parApplicationContext==null)
             return eTypeScaner.None;
         String model = android.os.Build.MODEL;
@@ -117,7 +150,7 @@ public class GlobalConfig {
 
         if (model.equals("TC20") && (manufacturer.contains("Zebra Technologies") || manufacturer.contains("Motorola Solutions")))
             return eTypeScaner.ZebraTC20;
-        if (model.equals("PM550") && manufacturer.contains("Point Mobile Co., Ltd."))
+        if (model.equals("PM550") && (manufacturer.contains("POINTMOBILE")|| manufacturer.contains("Point Mobile Co., Ltd.")))
             return eTypeScaner.PM550;
 
         return eTypeScaner.Camera;

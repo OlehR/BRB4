@@ -2,6 +2,7 @@ package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,11 +16,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 import ua.uz.vopak.brb4.brb4.helpers.*;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncAuthHelper;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncGetNumberPackege;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncGetWarehouseConfig;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLastLogin;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class AuthActivity extends Activity  implements View.OnClickListener {
@@ -31,6 +33,10 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Ініціалізація BD
+        Context c =this.getApplicationContext();
+        config.Init(c);
+
         setContentView(R.layout.auth_layout);
 
         loginBtn = findViewById(R.id.LoginButton);
@@ -39,9 +45,52 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
         password = findViewById(R.id.Password);
         aHelper = new AuterizationsHelper(this);
 
-        new AsyncLastLogin(aHelper).execute();
-        new AsyncGetWarehouseConfig().execute();
-        new AsyncGetNumberPackege().execute();
+        //new AsyncLastLogin(aHelper).execute();
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                aHelper.GetLastLogin();
+                return null;
+            }
+        }).execute();
+
+        //new AsyncGetWarehouseConfig().execute();
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+
+                config.CodeWarehouse = config.Worker.GetConfigPair("Warehouse");
+                if(config.GetWorker().LI!=null)
+                  config.GetWorker().LI.SetTypeShop(config.isSPAR());
+                return null;
+
+            }
+        }).execute();
+
+        //new AsyncGetNumberPackege().execute();
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                DateFormat df = new SimpleDateFormat("yyyyMMdd");
+                Date today = Calendar.getInstance().getTime();
+                String todayAsString = df.format(today);
+
+                String var  = config.Worker.GetConfigPair("NumberPackege");
+                String varNumberPackege="1";
+                if(var.length()>8 && var.substring(0,8).equals(todayAsString))
+                {
+                    varNumberPackege = var.substring(8);
+                }
+                else
+                    config.Worker.AddConfigPair("NumberPackege",todayAsString+ varNumberPackege);
+
+                config.NumberPackege=Integer.valueOf(varNumberPackege);
+                return null;
+            }
+        }).execute();
 
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -74,9 +123,17 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
                 String CodeData = "\"CodeData\": \"1\"";
                 String Login = "\"Login\": \"" + config.Login + "\"";
                 String PassWord = "\"PassWord\": \"" + config.Password + "\"";
-                String data = "{"+ CodeData +", "+ Login +", "+ PassWord +"}";
+                final String data = "{"+ CodeData +", "+ Login +", "+ PassWord +"}";
 
-                new AsyncAuthHelper(aHelper).execute(data);
+                //new AsyncAuthHelper(aHelper).execute(data);
+
+                new AsyncHelper<Void>(new IAsyncHelper() {
+                    @Override
+                    public Void Invoke() {
+                        aHelper.Start(data);
+                        return null;
+                    }
+                }).execute();
 
                 if(config.isAutorized){
                     Intent i = new Intent(this, MainActivity.class);
@@ -95,8 +152,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-                        //SomeActivity - имя класса Activity для которой переопределяем onBackPressed();
-                        GlobalConfig.instance().isAutorized = false;
+                        config.isAutorized = false;
                         finish();
                         moveTaskToBack(true);
                     }

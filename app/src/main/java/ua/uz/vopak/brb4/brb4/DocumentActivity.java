@@ -16,7 +16,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncLoadListDoc;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
@@ -27,6 +28,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
     DocumentActivity context;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
+    GlobalConfig config = GlobalConfig.instance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +41,15 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
         Intent i = getIntent();
         DocumentType = i.getStringExtra("document_type");
 
-        new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute(DocumentType);
+        //new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute(DocumentType);
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.LoadListDoc(context,DocumentType);
+                return null;
+            }
+        }).execute();
     }
 
     @Override

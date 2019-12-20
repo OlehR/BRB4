@@ -14,11 +14,13 @@ import static ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500.mScanner;
 
 public  class ScanResultReceiverPM extends BroadcastReceiver {
 
+    GlobalConfig config = GlobalConfig.instance();
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(GlobalConfig.TypeScaner!=eTypeScaner.PM550)
+        if(config.TypeScaner!=eTypeScaner.PM550)
             return;
-        ScanerPM500 mScaner=(ScanerPM500)GlobalConfig.GetScaner();
+        ScanerPM500 mScaner=(ScanerPM500)config.GetScaner();
         if(mScaner!=null) {
             //mScanerWrapper mScanerW = mScaner.mScanerW;
 

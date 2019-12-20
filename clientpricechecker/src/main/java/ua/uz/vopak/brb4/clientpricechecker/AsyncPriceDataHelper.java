@@ -2,7 +2,9 @@ package ua.uz.vopak.brb4.clientpricechecker;
 
 import android.os.AsyncTask;
 
-import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
+import org.json.JSONObject;
+
+import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class AsyncPriceDataHelper extends AsyncTask<String , Void, LabelInfo>
@@ -11,30 +13,20 @@ public class AsyncPriceDataHelper extends AsyncTask<String , Void, LabelInfo>
     @Override
     protected LabelInfo doInBackground(String... param)
     {
-        GetDataHTTP Http = new GetDataHTTP();
         LabelInfo LI = new LabelInfo(null);
         String BarCode = param[0].replace("\n",""),CodeWares="";
-
-        if(BarCode.indexOf('-')>0)
-        {
-            String [] str =BarCode.split("-");
-            CodeWares=str[0];
-            BarCode="";
-
-        }
-
-
 
 
         Config config = Config.instance(activity);
 
-        String resHttp=Http.GetData(config.getCodeWarehouse(),BarCode,CodeWares);
-        resHttp=resHttp.replace("&amp;","&");
-
-        LI.InfoHTTP= Http.HttpState.name();
-        if(resHttp!=null && !resHttp.isEmpty())
+        LI = new PricecheckerHelper().getPriceCheckerData(LI,BarCode,false,config);
+        if(LI.resHttp!=null && !LI.resHttp.isEmpty())
         {
-            LI.Init(resHttp);
+            try {
+                LI.Init(new JSONObject(LI.resHttp));
+            }catch (Exception e){
+                e.getMessage();
+            }
         }
 
         return LI;

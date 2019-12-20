@@ -38,6 +38,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 public class ScanFragment extends Fragment {
     Context mcontext;
     BarcodeView barcodeView;
+    GlobalConfig config = GlobalConfig.instance();
 
     final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
     View view;
@@ -48,7 +49,7 @@ public class ScanFragment extends Fragment {
 
         view=inflater.inflate(R.layout.scan_fragment, container, false);
 
-        if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
+        if(config.TypeScaner==eTypeScaner.Camera) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                     getActivity().checkSelfPermission(Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
@@ -65,7 +66,7 @@ public class ScanFragment extends Fragment {
             barcodeView.setVisibility(View.INVISIBLE);
         }
 
-        GlobalConfig.BarcodeImageLayout = view.findViewById(R.id.BarcodeImageLayout);
+        config.BarcodeImageLayout = view.findViewById(R.id.BarcodeImageLayout);
 
         //Приклад відправки повідомлення користувачу
         //sendMessage("Блютуз не підключено!","StackTrace:...", MessageType.ErrorMessage);
@@ -84,7 +85,7 @@ public class ScanFragment extends Fragment {
 
         barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
 
-        if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
+        if(config.TypeScaner==eTypeScaner.Camera) {
             barcodeView.setVisibility(View.VISIBLE);
             barcodeView.resume();
         }else{
@@ -101,7 +102,7 @@ public class ScanFragment extends Fragment {
 
         barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
 
-        if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
+        if(config.TypeScaner==eTypeScaner.Camera) {
             barcodeView.setVisibility(View.VISIBLE);
             barcodeView.pause();
         }else{
@@ -122,7 +123,7 @@ public class ScanFragment extends Fragment {
                 //AsyncWorker aW =  new AsyncWorker(worker);
                 //aW.execute(result.getText());
 
-                GlobalConfig.Scaner.CallBack.Run(result.getText());
+                config.Scaner.CallBack.Run(result.getText());
                 //((PriceCheckerActivity)getActivity()).ExecuteWorker(result.getText());
                 //worker.Start(result);
 
@@ -143,7 +144,7 @@ public class ScanFragment extends Fragment {
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
+        if(config.TypeScaner==eTypeScaner.Camera) {
             if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);

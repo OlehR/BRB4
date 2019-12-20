@@ -8,29 +8,44 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.View;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncConfigPairAdd;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelpers.AsyncWorker;
+import ua.uz.vopak.brb4.brb4.fragments.ScanFragment;
+import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
+import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.brb4.helpers.IPostResult;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
@@ -38,18 +53,23 @@ import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 
 public class PriceCheckerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack{
-    private Worker worker;
     private Scaner scaner;
-//    Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-    TextView codeView, textBarcodeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
+    TextView codeView, perView, nameView, priceView, oldPriceView,oldPriceText,priceText,Printer,
             Network, CountData, NewPriceOpt, OldPriceOpt, Rest;
-    Button ChangePrintType,AddPrintBlock;
-    LinearLayout optRow, PriceCheckerInfoLayout;
+    EditText textBarcodeView;
+    Button ChangePrintType,AddPrintBlock,ChangePrintColorType, PrintBlock;
+    LinearLayout optRow, PriceCheckerInfoLayout,priceCheckerLinearLayout;
+    GlobalConfig config = GlobalConfig.instance();
+    Spinner ChangePrintBlockNumber;
+    Integer currentPrintBlock=1;
+    Context context;
+    public RelativeLayout loader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        context = this;
         setContentView(R.layout.price_checker_layout_new);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         codeView = findViewById(R.id.code);
@@ -70,24 +90,100 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         ChangePrintType.setOnClickListener(this);
         Rest = findViewById(R.id.rest);
         PriceCheckerInfoLayout = findViewById(R.id.PricecheckerInfoLayout);
+        priceCheckerLinearLayout = findViewById(R.id.priceCheckerLinearLayout);
+        ChangePrintColorType = findViewById(R.id.ChangePrintColorType);
+        ChangePrintBlockNumber = findViewById(R.id.ChangePrintBlockNumber);
+        PrintBlock = findViewById(R.id.PrintBlock);
+        loader = findViewById(R.id.RevisionLoader);
 
         AddPrintBlock = findViewById(R.id.AddPrintBlock);
         AddPrintBlock.setOnClickListener(this);
-        AddPrintBlock.setText(GlobalConfig.NumberPackege.toString());
+        ChangePrintColorType.setOnClickListener(this);
+        textBarcodeView.setOnClickListener(this);
+        PrintBlock.setOnClickListener(this);
+        AddPrintBlock.setText(config.NumberPackege.toString());
 
         ProgressBar progresBar = findViewById(R.id.progressBar);
-        worker = GlobalConfig.GetWorker(progresBar);
-        worker.SetPriceCheckerActivity(this);
-        worker.ReInitBT();
-        ChangePrintType.setText(worker.LI.IsShort?"Коротка":"Стандартна");
+        config.SetProgressBar(progresBar);
+        config.Worker.SetPriceCheckerActivity(this);
+        config.Worker.ReInitBT();
+        ChangePrintType.setText(config.Worker.LI.IsShort?"Коротка":"Стандартна");
 
-        setScanResult(worker.LI);
+        setScanResult(config.Worker.LI);
         IntentIntegrator integrator = new IntentIntegrator(this);
         integrator.setBeepEnabled(true);
 
-        scaner=GlobalConfig.GetScaner();
+        scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
 
+        textBarcodeView.setFocusableInTouchMode(false);
+        textBarcodeView.setFocusable(false);
+
+        if(config.NumberPackege>0){
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    String val = config.Worker.GetConfigPair("currentPrintBlock");
+                    if(!val.equals(""))
+                    currentPrintBlock = Integer.parseInt(val);
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ChangePrintBlockNumber.setSelection(currentPrintBlock-1);
+                        }
+                    });
+                    return null;
+                }
+            }).execute();
+        }
+
+        ChangePrintBlockNumber.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String selectedItem = ChangePrintBlockNumber.getSelectedItem().toString();
+                if(selectedItem.indexOf("-")>0) {
+                    String[] selected = selectedItem.split("-");
+                    currentPrintBlock = Integer.parseInt(selected[0].trim());
+                }
+                else
+                    currentPrintBlock = Integer.parseInt(selectedItem.trim());
+                new AsyncHelper<Void>(new IAsyncHelper() {
+                    @Override
+                    public Void Invoke() {
+                        config.Worker.AddConfigPair("currentPrintBlock",currentPrintBlock.toString());
+                        return null;
+                    }
+                }).execute();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+            }
+        });
+
+        setSpinner();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        String keyCode = String.valueOf(event.getKeyCode());
+
+        if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
+            new AsyncHelper<LabelInfo>(
+                    new IAsyncHelper<LabelInfo>() {
+                        @Override
+                        public LabelInfo Invoke() {
+                            return config.Worker.Start(textBarcodeView.getText().toString(), true);
+                        }
+                    },
+                    new IPostResult<LabelInfo>() {
+                        @Override
+                        public void Invoke(LabelInfo parLI) {
+                            config.Worker.priceCheckerActivity.setScanResult(parLI);
+                        }
+                    }).execute();
+        }
+
+        return super.dispatchKeyEvent(event);
     }
 
     @Override
@@ -108,30 +204,116 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
       int Id= v.getId();
         switch (Id){
             case R.id.ChangePrintType:
-                worker.LI.IsShort=!worker.LI.IsShort;
-                ChangePrintType.setText(worker.LI.IsShort?"Коротка":"Стандартна");
+                config.Worker.LI.IsShort=!config.Worker.LI.IsShort;
+                ChangePrintType.setText(config.Worker.LI.IsShort?"Коротка":"Стандартна");
                 break;
             case R.id.AddPrintBlock:
-                GlobalConfig.NumberPackege++;
+                config.NumberPackege++;
+                setSpinner();
                 DateFormat df = new SimpleDateFormat("yyyyMMdd");
                 Date today = Calendar.getInstance().getTime();
-                String todayAsString = df.format(today);
-                new AsyncConfigPairAdd(worker).execute("NumberPackege",todayAsString+GlobalConfig.NumberPackege.toString());
-                AddPrintBlock.setText(GlobalConfig.NumberPackege.toString());
+                final String todayAsString = df.format(today);
+                //new AsyncConfigPairAdd(worker).execute("NumberPackege",todayAsString+GlobalConfig.NumberPackege.toString());
+                new AsyncHelper<Void>(new IAsyncHelper() {
+                    @Override
+                    public Void Invoke() {
+                        config.Worker.AddConfigPair("NumberPackege",todayAsString+config.NumberPackege.toString());
+                        return null;
+                    }
+                }).execute();
+                AddPrintBlock.setText(config.NumberPackege.toString());
+                break;
+            case R.id.ChangePrintColorType:
+                ChangePrintColorType();
+                break;
+            case R.id.PrintBlock:
+                config.Worker.printPackage(config.printType,currentPrintBlock);
+                break;
+            case R.id.bar_code:
+                textBarcodeView.setFocusable(true);
+                textBarcodeView.setFocusableInTouchMode(true);
+                textBarcodeView.requestFocus();
+                textBarcodeView.requestFocusFromTouch();
+                textBarcodeView.setText("");
+                textBarcodeView.setFocusableInTouchMode(false);
+                break;
         }
 
-        if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
+        if(config.TypeScaner==eTypeScaner.Camera) {
             BarcodeView barcodeView = findViewById(R.id.barcode_scanner);
             barcodeView.resume();
 
         }
     }
 
+    public void setSpinner() {
+        new AsyncHelper<Void>(
+                new IAsyncHelper<Void>() {
+                    @Override
+                    public Void Invoke() {
+                        String[] path = new String[config.NumberPackege];
+                        Integer j = 0;
+                        for (int i = 0; i < config.NumberPackege; i++) {
+                            j++;
+                            path[i] = j.toString();
+                        }
+
+                        String packages = TextUtils.join(",", path);
+                        final String[] fPath = new String[path.length];
+
+                        HashMap<String, String[]> counts = config.Worker.getPrintBlockItemsCount(packages);
+                        for (int i = 0; i < path.length; i++) {
+                            if (counts.get(path[i]) != null)
+                                fPath[i] = path[i] + "-" + counts.get(path[i])[0] + "/" + counts.get(path[i])[1];
+                            else {
+                                fPath[i] = path[i] + "-0/0";
+                            }
+                        }
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                ArrayAdapter adapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, fPath);
+                                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+                                ChangePrintBlockNumber.setAdapter(adapter);
+                            }
+                        });
+                        return null;
+                    }
+                }).execute();
+    }
+
+    private void ChangePrintColorType(){
+        if(ChangePrintColorType.getTag() == null){
+            ChangePrintColorType.setTag("ChangePrintColorType");
+            ChangePrintColorType.setText("Жовтий");
+            config.printType = 1;
+            setBgColor(priceCheckerLinearLayout,"#3fffff00");
+        }else {
+            ChangePrintColorType.setTag(null);
+            ChangePrintColorType.setText("Звичайний");
+            config.printType = 0;
+            setBgColor(priceCheckerLinearLayout,"#ffffff");
+        }
+    }
+
+    private void setBgColor(ViewGroup vG, String color){
+        for(int i=0;i<vG.getChildCount();i++){
+            View v = vG.getChildAt(i);
+            v.setBackgroundColor(Color.parseColor(color));
+            if(v instanceof ViewGroup && !(v.getId() != R.id.scan_fragment) && ((ViewGroup)v).getChildCount() > 0 && !(v instanceof Button)){
+                setBgColor((ViewGroup)v,color);
+            }
+        }
+        return;
+    }
+
     //We need to handle any incoming intents, so let override the onNewIntent method
     //Необхідно для Zebta  TC20 Оскільки повідомлення приходять саме так. !!!TMP Можливо перероблю через повідомлення
     @Override
     public void onNewIntent(Intent i) {
-        GlobalConfig.GetScaner().handleDecodeData(i);
+        config.GetScaner().handleDecodeData(i);
 
     }
 
@@ -142,7 +324,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         nameView.setText(LI.Name);
         Printer.setText(LI.InfoPrinter);
 
-        if( worker.Printer.varPrinterError != ePrinterError.None) {
+        if( config.Worker.Printer.varPrinterError != ePrinterError.None) {
             Printer.setTextColor(getResources().getColor(R.color.messageError));
         }
         else {
@@ -150,7 +332,7 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
 
         Network.setText(LI.InfoHTTP);
-        if( worker.Http.HttpState != eStateHTTP.HTTP_OK ) {
+        if( config.Worker.Http.HttpState != eStateHTTP.HTTP_OK ) {
             Network.setTextColor(getResources().getColor(R.color.messageError));
         }
         else {
@@ -158,15 +340,15 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         }
 
         boolean isProblem = false;
-        if( worker.Printer.varPrinterError != ePrinterError.None || worker.Http.HttpState != eStateHTTP.HTTP_OK){
-            if(GlobalConfig.BarcodeImageLayout != null){
-                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+        if( config.Worker.Printer.varPrinterError != ePrinterError.None || config.Worker.Http.HttpState != eStateHTTP.HTTP_OK){
+            if(config.BarcodeImageLayout != null){
+                Drawable dw = config.BarcodeImageLayout.getBackground();
                 dw.setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
                 isProblem = true;
             }
         }else{
-            if(GlobalConfig.BarcodeImageLayout != null){
-                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+            if(config.BarcodeImageLayout != null){
+                Drawable dw = config.BarcodeImageLayout.getBackground();
                 dw.clearColorFilter();
             }
         }
@@ -209,16 +391,18 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
             optRow.setVisibility(View.INVISIBLE);
         }
 
-        if(LI.ActionType == 2){
-            if(GlobalConfig.BarcodeImageLayout != null && !isProblem){
-                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+        if(LI.Action){
+            if(config.BarcodeImageLayout != null && !isProblem){
+                Drawable dw = config.BarcodeImageLayout.getBackground();
                 dw.clearColorFilter();
                 dw.setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
+                textBarcodeView.setBackground(ContextCompat.getDrawable(this,R.drawable.input_style_yellow));
             }
         }else{
-            if(GlobalConfig.BarcodeImageLayout != null && !isProblem){
-                Drawable dw = GlobalConfig.BarcodeImageLayout.getBackground();
+            if(config.BarcodeImageLayout != null && !isProblem){
+                Drawable dw = config.BarcodeImageLayout.getBackground();
                 dw.clearColorFilter();
+                textBarcodeView.setBackground(ContextCompat.getDrawable(this,R.drawable.input_style));
             }
         }
 
@@ -229,10 +413,11 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         Rest.setText(String.format("%.2f",LI.Rest));
 
 
-        if(GlobalConfig.TypeScaner==eTypeScaner.Camera) {
+        if(config.TypeScaner==eTypeScaner.Camera) {
             BarcodeView barcodeView = (BarcodeView) findViewById(R.id.barcode_scanner);
             barcodeView.resume();
         }
+
     }
 
 
@@ -241,9 +426,25 @@ public class PriceCheckerActivity extends FragmentActivity implements View.OnCli
         progresBar.setProgress(progres);
     }
 
-    public void ExecuteWorker(String parBarCode){
-        AsyncWorker aW =  new AsyncWorker(worker);
-        aW.execute(parBarCode);
+    public void ExecuteWorker(final String parBarCode){
+        //AsyncWorker aW =  new AsyncWorker(worker);
+        //aW.execute(parBarCode);
+
+        new AsyncHelper<LabelInfo>(
+                new IAsyncHelper<LabelInfo>() {
+                    @Override
+                    public LabelInfo Invoke() {
+                        LabelInfo LI = config.Worker.Start(parBarCode, false);
+                        setSpinner();
+                        return LI;
+                    }
+                },
+                new IPostResult<LabelInfo>() {
+                    @Override
+                    public void Invoke(LabelInfo parLI) {
+                        config.Worker.priceCheckerActivity.setScanResult(parLI);
+                    }
+                }).execute();
     }
 
     @Override

@@ -5,5 +5,9 @@ public enum TypeLanguagePrinter
     NotDefined,
     ZPL,
     ZPL_ZEBRA,
-    EZPL
+    EZPL,
+    CPCL_SEWOO,
+    ZPL_SEWOO,
+    ZPL_ARGOX
+
 }

@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+<LinearLayout
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/ClientPriceCheckerLayout">
@@ -20,7 +26,7 @@
 
         <ImageView
             android:id="@+id/Background"
-            android:background="@drawable/background_4"
+            android:background="@drawable/background2spar"
             android:focusableInTouchMode="false"
             android:focusable="false"
             android:layout_width="match_parent"
@@ -37,23 +43,28 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:layout_gravity="center"
-                android:background="@drawable/logo"
+                android:id="@+id/Logo"
                 android:layout_width="282dp"
                 android:layout_height="300dp"
-                android:layout_marginTop="56dp"/>
-            <ImageView
                 android:layout_gravity="center"
-                android:background="@drawable/check_the_price"
+                android:layout_marginTop="56dp"
+                android:background="@drawable/logo" />
+
+            <ImageView
+                android:id="@+id/CheckPrice_UA"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"/>
-            <ImageView
                 android:layout_gravity="center"
-                android:background="@drawable/presssssss"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/check_the_price" />
+
+            <ImageView
+                android:id="@+id/CheckPrice_HU"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"/>
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/presssssss" />
 
         </LinearLayout>
 
@@ -71,11 +82,11 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:background="@drawable/logo_2"
+                    android:id="@+id/Logo2"
                     android:layout_width="278dp"
                     android:layout_height="50dp"
                     android:layout_marginTop="10dp"
-                    />
+                    android:background="@drawable/logo_2" />
 
                 <TextView
                     android:id="@+id/Title"
@@ -366,3 +377,31 @@
     </FrameLayout>
 
 </LinearLayout>
+
+    <Button
+        android:id="@+id/HiddenInfoBtn"
+        android:layout_width="120dp"
+        android:background="#00FFFFFF"
+        android:layout_height="120dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:background="#ffffff"
+        android:id="@+id/HideInfoLayout"
+        android:layout_gravity="right"
+        android:orientation="vertical"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:layout_weight="1">
+
+    </LinearLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

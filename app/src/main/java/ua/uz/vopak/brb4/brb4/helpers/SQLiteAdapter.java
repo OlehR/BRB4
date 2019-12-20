@@ -2,6 +2,7 @@ package ua.uz.vopak.brb4.brb4.helpers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import android.content.ContentValues;
@@ -18,6 +19,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
+import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class SQLiteAdapter
 {
@@ -26,6 +28,7 @@ public class SQLiteAdapter
     private final Context mContext;
     private SQLiteDatabase mDb;
     private DataBaseHelper mDbHelper;
+    GlobalConfig config = GlobalConfig.instance();
 
     public SQLiteAdapter(Context context)
     {
@@ -69,12 +72,15 @@ public class SQLiteAdapter
     }
 
 
-    public void InsLogPrice(String parBarCode,Integer parIsGood) {
+    public void InsLogPrice(String parBarCode,Integer parIsGood, Integer actionType, Integer packageNumber, Integer codeWarees) {
         try {
             SQLiteDatabase db = mDb;
             ContentValues values = new ContentValues();
             values.put("bar_code", parBarCode);
             values.put("is_good", parIsGood);
+            values.put("action_type", actionType);
+            values.put("package_number", packageNumber);
+            values.put("code_wares", codeWarees);
             db.insert("LogPrice", null, values);
             //db.close();
         }
@@ -178,7 +184,7 @@ public class SQLiteAdapter
                     row.add(mCur.getString(0));
                     row.add(mCur.getInt(1));
                     row.add(mCur.getString(2));
-                    row.add(GlobalConfig.NumberPackege);
+                    row.add(config.NumberPackege);
 
                     list.add(row);
                 }
@@ -289,8 +295,8 @@ public class SQLiteAdapter
     }
 
     public List<DocumentModel> GetDocumentList(String type) {
-        String data=GlobalConfig.GetApiJson(150,"\"TypeDoc\":"+type);
-        String result = new GetDataHTTP().HTTPRequest(GlobalConfig.instance().ApiUrl, data);
+        String data=config.GetApiJson(150,"\"TypeDoc\":"+type);
+        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
         LoadDataDoc(result);
         List<DocumentModel> model = new ArrayList<DocumentModel>();
         Cursor mCur;
@@ -428,6 +434,26 @@ public class SQLiteAdapter
         }
     }
 
+    public HashMap<String,String[]> getPrintBlockItemsCount(String packages){
+        HashMap<String,String[]> data = new HashMap<String,String[]>();
+        Cursor mCur;
+
+        String sql = "select package_number,count(DISTINCT case when action_type in (1,2) then null else code_wares end) as normal,count(DISTINCT case when action_type in (1,2) then code_wares end) as yellow " +
+                "from LogPrice WHERE is_good < 0 AND package_number IN("+packages+") " +
+                "AND date(DT_insert) > date('now','-1 day')" +
+                "GROUP BY package_number";
+
+        mCur = mDb.rawQuery(sql, null);
+
+        if(mCur != null){
+            while (mCur.moveToNext()){
+                data.put(mCur.getString(0),new String[]{mCur.getString(1),mCur.getString(2)});
+            }
+        }
+
+        return data;
+    }
+
     public ArrayList SaveDocWares(String Quantity, String scanOrderDoc, String codeWares, String invNumber, String invTypeDoc){
         long result = -1;
         String s = "";
@@ -454,6 +480,28 @@ public class SQLiteAdapter
             add(status);
             add(msg);
         }};
+    }
+
+    public List<String> getPrintPackageBarcodes(Integer actionType,Integer packageNumber){
+        Cursor mCur;
+        List<String> data = new ArrayList<String>();
+        String _actionType = "";
+
+        if(actionType == 0)
+            _actionType = "NOT IN(1,2)";
+        else
+            _actionType = "IN(1,2)";
+
+        String sql =   "SELECT DISTINCT code_wares FROM LogPrice WHERE package_number ="+packageNumber+" AND is_good < 0 AND date(DT_insert) > date('now','-1 day') AND action_type "+_actionType;
+
+        mCur = mDb.rawQuery(sql, null);
+        if (mCur!=null && mCur.getCount() > 0) {
+            while (mCur.moveToNext()){
+                data.add(mCur.getString(0));
+            }
+        }
+
+        return data;
     }
 
 }

@@ -1,0 +1,20 @@
+^XA
+^LL280
+^CI28
+^FO 0,0^A@N,36,36,ar^FH^FD{Name1}^FS
+^FO 0,36^A@N,36,36,ar^FH^FD{Name2}^FS
+
+^FO {OffsetBill},70^A@N,145,{WidthBill},ar^FD{PriceBill}^FS
+^FO 210,70^A@N,80,80,ar ^FD{PriceCoin}^FS
+^FO 210,145^A@N,30,30,ar ^FH^FD{Unit}^FS
+
+^FO 300,70^BY2 ^BQN,2,5^FDMM,A{BarCodePrice}^FS
+
+^FO 10,190^ADN ^FD{BarCode}^FS
+^FO 300,190^ADN ^FD{Article}^FS
+
+^FO 220,255^AD ^FD{Date}^FS
+^FO0,240 {Logo}
+
+
+^XZ
