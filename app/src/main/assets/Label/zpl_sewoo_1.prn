@@ -10,10 +10,10 @@
 
 ^FO 300,70^BY2 ^BQN,2,5^FDMM,A{BarCodePrice}^FS
 
-^FO 10,190^ADN ^FD{BarCode}^FS
-^FO 300,190^ADN ^FD{Article}^FS
+^FO 10,188^A@N,22,22,ar ^FD{BarCode}^FS
+^FO 300,188^A@N,22,22,ar ^FD{Article}^FS
 
-^FO 220,255^AD ^FD{Date}^FS
+^FO 220,255^A@N,25,25,ar ^FD{Date}^FS
 ^FO0,240 {Logo}
 
 
