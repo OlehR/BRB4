@@ -168,7 +168,7 @@ public class Worker
     public void LoadDocsData(String parTypeDoc, MainActivity context)
     {
         String data=config.GetApiJson(150,"\"TypeDoc\":"+parTypeDoc);
-        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
+        String result = Http.HTTPRequest(config.ApiUrl, data);
 
         mDbHelper.LoadDataDoc(result);
 
@@ -187,7 +187,7 @@ public class Worker
             wares.add(war);
         }
         String data=config.GetApiJson(153,"\"TypeDoc\":"+parTypeDoc+ ",\"NumberDoc\":\""+ NumberDoc +"\",\"Wares\":["+ TextUtils.join(",",wares) +"]");
-        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
+        String result =  Http.HTTPRequest(config.ApiUrl, data);
 
     }
 
@@ -216,7 +216,7 @@ public class Worker
        String a = new Gson().toJson(list);
        String data=config.GetApiJson(141,"\"LogPrice\":"+a);
 
-       String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
+       String result = Http.HTTPRequest(config.ApiUrl, data);
 
        try {
            JSONObject jObject = new JSONObject(result);
@@ -331,21 +331,34 @@ public class Worker
 
 
     }
-
+    public void  printHTTP( List<String> codeWares) {
+        //String listString = String.join(", ", codeWares);
+        StringBuilder sb = new StringBuilder();
+        for (String s : codeWares)
+        {
+            sb.append(s);
+            sb.append(",");
+        }
+//znp.vopak.local
+        String json="{\"CodeWares\":\""+sb.toString()+"\",\"CodeWarehouse\":"+config.getCodeWarehouse()+"}";
+        String res=Http.HTTPRequest("http://195.16.78.134:7655/Print",json,"application/json;charset=UTF-8");//"http://10.1.0.14:8088/Print"
+    }
     public void printPackage(final Integer actionType, final Integer packageNumber) {
         new AsyncHelper<Void>(new IAsyncHelper<Void>() {
             @Override
             public Void Invoke() {
-                List<String> barCodes = mDbHelper.getPrintPackageBarcodes(actionType, packageNumber);
+                List<String> codeWares = mDbHelper.getPrintPackageCodeWares(actionType, packageNumber);
                 config.Worker.priceCheckerActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         config.Worker.priceCheckerActivity.loader.setVisibility(View.VISIBLE);
                     }
                 });
-
-                for (String barCode : barCodes) {
-                    config.Worker.printPackage(barCode);
+                if(config.connectionPrinterType==3)
+                    printHTTP(codeWares);
+                else
+                for (String CodeWares : codeWares) {
+                    printPackage(CodeWares);
                 }
 
                 config.Worker.priceCheckerActivity.runOnUiThread(new Runnable() {

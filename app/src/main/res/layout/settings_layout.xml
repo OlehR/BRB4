@@ -3,6 +3,13 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp">
+    <TextView
+        android:id="@+id/Ver"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12pt"
+        android:layout_marginTop="10dp"
+        android:text="Ver: " />
 
     <TextView
         android:id="@+id/textView"
@@ -53,8 +60,16 @@
         android:id="@+id/SN"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16pt"
+        android:textSize="12pt"
         android:layout_marginTop="10dp"
         android:text="SN: " />
+
+    <TextView
+        android:id="@+id/ApiUrl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12pt"
+        android:layout_marginTop="10dp"
+        android:text="ApiUrl: " />
 
 </LinearLayout>

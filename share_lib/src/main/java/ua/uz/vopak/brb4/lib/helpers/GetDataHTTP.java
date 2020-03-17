@@ -40,7 +40,12 @@ public class GetDataHTTP
         return response;
     }
 
-    public String HTTPRequest(String parURL,String parData)
+    public String HTTPRequest(String parURL,String parData )
+    {
+        return HTTPRequest(parURL,parData, "text/xml;charset=utf-8");
+    }
+
+    public String HTTPRequest(String parURL,String parData,String parContentType)
     {
         URL url;
         String response = "";
@@ -50,7 +55,7 @@ public class GetDataHTTP
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(15000);
             conn.setConnectTimeout(15000);
-            conn.setRequestProperty("Content-Type", "text/xml;charset=utf-8");
+            conn.setRequestProperty("Content-Type", parContentType);
             conn.setRequestMethod("POST");
             conn.setDoInput(true);
             conn.setDoOutput(true);

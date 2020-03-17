@@ -15,7 +15,7 @@ public class Config extends AbstractConfig {
     public static String Login;
     public String SN = Build.SERIAL;
     public String NameDCT = Build.USER;
-    public String ApiUrl = "http://znp.vopak.local/api/api_v1_utf8.php";
+    //public String ApiUrl = "http://znp.vopak.local/api/api_v1_utf8.php";
     public static String Password;
     public static String SmbDomain;
     public static String SmbUser;
@@ -25,7 +25,7 @@ public class Config extends AbstractConfig {
     XmlResourceParser xrp;
 
     protected Config(Context parContext){
-        super("http://znp.vopak.local/api/api_v1_utf8.php");
+        super("http://znp.vopak.local/api/api_v1_utf8.php");//
         context = parContext;
         xrp = context.getResources().getXml(R.xml.config);
 

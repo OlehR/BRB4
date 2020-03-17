@@ -482,7 +482,7 @@ public class SQLiteAdapter
         }};
     }
 
-    public List<String> getPrintPackageBarcodes(Integer actionType,Integer packageNumber){
+    public List<String> getPrintPackageCodeWares(Integer actionType, Integer packageNumber){
         Cursor mCur;
         List<String> data = new ArrayList<String>();
         String _actionType = "";
@@ -492,7 +492,7 @@ public class SQLiteAdapter
         else
             _actionType = "IN(1,2)";
 
-        String sql =   "SELECT DISTINCT code_wares FROM LogPrice WHERE package_number ="+packageNumber+" AND is_good < 0 AND date(DT_insert) > date('now','-1 day') AND action_type "+_actionType;
+        String sql =   "SELECT DISTINCT code_wares FROM LogPrice WHERE code_wares>0 and package_number ="+packageNumber+" AND is_good < 0 AND date(DT_insert) > date('now','-1 day') AND action_type "+_actionType;
 
         mCur = mDb.rawQuery(sql, null);
         if (mCur!=null && mCur.getCount() > 0) {

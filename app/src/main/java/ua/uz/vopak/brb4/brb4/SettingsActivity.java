@@ -86,17 +86,23 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
 
         SN = findViewById(R.id.SN);
         SN.setText("SN: " + config.SN);
+        SN = findViewById(R.id.Ver);
+        SN.setText("Ver: " + config.VerBRB);
+        SN = findViewById(R.id.ApiUrl);
+        SN.setText("ApiUrl: " + config.ApiUrl);
+
         loadDocsData = findViewById(R.id.LoadDocumentsData);
         loadDocsData.setOnClickListener(this);
         connectionPrinterType = findViewById(R.id.connectionPrinterType);
         yellowpriceAutoprint = findViewById(R.id.yellowAutoPrint);
 
-        String[] printerConnectionPath = new String[]{"Без Принтера", "Тільки при вході", "Авто підключення"};
-        printerConnectionMap.put("Без Принтера", "-1");
-        printerConnectionMap.put("Тільки при вході", "0");
-        printerConnectionMap.put("Авто підключення", "1");
+      //  String[] printerConnectionPath = new String[]{"Без Принтера", "Тільки при вході", "Авто підключення","Стаціонарний з обрізжчиком"};
+        printerConnectionMap.put(config.printerConnectionPath[0], "0");
+        printerConnectionMap.put(config.printerConnectionPath[1], "1");
+        printerConnectionMap.put(config.printerConnectionPath[2], "2");
+        printerConnectionMap.put(config.printerConnectionPath[3], "3");
 
-        printerConnectionAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, printerConnectionPath);
+        printerConnectionAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, config.printerConnectionPath);
         printerConnectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         connectionPrinterType.setAdapter(printerConnectionAdapter);
