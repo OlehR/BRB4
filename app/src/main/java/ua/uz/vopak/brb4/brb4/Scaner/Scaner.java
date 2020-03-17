@@ -76,6 +76,4 @@ public class Scaner extends Activity {
     {}
 
 
-
-
 }

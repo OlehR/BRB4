@@ -5,6 +5,11 @@ import android.os.Build;
 import android.view.View;
 import android.widget.ProgressBar;
 
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerTC20;
@@ -15,11 +20,19 @@ import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 public class GlobalConfig extends AbstractConfig {
     private static GlobalConfig Instance = null;
     public String CodeWarehouse = "0";
-    public String ApiUrl = "http://znp.vopak.local/api/api_v1_utf8.php";
+    //public String ApiUrl ="http://195.16.78.134:7654/api/api_v1_utf8.php";//"http://znp.vopak.local/api/api_v1_utf8.php";
+    private String UrlLocal="znp.vopak.local";
+    private int PortLocal=80;
+    private String Url="195.16.78.134";
+    private int Port=7654;
+    private String PathApi="/api/api_v1_utf8.php";
+    public String VerBRB="4.01.01";
+
+
     public String Login = "c";
     public String Password = "c";
     public Worker Worker;
-    public String SN = Build.SERIAL;
+    public String SN = GetSN();//Build.SERIAL;
     public String NameDCT = Build.USER;
     public SQLiteAdapter SQLiteAdapter;
     public eTypeScaner TypeScaner = eTypeScaner.NotDefine;
@@ -28,6 +41,7 @@ public class GlobalConfig extends AbstractConfig {
     public boolean isAutorized;
     public Integer NumberPackege = 0;
     public View BarcodeImageLayout;
+    public String[] printerConnectionPath = new String[]{"Без Принтера", "Тільки при вході", "Авто підключення","Стаціонарний з обрізжчиком"};
     public Integer connectionPrinterType;
     public boolean yellowAutoPrint;
     public Integer printType = 0;//Колір чека 0-звичайнийб 1-жовтий
@@ -49,8 +63,8 @@ public class GlobalConfig extends AbstractConfig {
         return Integer.parseInt(CodeWarehouse)>50;
     }
     protected GlobalConfig() {
-        super("http://znp.vopak.local/api/api_v1_utf8.php");
-    }
+        super("http://195.16.78.134:7654/api/api_v1_utf8.php");
+    }//"http://znp.vopak.local/api/api_v1_utf8.php"
 
     public static GlobalConfig instance() {
         if (Instance == null) {
@@ -66,6 +80,10 @@ public class GlobalConfig extends AbstractConfig {
         //Визначаємо тип Сканера
         TypeScaner=GetTypeScaner(varApplicationContext);
         //SQLite
+
+
+       // if( TypeScaner==eTypeScaner.Camera)
+
         GetSQLiteAdapter(varApplicationContext);
         //Worker
         GetWorker();
@@ -73,6 +91,12 @@ public class GlobalConfig extends AbstractConfig {
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
+
+                if(GetAddressReachable(UrlLocal))//,PortLocal,1000))
+                    ApiUrl="http://"+UrlLocal+":"+String.valueOf(PortLocal)+PathApi;
+                else
+                    ApiUrl="http://"+Url+":"+String.valueOf(Port)+PathApi;
+
                 String printerConnectionType = Worker.GetConfigPair("connectionPrinterType");
 
                 if(printerConnectionType.equals("")){
@@ -156,4 +180,69 @@ public class GlobalConfig extends AbstractConfig {
         return eTypeScaner.Camera;
 
     }
+
+    public String GetSN()
+    {
+        if(android.os.Build.VERSION.SDK_INT>=26)
+            return Build.getSerial();
+        if(android.os.Build.VERSION.SDK_INT==25)
+            return Build.SERIAL;
+        return "";
+
+    }
+
+    public boolean GetAddressReachable(String parHost)
+    {
+        try {
+            return InetAddress.getByName(parHost).isReachable(1000);
+        }
+        catch ( Exception ex)
+        {
+            String Res=ex.getMessage();
+
+        return false;}
+    }
+    public boolean GetAddressReachable(String address, int port, int timeout) {
+        try {
+
+            try (Socket crunchifySocket = new Socket()) {
+                // Connects this socket to the server with a specified timeout value.
+                crunchifySocket.connect(new InetSocketAddress(address, port), timeout);
+            }
+            // Return true if connection successful
+            return true;
+        } catch (IOException exception) {
+            exception.printStackTrace();
+
+            // Return false if connection fails
+            return false;
+        }
+    }
+   /* public static String getSerialNumber() {
+        String serialNumber;
+
+        try {
+            Class<?> c = Class.forName("android.os.SystemProperties");
+            Method get = c.getMethod("get", String.class);
+
+            serialNumber = (String) get.invoke(c, "gsm.sn1");
+            if (serialNumber.equals(""))
+                serialNumber = (String) get.invoke(c, "ril.serialnumber");
+            if (serialNumber.equals(""))
+                serialNumber = (String) get.invoke(c, "ro.serialno");
+            if (serialNumber.equals(""))
+                serialNumber = (String) get.invoke(c, "sys.serialnumber");
+            if (serialNumber.equals(""))
+                serialNumber = Build.SERIAL;
+
+            // If none of the methods above worked
+            if (serialNumber.equals(""))
+                serialNumber = null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            serialNumber = null;
+        }
+
+        return serialNumber;
+    }*/
 }
