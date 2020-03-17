@@ -16,12 +16,14 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
+import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
-public class DocumentActivity extends Activity implements View.OnClickListener {
+public class DocumentActivity extends Activity implements View.OnClickListener, ScanCallBack {
     LinearLayout tl;
     ScrollView documentList;
     String DocumentType;
@@ -29,6 +31,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
     GlobalConfig config = GlobalConfig.instance();
+    private Scaner scaner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +44,41 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
         Intent i = getIntent();
         DocumentType = i.getStringExtra("document_type");
 
+
+        scaner=config.GetScaner();
+        scaner.Init(this,savedInstanceState);
+
+
         //new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute(DocumentType);
 
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.LoadListDoc(context,DocumentType);
+                config.Worker.LoadListDoc(context,DocumentType,null);
                 return null;
             }
         }).execute();
+    }
+
+    @Override
+    public void Run(final String parBarCode) {
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.LoadListDoc(context,DocumentType,parBarCode);
+                return null;
+            }
+        }).execute();
+
+        /*
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.GetRevisionScannerData(parBarCode, context);
+                return null;
+            }
+        }).execute();*/
     }
 
     @Override
@@ -83,6 +112,19 @@ public class DocumentActivity extends Activity implements View.OnClickListener {
 
         if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
             tl.findViewWithTag("selected").callOnClick();
+        }
+
+        //Перерисовуємо без фільтра
+        if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    config.Worker.LoadListDoc(context,DocumentType,null);
+                    return null;
+                }
+            }).execute();
+
+
         }
 
         return super.dispatchKeyEvent(event);

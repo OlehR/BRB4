@@ -259,8 +259,6 @@ public class SQLiteAdapter
         }catch (Exception e){
             e.getMessage();
         }
-
-
         return model;
     }
 
@@ -289,19 +287,26 @@ public class SQLiteAdapter
         }catch (Exception e){
             e.getMessage();
         }
-
-
         return model;
     }
 
-    public List<DocumentModel> GetDocumentList(String type) {
+    public List<DocumentModel> GetDocumentList(String type,String parBarCode) {
         String data=config.GetApiJson(150,"\"TypeDoc\":"+type);
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
         LoadDataDoc(result);
         List<DocumentModel> model = new ArrayList<DocumentModel>();
         Cursor mCur;
-        String sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+type+"'"+
+        String sql;
+        if(parBarCode==null ||parBarCode.equals("") )
+         sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+type+"'"+
                      " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)";
+ else
+            sql = "SELECT d.date_doc,d.type_doc,d.number_doc,d.ext_info,d.name_user,d.bar_code,d.description,d.dt_insert,d.state"+
+        "FROM DOC d "+
+        "join doc_wares dw on d.number_doc=dw.number_doc and d.type_doc=dw.type_doc "+
+        "join bar_code bc on dw.code_wares=bc.CODE_WARES "+
+        "WHERE d.type_doc = '"+type+"'+ and bc.bar_code='"+parBarCode +"'" +
+        "AND d.date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)";
 
         try {
             //mDb.delete("INVENTORY_WARES", null, null);
@@ -485,14 +490,9 @@ public class SQLiteAdapter
     public List<String> getPrintPackageBarcodes(Integer actionType,Integer packageNumber){
         Cursor mCur;
         List<String> data = new ArrayList<String>();
-        String _actionType = "";
+        String _actionType = " AND action_type " + (actionType == 0 ?" NOT" : "")+" IN(1,2)";
 
-        if(actionType == 0)
-            _actionType = "NOT IN(1,2)";
-        else
-            _actionType = "IN(1,2)";
-
-        String sql =   "SELECT DISTINCT code_wares FROM LogPrice WHERE package_number ="+packageNumber+" AND is_good < 0 AND date(DT_insert) > date('now','-1 day') AND action_type "+_actionType;
+        String sql =   "SELECT DISTINCT code_wares FROM LogPrice WHERE package_number ="+packageNumber+" AND is_good < 0 AND date(DT_insert) > date('now','-1 day') "+_actionType;
 
         mCur = mDb.rawQuery(sql, null);
         if (mCur!=null && mCur.getCount() > 0) {

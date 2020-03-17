@@ -156,9 +156,9 @@ public class Worker
 
     }
 
-    public void LoadListDoc(Activity context,String parTypeDoc)
+    public void LoadListDoc(Activity context,String parTypeDoc,String parBarCode)
     {
-        List<DocumentModel> model = mDbHelper.GetDocumentList(parTypeDoc);
+        List<DocumentModel> model = mDbHelper.GetDocumentList(parTypeDoc,parBarCode);
 
         DocumentActivity activity = (DocumentActivity)context;
 
