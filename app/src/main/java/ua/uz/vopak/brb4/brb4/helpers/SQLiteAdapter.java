@@ -294,7 +294,7 @@ public class SQLiteAdapter
         return model;
     }
 
-    public List<DocumentModel> GetDocumentList(String type) {
+    public List<DocumentModel> GetDocumentList(String type,String parBarCode) {
         String data=config.GetApiJson(150,"\"TypeDoc\":"+type);
         String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
         LoadDataDoc(result);

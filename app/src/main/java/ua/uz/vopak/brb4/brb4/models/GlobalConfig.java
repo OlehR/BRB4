@@ -92,10 +92,10 @@ public class GlobalConfig extends AbstractConfig {
             @Override
             public Void Invoke() {
 
-                if(GetAddressReachable(UrlLocal))//,PortLocal,1000))
+                //if(GetAddressReachable("google.com"))//,PortLocal,1000))
                     ApiUrl="http://"+UrlLocal+":"+String.valueOf(PortLocal)+PathApi;
-                else
-                    ApiUrl="http://"+Url+":"+String.valueOf(Port)+PathApi;
+               // else
+                 //   ApiUrl="http://"+Url+":"+String.valueOf(Port)+PathApi;
 
                 String printerConnectionType = Worker.GetConfigPair("connectionPrinterType");
 
@@ -183,10 +183,16 @@ public class GlobalConfig extends AbstractConfig {
 
     public String GetSN()
     {
-        if(android.os.Build.VERSION.SDK_INT>=26)
-            return Build.getSerial();
-        if(android.os.Build.VERSION.SDK_INT==25)
-            return Build.SERIAL;
+        try {
+            if (android.os.Build.VERSION.SDK_INT > 25)
+                return Build.getSerial();
+            if (android.os.Build.VERSION.SDK_INT == 25)
+                return Build.SERIAL;
+        }
+        catch (Exception e )
+        {
+            String ee=e.getMessage();
+        }
         return "";
 
     }

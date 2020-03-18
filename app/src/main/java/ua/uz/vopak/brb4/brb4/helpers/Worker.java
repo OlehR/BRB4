@@ -341,7 +341,7 @@ public class Worker
         }
 //znp.vopak.local
         String json="{\"CodeWares\":\""+sb.toString()+"\",\"CodeWarehouse\":"+config.getCodeWarehouse()+"}";
-        String res=Http.HTTPRequest("http://195.16.78.134:7655/Print",json,"application/json;charset=UTF-8");//"http://10.1.0.14:8088/Print"
+        String res=Http.HTTPRequest("http://znp.vopak.local:8088/Print",json,"application/json;charset=UTF-8");//"http://znp.vopak.local:8088/Print"
     }
     public void printPackage(final Integer actionType, final Integer packageNumber) {
         new AsyncHelper<Void>(new IAsyncHelper<Void>() {
