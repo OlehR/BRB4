@@ -32,6 +32,8 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     List<View> menuItems = new ArrayList<View>();
     GlobalConfig config = GlobalConfig.instance();
     private Scaner scaner;
+    TextView  FilterKey,FilterText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,11 +46,11 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         Intent i = getIntent();
         DocumentType = i.getStringExtra("document_type");
 
-
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
 
-
+        FilterKey=findViewById(R.id.FilterKey);
+        FilterText=findViewById(R.id.FilterText);
         //new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute(DocumentType);
 
         new AsyncHelper<Void>(new IAsyncHelper() {
@@ -58,6 +60,14 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                 return null;
             }
         }).execute();
+        ViewFilter(false);
+    }
+
+    private void ViewFilter(Boolean parIsView)
+    {
+        int view = parIsView? View.VISIBLE:View.INVISIBLE;
+        FilterKey.setVisibility(view);
+        FilterText.setVisibility(view);
     }
 
     @Override
@@ -67,9 +77,11 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
             @Override
             public Void Invoke() {
                 config.Worker.LoadListDoc(context,DocumentType,parBarCode);
+
                 return null;
             }
         }).execute();
+        ViewFilter(true);
 
         /*
         new AsyncHelper<Void>(new IAsyncHelper() {
@@ -98,35 +110,33 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        String keyCode = String.valueOf(event.getKeyCode());
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+            String keyCode = String.valueOf(event.getKeyCode());
+            switch (keyCode) {
+                case "15":
+                    selectNext();
+                    selectItem();
+                    break;
+                case "9":
+                    selectPrev();
+                    selectItem();
+                    break;
+                case "66":
+                    tl.findViewWithTag("selected").callOnClick();
+                    break;
+                case "131": //F1 Перерисовуємо без фільтра
+                    new AsyncHelper<Void>(new IAsyncHelper() {
+                        @Override
+                        public Void Invoke() {
+                            config.Worker.LoadListDoc(context, DocumentType, null);
 
-        if(keyCode.equals("15") && event.getAction() == KeyEvent.ACTION_UP){
-            selectNext();
-            selectItem();
+                            return null;
+                        }
+                    }).execute();
+                    ViewFilter(false);
+                    break;
+            }
         }
-
-        if(keyCode.equals("9") && event.getAction() == KeyEvent.ACTION_UP){
-            selectPrev();
-            selectItem();
-        }
-
-        if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
-            tl.findViewWithTag("selected").callOnClick();
-        }
-
-        //Перерисовуємо без фільтра
-        if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
-            new AsyncHelper<Void>(new IAsyncHelper() {
-                @Override
-                public Void Invoke() {
-                    config.Worker.LoadListDoc(context,DocumentType,null);
-                    return null;
-                }
-            }).execute();
-
-
-        }
-
         return super.dispatchKeyEvent(event);
     }
 
@@ -142,7 +152,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                         dpValue = 3;
                         int padding = (int)(dpValue * d);
                         LinearLayout.LayoutParams lp;
-
+                        tl.removeAllViews();
                         for (DocumentModel item : model) {
 
                             String date = item.DateDoc;

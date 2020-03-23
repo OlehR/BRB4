@@ -85,6 +85,22 @@
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp"
                 android:text="вибір"/>
+            <TextView
+                android:id="@+id/FilterKey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/messageError"
+                android:textSize="18dp"
+                android:visibility="gone"
+                android:text=" F1-"/>
+            <TextView
+                android:id="@+id/FilterText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/messageAlert"
+                android:textSize="18dp"
+                android:visibility="gone"
+                android:text="Без фільтра"/>
 
         </LinearLayout>
 

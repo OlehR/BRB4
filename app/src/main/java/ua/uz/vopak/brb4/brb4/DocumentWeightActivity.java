@@ -30,7 +30,8 @@ import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class DocumentWeightActivity extends Activity implements IIncomeRender {
-    String number, documentType;
+    String number;
+    int documentType;
     List<Float> PrevValues = new ArrayList<Float>();
     LinearLayout tl;
     HashMap<Integer, DocWaresModelIncome> data = new HashMap<Integer, DocWaresModelIncome>();
@@ -48,7 +49,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
         context = this;
         Intent i = getIntent();
         number = i.getStringExtra("number");
-        documentType = i.getStringExtra("document_type");
+        documentType = i.getIntExtra("document_type",0);
         //new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number, documentType);
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
@@ -251,7 +252,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    config.Worker.SaveDocWares(value, scanNN.toString(), Model.get(position).CodeWares, number, documentType,"true", context);
+                    config.Worker.SaveDocWares(Double.valueOf( value), scanNN,Integer.parseInt( Model.get(position).CodeWares), number, documentType,true, context);
                     return null;
                 }
             }).execute();

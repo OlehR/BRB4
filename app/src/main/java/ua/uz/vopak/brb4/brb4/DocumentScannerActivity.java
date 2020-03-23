@@ -2,12 +2,10 @@ package ua.uz.vopak.brb4.brb4;
 
 import android.animation.ObjectAnimator;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -30,11 +28,10 @@ import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
-import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.QuantityModel;
-import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
+import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 
 public class DocumentScannerActivity extends Activity   implements ScanCallBack {
     EditText barCode, currentCount, inputCount, scannerCof, scannerCount, countInPosition;
@@ -46,12 +43,12 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     RelativeLayout loader;
     static String codeWares;
     List<DocWaresModel> InventoryItems;
-    RevisionItemModel InventoryItem;
+    WaresItemModel WaresItem;
     TableLayout RevisionTable;
     private Scaner scaner;
     int dpValue = 3, padding;
     float d, totalExistingCount;
-    String documentType;
+    int documentType;
     private QuantityModel quantity = null;
     GlobalConfig config = GlobalConfig.instance();
     Activity context;
@@ -68,7 +65,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
         Intent i = getIntent();
         InventoryNumber = i.getStringExtra("inv_number");
-        documentType = i.getStringExtra("document_type");
+        documentType = i.getIntExtra("document_type",0);
         InventoryItems = (List<DocWaresModel>)i.getSerializableExtra("InventoryItems");
         if(InventoryItems.size() > 0)
         scanNN = Integer.parseInt(InventoryItems.get(InventoryItems.size() - 1).OrderDoc);
@@ -116,7 +113,6 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                                 cof = Float.parseFloat(scannerCof.getText().toString());
                             }
                             Object tag = nameUnit.getTag();
-
                             if (tag != null && tag.toString().equals("7"))
                                 scannerCount.setText(String.format("%.3f", (input * cof)));
                             else
@@ -142,31 +138,30 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        String keyCode = String.valueOf(event.getKeyCode());
-
-        if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
-            barCode.setFocusable(true);
-            Object tag = barCode.getTag();
-            barCode.setFocusable(false);
-            if(tag != null && tag.toString().equals("onBarCode")){
-                findWareByArticleOrCode();
-            }else {
-                saveDocumentItem("false");
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+            String keyCode = String.valueOf(event.getKeyCode());
+            switch (keyCode){
+                case "66":
+                    barCode.setFocusable(true);
+                    Object tag = barCode.getTag();
+                    barCode.setFocusable(false);
+                    if (tag != null && tag.toString().equals("onBarCode")) {
+                        findWareByArticleOrCode();
+                    } else {
+                        saveDocumentItem(false);
+                    }
+                    break;
+                case "131":
+                    setNullToExistingPosition();
+                    break;
+                case "132":
+                    focusOnView("up");
+                case "133":
+                    focusOnView("down");
+                    break;
             }
-        }
 
-        if(keyCode.equals("131") && event.getAction() == KeyEvent.ACTION_UP){
-            setNullToExistingPosition();
         }
-
-        if(keyCode.equals("132") && event.getAction() == KeyEvent.ACTION_UP){
-            focusOnView("up");
-        }
-
-        if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
-            focusOnView("down");
-        }
-
         return super.dispatchKeyEvent(event);
     }
 
@@ -222,7 +217,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         });
     }
 
-    public void RenderData(final RevisionItemModel model){
+    public void RenderData(final WaresItemModel model){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -241,30 +236,21 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                     return;
                 }
 
-                if(documentType.equals("2")){
+                if(documentType==2){
                     loader.setVisibility(View.VISIBLE);
                     inputCount.setEnabled(false);
-                    //new AsyncGetQuantity(worker, aContext).execute(documentType, InventoryNumber, model.CodeWares);
-                    new AsyncHelper<Void>(new IAsyncHelper() {
-                        @Override
-                        public Void Invoke() {
-                            config.Worker.GetQuantity(documentType, InventoryNumber, model.CodeWares, context);
-                            return null;
-                        }
-                    }).execute();
                 }
 
-                InventoryItem = model;
-                codeWares = model.CodeWares;
+                WaresItem = model;
+                codeWares = Integer.toString( model.CodeWares);
                 barCode.setText(model.BarCode);
                 currentCount.setText("0");
                 scannerCof.setText(model.Coefficient);
                 scannerTitle.setText(model.NameWares);
                 nameUnit.setText(model.NameUnit + " X");
-                if(model.CodeUnit != null)
-                nameUnit.setTag(model.CodeUnit);
 
-                if(codeWares!=null && !codeWares.equals("") && Integer.parseInt(codeWares) > 0){
+
+                if(WaresItem.CodeWares > 0){
                     barCode.setFocusable(true);
                     barCode.setTag(null);
                     barCode.setFocusable(false);
@@ -274,9 +260,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 }
 
                 CheckAlert();
-
                 View similar = RevisionTable.findViewWithTag(codeWares);
-
                 if (similar != null){
                     RenderTableItem(true);
                 }
@@ -449,16 +433,6 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         }, 100L);
     }
 
-    public void SetQuantity(QuantityModel model){
-        quantity = model;
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                loader.setVisibility(View.INVISIBLE);
-            }
-        });
-    }
-
     public void setNullToExistingPosition(){
         ArrayList<View> existPos = getViewsByTag(RevisionTable,"nullable");
 
@@ -469,10 +443,10 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             }
         }
 
-        saveDocumentItem("true");
+        saveDocumentItem(true);
     }
 
-    private  void  saveDocumentItem(final String isNullable) {
+    private  void  saveDocumentItem(final Boolean isNullable) {
         String input = inputCount.getText().toString();
 
         if (input.equals("") || Integer.parseInt(input) <= 0 || scannerTitle.getText().toString().equals("")) {
@@ -484,7 +458,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    config.Worker.SaveDocWares(scannerCount.getText().toString(), scanNN.toString(), codeWares, InventoryNumber, documentType,isNullable, context);
+                    config.Worker.SaveDocWares( Double.valueOf( scannerCount.getText().toString()), scanNN, WaresItem.CodeWares, InventoryNumber, documentType,isNullable, context);
                     return null;
                 }
             }).execute();
@@ -549,13 +523,8 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 }
             }
         }
+        currentCount.setText(String.format(WaresItem.CodeUnit==7 ?"%.3f":"%.0f", totalExistingCount));
 
-        Object tag = nameUnit.getTag();
-
-        if (tag != null && tag.toString().equals("7"))
-            currentCount.setText(String.format("%.3f", totalExistingCount));
-        else
-            currentCount.setText(String.format("%.0f", totalExistingCount));
     }
 
     private void CheckAlert(){

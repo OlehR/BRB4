@@ -5,4 +5,7 @@ public class DocWaresModelIncome {
     public String NameWares;
     public Float QuantityOrdered;
     public Float QuantityIncoming;
+    public Float QuantityMin;
+    public Float QuantityMax;
+
 }

@@ -92,10 +92,10 @@ public class GlobalConfig extends AbstractConfig {
             @Override
             public Void Invoke() {
 
-                //if(GetAddressReachable("google.com"))//,PortLocal,1000))
+                if(GetAddressReachable(UrlLocal))//,PortLocal,1000))
                     ApiUrl="http://"+UrlLocal+":"+String.valueOf(PortLocal)+PathApi;
-               // else
-                 //   ApiUrl="http://"+Url+":"+String.valueOf(Port)+PathApi;
+                else
+                    ApiUrl="http://"+Url+":"+String.valueOf(Port)+PathApi;
 
                 String printerConnectionType = Worker.GetConfigPair("connectionPrinterType");
 

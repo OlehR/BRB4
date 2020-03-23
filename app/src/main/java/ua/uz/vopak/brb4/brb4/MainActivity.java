@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
@@ -41,6 +42,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+
 
         auth = new AuterizationsHelper();
 
@@ -106,6 +108,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         scaner=config.GetScaner();
         scaner.Init(this);
     }
+
 
     @Override
     public void Run(String parBarCode)

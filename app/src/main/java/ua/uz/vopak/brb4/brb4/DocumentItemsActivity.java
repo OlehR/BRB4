@@ -36,7 +36,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     ScrollView documentList;
     Context context;
     Button btn, btnSave;
-    String number, documentType;
+    String number;
+    int documentType;
     List<DocWaresModel> InventoryItems;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
@@ -52,7 +53,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         tl = findViewById(R.id.InventoriesList);
         Intent i = getIntent();
         number = i.getStringExtra("number");
-        documentType = i.getStringExtra("document_type");
+        documentType = i.getIntExtra("document_type",0);
         btn = findViewById(R.id.F4);
         btnSave = findViewById(R.id.F3);
         btn.setOnClickListener(this);
@@ -478,7 +479,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         });
     }
 
-    public void AfterSave(String DocumentType){
+    public void AfterSave(int DocumentType){
         Intent i = new Intent(this,DocumentActivity.class);
         i.putExtra("document_type", DocumentType);
         this.finish();
@@ -505,7 +506,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     private void setBackgroundToTableRow(ViewGroup rows, int backgroundId, String textColor) {
         ViewGroup tr;
 
-        if(documentType.equals("2")){
+        if(documentType==2){
             tr = rows;
         }else{
             tr = (ViewGroup) rows.getChildAt(0);
@@ -550,7 +551,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
                 float bottom = top + menuItems.get(current).getHeight();
 
-                if(documentType.equals("2"))
+                if(documentType==2)
                     bottom = bottom + (int) (53 * d);
                 if (scrollBounds.top < top && scrollBounds.bottom > bottom) {
                 } else {

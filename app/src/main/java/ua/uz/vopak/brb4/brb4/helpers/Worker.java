@@ -30,7 +30,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
-import ua.uz.vopak.brb4.brb4.models.RevisionItemModel;
+import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 
 public class Worker
@@ -176,7 +176,7 @@ public class Worker
         context.HideLoader();
     }
 
-    public void SyncDocsData(String parTypeDoc, String NumberDoc, List<DocWaresModel> Wares)
+    public void SyncDocsData(int parTypeDoc, String NumberDoc, List<DocWaresModel> Wares)
     {
         List<String> wares = new ArrayList<String>();
         for(DocWaresModel ware: Wares){
@@ -191,7 +191,7 @@ public class Worker
 
     }
 
-    public void UpdateDocState(String state, String number, String DocumentType, Activity activity){
+    public void UpdateDocState(String state, String number, int DocumentType, Activity activity){
 
        mDbHelper.UpdateDocState(state,number.replace("ПСЮ",""));
 
@@ -288,8 +288,8 @@ public class Worker
         return mDbHelper.GetConfigPair(name);
     }
 
-    public void GetDoc(String number,String DocType, IIncomeRender context){
-       if(DocType.equals("2")){
+    public void GetDoc(String number,int DocType, IIncomeRender context){
+       if(DocType==2){
            List<DocWaresModelIncome> model = mDbHelper.GetDocWaresIncome(number);
            List<DocWaresModel> inventoryModel = mDbHelper.GetDocWares(number,DocType);
 
@@ -301,15 +301,15 @@ public class Worker
     }
 
     public void GetRevisionScannerData(String BarCode, Activity context){
-        RevisionItemModel model = mDbHelper.GetScanData(BarCode);
+        WaresItemModel model = mDbHelper.GetScanData(BarCode);
 
         DocumentScannerActivity activity = (DocumentScannerActivity) context;
         activity.RenderData(model);
     }
 
-    public void SaveDocWares(String count, String scanNN, String CodeWares, String DocNumber,String TypeDoc , String isNullable, Activity context){
-        if(isNullable.equals("true")){
-            mDbHelper.SetNullableWares(CodeWares);
+    public void SaveDocWares(Double count, int scanNN, int CodeWares, String DocNumber,int TypeDoc , Boolean isNullable, Activity context){
+        if(isNullable){
+            mDbHelper.SetNullableWares(CodeWares,DocNumber,TypeDoc);
         }
 
         ArrayList args = mDbHelper.SaveDocWares(count, scanNN, CodeWares, DocNumber,TypeDoc);
@@ -322,15 +322,6 @@ public class Worker
 
     }
 
-    public void GetQuantity(String typeDoc, String numberDoc, String CodeWares , Activity context){
-        QuantityModel model = mDbHelper.GetQuantity(typeDoc, numberDoc, CodeWares);
-
-        DocumentScannerActivity activity = (DocumentScannerActivity) context;
-
-        activity.SetQuantity(model);
-
-
-    }
     public void  printHTTP( List<String> codeWares) {
         //String listString = String.join(", ", codeWares);
         StringBuilder sb = new StringBuilder();
