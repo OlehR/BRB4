@@ -25,7 +25,6 @@ import ua.uz.vopak.brb4.brb4.DocumentScannerActivity;
 import ua.uz.vopak.brb4.brb4.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
-import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
@@ -300,7 +299,7 @@ public class Worker
        }
     }
 
-    public void GetRevisionScannerData(String BarCode, Activity context){
+    public void GetWaresFromBarcode(String BarCode, Activity context){
         WaresItemModel model = mDbHelper.GetScanData(BarCode);
 
         DocumentScannerActivity activity = (DocumentScannerActivity) context;

@@ -10,6 +10,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
+import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerTC20;
@@ -117,7 +118,13 @@ public class GlobalConfig extends AbstractConfig {
             }
         }).execute();
     }
+ public void InitScaner(ScanCallBack cCallBack)
+ {
+     GetScaner();
+     if(Scaner!=null)
+        Scaner.Init(cCallBack);
 
+ }
     public Scaner GetScaner() {
 
         if(Scaner!=null)
@@ -135,9 +142,7 @@ public class GlobalConfig extends AbstractConfig {
             default:
                 Scaner = new Scaner(varApplicationContext);
                 break;
-
         }
-
         return Scaner;
     }
 

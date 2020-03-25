@@ -110,7 +110,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             case R.id.F4:
                 Intent i = new Intent(this, DocumentScannerActivity.class);
                 i.putExtra("inv_number",number);
-                i.putExtra("InventoryItems",(Serializable)InventoryItems);
+                i.putExtra("order_doc",InventoryItems.get(InventoryItems.size() - 1).OrderDoc);
+                //i.putExtra("InventoryItems",(Serializable)InventoryItems);
                 i.putExtra("document_type",documentType);
                 startActivity(i);
                 break;

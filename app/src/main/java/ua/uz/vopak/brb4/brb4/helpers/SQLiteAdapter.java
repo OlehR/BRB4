@@ -16,7 +16,6 @@ import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
-import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 
 public class SQLiteAdapter
@@ -369,14 +368,14 @@ public class SQLiteAdapter
         }
 
         if(isBarCode) {
-            sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.NAME_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
+            sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.ABR_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                     "from BAR_CODE bc " +
                     "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
                     "join wares w on w.CODE_WARES=bc.CODE_WARES " +
                     "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
                     "where bc.BAR_CODE='" + number.trim()+"'";
         }else{
-            sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.NAME_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
+            sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                     "from WARES w " +
                     "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +
                     "join UNIT_DIMENSION ud on w.CODE_UNIT=ud.CODE_UNIT " +

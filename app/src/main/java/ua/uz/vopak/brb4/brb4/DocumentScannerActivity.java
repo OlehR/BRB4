@@ -3,6 +3,7 @@ package ua.uz.vopak.brb4.brb4;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -23,56 +24,60 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
-import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
-import ua.uz.vopak.brb4.brb4.models.QuantityModel;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 
 public class DocumentScannerActivity extends Activity   implements ScanCallBack {
     EditText barCode, currentCount, inputCount, scannerCof, scannerCount, countInPosition;
     TextView scannerTitle, inPosition, nameUnit;
     ScrollView scrollView;
-    public static DocumentScannerActivity aContext;
-    static String InventoryNumber;
-    static Integer scanNN = 0;
     RelativeLayout loader;
+    TableLayout WaresTableLayout;
+
+    Activity context;
+    GlobalConfig config = GlobalConfig.instance();
+    DocumentScannerActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
+    //public static DocumentScannerActivity aContext;
+
+    int documentType;
+    static String DocNumber;
+    static Integer scanNN = 0;
     static String codeWares;
-    List<DocWaresModel> InventoryItems;
-    WaresItemModel WaresItem;
-    TableLayout RevisionTable;
-    private Scaner scaner;
+    List<DocWaresModel> ListWares;
+    WaresItemModel WaresItem = new WaresItemModel();
+
     int dpValue = 3, padding;
     float d, totalExistingCount;
-    int documentType;
-    private QuantityModel quantity = null;
-    GlobalConfig config = GlobalConfig.instance();
-    Activity context;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
         d = this.getResources().getDisplayMetrics().density;
-        padding = (int)(dpValue * d);
+        padding = (int) (dpValue * d);
         setContentView(R.layout.document_scanner_activity);
 
-        aContext = this;
-
         Intent i = getIntent();
-        InventoryNumber = i.getStringExtra("inv_number");
-        documentType = i.getIntExtra("document_type",0);
-        InventoryItems = (List<DocWaresModel>)i.getSerializableExtra("InventoryItems");
-        if(InventoryItems.size() > 0)
-        scanNN = Integer.parseInt(InventoryItems.get(InventoryItems.size() - 1).OrderDoc);
+        DocNumber = i.getStringExtra("inv_number");
+        documentType = i.getIntExtra("document_type", 0);
+        ListWares = (List<DocWaresModel>) i.getSerializableExtra("InventoryItems");
+        if (ListWares.size() > 0)
+            scanNN = Integer.parseInt(ListWares.get(ListWares.size() - 1).OrderDoc);
         codeWares = "";
 
-        scaner = config.GetScaner();
-        scaner.Init(this);
+        config.InitScaner(this);
+
+        WaresItem.ClearData();
+        binding.setWaresItem(WaresItem);
+        //binding.setEmployee(employee);
 
         barCode = findViewById(R.id.RevisionBarCode);
         currentCount = findViewById(R.id.RevisionScannerCurrentCount);
@@ -83,8 +88,9 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         scannerTitle = findViewById(R.id.RevisionScannerTitle);
         inPosition = findViewById(R.id.RevisionInPosition);
         nameUnit = findViewById(R.id.RevisionNameUnit);
+
         loader = findViewById(R.id.RevisionLoader);
-        RevisionTable = findViewById(R.id.RevisionScanItemsTable);
+        WaresTableLayout = findViewById(R.id.RevisionScanItemsTable);
         scrollView = findViewById(R.id.RevisionScrollView);
 
         RenderTable();
@@ -92,7 +98,8 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         inputCount.addTextChangedListener(new TextWatcher() {
 
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+            }
 
             @Override
             public void beforeTextChanged(CharSequence s, int start,
@@ -102,23 +109,13 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                        if (s.length() != 0) {
-                            float input = Float.parseFloat(inputCount.getText().toString());
-                            float cof;
-                            String cofStr = scannerCof.getText().toString();
-                            if (scannerCof.getText() == null || cofStr.equals("")) {
-                                scannerCof.setText("1");
-                                cof = 1f;
-                            }else{
-                                cof = Float.parseFloat(scannerCof.getText().toString());
-                            }
-                            Object tag = nameUnit.getTag();
-                            if (tag != null && tag.toString().equals("7"))
-                                scannerCount.setText(String.format("%.3f", (input * cof)));
-                            else
-                                scannerCount.setText(String.format("%.0f", (input * cof)));
-                                }
-                        }
+                if (s.length() != 0) {
+                    WaresItem.InputQuantity= Float.parseFloat(inputCount.getText().toString());
+
+                    //float input = Float.parseFloat(inputCount.getText().toString());
+                    //scannerCount.setText(String.format(WaresItem.CodeUnit == 7 ? "%.3f" : "%.0f", (input *WaresItem.Coefficient )));
+                }
+            }
         });
 
     }
@@ -130,7 +127,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.GetRevisionScannerData(parBarCode, context);
+                config.Worker.GetWaresFromBarcode(parBarCode, context);
                 return null;
             }
         }).execute();
@@ -174,14 +171,14 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         inputCount.setText("");
         scannerCount.setText("");
 
-        for (int i = 0; i < RevisionTable.getChildCount(); i++) {
-            View v = RevisionTable.getChildAt(i);
+        for (int i = 0; i < WaresTableLayout.getChildCount(); i++) {
+            View v = WaresTableLayout.getChildAt(i);
 
             if (v instanceof TableRow) {
                 TableRow row = (TableRow) v;
                 Object tag = row.getTag();
                 if(tag != null && tag.toString().equals("alert")) {
-                    RevisionTable.removeView(row);
+                    WaresTableLayout.removeView(row);
                 }
             }
         }
@@ -221,7 +218,6 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
                 if(model == null){
                     currentCount.setText("0");
                     scannerCof.setText("");
@@ -245,7 +241,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 codeWares = Integer.toString( model.CodeWares);
                 barCode.setText(model.BarCode);
                 currentCount.setText("0");
-                scannerCof.setText(model.Coefficient);
+                scannerCof.setText(Integer.toString(model.Coefficient));
                 scannerTitle.setText(model.NameWares);
                 nameUnit.setText(model.NameUnit + " X");
 
@@ -260,7 +256,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 }
 
                 CheckAlert();
-                View similar = RevisionTable.findViewWithTag(codeWares);
+                View similar = WaresTableLayout.findViewWithTag(codeWares);
                 if (similar != null){
                     RenderTableItem(true);
                 }
@@ -322,7 +318,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             params.weight = 1;
             OldQuantity.setLayoutParams(params);
 
-            RevisionTable.addView(tr);
+            WaresTableLayout.addView(tr);
 
             if(isAlert){
                 ViewGroup rowGroup = tr;
@@ -364,7 +360,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     public void RenderTable(){
         LinearLayout.LayoutParams params;
 
-        for (DocWaresModel item : InventoryItems) {
+        for (DocWaresModel item : ListWares) {
             TableRow tr = new TableRow(this);
             tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
@@ -414,7 +410,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             params.weight = 1;
             OldQuantity.setLayoutParams(params);
 
-            RevisionTable.addView(tr);
+            WaresTableLayout.addView(tr);
 
         }
 
@@ -434,7 +430,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     }
 
     public void setNullToExistingPosition(){
-        ArrayList<View> existPos = getViewsByTag(RevisionTable,"nullable");
+        ArrayList<View> existPos = getViewsByTag(WaresTableLayout,"nullable");
 
         for(View item: existPos){
             if(item instanceof ViewGroup){
@@ -458,7 +454,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    config.Worker.SaveDocWares( Double.valueOf( scannerCount.getText().toString()), scanNN, WaresItem.CodeWares, InventoryNumber, documentType,isNullable, context);
+                    config.Worker.SaveDocWares( Double.valueOf( scannerCount.getText().toString()), scanNN, WaresItem.CodeWares, DocNumber, documentType,isNullable, context);
                     return null;
                 }
             }).execute();
@@ -497,7 +493,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
     private void CheckAlert(TableRow tr){
         totalExistingCount = 0f;
-        ViewGroup rows = RevisionTable;
+        ViewGroup rows = WaresTableLayout;
         for (int i = 0; i < rows.getChildCount(); i++) {
             TableRow trc = (TableRow) rows.getChildAt(i);
             View v = trc.getChildAt(0);
@@ -528,7 +524,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     }
 
     private void CheckAlert(){
-        ViewGroup rows = RevisionTable;
+        ViewGroup rows = WaresTableLayout;
         for (int i = 0; i < rows.getChildCount(); i++) {
             TableRow trc = (TableRow) rows.getChildAt(i);
             View v = trc.getChildAt(0);
@@ -553,7 +549,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
     }
 
     private  void CheckEmptyValue(){
-        ViewGroup rows = RevisionTable;
+        ViewGroup rows = WaresTableLayout;
         TableRow tr = (TableRow) rows.getChildAt(rows.getChildCount() - 1);
         TextView tv = (TextView)tr.getChildAt(2);
         String a = tv.getText().toString();
@@ -568,7 +564,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.GetRevisionScannerData(barCode.getText().toString(), context);
+                config.Worker.GetWaresFromBarcode(barCode.getText().toString(), context);
                 return null;
             }
         }).execute();
