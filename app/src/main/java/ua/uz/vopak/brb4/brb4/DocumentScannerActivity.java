@@ -20,10 +20,8 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.brb4.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
@@ -34,103 +32,77 @@ import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 
 public class DocumentScannerActivity extends Activity   implements ScanCallBack {
-    EditText barCode, currentCount, inputCount, scannerCof, scannerCount, countInPosition;
-    TextView scannerTitle, inPosition, nameUnit;
+    EditText barCode,  inputCount;
+
     ScrollView scrollView;
     RelativeLayout loader;
     TableLayout WaresTableLayout;
 
     Activity context;
     GlobalConfig config = GlobalConfig.instance();
-    DocumentScannerActivityBinding binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
-    //public static DocumentScannerActivity aContext;
+    DocumentScannerActivityBinding binding;
 
-    int documentType;
-    static String DocNumber;
-    static Integer scanNN = 0;
-    static String codeWares;
-    List<DocWaresModel> ListWares;
+    List<WaresItemModel> ListWares;
     WaresItemModel WaresItem = new WaresItemModel();
 
-    int dpValue = 3, padding;
-    float d, totalExistingCount;
-
-
+    int padding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
-        d = this.getResources().getDisplayMetrics().density;
-        padding = (int) (dpValue * d);
         setContentView(R.layout.document_scanner_activity);
-
         Intent i = getIntent();
-        DocNumber = i.getStringExtra("inv_number");
-        documentType = i.getIntExtra("document_type", 0);
-        ListWares = (List<DocWaresModel>) i.getSerializableExtra("InventoryItems");
+
+        float d = this.getResources().getDisplayMetrics().density;
+        int dpValue = 3;
+        padding = (int) (dpValue * d);
+
+        WaresItem.NumberDoc = i.getStringExtra("inv_number");
+        WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
+        List<DocWaresModel> LW = (List<DocWaresModel>) i.getSerializableExtra("InventoryItems");
+        ListWares = new ArrayList<>();
+        for (DocWaresModel item : LW)
+            ListWares.add(new WaresItemModel(item));
+
         if (ListWares.size() > 0)
-            scanNN = Integer.parseInt(ListWares.get(ListWares.size() - 1).OrderDoc);
-        codeWares = "";
+            WaresItem.OrderDoc = ListWares.get(ListWares.size() - 1).OrderDoc;
 
         config.InitScaner(this);
 
         WaresItem.ClearData();
+        binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
         binding.setWaresItem(WaresItem);
         //binding.setEmployee(employee);
 
         barCode = findViewById(R.id.RevisionBarCode);
-        currentCount = findViewById(R.id.RevisionScannerCurrentCount);
         inputCount = findViewById(R.id.RevisionInputCount);
-        scannerCof = findViewById(R.id.RevisionScannerCof);
-        scannerCount = findViewById(R.id.RevisionScannerCount);
-        countInPosition = findViewById(R.id.RevisionCountInPosition);
-        scannerTitle = findViewById(R.id.RevisionScannerTitle);
-        inPosition = findViewById(R.id.RevisionInPosition);
-        nameUnit = findViewById(R.id.RevisionNameUnit);
 
         loader = findViewById(R.id.RevisionLoader);
         WaresTableLayout = findViewById(R.id.RevisionScanItemsTable);
         scrollView = findViewById(R.id.RevisionScrollView);
 
-        RenderTable();
+        Refresh();
+        RenderTable(ListWares);
 
         inputCount.addTextChangedListener(new TextWatcher() {
-
             @Override
             public void afterTextChanged(Editable s) {
+                Refresh();
             }
-
             @Override
             public void beforeTextChanged(CharSequence s, int start,
                                           int count, int after) {
             }
-
             @Override
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 if (s.length() != 0) {
                     WaresItem.InputQuantity= Float.parseFloat(inputCount.getText().toString());
-
-                    //float input = Float.parseFloat(inputCount.getText().toString());
-                    //scannerCount.setText(String.format(WaresItem.CodeUnit == 7 ? "%.3f" : "%.0f", (input *WaresItem.Coefficient )));
                 }
             }
         });
 
-    }
-
-    @Override
-    public void Run(final String parBarCode) {
-        //new AsyncRevisionScanHelper(worker, aContext).execute(parBarCode);
-
-        new AsyncHelper<Void>(new IAsyncHelper() {
-            @Override
-            public Void Invoke() {
-                config.Worker.GetWaresFromBarcode(parBarCode, context);
-                return null;
-            }
-        }).execute();
     }
 
     @Override
@@ -139,14 +111,11 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             String keyCode = String.valueOf(event.getKeyCode());
             switch (keyCode){
                 case "66":
-                    barCode.setFocusable(true);
-                    Object tag = barCode.getTag();
-                    barCode.setFocusable(false);
-                    if (tag != null && tag.toString().equals("onBarCode")) {
+                    if(WaresItem.IsInputQuantity())
+                        if(WaresItem.InputQuantity>0)
+                            saveDocumentItem(false);
+                    else
                         findWareByArticleOrCode();
-                    } else {
-                        saveDocumentItem(false);
-                    }
                     break;
                 case "131":
                     setNullToExistingPosition();
@@ -162,26 +131,143 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         return super.dispatchKeyEvent(event);
     }
 
-    public void RemoveItemFromTable(){
-        barCode.setText("");
-        currentCount.setText("0");
-        scannerCof.setText("");
-        scannerTitle.setText("Назва: ");
-        nameUnit.setText(" X");
-        inputCount.setText("");
-        scannerCount.setText("");
+    @Override
+    public void Run(final String parBarCode) {
 
-        for (int i = 0; i < WaresTableLayout.getChildCount(); i++) {
-            View v = WaresTableLayout.getChildAt(i);
-
-            if (v instanceof TableRow) {
-                TableRow row = (TableRow) v;
-                Object tag = row.getTag();
-                if(tag != null && tag.toString().equals("alert")) {
-                    WaresTableLayout.removeView(row);
-                }
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.GetWaresFromBarcode(parBarCode, context);
+                return null;
             }
+        }).execute();
+    }
+
+    public void RenderData(final WaresItemModel model){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(model == null)
+                  WaresItem.ClearData("Товар не знайдено");
+                else {
+                    WaresItem.ClearData();
+                    WaresItem.Set(model);
+                    WaresItem.BeforeQuantity = CountBeforeQuantity(ListWares, WaresItem.CodeWares);
+                }
+                Refresh();
+                SetAlert(WaresItem.CodeWares);
+                return;
+            }
+        });
+    }
+
+    void Refresh( )    {
+        binding.invalidateAll();
+
+        if(WaresItem.IsInputQuantity()) {
+            //inputCount.setFocusableInTouchMode(true);
+            //inputCount.requestFocusFromTouch();
+            inputCount.requestFocus();
+            // inputCount.setFocusableInTouchMode(false);
         }
+        else
+        {
+            barCode.requestFocus();
+        }
+    }
+
+    public TableRow RenderTableItem (WaresItemModel parWM ) {
+        LinearLayout.LayoutParams params;
+        TableRow tr = new TableRow(this);
+        tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
+
+        TextView Position = new TextView(this);
+        Position.setPadding(padding, padding, padding, padding);
+        Position.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+        Position.setText(parWM.GetOrderDoc());
+        Position.setTextColor(Color.parseColor("#000000"));
+        Position.setTag(parWM.GetCodeWares());
+        tr.addView(Position);
+
+        params = (LinearLayout.LayoutParams)Position.getLayoutParams();
+        params.weight = 1;
+        Position.setLayoutParams(params);
+
+        TextView Title = new TextView(this);
+        Title.setPadding(padding, padding, padding, padding);
+        Title.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+
+        Title.setText(parWM.NameWares.length()>25?parWM.NameWares.substring(0,25):parWM.NameWares);
+        Title.setTextColor(Color.parseColor("#000000"));
+        tr.addView(Title);
+
+        params = (LinearLayout.LayoutParams)Title.getLayoutParams();
+        params.weight = 3;
+        Title.setLayoutParams(params);
+
+        TextView Quantity = new TextView(this);
+        Quantity.setPadding(padding, padding, padding, padding);
+        Quantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+        Quantity.setText(parWM.InputQuantity());
+        Quantity.setTextColor(Color.parseColor("#000000"));
+        tr.addView(Quantity);
+
+        params = (LinearLayout.LayoutParams)Quantity.getLayoutParams();
+        params.weight = 1;
+        Quantity.setLayoutParams(params);
+
+        TextView OldQuantity = new TextView(this);
+        OldQuantity.setPadding(padding, padding, padding, padding);
+        OldQuantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
+        OldQuantity.setText(parWM.GetQuantityOld());
+        OldQuantity.setTextColor(Color.parseColor("#000000"));
+        tr.addView(OldQuantity);
+
+        params = (LinearLayout.LayoutParams)OldQuantity.getLayoutParams();
+        params.weight = 1;
+        OldQuantity.setLayoutParams(params);
+
+       return tr;
+    }
+
+    public void RenderTable(List<WaresItemModel> parL )    {
+        for (WaresItemModel item : parL) {
+            WaresTableLayout.addView(RenderTableItem(item));
+        }
+    }
+
+    public Double CountBeforeQuantity(List<WaresItemModel> parL,int pCodeWares)    {
+        Double res=0d;
+        for (WaresItemModel item : parL)
+            if(item.CodeWares==pCodeWares)
+                res+=item.InputQuantity;
+            return res;
+    }
+
+    private void saveDocumentItem(final Boolean isNullable) {
+        if (WaresItem.InputQuantity>0) {
+
+            loader.setVisibility(View.VISIBLE);
+            WaresItem.OrderDoc++;
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    config.Worker.SaveDocWares( WaresItem.InputQuantity, WaresItem.OrderDoc, WaresItem.CodeWares, WaresItem.NumberDoc, WaresItem.TypeDoc ,isNullable, context);
+                    return null;
+                }
+            }).execute();
+        }
+/*
+        scrollView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                barCode.setFocusable(true);
+                barCode.setFocusable(false);
+                barCode.setFocusableInTouchMode(true);
+                barCode.requestFocusFromTouch();
+                barCode.setFocusableInTouchMode(false);
+            }
+        }, 100L);*/
     }
 
     public void AfterSave(final ArrayList args){
@@ -192,16 +278,13 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 boolean isSave = (boolean) args.get(0);
                 String message = (String) args.get(1);
 
-                barCode.setFocusable(true);
-                barCode.setTag("onBarCode");
-                barCode.setFocusable(false);
-
                 if(isSave) {
-                    RenderTableItem(false);
-                    RemoveItemFromTable();
+                    ListWares.add(WaresItem);
+                    WaresTableLayout.addView(RenderTableItem(WaresItem));
                 }
 
                 loader.setVisibility(View.INVISIBLE);
+                WaresItem.ClearData();
 
                 if (!isSave) {
                     Intent i = new Intent(context, MessageActivity.class);
@@ -214,263 +297,15 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         });
     }
 
-    public void RenderData(final WaresItemModel model){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(model == null){
-                    currentCount.setText("0");
-                    scannerCof.setText("");
-                    scannerTitle.setText("Товар не знайдено");
-                    nameUnit.setText("");
-                    barCode.setFocusable(true);
-                    barCode.setTag("onBarCode");
-                    barCode.setFocusable(false);
-                    barCode.setFocusableInTouchMode(true);
-                    barCode.requestFocusFromTouch();
-                    barCode.setFocusableInTouchMode(false);
-                    return;
-                }
-
-                if(documentType==2){
-                    loader.setVisibility(View.VISIBLE);
-                    inputCount.setEnabled(false);
-                }
-
-                WaresItem = model;
-                codeWares = Integer.toString( model.CodeWares);
-                barCode.setText(model.BarCode);
-                currentCount.setText("0");
-                scannerCof.setText(Integer.toString(model.Coefficient));
-                scannerTitle.setText(model.NameWares);
-                nameUnit.setText(model.NameUnit + " X");
-
-
-                if(WaresItem.CodeWares > 0){
-                    barCode.setFocusable(true);
-                    barCode.setTag(null);
-                    barCode.setFocusable(false);
-                    inputCount.setFocusableInTouchMode(true);
-                    inputCount.requestFocusFromTouch();
-                    inputCount.setFocusableInTouchMode(false);
-                }
-
-                CheckAlert();
-                View similar = WaresTableLayout.findViewWithTag(codeWares);
-                if (similar != null){
-                    RenderTableItem(true);
-                }
-            }
-        });
-    }
-
-    public void RenderTableItem(boolean isAlert){
-            CheckEmptyValue();
-
-            LinearLayout.LayoutParams params;
-
-            TableRow tr = new TableRow(this);
-            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
-
-            TextView Position = new TextView(this);
-            Position.setPadding(padding, padding, padding, padding);
-            Position.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            Position.setText(scanNN.toString());
-            Position.setTextColor(Color.parseColor("#000000"));
-            Position.setTag(codeWares);
-            tr.addView(Position);
-
-            params = (LinearLayout.LayoutParams)Position.getLayoutParams();
-            params.weight = 1;
-            Position.setLayoutParams(params);
-
-            TextView Title = new TextView(this);
-            Title.setPadding(padding, padding, padding, padding);
-            Title.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-
-            Title.setText(scannerTitle.getText().toString().length()>25?scannerTitle.getText().toString().substring(0,25):scannerTitle.getText().toString());
-            Title.setTextColor(Color.parseColor("#000000"));
-            tr.addView(Title);
-
-            params = (LinearLayout.LayoutParams)Title.getLayoutParams();
-            params.weight = 3;
-            Title.setLayoutParams(params);
-
-            TextView Quantity = new TextView(this);
-            Quantity.setPadding(padding, padding, padding, padding);
-            Quantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            Quantity.setText(scannerCount.getText());
-            Quantity.setTextColor(Color.parseColor("#000000"));
-            tr.addView(Quantity);
-
-            params = (LinearLayout.LayoutParams)Quantity.getLayoutParams();
-            params.weight = 1;
-            Quantity.setLayoutParams(params);
-
-            TextView OldQuantity = new TextView(this);
-            OldQuantity.setPadding(padding, padding, padding, padding);
-            OldQuantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            OldQuantity.setText("0");
-            OldQuantity.setTextColor(Color.parseColor("#000000"));
-            tr.addView(OldQuantity);
-
-            params = (LinearLayout.LayoutParams)OldQuantity.getLayoutParams();
-            params.weight = 1;
-            OldQuantity.setLayoutParams(params);
-
-            WaresTableLayout.addView(tr);
-
-            if(isAlert){
-                ViewGroup rowGroup = tr;
-                for (int i = 0; i < rowGroup.getChildCount(); i++) {
-                    TextView v = (TextView) rowGroup.getChildAt(i);
-                    v.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_alert));
-                    v.setTextColor(getResources().getColor(R.color.messageAlert));
-                }
-
-                Integer newScanNN = scanNN + 1;
-                Position.setText(newScanNN.toString());
-
-                tr.setTag("alert");
-
-                CheckAlert(tr);
-            }
-
-            scrollView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //replace this line to scroll up or down
-                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
-                barCode.setFocusable(true);
-                Object tag = barCode.getTag();
-                barCode.setFocusable(false);
-                if(tag == null || !tag.toString().equals("onBarCode")) {
-                    inputCount.setFocusableInTouchMode(true);
-                    inputCount.requestFocusFromTouch();
-                    inputCount.setFocusableInTouchMode(false);
-                }else{
-                    barCode.setFocusableInTouchMode(true);
-                    barCode.requestFocusFromTouch();
-                    barCode.setFocusableInTouchMode(false);
-                }
-            }
-        }, 100L);
-    }
-
-    public void RenderTable(){
-        LinearLayout.LayoutParams params;
-
-        for (DocWaresModel item : ListWares) {
-            TableRow tr = new TableRow(this);
-            tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
-
-            TextView Position = new TextView(this);
-            Position.setPadding(padding, padding, padding, padding);
-            Position.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            Position.setText(item.OrderDoc);
-            Position.setTextColor(Color.parseColor("#000000"));
-            Position.setTag(item.CodeWares);
-            tr.addView(Position);
-
-            params = (LinearLayout.LayoutParams)Position.getLayoutParams();
-            params.weight = 1;
-            Position.setLayoutParams(params);
-
-            TextView Title = new TextView(this);
-            Title.setPadding(padding, padding, padding, padding);
-            Title.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            String NameWares = item.NameWares.toString().length()>25?item.NameWares.toString().substring(0,25):item.NameWares.toString();
-            Title.setText(NameWares);
-            Title.setTextColor(Color.parseColor("#000000"));
-            tr.addView(Title);
-
-            params = (LinearLayout.LayoutParams)Title.getLayoutParams();
-            params.weight = 3;
-            Title.setLayoutParams(params);
-
-            TextView Quantity = new TextView(this);
-            Quantity.setPadding(padding, padding, padding, padding);
-            Quantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            Quantity.setText(item.Quantity);
-            Quantity.setTextColor(Color.parseColor("#000000"));
-            tr.addView(Quantity);
-
-            params = (LinearLayout.LayoutParams)Quantity.getLayoutParams();
-            params.weight = 1;
-            Quantity.setLayoutParams(params);
-
-            TextView OldQuantity = new TextView(this);
-            OldQuantity.setPadding(padding, padding, padding, padding);
-            OldQuantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-            OldQuantity.setText(item.OldQuantity);
-            OldQuantity.setTextColor(Color.parseColor("#000000"));
-            tr.addView(OldQuantity);
-
-            params = (LinearLayout.LayoutParams)OldQuantity.getLayoutParams();
-            params.weight = 1;
-            OldQuantity.setLayoutParams(params);
-
-            WaresTableLayout.addView(tr);
-
-        }
-
-        scrollView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //replace this line to scroll up or down
-                scrollView.fullScroll(ScrollView.FOCUS_DOWN);
-                barCode.setFocusable(true);
-                barCode.setTag("onBarCode");
-                barCode.setFocusable(false);
-                barCode.setFocusableInTouchMode(true);
-                barCode.requestFocusFromTouch();
-                barCode.setFocusableInTouchMode(false);
-            }
-        }, 100L);
-    }
-
-    public void setNullToExistingPosition(){
+    private void setNullToExistingPosition(){
         ArrayList<View> existPos = getViewsByTag(WaresTableLayout,"nullable");
-
         for(View item: existPos){
             if(item instanceof ViewGroup){
                 View tx = ((ViewGroup) item).getChildAt(2);
                 ((TextView)tx).setText("0");
             }
         }
-
         saveDocumentItem(true);
-    }
-
-    private  void  saveDocumentItem(final Boolean isNullable) {
-        String input = inputCount.getText().toString();
-
-        if (input.equals("") || Integer.parseInt(input) <= 0 || scannerTitle.getText().toString().equals("")) {
-            RemoveItemFromTable();
-        } else {
-            loader.setVisibility(View.VISIBLE);
-            scanNN++;
-            //new AsyncDocWares(worker, this).execute(scannerCount.getText().toString(), scanNN.toString(), codeWares, InventoryNumber, documentType, isNullable);
-            new AsyncHelper<Void>(new IAsyncHelper() {
-                @Override
-                public Void Invoke() {
-                    config.Worker.SaveDocWares( Double.valueOf( scannerCount.getText().toString()), scanNN, WaresItem.CodeWares, DocNumber, documentType,isNullable, context);
-                    return null;
-                }
-            }).execute();
-        }
-
-        scrollView.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                barCode.setFocusable(true);
-                barCode.setTag("onBarCode");
-                barCode.setFocusable(false);
-                barCode.setFocusableInTouchMode(true);
-                barCode.requestFocusFromTouch();
-                barCode.setFocusableInTouchMode(false);
-            }
-        }, 100L);
     }
 
     private static ArrayList<View> getViewsByTag(ViewGroup root, String tag){
@@ -486,50 +321,17 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             if (tagObj != null && tagObj.equals(tag)) {
                 views.add(child);
             }
-
         }
         return views;
     }
 
-    private void CheckAlert(TableRow tr){
-        totalExistingCount = 0f;
+    private void SetAlert(int pCodeWares){
         ViewGroup rows = WaresTableLayout;
         for (int i = 0; i < rows.getChildCount(); i++) {
             TableRow trc = (TableRow) rows.getChildAt(i);
             View v = trc.getChildAt(0);
             String tag = (String) v.getTag();
-            if(tag != null && tag.equals(codeWares)){
-                if(!trc.equals(tr)){
-                    trc.setTag("nullable");
-                    totalExistingCount += Float.parseFloat(((TextView)trc.getChildAt(2)).getText().toString());
-                }else{
-                    if(trc.getTag() == null || !trc.getTag().toString().equals("alert"))
-                    trc.setTag(null);
-                }
-                for (int j = 0; j < trc.getChildCount(); j++) {
-                    TextView vI = (TextView)trc.getChildAt(j);
-                    vI.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_alert));
-                    vI.setTextColor(getResources().getColor(R.color.messageAlert));
-                }
-            }else{
-                for (int j = 0; j < trc.getChildCount(); j++) {
-                    TextView vI = (TextView)trc.getChildAt(j);
-                    vI.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-                    vI.setTextColor(Color.parseColor("#000000"));
-                }
-            }
-        }
-        currentCount.setText(String.format(WaresItem.CodeUnit==7 ?"%.3f":"%.0f", totalExistingCount));
-
-    }
-
-    private void CheckAlert(){
-        ViewGroup rows = WaresTableLayout;
-        for (int i = 0; i < rows.getChildCount(); i++) {
-            TableRow trc = (TableRow) rows.getChildAt(i);
-            View v = trc.getChildAt(0);
-            String tag = (String) v.getTag();
-            if(tag != null && tag.equals(codeWares)){
+            if(tag != null && tag.equals(String.valueOf(pCodeWares))){
                 for (int j = 0; j < trc.getChildCount(); j++) {
                     TextView vI = (TextView)trc.getChildAt(j);
                     vI.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_alert));
@@ -545,17 +347,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             }
         }
 
-        CheckEmptyValue();
-    }
-
-    private  void CheckEmptyValue(){
-        ViewGroup rows = WaresTableLayout;
-        TableRow tr = (TableRow) rows.getChildAt(rows.getChildCount() - 1);
-        TextView tv = (TextView)tr.getChildAt(2);
-        String a = tv.getText().toString();
-        if(tv.getText().toString().equals("")){
-            rows.removeView(tr);
-        }
+        //CheckEmptyValue();
     }
 
     private void  findWareByArticleOrCode(){

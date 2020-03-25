@@ -44,7 +44,8 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
         login = findViewById(R.id.Login);
         password = findViewById(R.id.Password);
         aHelper = new AuterizationsHelper(this);
-
+        if(config.IsDebug)
+            password.setText(config.Password);
         //new AsyncLastLogin(aHelper).execute();
 
         new AsyncHelper<Void>(new IAsyncHelper() {

@@ -19,6 +19,7 @@ import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 
 public class GlobalConfig extends AbstractConfig {
+    public Boolean IsDebug=true;
     private static GlobalConfig Instance = null;
     public String CodeWarehouse = "0";
     //public String ApiUrl ="http://195.16.78.134:7654/api/api_v1_utf8.php";//"http://znp.vopak.local/api/api_v1_utf8.php";
@@ -30,8 +31,8 @@ public class GlobalConfig extends AbstractConfig {
     public String VerBRB="4.01.01";
 
 
-    public String Login = "c";
-    public String Password = "c";
+    public String Login = "nov";
+    public String Password = "123";
     public Worker Worker;
     public String SN = GetSN();//Build.SERIAL;
     public String NameDCT = Build.USER;
