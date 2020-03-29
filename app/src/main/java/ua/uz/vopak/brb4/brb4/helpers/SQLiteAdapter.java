@@ -294,15 +294,13 @@ public class SQLiteAdapter
     }
 
     public List<DocumentModel> GetDocumentList(String type,String parBarCode) {
-        //String data=config.GetApiJson(150,"\"TypeDoc\":"+type);
-        //String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
-        //LoadDataDoc(result);
+
         List<DocumentModel> model = new ArrayList<DocumentModel>();
         Cursor mCur;
         String sql;
         if(parBarCode==null||parBarCode.isEmpty())
          sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+type+"'"+
-                     " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)";
+                     " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)" + (config.IsDebug ? " limit 10" :"");
         else
           sql="SELECT DISTINCT d.date_doc,d.type_doc,d.number_doc,d.ext_info,d.name_user,d.bar_code,d.description,d.dt_insert,d.state -- ,bc.BAR_CODE, dw.*\n" +
                   "FROM DOC d \n" +
@@ -310,7 +308,7 @@ public class SQLiteAdapter
                   "join bar_code bc on dw.code_wares=bc.CODE_WARES\n" +
                   "WHERE d.type_doc = '"+type+"'"+
                   " AND d.date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)"+
-                  "and bc.BAR_CODE= '"+parBarCode+"'";
+                  "and bc.BAR_CODE= '"+parBarCode+"'" + (config.IsDebug ? " limit 10" :"");
 
         try {
             //mDb.delete("INVENTORY_WARES", null, null);
@@ -356,39 +354,40 @@ public class SQLiteAdapter
         }
     }
 
-    public WaresItemModel GetScanData(String number) {
+    public WaresItemModel GetScanData(int TypeDoc, String DocNumber,String number) {
         WaresItemModel model = null;
         Cursor mCur;
         String sql;
+
         Integer intNum = 0;
         boolean isBarCode = true;
-        if(number.length() <= 8 && ! number.equals("")) {
+        if (number.length() <= 8 && !number.equals("")) {
             intNum = Integer.parseInt(number);
             isBarCode = intNum.toString().length() >= 8;
         }
 
-        if(isBarCode) {
-            sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.ABR_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
+        if (isBarCode) {
+            sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.ABR_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                     "from BAR_CODE bc " +
                     "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
                     "join wares w on w.CODE_WARES=bc.CODE_WARES " +
                     "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
-                    "where bc.BAR_CODE='" + number.trim()+"'";
-        }else{
-            sql =   "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
+                    "where bc.BAR_CODE='" + number.trim() + "'";
+        } else {
+            sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                     "from WARES w " +
                     "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +
                     "join UNIT_DIMENSION ud on w.CODE_UNIT=ud.CODE_UNIT " +
-                    "where w.ARTICL='" + number+"'";
+                    "where w.ARTICL='" + number + "'";
         }
 
         try {
             mCur = mDb.rawQuery(sql, null);
-            if (mCur!=null && mCur.getCount() > 0) {
+            if (mCur != null && mCur.getCount() > 0) {
                 mCur.moveToFirst();
                 model = new WaresItemModel();
 
-                model.CodeWares = mCur.getInt (0);
+                model.CodeWares = mCur.getInt(0);
                 model.NameWares = mCur.getString(1);
                 model.Coefficient = mCur.getInt(2);
                 model.CodeUnit = mCur.getInt(3);
@@ -396,8 +395,25 @@ public class SQLiteAdapter
                 model.BarCode = mCur.getString(5);
                 model.BaseCodeUnit = mCur.getInt(6);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.getMessage();
+        }
+        if (model != null) {
+            sql = "select coalesce(d.Is_Control,0) as Is_Control, coalesce(quantity_max,0) as quantity_max, coalesce(quantity,0) as quantity from DOC d\n" +
+                    " left join DOC_WARES_sample dws on d.Type_doc=dws.Type_doc and d.number_doc=dws.number_doc and dws.code_wares=" + model.CodeWares +
+                    " \nwhere  d.Type_doc=" + TypeDoc + " and d.number_doc=\"" + DocNumber + "\"";
+            try {
+                mCur = mDb.rawQuery(sql, null);
+                if (mCur != null && mCur.getCount() > 0) {
+                    mCur.moveToFirst();
+                    model.QuantityMax=(mCur.getInt(0)==1?mCur.getInt(1):Integer.MAX_VALUE);
+                    model.QuantityOrder=mCur.getInt(2);
+
+                }
+                } catch (Exception e) {
+                e.getMessage();
+            }
+
         }
 
         return model;

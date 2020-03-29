@@ -112,10 +112,13 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             switch (keyCode){
                 case "66":
                     if(WaresItem.IsInputQuantity())
-                        if(WaresItem.InputQuantity>0)
-                            saveDocumentItem(false);
+                       saveDocumentItem(false);
                     else
                         findWareByArticleOrCode();
+                    break;
+                case "62"://key SP
+                    WaresItem.ClearData();
+                    Refresh();
                     break;
                 case "131":
                     setNullToExistingPosition();
@@ -137,7 +140,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.GetWaresFromBarcode(parBarCode, context);
+                config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,parBarCode, context);
                 return null;
             }
         }).execute();
@@ -169,10 +172,16 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             //inputCount.requestFocusFromTouch();
             inputCount.requestFocus();
             // inputCount.setFocusableInTouchMode(false);
+            inputCount.setFocusableInTouchMode(true);
+            inputCount.requestFocusFromTouch();
+            inputCount.setFocusableInTouchMode(false);
         }
         else
         {
             barCode.requestFocus();
+            barCode.setFocusableInTouchMode(true);
+            barCode.requestFocusFromTouch();
+            barCode.setFocusableInTouchMode(false);
         }
     }
 
@@ -285,6 +294,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
 
                 loader.setVisibility(View.INVISIBLE);
                 WaresItem.ClearData();
+                Refresh();
 
                 if (!isSave) {
                     Intent i = new Intent(context, MessageActivity.class);
@@ -356,7 +366,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.GetWaresFromBarcode(barCode.getText().toString(), context);
+                config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc ,barCode.getText().toString(), context);
                 return null;
             }
         }).execute();

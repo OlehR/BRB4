@@ -299,9 +299,8 @@ public class Worker
        }
     }
 
-    public void GetWaresFromBarcode(String BarCode, Activity context){
-        WaresItemModel model = mDbHelper.GetScanData(BarCode);
-
+    public void GetWaresFromBarcode(int TypeDoc, String DocNumber, String BarCode, Activity context){
+        WaresItemModel model = mDbHelper.GetScanData(TypeDoc,DocNumber,BarCode);
         DocumentScannerActivity activity = (DocumentScannerActivity) context;
         activity.RenderData(model);
     }
