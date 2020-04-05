@@ -19,7 +19,7 @@ import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 
 public class GlobalConfig extends AbstractConfig {
-    public Boolean IsDebug=true;
+    public Boolean IsDebug=false;
     private static GlobalConfig Instance = null;
     public String CodeWarehouse = "0";
     //public String ApiUrl ="http://195.16.78.134:7654/api/api_v1_utf8.php";//"http://znp.vopak.local/api/api_v1_utf8.php";
@@ -65,8 +65,8 @@ public class GlobalConfig extends AbstractConfig {
         return Integer.parseInt(CodeWarehouse)>50;
     }
     protected GlobalConfig() {
-        super("http://195.16.78.134:7654/api/api_v1_utf8.php");
-    }//"http://znp.vopak.local/api/api_v1_utf8.php"
+        super("http://znp.vopak.local/api/api_v1_utf8.php");//"http://195.16.78.134:7654/api/api_v1_utf8.php"
+    }//
 
     public static GlobalConfig instance() {
         if (Instance == null) {
@@ -94,7 +94,7 @@ public class GlobalConfig extends AbstractConfig {
             @Override
             public Void Invoke() {
 
-                if(GetAddressReachable(UrlLocal))//,PortLocal,1000))
+                if( true || GetAddressReachable(UrlLocal))//,PortLocal,1000))
                     ApiUrl="http://"+UrlLocal+":"+String.valueOf(PortLocal)+PathApi;
                 else
                     ApiUrl="http://"+Url+":"+String.valueOf(Port)+PathApi;
