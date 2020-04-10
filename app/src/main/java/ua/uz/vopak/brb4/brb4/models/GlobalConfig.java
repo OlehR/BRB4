@@ -49,7 +49,7 @@ public class GlobalConfig extends AbstractConfig {
     public Integer printType = 0;//Колір чека 0-звичайнийб 1-жовтий
     @Override
     public String GetApiJson(int parCodeData, String parData) {
-        return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+this.getCodeWarehouse()+"\", \"CodeWarehouse\":\""+this.getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
+        return "{\"CodeData\":"+ parCodeData + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Ver\":\""+VerBRB+"\",\"Warehouse\":\""+this.getCodeWarehouse()+"\", \"CodeWarehouse\":\""+this.getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData==null?"":","+parData )+"}";
     }
 

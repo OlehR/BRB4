@@ -78,7 +78,6 @@
                 android:textColor="@color/messageError"
                 android:textSize="18dp"
                 android:text=" ENT-"/>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -100,6 +99,20 @@
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp"
                 android:visibility="gone"
+                android:text="Без фільтра"/>
+            <TextView
+                android:id="@+id/FilterEDRPO"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/messageError"
+                android:textSize="18dp"
+                android:text=" F2-"/>
+            <TextView
+                android:id="@+id/FilterEDRPOText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/messageAlert"
+                android:textSize="18dp"
                 android:text="Без фільтра"/>
 
         </LinearLayout>

@@ -141,7 +141,9 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     }
 
     public void renderTable(final List<DocumentModel> model){
+        current=0;
         final DocumentActivity context = this;
+        menuItems.clear();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -247,7 +249,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                                 ViewGroup rows = tl0;
                                 for (int i = 0; i < rows.getChildCount(); i++) {
                                     LinearLayout trc = (LinearLayout) rows.getChildAt(i);
-
                                     for(int j = 0; j < trc.getChildCount(); j++){
                                         trc.getChildAt(j).setBackground(ContextCompat.getDrawable(context, R.drawable.odd_row_bordered));
                                     }
@@ -281,7 +282,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
             selectedItem.setTag(null);
         }
         ViewGroup currentRows = (ViewGroup) menuItems.get(current);
-        menuItems.get(current).setTag("selected");
+        currentRows.setTag("selected");
         setBackgroundToTableRow(currentRows, R.drawable.table_cell_selected, "#ffffff");
     }
 
