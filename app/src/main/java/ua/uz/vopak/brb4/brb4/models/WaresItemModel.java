@@ -16,25 +16,20 @@ public class WaresItemModel {
     public String BarCode;
     public int BaseCodeUnit;
     public double InputQuantity;
-    public String InputQuantity() {return InputQuantity==0.0d ? "": String.format(CodeUnit == 7 ? "%.3f" : "%.0f",InputQuantity);}
+    public String GetInputQuantity() {return InputQuantity==0.0d ? "": String.format(CodeUnit == 7 ? "%.3f" : "%.0f",InputQuantity);}
+    public String GetInputQuantityZero() {return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",InputQuantity);}
     public String GetQuantityBase() {return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",(double)Coefficient*InputQuantity);}
     public double BeforeQuantity;
-    public String GetBeforeQuantity() { return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity)+ (QuantityMax==Integer.MAX_VALUE?"":"/"+String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity))   ;}
+    public String GetBeforeQuantity() { return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity)+ (QuantityMax==Double.MAX_VALUE?"":"/"+String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity))   ;}
 
     public double QuantityMin;
     public double QuantityMax;
     public double QuantityOld;
     public double QuantityOrder;
+    public String GetQuantityOrder() { return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",QuantityOrder);}
 
     public WaresItemModel(){};
-    public WaresItemModel(DocWaresModel parDW){
-        NumberDoc= parDW.Number;
-        CodeWares= Integer.valueOf( parDW.CodeWares);
-        OrderDoc= Integer.valueOf( parDW.OrderDoc);
-        InputQuantity= Double.valueOf(parDW.Quantity);
-        QuantityOld = Double.valueOf(parDW.OldQuantity);
-        NameWares=parDW.NameWares;
-    };
+
     public String GetQuantityOld(){return String.valueOf(QuantityOld);}
   public void Set(WaresItemModel parWIM)
   {
@@ -75,7 +70,7 @@ public class WaresItemModel {
         BeforeQuantity=0;
         QuantityMin=0 ;
         InputQuantity=0;
-        QuantityMax=Integer.MAX_VALUE ;
+        QuantityMax=Double.MAX_VALUE ;
 
     }
     public Boolean IsInputQuantity() { return (Coefficient>0);}

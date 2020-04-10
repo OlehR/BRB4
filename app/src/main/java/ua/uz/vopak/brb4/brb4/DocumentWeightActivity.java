@@ -25,14 +25,14 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
-import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
+import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class DocumentWeightActivity extends Activity implements IIncomeRender {
     String number;
     int documentType;
-    List<Float> PrevValues = new ArrayList<Float>();
+    List<Double> PrevValues = new ArrayList<>();
     LinearLayout tl;
     HashMap<Integer, DocWaresModelIncome> data = new HashMap<Integer, DocWaresModelIncome>();
     List<DocWaresModelIncome> Model;
@@ -54,7 +54,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.GetDoc(number,documentType,(IIncomeRender) context);
+                config.Worker.GetDoc(documentType,number,1,(IIncomeRender) context);
                 return null;
             }
         }).execute();
@@ -87,9 +87,9 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
         return super.dispatchKeyEvent(event);
     }
 
-    public void RenderTableIncome(final List<DocWaresModelIncome> model, List<DocWaresModel> inventoryModel) {
+    public void RenderTableIncome(final List<WaresItemModel> model) {
         final DocumentWeightActivity context = this;
-        Model = model;
+        //Model = model;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -98,7 +98,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
                     float d = context.getResources().getDisplayMetrics().density;
                     int padding = (int) (dpValue * d);
 
-                    for (DocWaresModelIncome item : model) {
+                    for (WaresItemModel item : model) {
 
                         final LinearLayout tl0 = new LinearLayout(context);
                         tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -126,7 +126,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
                         Title.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
                         TextView QuantityOrdered = new TextView(context);
-                        QuantityOrdered.setText(String.format("%.3f", item.QuantityOrdered));
+                        QuantityOrdered.setText(item.GetQuantityOrder());
                         QuantityOrdered.setTextSize((int) (12 * d));
                         QuantityOrdered.setTextColor(Color.parseColor("#000000"));
                         tr1.addView(QuantityOrdered);
@@ -139,9 +139,9 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
                         QuantityOrdered.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                         QuantityOrdered.setLayoutParams(params1);
 
-                        PrevValues.add(item.QuantityIncoming);
+                        PrevValues.add(item.InputQuantity);
                         EditText QuantityIncomed = new EditText(context);
-                        QuantityIncomed.setText(String.format("%.3f", item.QuantityIncoming));
+                        QuantityIncomed.setText( item.GetInputQuantity());
                         QuantityIncomed.setTextColor(Color.parseColor("#000000"));
                         QuantityIncomed.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
                         QuantityIncomed.setOnKeyListener(new View.OnKeyListener() {
@@ -217,7 +217,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
         });
     }
 
-    public void renderTable(final List<DocWaresModel> model) {
+    public void renderTable(final List<WaresItemModel> model) {
 
     }
 
@@ -236,7 +236,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
         if (v.getText().toString().equals("") || PrevValues.get(index) == Float.parseFloat(v.getText().toString())) {
             v.setText(String.format("%.3f", PrevValues.get(index)));
         } else {
-            PrevValues.set(index,Float.parseFloat(v.getText().toString()));
+            PrevValues.set(index,Double.parseDouble(v.getText().toString()));
             data.put(index, Model.get(index));
         }
     }
@@ -252,7 +252,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    config.Worker.SaveDocWares(Double.valueOf( value), scanNN,Integer.parseInt( Model.get(position).CodeWares), number, documentType,true, context);
+                    config.Worker.SaveDocWares(documentType, number,Integer.parseInt( Model.get(position).CodeWares),scanNN,  Double.valueOf( value), true, context);
                     return null;
                 }
             }).execute();
@@ -294,7 +294,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.UpdateDocState("1",number, documentType,(Activity) context);
+                config.Worker.UpdateDocState(1,documentType,number, (Activity) context);
                 return null;
             }
         }).execute();

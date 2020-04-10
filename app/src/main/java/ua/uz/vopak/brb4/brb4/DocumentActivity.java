@@ -26,7 +26,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 public class DocumentActivity extends Activity implements View.OnClickListener, ScanCallBack {
     LinearLayout tl;
     ScrollView documentList;
-    String DocumentType;
+    int DocumentType;
     DocumentActivity context;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
@@ -44,7 +44,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         context = this;
 
         Intent i = getIntent();
-        DocumentType = i.getStringExtra("document_type");
+        DocumentType =  i.getIntExtra("document_type",0);
 
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);

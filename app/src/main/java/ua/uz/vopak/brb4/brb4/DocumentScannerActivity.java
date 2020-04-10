@@ -27,11 +27,11 @@ import ua.uz.vopak.brb4.brb4.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
-import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 
-public class DocumentScannerActivity extends Activity   implements ScanCallBack {
+public class DocumentScannerActivity extends Activity   implements ScanCallBack, IIncomeRender {
     EditText barCode,  inputCount;
 
     ScrollView scrollView;
@@ -58,19 +58,14 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         int dpValue = 3;
         padding = (int) (dpValue * d);
 
-        WaresItem.NumberDoc = i.getStringExtra("inv_number");
-        WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
-        List<DocWaresModel> LW = (List<DocWaresModel>) i.getSerializableExtra("InventoryItems");
-        ListWares = new ArrayList<>();
-        for (DocWaresModel item : LW)
-            ListWares.add(new WaresItemModel(item));
-
-        if (ListWares.size() > 0)
-            WaresItem.OrderDoc = ListWares.get(ListWares.size() - 1).OrderDoc;
-
         config.InitScaner(this);
-
+        ListWares = new ArrayList<>();
         WaresItem.ClearData();
+
+        WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
+        WaresItem.NumberDoc = i.getStringExtra("inv_number");
+
+
         binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
         binding.setWaresItem(WaresItem);
         //binding.setEmployee(employee);
@@ -83,7 +78,6 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         scrollView = findViewById(R.id.RevisionScrollView);
 
         Refresh();
-        RenderTable(ListWares);
 
         inputCount.addTextChangedListener(new TextWatcher() {
             @Override
@@ -102,6 +96,14 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 }
             }
         });
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.GetDoc(WaresItem.TypeDoc,WaresItem.NumberDoc,2,(IIncomeRender) context);
+                return null;
+            }
+        }).execute();
 
     }
 
@@ -217,7 +219,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
         TextView Quantity = new TextView(this);
         Quantity.setPadding(padding, padding, padding, padding);
         Quantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-        Quantity.setText(parWM.InputQuantity());
+        Quantity.setText(parWM.GetInputQuantity());
         Quantity.setTextColor(Color.parseColor("#000000"));
         tr.addView(Quantity);
 
@@ -239,10 +241,20 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
        return tr;
     }
 
-    public void RenderTable(List<WaresItemModel> parL )    {
-        for (WaresItemModel item : parL) {
-            WaresTableLayout.addView(RenderTableItem(item));
-        }
+    public void renderTable(final List<WaresItemModel>  parL ) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ListWares = parL;
+                if (ListWares.size() > 0) {
+                    WaresItem.OrderDoc = ListWares.get(ListWares.size() - 1).OrderDoc;
+                    for (WaresItemModel item : parL) {
+                        TableRow tbl = RenderTableItem(item);
+                        WaresTableLayout.addView(tbl);
+                    }
+                }
+            }
+        });
     }
 
     public Double CountBeforeQuantity(List<WaresItemModel> parL,int pCodeWares)    {
@@ -261,7 +273,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    config.Worker.SaveDocWares( WaresItem.InputQuantity, WaresItem.OrderDoc, WaresItem.CodeWares, WaresItem.NumberDoc, WaresItem.TypeDoc ,isNullable, context);
+                    config.Worker.SaveDocWares( WaresItem.TypeDoc ,WaresItem.NumberDoc, WaresItem.CodeWares, WaresItem.OrderDoc, WaresItem.InputQuantity, isNullable, context);
                     return null;
                 }
             }).execute();
@@ -356,7 +368,6 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack 
                 }
             }
         }
-
         //CheckEmptyValue();
     }
 

@@ -12,9 +12,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
-import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 
@@ -27,14 +25,12 @@ public class SQLiteAdapter
     private DataBaseHelper mDbHelper;
     GlobalConfig config = GlobalConfig.instance();
 
-    public SQLiteAdapter(Context context)
-    {
+    public SQLiteAdapter(Context context)    {
         this.mContext = context;
         mDbHelper = new DataBaseHelper(mContext);
     }
 
-    public SQLiteAdapter createDatabase() throws SQLException
-    {
+    public SQLiteAdapter createDatabase() throws SQLException    {
         try
         {
             mDbHelper.createDataBase();
@@ -47,8 +43,7 @@ public class SQLiteAdapter
         return this;
     }
 
-    public SQLiteAdapter open() throws SQLException
-    {
+    public SQLiteAdapter open() throws SQLException    {
         try
         {
             mDbHelper.openDataBase();
@@ -66,6 +61,34 @@ public class SQLiteAdapter
     public void close()
     {
         mDbHelper.close();
+    }
+
+    public void AddConfigPair(String name, String value) {
+        try {
+            SQLiteDatabase db = mDb;
+            ContentValues values = new ContentValues();
+            values.put("NAME_VAR", name);
+            values.put("DATA_VAR", value);
+            db.replace("CONFIG", null, values);
+        }
+        catch (Exception e)
+        {
+            String s=e.getMessage();
+        }
+    }
+
+    public String GetConfigPair(String name) {
+        Cursor mCur;
+        String value = "";
+        String sql = "SELECT DATA_VAR FROM CONFIG WHERE NAME_VAR = '"+name+"'";
+
+        mCur = mDb.rawQuery(sql, null);
+        if (mCur!=null && mCur.getCount() > 0) {
+            mCur.moveToFirst();
+            value = mCur.getString(0);
+        }
+
+        return value;
     }
 
 
@@ -86,6 +109,7 @@ public class SQLiteAdapter
             String s=e.getMessage();
         }
      }
+
     public int[] GetCountScanCode() {
         int[] varRes = {0,0};
     try
@@ -108,8 +132,8 @@ public class SQLiteAdapter
     }
         return varRes;
     }
-    public boolean LoadDataDoc(String parSQL)
-    {
+
+    public boolean LoadDataDoc(String parSQL)    {
         int varN=mDb.getVersion();
         try {
 
@@ -147,6 +171,48 @@ public class SQLiteAdapter
             return false;
          }
         return true;
+    }
+
+    public HashMap<String,String[]> getPrintBlockItemsCount(String packages){
+        HashMap<String,String[]> data = new HashMap<String,String[]>();
+        Cursor mCur;
+
+        String sql = "select package_number,count(DISTINCT case when action_type in (1,2) then null else code_wares end) as normal,count(DISTINCT case when action_type in (1,2) then code_wares end) as yellow " +
+                "from LogPrice WHERE is_good < 0 AND package_number IN("+packages+") " +
+                "AND date(DT_insert) > date('now','-1 day')" +
+                "GROUP BY package_number";
+
+        mCur = mDb.rawQuery(sql, null);
+
+        if(mCur != null){
+            while (mCur.moveToNext()){
+                data.put(mCur.getString(0),new String[]{mCur.getString(1),mCur.getString(2)});
+            }
+        }
+
+        return data;
+    }
+
+    public List<String> getPrintPackageCodeWares(Integer actionType, Integer packageNumber){
+        Cursor mCur;
+        List<String> data = new ArrayList<String>();
+        String _actionType = "";
+
+        if(actionType == 0)
+            _actionType = "NOT IN(1,2)";
+        else
+            _actionType = "IN(1,2)";
+
+        String sql =   "SELECT DISTINCT code_wares FROM LogPrice WHERE code_wares>0 and package_number ="+packageNumber+" AND is_good < 0 AND date(DT_insert) > date('now','-1 day') AND action_type "+_actionType;
+
+        mCur = mDb.rawQuery(sql, null);
+        if (mCur!=null && mCur.getCount() > 0) {
+            while (mCur.moveToNext()){
+                data.add(mCur.getString(0));
+            }
+        }
+
+        return data;
     }
 
     public List<ArrayList> GetSendData() {
@@ -195,6 +261,7 @@ public class SQLiteAdapter
         }
         return list;
     }
+
     public void AfterSendData() {
         ContentValues cv = new ContentValues();
         cv.put("is_send",1);
@@ -203,65 +270,109 @@ public class SQLiteAdapter
 //        mDb.execSQL(sql);
     }
 
-    public void AddConfigPair(String name, String value) {
-        try {
-            SQLiteDatabase db = mDb;
-            ContentValues values = new ContentValues();
-            values.put("NAME_VAR", name);
-            values.put("DATA_VAR", value);
-            db.replace("CONFIG", null, values);
-        }
-        catch (Exception e)
-        {
-            String s=e.getMessage();
-        }
-    }
 
-    public String GetConfigPair(String name) {
+    public List<DocumentModel> GetDocumentList(int TypeDoc,String parBarCode) {
+
+        List<DocumentModel> model = new ArrayList<DocumentModel>();
         Cursor mCur;
-        String value = "";
-        String sql = "SELECT DATA_VAR FROM CONFIG WHERE NAME_VAR = '"+name+"'";
-
-        mCur = mDb.rawQuery(sql, null);
-        if (mCur!=null && mCur.getCount() > 0) {
-            mCur.moveToFirst();
-            value = mCur.getString(0);
-        }
-
-        return value;
-    }
-
-    public List<DocWaresModel> GetDocWares(String numberDoc,int DocType) {
-        List<DocWaresModel> model = new ArrayList<DocWaresModel>();
-        Cursor mCur;
-        String sql = "SELECT iw.number_doc,iw.code_wares,iw.order_doc,iw.quantity,iw.quantity_old, w.NAME_WARES FROM DOC_WARES iw LEFT JOIN WARES w ON w.CODE_WARES=iw.code_wares WHERE iw.number_doc = '"+numberDoc+"'"+
-                "and type_doc="+DocType+
-                " order by iw.order_doc asc";
+        String sql;
+        if(parBarCode==null||parBarCode.isEmpty())
+            sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+TypeDoc+"'"+
+                    " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)" + (config.IsDebug ? " limit 10" :"");
+        else
+            sql="SELECT DISTINCT d.date_doc,d.type_doc,d.number_doc,d.ext_info,d.name_user,d.bar_code,d.description,d.dt_insert,d.state -- ,bc.BAR_CODE, dw.*\n" +
+                    "FROM DOC d \n" +
+                    "Join DOC_WARES_SAMPLE dw on dw.number_doc=d.number_doc and dw.type_doc=d.type_doc\n" +
+                    "join bar_code bc on dw.code_wares=bc.CODE_WARES\n" +
+                    "WHERE d.type_doc = '"+TypeDoc+"'"+
+                    " AND d.date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)"+
+                    "and bc.BAR_CODE= '"+parBarCode+"'" + (config.IsDebug ? " limit 10" :"");
 
         try {
             //mDb.delete("INVENTORY_WARES", null, null);
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null && mCur.getCount() > 0) {
                 while (mCur.moveToNext()){
-                    DocWaresModel WaresModel = new DocWaresModel();
-                    WaresModel.Number = mCur.getString(0);
-                    WaresModel.CodeWares = mCur.getString(1);
-                    WaresModel.OrderDoc = mCur.getString(2);
-                    WaresModel.Quantity = mCur.getString(3);
-                    WaresModel.OldQuantity = mCur.getString(4);
-                    WaresModel.NameWares = mCur.getString(5);
-                    model.add(WaresModel);
+                    DocumentModel document = new DocumentModel();
+                    document.DateDoc = mCur.getString(0);
+                    document.TypeDoc = mCur.getString(1);
+                    document.NumberDoc = mCur.getString(2);
+                    document.ExtInfo = mCur.getString(3);
+                    document.NameUser = mCur.getString(4);
+                    document.BarCode = mCur.getString(5);
+                    document.Description = mCur.getString(6);
+
+                    //Костиль для вагового товару.
+                    document.WaresType = document.Description.substring(0,1);
+                    document.Description = document.Description.replace(document.WaresType,"");
+
+                    document.DateInsert = mCur.getString(7);
+                    document.State = mCur.getString(8);
+                    model.add(document);
                 }
             }
         }catch (Exception e){
-            e.getMessage();
+            ;            e.getMessage();
         }
 
 
         return model;
     }
 
-    public List<DocWaresModelIncome> GetDocWaresIncome(String number) {
+    public List<WaresItemModel> GetDocWares(int pTypeDoc,String pNumberDoc,int pTypeResult) {
+        List<WaresItemModel> model = new ArrayList<>();
+        Cursor mCur;
+        String sql="";
+        if(pTypeResult==1)
+          sql = " select dw1.order_doc, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
+                "    from Doc d  \n" +
+                "    join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,max(dw.order_doc) as order_doc,sum(quantity_old) as quantity_old from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
+                "    join wares w on dw1.code_wares = w.code_wares \n" +
+                "    left join DOC_WARES_sample dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = w.code_wares\n" +
+                "    where d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
+                " union all\n" + 
+                " select dws.order_doc+100000, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
+                "    from Doc d  \n" +
+                "    join DOC_WARES_sample dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc --and dws.code_wares = w.code_wares\n" +
+                "    join wares w on dws.code_wares = w.code_wares \n" +
+                "    left join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,sum(dw.quantity_old) as quantity_old from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc and dw1.code_wares = w.code_wares)\n" +
+                "    where dw1.type_doc is null and d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
+                " order by 1";
+
+        if(pTypeResult==2)
+            sql="select dw1.order_doc, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old \n" +
+                    "    from Doc d  \n" +
+                    "    join doc_wares dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
+                    "    join wares w on dw1.code_wares = w.code_wares \n" +
+                    "    left join DOC_WARES_sample dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = w.code_wares\n"+
+                    "    where d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
+                    " order by 1";
+
+
+
+        try {
+            mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null && mCur.getCount() > 0) {
+                while (mCur.moveToNext()){
+                    WaresItemModel WaresModel = new WaresItemModel();
+                    WaresModel.OrderDoc = mCur.getInt(0);
+                    WaresModel.CodeWares = mCur.getInt(1);
+                    WaresModel.NameWares = mCur.getString(2);
+                    WaresModel.QuantityOrder = mCur.getDouble(3);
+                    WaresModel.InputQuantity = mCur.getDouble(4);
+                    WaresModel.QuantityMin = mCur.getDouble(5);
+                    WaresModel.QuantityMax=(mCur.getInt(7)==1?mCur.getDouble(6):Double.MAX_VALUE);
+                    WaresModel.QuantityOld=mCur.getDouble(8);
+                    model.add(WaresModel);
+                }
+            }
+        }catch (Exception e){
+            e.getMessage();
+        }
+        return model;
+    }
+
+/*    public List<DocWaresModelIncome> GetDocWaresIncome(String number) {
         List<DocWaresModelIncome> model = new ArrayList<DocWaresModelIncome>();
         Cursor mCur;
         String sql = "select w.CODE_WARES,w.NAME_WARES,dws.quantity,dw.quantity,dws.quantity_min,dws.quantity_max from DOC_WARES_sample dws" +
@@ -288,71 +399,9 @@ public class SQLiteAdapter
         }catch (Exception e){
             e.getMessage();
         }
-
-
         return model;
     }
-
-    public List<DocumentModel> GetDocumentList(String type,String parBarCode) {
-
-        List<DocumentModel> model = new ArrayList<DocumentModel>();
-        Cursor mCur;
-        String sql;
-        if(parBarCode==null||parBarCode.isEmpty())
-         sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+type+"'"+
-                     " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)" + (config.IsDebug ? " limit 10" :"");
-        else
-          sql="SELECT DISTINCT d.date_doc,d.type_doc,d.number_doc,d.ext_info,d.name_user,d.bar_code,d.description,d.dt_insert,d.state -- ,bc.BAR_CODE, dw.*\n" +
-                  "FROM DOC d \n" +
-                  "Join DOC_WARES_SAMPLE dw on dw.number_doc=d.number_doc and dw.type_doc=d.type_doc\n" +
-                  "join bar_code bc on dw.code_wares=bc.CODE_WARES\n" +
-                  "WHERE d.type_doc = '"+type+"'"+
-                  " AND d.date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)"+
-                  "and bc.BAR_CODE= '"+parBarCode+"'" + (config.IsDebug ? " limit 10" :"");
-
-        try {
-            //mDb.delete("INVENTORY_WARES", null, null);
-            mCur = mDb.rawQuery(sql, null);
-            if (mCur!=null && mCur.getCount() > 0) {
-                while (mCur.moveToNext()){
-                    DocumentModel document = new DocumentModel();
-                    document.DateDoc = mCur.getString(0);
-                    document.TypeDoc = mCur.getString(1);
-                    document.NumberDoc = mCur.getString(2);
-                    document.ExtInfo = mCur.getString(3);
-                    document.NameUser = mCur.getString(4);
-                    document.BarCode = mCur.getString(5);
-                    document.Description = mCur.getString(6);
-
-                    //Костиль для вагового товару.
-                    document.WaresType = document.Description.substring(0,1);
-                    document.Description = document.Description.replace(document.WaresType,"");
-
-                    document.DateInsert = mCur.getString(7);
-                    document.State = mCur.getString(8);
-                    model.add(document);
-                }
-            }
-        }catch (Exception e){
-;            e.getMessage();
-        }
-
-
-        return model;
-    }
-
-    public void UpdateDocState(String state, String number){
-        try {
-            SQLiteDatabase db = mDb;
-            ContentValues values = new ContentValues();
-            values.put("state", state);
-            db.update("DOC", values, "number_doc="+number,null);
-        }
-        catch (Exception e)
-        {
-            String s=e.getMessage();
-        }
-    }
+*/
 
     public WaresItemModel GetScanData(int TypeDoc, String DocNumber,String number) {
         WaresItemModel model = null;
@@ -406,11 +455,10 @@ public class SQLiteAdapter
                 mCur = mDb.rawQuery(sql, null);
                 if (mCur != null && mCur.getCount() > 0) {
                     mCur.moveToFirst();
-                    model.QuantityMax=(mCur.getInt(0)==1?mCur.getInt(1):Integer.MAX_VALUE);
+                    model.QuantityMax=(mCur.getInt(0)==1?mCur.getInt(1):Double.MAX_VALUE);
                     model.QuantityOrder=mCur.getInt(2);
-
                 }
-                } catch (Exception e) {
+            } catch (Exception e) {
                 e.getMessage();
             }
 
@@ -419,8 +467,20 @@ public class SQLiteAdapter
         return model;
     }
 
+    public void UpdateDocState(int pState,int pTypeDoc, String pNumberDoc){
+        try {
+            SQLiteDatabase db = mDb;
+            ContentValues values = new ContentValues();
+            values.put("state", pState);
+            db.update("DOC", values, "Type_doc=" + pTypeDoc+" and number_doc="+pNumberDoc,null);
+        }
+        catch (Exception e)
+        {
+            String s=e.getMessage();
+        }
+    }
 
-    public void SetNullableWares(int CodeWares,String parNumberDoc, int parTypeDoc){
+    public void SetNullableWares(int parTypeDoc,String parNumberDoc,int CodeWares ){
         long result = -1;
         String s = "";
         try {
@@ -435,37 +495,17 @@ public class SQLiteAdapter
         }
     }
 
-    public HashMap<String,String[]> getPrintBlockItemsCount(String packages){
-        HashMap<String,String[]> data = new HashMap<String,String[]>();
-        Cursor mCur;
-
-        String sql = "select package_number,count(DISTINCT case when action_type in (1,2) then null else code_wares end) as normal,count(DISTINCT case when action_type in (1,2) then code_wares end) as yellow " +
-                "from LogPrice WHERE is_good < 0 AND package_number IN("+packages+") " +
-                "AND date(DT_insert) > date('now','-1 day')" +
-                "GROUP BY package_number";
-
-        mCur = mDb.rawQuery(sql, null);
-
-        if(mCur != null){
-            while (mCur.moveToNext()){
-                data.put(mCur.getString(0),new String[]{mCur.getString(1),mCur.getString(2)});
-            }
-        }
-
-        return data;
-    }
-
-    public ArrayList SaveDocWares(Double Quantity, int OrderDoc, int codeWares, String parNumberDoc, int parTypeDoc){
+    public ArrayList SaveDocWares(int pTypeDoc,String pNumberDoc,int pCodeWares, int pOrderDoc, Double pQuantity ){
         long result = -1;
         String s = "";
         try {
             SQLiteDatabase db = mDb;
             ContentValues values = new ContentValues();
-            values.put("type_doc", parTypeDoc);
-            values.put("number_doc", parNumberDoc);
-            values.put("code_wares", codeWares);
-            values.put("order_doc", OrderDoc);
-            values.put("quantity", Quantity);
+            values.put("type_doc", pTypeDoc);
+            values.put("number_doc", pNumberDoc);
+            values.put("code_wares", pCodeWares);
+            values.put("order_doc", pOrderDoc);
+            values.put("quantity", pQuantity);
             values.put("quantity_old", 0);
             result = db.insert("DOC_WARES", null, values);
         }
@@ -483,26 +523,5 @@ public class SQLiteAdapter
         }};
     }
 
-    public List<String> getPrintPackageCodeWares(Integer actionType, Integer packageNumber){
-        Cursor mCur;
-        List<String> data = new ArrayList<String>();
-        String _actionType = "";
-
-        if(actionType == 0)
-            _actionType = "NOT IN(1,2)";
-        else
-            _actionType = "IN(1,2)";
-
-        String sql =   "SELECT DISTINCT code_wares FROM LogPrice WHERE code_wares>0 and package_number ="+packageNumber+" AND is_good < 0 AND date(DT_insert) > date('now','-1 day') AND action_type "+_actionType;
-
-        mCur = mDb.rawQuery(sql, null);
-        if (mCur!=null && mCur.getCount() > 0) {
-            while (mCur.moveToNext()){
-                data.add(mCur.getString(0));
-            }
-        }
-
-        return data;
-    }
 
 }

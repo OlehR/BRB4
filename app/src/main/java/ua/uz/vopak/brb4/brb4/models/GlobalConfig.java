@@ -28,7 +28,7 @@ public class GlobalConfig extends AbstractConfig {
     private String Url="195.16.78.134";
     private int Port=7654;
     private String PathApi="/api/api_v1_utf8.php";
-    public String VerBRB="4.01.01";
+    public String VerBRB="4.01.03";
 
 
     public String Login = "nov";

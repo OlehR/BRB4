@@ -174,9 +174,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 }
             }).execute();
         }
-
-
-
     }
 
 
@@ -184,70 +181,39 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     public boolean dispatchKeyEvent(KeyEvent event) {
         Intent i;
         String keyCode = String.valueOf(event.getKeyCode());
+        if(event.getAction() == KeyEvent.ACTION_UP) {
 
-        if((keyCode.equals("19") || keyCode.equals("20")) && event.getAction() == KeyEvent.ACTION_UP){
-
-            if(current > 0 && keyCode.equals("19") && menuItems[current-1].isEnabled()){
-                current--;
+            switch (keyCode)
+            {
+                case "19":
+                    current--;
+                    break;
+                case "20":
+                    current++;
+                    break;
+                case "285":
+                    menuItems[current].callOnClick();
+                    break;
+                case "131":
+                    i = new Intent(this, PriceCheckerActivity.class);
+                    startActivity(i);
+                    break;
+                default:
+                    if(Integer.valueOf(keyCode)>=132 && Integer.valueOf(keyCode)<=137)
+                    {
+                        i = new Intent(this, DocumentActivity.class);
+                        i.putExtra("document_type", Integer.valueOf(keyCode)-131);
+                        startActivity(i);
+                    }
             }
-
-            if(current < 3 && keyCode.equals("20") && menuItems[current+1].isEnabled()){
-                current++;
-            }
         }
-
-        if(keyCode.equals("285") && event.getAction() == KeyEvent.ACTION_UP){
-            menuItems[current].callOnClick();
-        }
-
-        if(keyCode.equals("131") && event.getAction() == KeyEvent.ACTION_UP){
-            i = new Intent(this, PriceCheckerActivity.class);
-            startActivity(i);
-        }
-
-        if(keyCode.equals("132") && event.getAction() == KeyEvent.ACTION_UP){
-            i = new Intent(this, DocumentActivity.class);
-            i.putExtra("document_type", "1");
-            startActivity(i);
-        }
-
-        if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
-            i = new Intent(this, DocumentActivity.class);
-            i.putExtra("document_type", "2");
-            startActivity(i);
-        }
-
-        if(keyCode.equals("134") && event.getAction() == KeyEvent.ACTION_UP){
-            i = new Intent(this, DocumentActivity.class);
-            i.putExtra("document_type", "3");
-            startActivity(i);
-        }
-
-        if(keyCode.equals("135") && event.getAction() == KeyEvent.ACTION_UP){
-            i = new Intent(this, DocumentActivity.class);
-            i.putExtra("document_type", "4");
-            startActivity(i);
-        }
-
-        if(keyCode.equals("136") && event.getAction() == KeyEvent.ACTION_UP){
-            i = new Intent(this, DocumentActivity.class);
-            i.putExtra("document_type", "5");
-            startActivity(i);
-        }
-
-        if(keyCode.equals("137") && event.getAction() == KeyEvent.ACTION_UP){
-            i = new Intent(this, DocumentActivity.class);
-            i.putExtra("document_type", "6");
-            startActivity(i);
-        }
-
         return super.dispatchKeyEvent(event);
     }
 
     @Override
     public void onClick(View v) {
         Intent i;
-
+        int Id=v.getId();
         switch (v.getId()) {
             case R.id.PriceCheker:
                 i = new Intent(this, PriceCheckerActivity.class);
@@ -255,32 +221,32 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.Revision:
                 i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", "1");
+                i.putExtra("document_type", 1);
                 startActivity(i);
                 break;
             case R.id.Incom:
                 i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", "2");
+                i.putExtra("document_type", 2);
                 startActivity(i);
                 break;
             case R.id.Moving:
                 i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", "3");
+                i.putExtra("document_type", 3);
                 startActivity(i);
                 break;
             case R.id.Write_off:
                 i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", "4");
+                i.putExtra("document_type", 4);
                 startActivity(i);
                 break;
             case R.id.Returning:
                 i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", "5");
+                i.putExtra("document_type", 5);
                 startActivity(i);
                 break;
             case R.id.Expenditure:
                 i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", "6");
+                i.putExtra("document_type", 6);
                 startActivity(i);
                 break;
         }

@@ -18,6 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -26,9 +30,8 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
-import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
-import ua.uz.vopak.brb4.brb4.models.DocWaresModel;
+import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener, IIncomeRender {
     LinearLayout tl;
@@ -38,7 +41,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     Button btn, btnSave;
     String number;
     int documentType;
-    List<DocWaresModel> InventoryItems;
+    //List<DocWaresModel> InventoryItems;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
     GlobalConfig config = GlobalConfig.instance();
@@ -62,7 +65,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.GetDoc(number,documentType,(IIncomeRender) context);
+                config.Worker.GetDoc(documentType,number,1,(IIncomeRender) context);
                 return null;
             }
         }).execute();
@@ -71,56 +74,53 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         String keyCode = String.valueOf(event.getKeyCode());
-
-        if(keyCode.equals("134") && event.getAction() == KeyEvent.ACTION_UP){
-            Intent i = new Intent(this, DocumentScannerActivity.class);
-            i.putExtra("inv_number",number);
-            i.putExtra("InventoryItems",(Serializable)InventoryItems);
-            i.putExtra("document_type",documentType);
-            startActivityForResult(i,1);
+        if(event.getAction() == KeyEvent.ACTION_UP) {
+            switch (keyCode) {
+                case "134":
+                    ExecuteDocumentScannerActivity();
+                    break;
+                case "133":
+                    new AsyncHelper<Void>(new IAsyncHelper() {
+                        @Override
+                        public Void Invoke() {
+                            config.Worker.UpdateDocState(1, documentType, number, (Activity) context);
+                            return null;
+                        }
+                    }).execute();
+                    break;
+                case "15":
+                    selectNext();
+                    selectItem();
+                    break;
+                case "9":
+                    selectPrev();
+                    selectItem();
+                    break;
+            }
         }
-
-        if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
-            //new AsyncUpdateDocState(GlobalConfig.instance().GetWorker(),this).execute("1",number,documentType);
-            new AsyncHelper<Void>(new IAsyncHelper() {
-                @Override
-                public Void Invoke() {
-                    config.Worker.UpdateDocState("1",number, documentType,(Activity) context);
-                    return null;
-                }
-            }).execute();
-        }
-
-        if(keyCode.equals("15") && event.getAction() == KeyEvent.ACTION_UP){
-            selectNext();
-            selectItem();
-        }
-
-        if(keyCode.equals("9") && event.getAction() == KeyEvent.ACTION_UP){
-            selectPrev();
-            selectItem();
-        }
-
         return super.dispatchKeyEvent(event);
+    }
+
+    public void ExecuteDocumentScannerActivity() {
+        Intent i = new Intent(this, DocumentScannerActivity.class);
+        i.putExtra("inv_number",number);
+        //i.putExtra("order_doc",InventoryItems.get(InventoryItems.size() - 1).OrderDoc);
+        //i.putExtra("InventoryItems",(Serializable)InventoryItems);
+        i.putExtra("document_type",documentType);
+        startActivity(i);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.F4:
-                Intent i = new Intent(this, DocumentScannerActivity.class);
-                i.putExtra("inv_number",number);
-                i.putExtra("order_doc",InventoryItems.get(InventoryItems.size() - 1).OrderDoc);
-                //i.putExtra("InventoryItems",(Serializable)InventoryItems);
-                i.putExtra("document_type",documentType);
-                startActivity(i);
+                ExecuteDocumentScannerActivity();
                 break;
             case R.id.F3:
-                //new AsyncUpdateDocState(GlobalConfig.instance().GetWorker(),this).execute("1",number,documentType);
                 new AsyncHelper<Void>(new IAsyncHelper() {
                     @Override
                     public Void Invoke() {
-                        config.Worker.UpdateDocState("1",number, documentType,(Activity) context);
+                        config.Worker.UpdateDocState(1,documentType,number, (Activity) context);
                         return null;
                     }
                 }).execute();
@@ -130,25 +130,28 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number,documentType);
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.GetDoc(number,documentType,(IIncomeRender) context);
+                config.Worker.GetDoc(documentType,number,1,(IIncomeRender) context);
                 return null;
             }
         }).execute();
     }
 
-    public void renderTable(final List<DocWaresModel> model){
-        InventoryItems = model;
+    public void renderTable(final List<WaresItemModel> model){
+        if(documentType==2)
+        {
+            RenderTableIncome(model);
+            return;
+        }
+        //InventoryItems = model;
         final DocumentItemsActivity context = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
                 tl.removeAllViews();
-
                 try {
                     int dpValue = 5;
                     float d = context.getResources().getDisplayMetrics().density;
@@ -169,7 +172,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     }
                     else {
                         padding = (int)(3 * d);
-                        for (DocWaresModel item : model) {
+                        for (WaresItemModel item : model) {
 
                             LinearLayout tl0 = new LinearLayout(context);
                             tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -195,7 +198,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             tr2.setWeightSum(2f);
 
                             TextView Date = new TextView(context);
-                            Date.setText(item.Number);
+                            Date.setText(item.GetOrderDoc());
                             Date.setTextColor(Color.parseColor("#000000"));
                             tr.addView(Date);
 
@@ -207,7 +210,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             Date.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
                             TextView NumberInv = new TextView(context);
-                            NumberInv.setText(item.CodeWares);
+                            NumberInv.setText(item.GetCodeWares());
                             NumberInv.setTextColor(Color.parseColor("#000000"));
                             NumberInv.setTag("number_inv");
                             tr.addView(NumberInv);
@@ -233,7 +236,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             ExtInfo.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
                             TextView UserName = new TextView(context);
-                            UserName.setText("к-ст: " + item.Quantity);
+                            UserName.setText("к-ст: " + item.GetInputQuantity());
                             UserName.setTextColor(Color.parseColor("#000000"));
                             tr2.addView(UserName);
 
@@ -245,7 +248,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
 
                             TextView OldQuantity = new TextView(context);
-                            OldQuantity.setText("ст.к-сть: " + item.OldQuantity);
+                            OldQuantity.setText("ст.к-сть: " + item.GetQuantityOld());
                             OldQuantity.setTextColor(Color.parseColor("#000000"));
                             tr2.addView(OldQuantity);
 
@@ -295,13 +298,13 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         });
     }
 
-    public void RenderTableIncome(final List<DocWaresModelIncome> model, List<DocWaresModel> inventoryModel){
+    public void RenderTableIncome(final List<WaresItemModel> model){
 
         if(model.size() == 0)
             return;
 
         final DocumentItemsActivity context = this;
-        InventoryItems = inventoryModel;
+        //InventoryItems = inventoryModel;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -386,7 +389,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
                 try {
 
-                    for (DocWaresModelIncome item : model) {
+                    for (WaresItemModel item : model) {
 
                         LinearLayout tl0 = new LinearLayout(context);
                         tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -401,7 +404,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                         tr1.setWeightSum(7f);
 
                         TextView CodeWares = new TextView(context);
-                        CodeWares.setText(item.CodeWares);
+                        CodeWares.setText(item.GetCodeWares());
                         CodeWares.setTextColor(Color.parseColor("#000000"));
                         tr.addView(CodeWares);
 
@@ -413,7 +416,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                         CodeWares.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
                         TextView QuantityOrdered = new TextView(context);
-                        QuantityOrdered.setText(item.QuantityOrdered.toString());
+                        QuantityOrdered.setText(item.GetQuantityOrder());
                         QuantityOrdered.setTextColor(Color.parseColor("#000000"));
                         tr.addView(QuantityOrdered);
 
@@ -425,7 +428,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                         QuantityOrdered.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
                         TextView QuantityIncomed = new TextView(context);
-                        QuantityIncomed.setText(item.QuantityIncoming.toString());
+                        QuantityIncomed.setText(item.GetInputQuantity());
                         QuantityIncomed.setTextColor(Color.parseColor("#000000"));
                         tr.addView(QuantityIncomed);
 
@@ -480,9 +483,32 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         });
     }
 
-    public void AfterSave(int DocumentType){
-        Intent i = new Intent(this,DocumentActivity.class);
-        i.putExtra("document_type", DocumentType);
+    public void AfterSave(final String pMessage) {
+        JSONObject jObject;
+        String vMessage="Документ успішно збережено!!!\n";
+        try {
+            jObject = new JSONObject(pMessage);
+            if( jObject.getInt("State")!=0)
+                vMessage="Помилка збереження документа:\n"+jObject.getString("TextError");
+            else
+                if(documentType==2)
+                  vMessage+=jObject.getString("Info");
+        } catch (JSONException e) {
+            vMessage="Помилка збереження документа:\n"+pMessage;
+            e.printStackTrace();
+        }
+
+        final String Message=vMessage;
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Context context = getApplicationContext();
+                Toast toast = Toast.makeText(context, Message, Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+        Intent i = new Intent(this, DocumentActivity.class);
+        i.putExtra("document_type", documentType);
         this.finish();
         startActivity(i);
     }
