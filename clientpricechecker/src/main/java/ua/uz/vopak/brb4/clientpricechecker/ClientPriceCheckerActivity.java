@@ -202,7 +202,7 @@ public class ClientPriceCheckerActivity extends Activity {
 
     public void setScanResult(LabelInfo Li){
         Title.setText(Li.Name);
-        BarCodeView.setText(Li.BarCode);
+        BarCodeView.setText(Li.BarCode.get());
         Article.setText(Li.Article);
         PriceBill.setText(((Integer)Li.PriceBill).toString());
         PriceCoin.setText(Li.strPriceCoin() + " " + Li.Unit);
@@ -216,7 +216,7 @@ public class ClientPriceCheckerActivity extends Activity {
             OptPriceBlock.setVisibility(View.INVISIBLE);
         }
 
-        if(Li.Action){
+        if(Li.Action()){
             ActionView.setVisibility(View.VISIBLE);
         }else {
             ActionView.setVisibility(View.INVISIBLE);

@@ -3,11 +3,11 @@ package ua.uz.vopak.brb4.brb4;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -23,10 +23,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
-import ua.uz.vopak.brb4.brb4.enums.MessageType;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.lib.enums.MessageType;
+import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
-import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
@@ -357,7 +357,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack,
                 for (int j = 0; j < trc.getChildCount(); j++) {
                     TextView vI = (TextView)trc.getChildAt(j);
                     vI.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_alert));
-                    vI.setTextColor(getResources().getColor(R.color.messageAlert));
+                    vI.setTextColor(ContextCompat.getColor(context,R.color.messageAlert));
                 }
             }else{
                 trc.setTag(null);

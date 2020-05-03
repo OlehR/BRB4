@@ -91,18 +91,19 @@ public class SQLiteAdapter
         return value;
     }
 
-
-    public void InsLogPrice(String parBarCode,Integer parIsGood, Integer actionType, Integer packageNumber, Integer codeWarees) {
+    public void InsLogPrice(String pBarCode,Integer pStatus, Integer pActionType, Integer pPackageNumber, Integer pCodeWarees,String pArticle,Integer pLineNumber) {
         try {
             SQLiteDatabase db = mDb;
             ContentValues values = new ContentValues();
-            values.put("bar_code", parBarCode);
-            values.put("is_good", parIsGood);
-            values.put("action_type", actionType);
-            values.put("package_number", packageNumber);
-            values.put("code_wares", codeWarees);
+            values.put("bar_code", pBarCode);
+            values.put("Status", pStatus);
+            values.put("action_type", pActionType);
+            values.put("package_number", pPackageNumber);
+            values.put("code_wares", pCodeWarees);
+            values.put("Line_Number", pLineNumber);
+            values.put("Article", pArticle);
+
             db.insert("LogPrice", null, values);
-            //db.close();
         }
         catch (Exception e)
         {
@@ -114,7 +115,7 @@ public class SQLiteAdapter
         int[] varRes = {0,0};
     try
     {
-        String sql ="select count(*),sum(case when is_good=0 then 1 else 0 end) from   LogPrice where is_send=0";
+        String sql ="select count(*),sum(case when Status=0 then 1 else 0 end) from   LogPrice where is_send=0";
 
         Cursor mCur = mDb.rawQuery(sql, null);
         if (mCur!=null)
@@ -136,34 +137,27 @@ public class SQLiteAdapter
     public boolean LoadDataDoc(String parSQL)    {
         int varN=mDb.getVersion();
         try {
-
-           //mDb.execSQL("delete from wares");
-
-            String sql ="select count(*) from   bar_code";
+            /*String sql ="select count(*) from  bar_code";
 
             Cursor mCur = mDb.rawQuery(sql, null);
             if (mCur!=null) {
                 mCur.moveToFirst();
                 varN = mCur.getInt(0);
-            }
+            }*/
 
             String[] varS=parSQL.split(";;;");
             for(int i=0;i<varS.length;i++)
             {
-
                 if(varS[i].trim() != null && !varS[i].trim().isEmpty() && varS[i].length()>10)
                     mDb.execSQL(varS[i]);
             }
-
-
+/*
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null) {
                 mCur.moveToFirst();
                 varN = mCur.getInt(0);
             }
-            int i=varN++;
-
-
+            int i=varN++;*/
         }
         catch (SQLException mSQLException)
         {
@@ -173,23 +167,20 @@ public class SQLiteAdapter
         return true;
     }
 
-    public HashMap<String,String[]> getPrintBlockItemsCount(String packages){
+    public HashMap<String,String[]> getPrintBlockItemsCount(){
         HashMap<String,String[]> data = new HashMap<String,String[]>();
         Cursor mCur;
 
         String sql = "select package_number,count(DISTINCT case when action_type in (1,2) then null else code_wares end) as normal,count(DISTINCT case when action_type in (1,2) then code_wares end) as yellow " +
-                "from LogPrice WHERE is_good < 0 AND package_number IN("+packages+") " +
-                "AND date(DT_insert) > date('now','-1 day')" +
+                "from LogPrice WHERE  Status< 0 AND date(DT_insert) > date('now','-1 day') " +
                 "GROUP BY package_number";
 
         mCur = mDb.rawQuery(sql, null);
-
         if(mCur != null){
             while (mCur.moveToNext()){
                 data.put(mCur.getString(0),new String[]{mCur.getString(1),mCur.getString(2)});
             }
         }
-
         return data;
     }
 
@@ -197,13 +188,13 @@ public class SQLiteAdapter
         Cursor mCur;
         List<String> data = new ArrayList<String>();
         String _actionType = "";
-
         if(actionType == 0)
-            _actionType = "NOT IN(1,2)";
+            _actionType = " AND action_type NOT IN(1,2)";
         else
-            _actionType = "IN(1,2)";
+            if(actionType == 1)
+                _actionType = " AND action_type IN(1,2)";
 
-        String sql =   "SELECT DISTINCT code_wares FROM LogPrice WHERE code_wares>0 and package_number ="+packageNumber+" AND is_good < 0 AND date(DT_insert) > date('now','-1 day') AND action_type "+_actionType;
+        String sql = "SELECT DISTINCT code_wares FROM LogPrice WHERE code_wares>0 and package_number ="+packageNumber+" AND Status < 0 AND date(DT_insert) > date('now','-1 day')"+_actionType;
 
         mCur = mDb.rawQuery(sql, null);
         if (mCur!=null && mCur.getCount() > 0) {
@@ -211,15 +202,13 @@ public class SQLiteAdapter
                 data.add(mCur.getString(0));
             }
         }
-
         return data;
     }
 
-    public List<ArrayList> GetSendData() {
-        int[] varRes = {0,0};
+    public List<LogPrice> GetSendData() {
         int varN;
         Cursor mCur;
-        List<ArrayList> list = new ArrayList<ArrayList>();
+        List<LogPrice> list = new ArrayList<>();
         try
         {
             String sql ="select count(*) from   LogPrice where is_send=-1";
@@ -237,22 +226,16 @@ public class SQLiteAdapter
                 }
             }
 
-            sql ="select bar_code,is_good,DT_insert from LogPrice where is_send=-1";
+            sql ="select bar_code,Status,DT_insert,package_number,is_send,action_type,code_wares,article,Line_Number,Number_Of_Replenishment from LogPrice where is_send=-1";
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null)
             {
-                //mCur.moveToFirst() ;
-                while (mCur.moveToNext()){
-                    ArrayList row = new ArrayList();
-                    row.add(mCur.getString(0));
-                    row.add(mCur.getInt(1));
-                    row.add(mCur.getString(2));
-                    row.add(config.NumberPackege);
-
-                    list.add(row);
+                mCur.moveToFirst() ;
+                while (mCur.moveToNext())
+                { LogPrice el = new LogPrice(mCur);
+                    list.add(el);
                 }
             }
-
         }
         catch (SQLException mSQLException)
         {
@@ -266,11 +249,22 @@ public class SQLiteAdapter
         ContentValues cv = new ContentValues();
         cv.put("is_send",1);
         mDb.update("LogPrice",cv,"is_send=-1",null);
-//        String sql = "UPDATE LogPrice SET is_send=1 WHERE is_send=-1";
-//        mDb.execSQL(sql);
+    }
+    public void UpdateReplenishment(int pLineNumber,double pNumberOfReplenishment){
+        try {
+            ContentValues values = new ContentValues();
+            values.put("Number_Of_Replenishment", pNumberOfReplenishment);
+            mDb.update("LogPrice", values, " date('now','-1 day') and is_send=0 and Line_Number=" + pLineNumber,null);
+        }
+        catch (Exception e)
+        {
+            String s=e.getMessage();
+        }
+
     }
 
 
+    //Робота з документами.
     public List<DocumentModel> GetDocumentList(int TypeDoc,String parBarCode) {
 
         List<DocumentModel> model = new ArrayList<DocumentModel>();
@@ -301,11 +295,9 @@ public class SQLiteAdapter
                     document.NameUser = mCur.getString(4);
                     document.BarCode = mCur.getString(5);
                     document.Description = mCur.getString(6);
-
                     //Костиль для вагового товару.
                     document.WaresType = document.Description.substring(0,1);
                     document.Description = document.Description.replace(document.WaresType,"");
-
                     document.DateInsert = mCur.getString(7);
                     document.State = mCur.getString(8);
                     model.add(document);
@@ -314,8 +306,6 @@ public class SQLiteAdapter
         }catch (Exception e){
             ;            e.getMessage();
         }
-
-
         return model;
     }
 
@@ -371,37 +361,6 @@ public class SQLiteAdapter
         }
         return model;
     }
-
-/*    public List<DocWaresModelIncome> GetDocWaresIncome(String number) {
-        List<DocWaresModelIncome> model = new ArrayList<DocWaresModelIncome>();
-        Cursor mCur;
-        String sql = "select w.CODE_WARES,w.NAME_WARES,dws.quantity,dw.quantity,dws.quantity_min,dws.quantity_max from DOC_WARES_sample dws" +
-                " join wares w on dws.code_wares = w.code_wares " +
-                " left join (select code_wares, sum(quantity) as quantity  from doc_wares dw where dw.number_doc="+ number +" group by code_wares) dw on dws.code_wares = dw.code_wares " +
-                " where dws.number_doc="+number +
-                " order by dws.order_doc";
-
-        try {
-            //mDb.delete("INVENTORY_WARES", null, null);
-            mCur = mDb.rawQuery(sql, null);
-            if (mCur!=null && mCur.getCount() > 0) {
-                while (mCur.moveToNext()){
-                    DocWaresModelIncome WaresModel = new DocWaresModelIncome();
-                    WaresModel.CodeWares = mCur.getString(0);
-                    WaresModel.NameWares = mCur.getString(1);
-                    WaresModel.QuantityOrdered = mCur.getFloat(2);
-                    WaresModel.QuantityIncoming = mCur.getFloat(3);
-                    WaresModel.QuantityMin =  mCur.getFloat(4);
-                    WaresModel.QuantityMax =  mCur.getFloat(5);
-                    model.add(WaresModel);
-                }
-            }
-        }catch (Exception e){
-            e.getMessage();
-        }
-        return model;
-    }
-*/
 
     public WaresItemModel GetScanData(int TypeDoc, String DocNumber,String number) {
         WaresItemModel model = null;

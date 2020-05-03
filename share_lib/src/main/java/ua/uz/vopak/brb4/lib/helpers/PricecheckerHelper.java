@@ -1,10 +1,19 @@
 package ua.uz.vopak.brb4.lib.helpers;
 
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class PricecheckerHelper {
     private GetDataHTTP Http = new GetDataHTTP();
-    public LabelInfo getPriceCheckerData(LabelInfo LI, String BarCode, boolean isHandInput, AbstractConfig config){
+    public LabelInfo getPriceCheckerData(LabelInfo LI, String BarCode, boolean isHandInput, AbstractConfig config) {
+        if(config.Company== eCompany.SparPSU||config.Company==eCompany.VopakPSU)
+            return getPriceCheckerDataPSU(  LI,  BarCode,  isHandInput,  config);
+        else if(config.Company== eCompany.SevenEleven)
+            return getPriceCheckerDataSevenEleven(LI,  BarCode,  isHandInput,  config);
+        return LI;
+    }
+
+    public LabelInfo getPriceCheckerDataPSU(LabelInfo LI, String BarCode, boolean isHandInput, AbstractConfig config){
         String CodeWares = "";
 
         LI.OldPrice =0;
@@ -55,8 +64,28 @@ public class PricecheckerHelper {
         LI.resHttp = Http.HTTPRequest(config.getApiUrl(), data);
         //resHttp = resHttp.replace("&amp;", "&");
         //Call Progres 50%;
-        LI.InfoHTTP = Http.HttpState.name();
+        //LI.InfoHTTP = Http.HttpState.name();
+        LI.HttpState=Http.HttpState;
 
         return LI;
     }
+
+
+    public LabelInfo getPriceCheckerDataSevenEleven(LabelInfo LI, String BarCode, boolean isHandInput, AbstractConfig config){
+        String vCode = null;
+        LI.OldPrice =0;
+
+        if (BarCode.substring(0,2) =="29"|| BarCode.length()<8 ) {
+            vCode=BarCode.substring(2,6);
+            LI.OldPrice=Integer.valueOf( BarCode.substring(7,5));
+            }
+            else
+            vCode=BarCode;
+
+        LI.resHttp = Http.HTTPRequest(config.ApiUrl+"PriceTagInfo?code="+vCode, null);
+        LI.HttpState=Http.HttpState;
+        return LI;
+    }
+
+    public String HttpState() {return Http.HttpState.name();}
 }

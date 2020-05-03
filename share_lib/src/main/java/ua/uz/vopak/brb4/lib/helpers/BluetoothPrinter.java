@@ -1,4 +1,4 @@
-package ua.uz.vopak.brb4.brb4.helpers;
+package ua.uz.vopak.brb4.lib.helpers;
 
 
 import java.io.*;
@@ -8,34 +8,38 @@ import java.util.*;
 import android.bluetooth.*;
 import android.os.Handler;
 
-import ua.uz.vopak.brb4.brb4.enums.ePrinterError;
-import ua.uz.vopak.brb4.brb4.enums.TypePrinter;
+import ua.uz.vopak.brb4.lib.enums.ePrinterError;
+import ua.uz.vopak.brb4.lib.enums.eTypePrinter;
 import ua.uz.vopak.brb4.lib.enums.TypeLanguagePrinter;
 
 public class BluetoothPrinter {
     BluetoothAdapter mBluetoothAdapter;
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice = null;
-    public TypePrinter varTypePrinter = TypePrinter.NotDefined;
+    public eTypePrinter varTypePrinter = eTypePrinter.NotDefined;
     public ePrinterError varPrinterError= ePrinterError.NotInit;
     // needed for communication to bluetooth device / network
     OutputStream mmOutputStream;
     InputStream mmInputStream;
     Thread workerThread;
-
+    AbstractConfig config;
     byte[] readBuffer;
     int readBufferPosition;
     volatile boolean stopWorker;
 
-    TypeLanguagePrinter GetTypeLanguagePrinter()
-    {
-        if(varTypePrinter==TypePrinter.Argox_3230)
+    public BluetoothPrinter(AbstractConfig pConfig)  {config= pConfig;}
+
+    public TypeLanguagePrinter GetTypeLanguagePrinter()    {
+        //Для вилка бо не прошитий Argox потрібними шрифтами.
+        if(varTypePrinter== eTypePrinter.Argox_3230 && Integer.parseInt(config.CodeWarehouse)==89)
+            return  TypeLanguagePrinter.ZPL; //TypeLanguagePrinter.ZPL;
+        if(varTypePrinter== eTypePrinter.Argox_3230)
             return  TypeLanguagePrinter.ZPL_ARGOX; //TypeLanguagePrinter.ZPL;
-        if(varTypePrinter==TypePrinter.Zebra_QLn320)
+        if(varTypePrinter== eTypePrinter.Zebra_QLn320)
             return TypeLanguagePrinter.ZPL_ZEBRA;
-        if(varTypePrinter==TypePrinter.Godex_MX20)
+        if(varTypePrinter== eTypePrinter.Godex_MX20)
             return TypeLanguagePrinter.EZPL;
-        if(varTypePrinter==TypePrinter.Sewoo_LK_P34)
+        if(varTypePrinter== eTypePrinter.Sewoo_LK_P34)
             return TypeLanguagePrinter.ZPL_SEWOO;//CPCL_SEWOO; //ZPL_ZEBRA;//TypeLanguagePrinter.CPCL_SEWOO;
         return TypeLanguagePrinter.NotDefined;
 
@@ -82,24 +86,24 @@ public class BluetoothPrinter {
                         case "Argox 3230":
                         case "00:0A:3A:32:1B:F1":
                         case "Argox AME-3230B":
-                            varTypePrinter=TypePrinter.Argox_3230;
+                            varTypePrinter= eTypePrinter.Argox_3230;
                             break;
                         case "MX20":
                         case "Godex MX20":
-                            varTypePrinter=TypePrinter.Godex_MX20;
+                            varTypePrinter= eTypePrinter.Godex_MX20;
                             break;
                         case "LK-P34":
-                            varTypePrinter=TypePrinter.Sewoo_LK_P34;
+                            varTypePrinter= eTypePrinter.Sewoo_LK_P34;
                             break;
                         case "QLn320":
                         default:
-                            varTypePrinter=TypePrinter.Zebra_QLn320;
+                            varTypePrinter= eTypePrinter.Zebra_QLn320;
 
                     }
 
 
 //                    if (device.getName().equals("RPP300")) {
-                    if(varTypePrinter!= TypePrinter.NotDefined)
+                    if(varTypePrinter!= eTypePrinter.NotDefined)
                     {
                      mmDevice = device;
                      break;
@@ -125,7 +129,7 @@ public class BluetoothPrinter {
 
             //mmSocket = (BluetoothSocket)m.invoke(mmDevice, Integer.valueOf(1));
             //Гребана магія з принтером Sewoo_LK_P34
-            if(varTypePrinter==TypePrinter.Sewoo_LK_P34)
+            if(varTypePrinter== eTypePrinter.Sewoo_LK_P34)
               mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
             else
               mmSocket = (BluetoothSocket)m.invoke(mmDevice, Integer.valueOf(1));
@@ -217,10 +221,9 @@ public class BluetoothPrinter {
         }
     }
 
-
     public void sendData(byte[] msg) throws IOException {
         try {
-            if(varTypePrinter != TypePrinter.NotDefined && varPrinterError== ePrinterError.None)
+            if(varTypePrinter != eTypePrinter.NotDefined && varPrinterError== ePrinterError.None)
                 mmOutputStream.write(msg);
             // tell the user data were sent
             //myLabel.setText("Data sent.");

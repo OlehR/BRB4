@@ -1,5 +1,6 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
+import android.app.Activity;
 import android.content.Intent;
 
 import org.json.JSONObject;
@@ -7,69 +8,86 @@ import org.json.JSONObject;
 import ua.uz.vopak.brb4.brb4.AuthActivity;
 import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.MessageActivity;
-import ua.uz.vopak.brb4.brb4.enums.MessageType;
+import ua.uz.vopak.brb4.lib.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
+import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
+import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
+import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
 public class AuterizationsHelper {
     GlobalConfig config = GlobalConfig.instance();
-    //Заготовка для авторизації по токену
-    //private static String token = null;
-    AuthActivity activity;
+    GetDataHTTP Http=new GetDataHTTP();
 
-    public AuterizationsHelper Start(String data){
+    public boolean Login(Activity pActivity,final String pLogin,final String pPassWord)
+    {
+        if(config.Company== eCompany.SparPSU||config.Company==eCompany.VopakPSU)
+            return LoginPSU( pActivity,pLogin,pPassWord);
+        else if(config.Company== eCompany.SevenEleven)
+            return LoginSevenEleven(pActivity,pLogin,pPassWord);
+        return false;
+    }
+    public boolean LoginSevenEleven(Activity activity,final String pLogin,final String pPassWord) {
 
-        String result = new GetDataHTTP().HTTPRequest(config.ApiUrl, data);
-
-        if(result.equals("")){
-            Intent i = new Intent(activity, MessageActivity.class);
-            i.putExtra("messageHeader","Ви не підключені до мережі Вопак");
-            i.putExtra("message","");
-            i.putExtra("type",MessageType.ErrorMessage);
-            activity.startActivityForResult(i,1);
+        String res=Http.HTTPRequest(config.ApiUrl+"warehouse",null,"application/json;charset=utf-8",pLogin,pPassWord);
+        if(Http.HttpState== eStateHTTP.HTTP_UNAUTHORIZED || Http.HttpState== eStateHTTP.HTTP_Not_Define_Error)
+        {
+            MessageError(activity, "Неправильний логін або пароль","");
+            return false;
         }
+        else
+        if(Http.HttpState!= eStateHTTP.HTTP_OK) {
+            MessageError(activity, "Ви не підключені до мережі " + config.Company.name(), "");
+            return false;
+        }
+
+        ExecuteMainActivity(activity,pLogin,pPassWord);
+        return true;
+    }
+
+
+    public boolean LoginPSU(Activity activity,final String pLogin,final String pPassWord) {
+        final String data = "{\"CodeData\": \"1\"" + ", \"Login\": \"" + pLogin + "\"" + ", \"PassWord\": \"" + pPassWord + "\"}";
+        String result = Http.HTTPRequest(config.ApiUrl, data);
+
+
+        if (result.equals(""))
+            MessageError(activity, "Ви не підключені до мережі " + config.Company.name(), "");
+        else
 
         try {
             JSONObject jObject = new JSONObject(result);
-
             if(jObject.getInt("State") == 0){
-                config.isAutorized = true;
-                //new AsyncConfigPairAdd(config.GetWorker()).execute("Login", config.Login);
-                new AsyncHelper<Void>(new IAsyncHelper() {
-                    @Override
-                    public Void Invoke() {
-                        config.Worker.AddConfigPair("Login",config.Login);
-                        return null;
-                    }
-                }).execute();
-                Intent i = new Intent(activity,MainActivity.class);
-                activity.startActivity(i);
-
+                ExecuteMainActivity(activity,pLogin,pPassWord);
             }else{
-                Intent i = new Intent(activity, MessageActivity.class);
-                i.putExtra("messageHeader","Неправильний логін або пароль");
-                i.putExtra("message",jObject.getString("TextError"));
-                i.putExtra("type",MessageType.ErrorMessage);
-                activity.startActivityForResult(i,1);
+                MessageError(activity, "Неправильний логін або пароль", jObject.getString("TextError"));
             }
-
         }catch (Exception e){
 
         }
-
-        return  this;
-    }
-
-    public void GetLastLogin(){
-        String LastLogin = config.GetWorker().GetConfigPair("Login");
-        activity.setLogin(LastLogin);
+        return  true;
     }
 
     public AuterizationsHelper(){
-
     }
 
-    public AuterizationsHelper(AuthActivity context){
-        activity = context;
+    public void ExecuteMainActivity(Activity activity,final String pLogin,final String pPassWord)
+    {
+        config.Login=pLogin;
+        config. Password=pPassWord;
+        config.isAutorized = true;
+        config.Worker.AddConfigPair("Login",config.Login);
+        Intent i = new Intent(activity,MainActivity.class);
+        activity.startActivity(i);
     }
+    void MessageError(Activity activity,String Message,String exMessage)
+    {
+        Intent i = new Intent(activity, MessageActivity.class);
+        i.putExtra("messageHeader",Message);
+        i.putExtra("message",exMessage);
+        i.putExtra("type",MessageType.ErrorMessage);
+        activity.startActivityForResult(i,1);
+    }
+
 }

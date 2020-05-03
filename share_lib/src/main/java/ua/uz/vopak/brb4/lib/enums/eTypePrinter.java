@@ -1,7 +1,7 @@
-package ua.uz.vopak.brb4.brb4.enums;
+package ua.uz.vopak.brb4.lib.enums;
 
 
-public enum TypePrinter {
+public enum eTypePrinter {
     NotDefined,
     Argox_3230,
     Godex_MX20,

@@ -5,9 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,12 +22,11 @@ import android.widget.Toast;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
-import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
@@ -225,7 +223,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             TextView ExtInfo = new TextView(context);
                             ExtInfo.setText(item.NameWares);
                             ExtInfo.setTag("extInfo");
-                            ExtInfo.setTextColor(getResources().getColor(R.color.messageSuccess));
+                            ExtInfo.setTextColor(ContextCompat.getColor(context,R.color.messageSuccess));
                             tr1.addView(ExtInfo);
 
                             LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)ExtInfo.getLayoutParams();
@@ -544,7 +542,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 TextView v = (TextView) row.getChildAt(j);
                 v.setBackground(ContextCompat.getDrawable(context, backgroundId));
                 if(v.getTag() != null && v.getTag().toString().equals("extInfo") && backgroundId != R.drawable.table_cell_selected) {
-                    v.setTextColor(getResources().getColor(R.color.messageSuccess));
+                    v.setTextColor(ContextCompat.getColor(context,R.color.messageSuccess));
                 }else{
                     v.setTextColor(Color.parseColor(textColor));
                 }

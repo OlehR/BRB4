@@ -3,11 +3,9 @@ package ua.uz.vopak.brb4.brb4.Scaner;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.view.View;
 
 import device.common.ScanConst;
-import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
-import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
+import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 import static ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500.mScanner;

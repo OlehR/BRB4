@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,8 +18,8 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
-import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
@@ -213,7 +213,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                             TextView ExtInfo = new TextView(context);
                             ExtInfo.setText(extInfo);
                             ExtInfo.setTag("extInfo");
-                            ExtInfo.setTextColor(getResources().getColor(R.color.messageSuccess));
+                            ExtInfo.setTextColor(ContextCompat.getColor(context,R.color.messageSuccess));
                             tr1.addView(ExtInfo);
 
                             LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)ExtInfo.getLayoutParams();
@@ -294,7 +294,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                 TextView v = (TextView) row.getChildAt(j);
                 v.setBackground(ContextCompat.getDrawable(context, backgroundId));
                 if(v.getTag() != null && v.getTag().toString().equals("extInfo") && backgroundId != R.drawable.table_cell_selected) {
-                    v.setTextColor(getResources().getColor(R.color.messageSuccess));
+                    v.setTextColor(ContextCompat.getColor(context,R.color.messageSuccess));
                 }else{
                     v.setTextColor(Color.parseColor(textColor));
                 }

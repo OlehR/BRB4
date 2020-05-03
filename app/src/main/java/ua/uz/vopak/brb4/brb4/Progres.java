@@ -13,8 +13,6 @@ public class Progres {
     }
     public void SetProgres(int progres)
     {
-
         progresBar.setProgress(progres);
-
     }
 }

@@ -3,13 +3,14 @@ package ua.uz.vopak.brb4.brb4;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.core.content.ContextCompat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import ua.uz.vopak.brb4.brb4.enums.ActionType;
-import ua.uz.vopak.brb4.brb4.enums.MessageType;
+import ua.uz.vopak.brb4.lib.enums.ActionType;
+import ua.uz.vopak.brb4.lib.enums.MessageType;
 
 
 public class MessageActivity extends Activity implements View.OnClickListener {
@@ -39,19 +40,19 @@ public class MessageActivity extends Activity implements View.OnClickListener {
 
         switch (type){
             case ErrorMessage:
-                messageHeaderView.setTextColor(getResources().getColor(R.color.messageError));
-                messageView.setTextColor(getResources().getColor(R.color.messageError));
-                messageScrollView.setBackground(getResources().getDrawable(R.drawable.message_border_error));
+                messageHeaderView.setTextColor(ContextCompat.getColor( this,R.color.messageError));
+                messageView.setTextColor(ContextCompat.getColor( this,R.color.messageError));
+                messageScrollView.setBackground(ContextCompat.getDrawable(this,R.drawable.message_border_error));
                 break;
             case AlertMessage:
-                messageHeaderView.setTextColor(getResources().getColor(R.color.messageAlert));
-                messageView.setTextColor(getResources().getColor(R.color.messageAlert));
-                messageScrollView.setBackground(getResources().getDrawable(R.drawable.message_border_alert));
+                messageHeaderView.setTextColor(ContextCompat.getColor( this,R.color.messageAlert));
+                messageView.setTextColor(ContextCompat.getColor( this,R.color.messageAlert));
+                messageScrollView.setBackground(ContextCompat.getDrawable(this,R.drawable.message_border_alert));
                 break;
             case SuccessMesage:
-                messageHeaderView.setTextColor(getResources().getColor(R.color.messageSuccess));
-                messageView.setTextColor(getResources().getColor(R.color.messageSuccess));
-                messageScrollView.setBackground(getResources().getDrawable(R.drawable.message_border_success));
+                messageHeaderView.setTextColor(ContextCompat.getColor( this,R.color.messageSuccess));
+                messageView.setTextColor(ContextCompat.getColor( this,R.color.messageSuccess));
+                messageScrollView.setBackground(ContextCompat.getDrawable(this,R.drawable.message_border_success));
                 break;
         }
 

@@ -1,10 +1,7 @@
 package ua.uz.vopak.brb4.brb4.Scaner;
-        import android.app.Activity;
         import android.content.Context;
-        import android.content.Intent;
         import android.os.Handler;
 
-        import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
         import device.common.DecodeResult;
         import device.common.DecodeStateCallback;
         import device.common.ScanConst;

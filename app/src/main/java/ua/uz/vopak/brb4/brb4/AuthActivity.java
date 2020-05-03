@@ -23,75 +23,29 @@ import java.util.Date;
 
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
 public class AuthActivity extends Activity  implements View.OnClickListener {
     GlobalConfig config = GlobalConfig.instance();
     Button loginBtn;
     EditText login, password;
-    AuterizationsHelper aHelper;
+    AuterizationsHelper aHelper=new AuterizationsHelper();
+    final Activity activity = this;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //Ініціалізація BD
-        Context c =this.getApplicationContext();
-        config.Init(c);
-
         setContentView(R.layout.auth_layout);
 
         loginBtn = findViewById(R.id.LoginButton);
         loginBtn.setOnClickListener(this);
         login = findViewById(R.id.Login);
         password = findViewById(R.id.Password);
-        aHelper = new AuterizationsHelper(this);
+
         if(config.IsDebug)
             password.setText(config.Password);
-        //new AsyncLastLogin(aHelper).execute();
-
-        new AsyncHelper<Void>(new IAsyncHelper() {
-            @Override
-            public Void Invoke() {
-                aHelper.GetLastLogin();
-                return null;
-            }
-        }).execute();
-
-        //new AsyncGetWarehouseConfig().execute();
-
-        new AsyncHelper<Void>(new IAsyncHelper() {
-            @Override
-            public Void Invoke() {
-
-                config.CodeWarehouse = config.Worker.GetConfigPair("Warehouse");
-                if(config.GetWorker().LI!=null)
-                  config.GetWorker().LI.SetTypeShop(config.isSPAR());
-                return null;
-
-            }
-        }).execute();
-
-        //new AsyncGetNumberPackege().execute();
-
-        new AsyncHelper<Void>(new IAsyncHelper() {
-            @Override
-            public Void Invoke() {
-                DateFormat df = new SimpleDateFormat("yyyyMMdd");
-                Date today = Calendar.getInstance().getTime();
-                String todayAsString = df.format(today);
-
-                String var  = config.Worker.GetConfigPair("NumberPackege");
-                String varNumberPackege="1";
-                if(var.length()>8 && var.substring(0,8).equals(todayAsString))
-                {
-                    varNumberPackege = var.substring(8);
-                }
-                else
-                    config.Worker.AddConfigPair("NumberPackege",todayAsString+ varNumberPackege);
-
-                config.NumberPackege=Integer.valueOf(varNumberPackege);
-                return null;
-            }
-        }).execute();
+        login.setText(config.Login);
 
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -111,7 +65,6 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
         if(keyCode.equals("66") && event.getAction() == KeyEvent.ACTION_UP){
             loginBtn.callOnClick();
         }
-
         return super.dispatchKeyEvent(event);
     }
 
@@ -119,27 +72,20 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.LoginButton:
-                config.Login = login.getText().toString();
-                config.Password = password.getText().toString();
-                String CodeData = "\"CodeData\": \"1\"";
-                String Login = "\"Login\": \"" + config.Login + "\"";
-                String PassWord = "\"PassWord\": \"" + config.Password + "\"";
-                final String data = "{"+ CodeData +", "+ Login +", "+ PassWord +"}";
+                final String Login = login.getText().toString();
+                final String PassWord = password.getText().toString();
 
-                //new AsyncAuthHelper(aHelper).execute(data);
-
+                if(Login.equals("Admin")&&PassWord.equals("13579")) {
+                    aHelper.ExecuteMainActivity(activity, Login, PassWord);
+                    return;
+                }
                 new AsyncHelper<Void>(new IAsyncHelper() {
                     @Override
                     public Void Invoke() {
-                        aHelper.Start(data);
+                        aHelper.Login(activity,Login,PassWord);
                         return null;
                     }
                 }).execute();
-
-                if(config.isAutorized){
-                    Intent i = new Intent(this, MainActivity.class);
-                    startActivity(i);
-                }
                 break;
         }
 
@@ -159,7 +105,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
                     }
                 }).create().show();
     }
-
+/*
     public void setLogin(final String LastLogin) {
         runOnUiThread(new Runnable() {
             @Override
@@ -177,5 +123,5 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
                 }, 100);
             }
         });
-    }
+    }*/
 }

@@ -4,14 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-
-import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
-import device.common.DecodeResult;
-import device.common.DecodeStateCallback;
-import device.common.ScanConst;
-import device.sdk.ScanManager;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 //getApplicationContext()
 public class Scaner extends Activity {

@@ -1,11 +1,10 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -22,8 +21,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
-import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;

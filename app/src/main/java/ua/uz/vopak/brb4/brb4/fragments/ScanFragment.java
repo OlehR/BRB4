@@ -4,14 +4,13 @@ package ua.uz.vopak.brb4.brb4.fragments;
 
 import android.Manifest;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.Fragment;
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,13 +21,8 @@ import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
 import java.util.List;
 
-import ua.uz.vopak.brb4.brb4.MainActivity;
-import ua.uz.vopak.brb4.brb4.enums.ActionType;
-import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
-import ua.uz.vopak.brb4.brb4.MessageActivity;
-import ua.uz.vopak.brb4.brb4.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.R;
-import ua.uz.vopak.brb4.brb4.enums.eTypeScaner;
+import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 /**
@@ -49,6 +43,8 @@ public class ScanFragment extends Fragment {
 
         view=inflater.inflate(R.layout.scan_fragment, container, false);
 
+        barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+
         if(config.TypeScaner==eTypeScaner.Camera) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                     getActivity().checkSelfPermission(Manifest.permission.CAMERA)
@@ -56,24 +52,21 @@ public class ScanFragment extends Fragment {
                 requestPermissions(new String[]{Manifest.permission.CAMERA},
                         PERMISSIONS_REQUEST_ACCESS_CAMERA);
             } else {
-                barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
+
                 barcodeView.setVisibility(View.VISIBLE);
                 barcodeView.decodeContinuous(callback);
 
             }
         }else{
-            barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
             barcodeView.setVisibility(View.INVISIBLE);
         }
 
-        config.BarcodeImageLayout = view.findViewById(R.id.BarcodeImageLayout);
+        //config.BarcodeImageLayout = view.findViewById(R.id.BarcodeImageLayout);
 
         //Приклад відправки повідомлення користувачу
         //sendMessage("Блютуз не підключено!","StackTrace:...", MessageType.ErrorMessage);
 
-
         mcontext=getContext();
-
         return view;
     }
 
@@ -82,9 +75,6 @@ public class ScanFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
-        barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
-
         if(config.TypeScaner==eTypeScaner.Camera) {
             barcodeView.setVisibility(View.VISIBLE);
             barcodeView.resume();
@@ -99,8 +89,6 @@ public class ScanFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-
-        barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
 
         if(config.TypeScaner==eTypeScaner.Camera) {
             barcodeView.setVisibility(View.VISIBLE);
@@ -117,24 +105,9 @@ public class ScanFragment extends Fragment {
                 barcodeView.pause();
                 ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 1000);
                 toneGen1.startTone(ToneGenerator.TONE_PROP_BEEP,250);
-                //after the string has been read we prozess it
-
-                //worker.execute(result);
-                //AsyncWorker aW =  new AsyncWorker(worker);
-                //aW.execute(result.getText());
-
                 config.Scaner.CallBack.Run(result.getText());
-                //((PriceCheckerActivity)getActivity()).ExecuteWorker(result.getText());
-                //worker.Start(result);
-
-               /* if(!ScanText.equals("abc")){//if the tag was not scanned succesfully let us start the scan again
-                    codeView.setText("code: " + ScanCode);
-                    contentView.setText("content :" + ScanText);
-                    //barcodeView.resume(); //notice we don't call decodeContinuous function again
-                }*/
             }
         }
-
         @Override
         public void possibleResultPoints(List<ResultPoint> resultPoints) {
         }
@@ -147,18 +120,16 @@ public class ScanFragment extends Fragment {
         if(config.TypeScaner==eTypeScaner.Camera) {
             if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
                     barcodeView.setVisibility(View.VISIBLE);
                     barcodeView.decodeContinuous(callback);
                 }
             }
         }else{
-            barcodeView = (BarcodeView) view.findViewById(R.id.barcode_scanner);
             barcodeView.setVisibility(View.INVISIBLE);
         }
     }
 
-
+/*
 
     public  void sendMessage(String messageHeader, String message, MessageType type){
 
@@ -178,6 +149,6 @@ public class ScanFragment extends Fragment {
         intent.putExtra("type",type);
         intent.putExtra("action", action);
         startActivity(intent);
-    }
+    }*/
 
 }

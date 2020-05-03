@@ -1,6 +1,5 @@
 package ua.uz.vopak.brb4.brb4;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -9,30 +8,32 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import androidx.core.content.ContextCompat;
 import android.view.KeyEvent;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
-import ua.uz.vopak.brb4.brb4.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
-import ua.uz.vopak.brb4.brb4.helpers.IAsyncHelper;
-import ua.uz.vopak.brb4.brb4.helpers.Worker;
+import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
+import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener, ScanCallBack {
     static GlobalConfig config = GlobalConfig.instance();
     public RelativeLayout loader;
     Button[] menuItems = new Button[7];
     int current = 0;
-    AuterizationsHelper auth;
+    //AuterizationsHelper auth;
     static boolean isFirstRun = true;
     boolean isReload = false;
     private Scaner scaner;
@@ -43,36 +44,52 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         super.onCreate(savedInstanceState);
         context = this;
 
-
-        auth = new AuterizationsHelper();
-
+        //auth = new AuterizationsHelper();
+/*
         if(!config.isAutorized){
-            Intent i = new Intent(this, AuthActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
-            finish();
-            return;
-        }
+
+        }*/
+
+        //ініціалізація класа при старті.
+        Utils.instance(context);
+        config.Init(context);
 
 
         setContentView(R.layout.main_layout);
-
         loader = findViewById(R.id.RevisionLoader);
 
         Intent in = getIntent();
         isReload = Boolean.parseBoolean(in.getStringExtra("isReload"));
 
         //---!!!!!TMP Not Load
-        if((isFirstRun || isReload) && !config.getCodeWarehouse().equals("000000000")){
+        if((isFirstRun || isReload) ){
             ShowLoader();
             //new AsyncLoadDocsData(config.GetWorker(), this).execute(isReload?"-1":"0");
-            new AsyncHelper<Void>(new IAsyncHelper() {
+            new AsyncHelper<Boolean>(new IAsyncHelper() {
                 @Override
-                public Void Invoke() {
-                    config.Worker.LoadDocsData(isReload?"-1":"0",(MainActivity) context);
-                    return null;
+                public Boolean Invoke() {
+                    config.Worker.LoadStartData();
+                    if(!config.isAutorized) return false;
+                    if(!config.getCodeWarehouse().equals("000000000"))
+                        return  config.Worker.LoadDocsData(isReload?"-1":"0");
+                    return false;
+                }},
+                        new IPostResult<Boolean>() {
+                    @Override
+                    public void Invoke(Boolean p) {
+                        if(config.isAutorized)
+                         HideLoader();
+                        else
+                        {
+                            Intent i = new Intent(context, AuthActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(i);
+                            finish();
+                        }
+
+                    }
                 }
-            }).execute();
+            ).execute();
             if(!isReload)
             setAlarm(60 * 30, 60 * 30);
             isFirstRun = false;
@@ -95,9 +112,9 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 public void onFocusChange(View v, boolean hasFocus) {
                     // TODO Auto-generated method stub
                     if (hasFocus) {
-                        ((Button)v).setTextColor(getResources().getColor(android.R.color.white));
+                        ((Button)v).setTextColor(ContextCompat.getColor(context,android.R.color.white));
                     }else {
-                        ((Button)v).setTextColor(getResources().getColor(android.R.color.black));
+                        ((Button)v).setTextColor(ContextCompat.getColor(context,android.R.color.black));
                     }
                 }
 
@@ -109,6 +126,21 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         scaner.Init(this);
     }
 
+
+    public void RunAuth()
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent i = new Intent(context, AuthActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+                finish();
+
+            }
+        });
+
+    }
 
     @Override
     public void Run(String parBarCode)
@@ -165,14 +197,13 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             startActivity(i);
         }
         else {
-            //new AsyncSyncData(worker).execute();
-            new AsyncHelper<Void>(new IAsyncHelper() {
+   /*         new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
                     config.Worker.SendLogPrice();
                     return null;
                 }
-            }).execute();
+            }).execute();*/
         }
     }
 
@@ -272,7 +303,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 new AsyncHelper<Void>(new IAsyncHelper() {
                     @Override
                     public Void Invoke() {
-                        config.Worker.LoadDocsData("0", null);
+                        config.Worker.LoadDocsData("0");
                         return null;
                     }
                 }).execute();
@@ -302,8 +333,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
-                .setTitle("Выйти из приложения?")
-                .setMessage("Вы действительно хотите выйти?")
+                .setTitle("Вийти з програми?")
+                .setMessage("Ви справді хочете вийти?")
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
