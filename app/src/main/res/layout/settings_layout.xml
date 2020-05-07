@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
+        <import type="android.view.View"/>
         <variable name="SM" type="ua.uz.vopak.brb4.brb4.models.SetingModel"/>
     </data>
     <LinearLayout
@@ -30,15 +31,33 @@
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
+            android:visibility="@{SM.IsAdmin?View.VISIBLE:View.GONE}"
             android:entries="@{SM.ListCompany}"
             android:selectedItemPosition="@={SM.ListCompanyIdx}"
             />
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:textSize="10pt"
-        android:text="ApiUrl:" />
+        android:text="Згенерувати" />
+
+     <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="10pt"
+            android:text="Зберегти" />
+
+    </LinearLayout>
 
     <EditText
         android:id="@+id/ApiUrl"
