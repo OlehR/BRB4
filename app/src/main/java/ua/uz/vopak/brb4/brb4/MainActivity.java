@@ -70,8 +70,11 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 public Boolean Invoke() {
                     config.Worker.LoadStartData();
                     if(!config.isAutorized) return false;
-                    if(!config.getCodeWarehouse().equals("000000000"))
-                        return  config.Worker.LoadDocsData(isReload?"-1":"0");
+                    if(!config.getCodeWarehouse().equals("000000000")) {
+                        isFirstRun = false;
+                        return config.Worker.LoadDocsData(isReload ? "-1" : "0");
+
+                    }
                     return false;
                 }},
                         new IPostResult<Boolean>() {
@@ -92,7 +95,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             ).execute();
             if(!isReload)
             setAlarm(60 * 30, 60 * 30);
-            isFirstRun = false;
         }
         ////////////////////////////////
 
@@ -127,8 +129,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    public void RunAuth()
-    {
+    public void RunAuth()    {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

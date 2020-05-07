@@ -1,5 +1,7 @@
 package ua.uz.vopak.brb4.brb4.models;
 
+import android.graphics.Color;
+
 public class WaresItemModel {
     public String NumberDoc;
     public int TypeDoc;
@@ -21,6 +23,10 @@ public class WaresItemModel {
     public String GetQuantityBase() {return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",(double)Coefficient*InputQuantity);}
     public double BeforeQuantity;
     public String GetBeforeQuantity() { return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity)+ (QuantityMax==Double.MAX_VALUE?"":"/"+String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity))   ;}
+
+    public int ColorBackground(){return Color.parseColor(QuantityMax>0d ? "#ffffff" : "#3fffff00");}
+
+    //public boolean IsInput(){return QuantityMax>0d;}
 
     public double QuantityMin;
     public double QuantityMax;
@@ -73,7 +79,7 @@ public class WaresItemModel {
         QuantityMax=Double.MAX_VALUE ;
 
     }
-    public Boolean IsInputQuantity() { return (Coefficient>0);}
+    public Boolean IsInputQuantity() { return (Coefficient>0 && QuantityMax>0d);}
 }
 
 

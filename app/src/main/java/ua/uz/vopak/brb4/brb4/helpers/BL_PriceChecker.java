@@ -240,7 +240,7 @@ public class BL_PriceChecker extends BL {
 
         String data = a;
 
-        String res = Http.HTTPRequest(config.ApiUrl+"pricetag", null, "application/json;charset=utf-8", config.Login, config.Password);
+        String res = Http.HTTPRequest(config.ApiUrl+"pricetag", data, "application/json;charset=utf-8", config.Login, config.Password);
         if (Http.HttpState == eStateHTTP.HTTP_OK) {
             try {
                 mDbHelper.AfterSendData();

@@ -33,7 +33,7 @@ public class GlobalConfig extends AbstractConfig {
 
     @Override
     public String GetApiJson(int parCodeData, String parData) {
-        return "{\"CodeData\":" + parCodeData + ",\"SerialNumber\":\"" + SN + "\",\"NameDCT\":\"" + NameDCT + "\", \"Ver\":\"" + BuildConfig.VERSION_NAME + "\",\"Warehouse\":\"" + this.getCodeWarehouse() + "\", \"CodeWarehouse\":\"" + this.getCodeWarehouse() + "\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
+        return "{\"CodeData\":" + parCodeData + ",\"SerialNumber\":\"" + SN + "\",\"NameDCT\":\"" + NameDCT + "\", \"Ver\":\"" + BuildConfig.VERSION_CODE +  "\", \"CodeWarehouse\":\"" + this.getCodeWarehouse() + "\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData == null ? "" : "," + parData) + "}";
     }
 

@@ -79,13 +79,13 @@ public class Worker {
     public void LoadStartData() {
         String strCompany = GetConfigPair("Company");
         if (TextUtils.isEmpty(strCompany))
-            config.Company = eCompany.SevenEleven;
+            config.Company = eCompany.VopakPSU;
         else
             config.Company = eCompany.fromOrdinal(Integer.valueOf(strCompany));
 
         config.ApiUrl=GetConfigPair("ApiUrl");
         if(config.ApiUrl==null || config.ApiUrl.isEmpty() )
-                config.ApiUrl=(config.Company==eCompany.SevenEleven? "http://93.183.216.37/copy_rt/hs/TSD/":"http://znp.vopak.local/api/api_v1_utf8.php");
+                config.ApiUrl=(config.Company==eCompany.SevenEleven? "http://176.241.128.13/RetailShop/hs/TSD/":"http://znp.vopak.local/api/api_v1_utf8.php");
 
 
         config.Login = GetConfigPair("Login");
@@ -130,8 +130,8 @@ public class Worker {
         return result;
     }
     // Отримати список документів з БД
-    public void LoadListDoc(Activity context, int parTypeDoc, String parBarCode) {
-        List<DocumentModel> model = mDbHelper.GetDocumentList(parTypeDoc, parBarCode);
+    public void LoadListDoc(Activity context, int parTypeDoc, String parBarCode,String pExtInfo ) {
+        List<DocumentModel> model = mDbHelper.GetDocumentList(parTypeDoc, parBarCode,pExtInfo);
         DocumentActivity activity = (DocumentActivity) context;
         activity.renderTable(model);
     }

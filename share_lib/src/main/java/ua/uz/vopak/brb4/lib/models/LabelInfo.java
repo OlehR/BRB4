@@ -169,18 +169,19 @@ public class LabelInfo
     public void Init(JSONObject parData) {
         if(parData.length() == 0)
             return;
+        PriceBill = 0;
+        PriceCoin = 0;
         try {
             Code = parData.getInt("Code");
             Name = parData.getString("Name");
-            if (parData.getString("Price").length() > 1) {
-                String[] varPrice = parData.getString("Price").split("\\.");
+            if (parData.getString("Price").length() > 0) {
+                String[] varPrice = parData.getString("Price").replace(',','.').split("\\.");
                 PriceBill = Integer.parseInt(varPrice[0]);
-                if(varPrice[1].length() == 1)
-                    varPrice[1] = varPrice[1] + "0";
-                PriceCoin = Integer.parseInt(varPrice[1]);
-            } else {
-                PriceBill = 0;
-                PriceCoin = 0;
+                if(varPrice.length ==2) {
+                    if (varPrice[1].length() == 1)
+                        varPrice[1] = varPrice[1] + "0";
+                    PriceCoin = Integer.parseInt(varPrice[1]);
+                }
             }
             Price = PriceBill * 100 + PriceCoin;
 
@@ -196,6 +197,23 @@ public class LabelInfo
             PriceCoinOpt = 0;
             QuantityOpt = 0;
             Rest = 0;
+
+            if(parData.has("PromotionPrice"))//SevenEleven В ціннику Оптова ціна.
+            {
+                String[] varPrice = parData.getString("PromotionPrice").replace(',','.').split("\\.");
+                PriceBillOpt = Integer.parseInt(varPrice[0]);
+                if(varPrice.length ==2) {
+                    if (varPrice[1].length() == 1)
+                        varPrice[1] = varPrice[1] + "0";
+                    PriceCoinOpt = Integer.parseInt(varPrice[1]);
+                }
+                PriceOpt = PriceBillOpt * 100 + PriceCoinOpt;
+                if(PriceOpt!=Price)
+                {
+                    OldPriceOpt = OldPrice;
+                    OldPrice = Price;
+                }
+            }
 
             if (parData.has("QuantityOpt") && parData.has("PriceOpt")) {
                     QuantityOpt = parData.getDouble("QuantityOpt");

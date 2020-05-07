@@ -1,27 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <import type="android.view.View"/>
+        <variable name="DM" type="ua.uz.vopak.brb4.brb4.models.DocumentViewModel"/>
+    </data>
+<FrameLayout
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="0dp">
+
 <LinearLayout
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <EditText
+        android:id="@+id/DocumentZKPO"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="9pt"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        />
+    <!--
+     android:visibility= "@{DM.IsEnterCodeZKPO ? View.GONE : View.VISIBLE}"
+        android:focusable="@{DM.IsEnterCodeZKPO ? true : false}"
+        android:text="@={ DM.ZKPO}"
+        -->
 
 <ScrollView
     android:id="@+id/DocumentList"
-    android:paddingTop="5dp"
     android:paddingLeft="5dp"
     android:paddingRight="5dp"
     android:paddingBottom="25dp"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
+    android:layout_height="match_parent">
+<!--android:enabled="@{DM.IsEnterCodeZKPO ? false:true}"-->
     <LinearLayout
         android:orientation="vertical"
         android:id="@+id/RevisionsList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         >
-
     </LinearLayout>
 
 </ScrollView>
@@ -85,38 +106,44 @@
                 android:textSize="18dp"
                 android:text="вибір"/>
             <TextView
-                android:id="@+id/FilterKey"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageError"
-                android:textSize="18dp"
-                android:visibility="gone"
-                android:text=" F1-"/>
-            <TextView
-                android:id="@+id/FilterText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageAlert"
-                android:textSize="18dp"
-                android:visibility="gone"
-                android:text="Без фільтра"/>
-            <TextView
                 android:id="@+id/FilterEDRPO"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageError"
                 android:textSize="18dp"
-                android:text=" F2-"/>
+                android:text=" F1-"/>
+            <!--android:visibility= "@{DM.TypeDoc==2? View.GONE : View.VISIBLE}"-->
             <TextView
                 android:id="@+id/FilterEDRPOText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp"
+                android:text="ЗКПО"/>
+            <!--                android:visibility= "@{DM.TypeDoc==2? View.GONE : View.VISIBLE}" -->
+
+
+            <TextView
+                android:id="@+id/FilterKey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/messageError"
+                android:textSize="18dp"
+
+                android:text=" F2-"/>
+            <!--android:visibility= "@{DM.IsFilter? View.GONE : View.VISIBLE}"-->
+            <TextView
+                android:id="@+id/FilterText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/messageAlert"
+                android:textSize="18dp"
                 android:text="Без фільтра"/>
+            <!--  android:visibility= "@{DM.IsFilter? View.GONE : View.VISIBLE}"-->
 
         </LinearLayout>
 
     </LinearLayout>
 
 </FrameLayout>
+</layout>

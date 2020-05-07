@@ -265,22 +265,22 @@ public class SQLiteAdapter
 
 
     //Робота з документами.
-    public List<DocumentModel> GetDocumentList(int TypeDoc,String parBarCode) {
+    public List<DocumentModel> GetDocumentList(int pTypeDoc,String pBarCode,String pExtInfo) {
 
         List<DocumentModel> model = new ArrayList<DocumentModel>();
         Cursor mCur;
         String sql;
-        if(parBarCode==null||parBarCode.isEmpty())
-            sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+TypeDoc+"'"+
-                    " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)" + (config.IsDebug ? " limit 10" :"");
+        if(pBarCode==null||pBarCode.isEmpty())
+            sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+pTypeDoc+"'"+
+                    " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-5 day') AND datetime(CURRENT_TIMESTAMP)" + (pExtInfo==null?"":" and ext_info like'%"+ pExtInfo.trim()+"%'") + (config.IsDebug ? " limit 10" :"");
         else
             sql="SELECT DISTINCT d.date_doc,d.type_doc,d.number_doc,d.ext_info,d.name_user,d.bar_code,d.description,d.dt_insert,d.state -- ,bc.BAR_CODE, dw.*\n" +
                     "FROM DOC d \n" +
                     "Join DOC_WARES_SAMPLE dw on dw.number_doc=d.number_doc and dw.type_doc=d.type_doc\n" +
                     "join bar_code bc on dw.code_wares=bc.CODE_WARES\n" +
-                    "WHERE d.type_doc = '"+TypeDoc+"'"+
+                    "WHERE d.type_doc = '"+pTypeDoc+"'"+
                     " AND d.date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)"+
-                    "and bc.BAR_CODE= '"+parBarCode+"'" + (config.IsDebug ? " limit 10" :"");
+                    "and bc.BAR_CODE= '"+pBarCode+"'" + (config.IsDebug ? " limit 10" :"");
 
         try {
             //mDb.delete("INVENTORY_WARES", null, null);
@@ -414,7 +414,7 @@ public class SQLiteAdapter
                 mCur = mDb.rawQuery(sql, null);
                 if (mCur != null && mCur.getCount() > 0) {
                     mCur.moveToFirst();
-                    model.QuantityMax=(mCur.getInt(0)==1?mCur.getInt(1):Double.MAX_VALUE);
+                    model.QuantityMax=(mCur.getInt(0)==1?mCur.getDouble(1):Double.MAX_VALUE);
                     model.QuantityOrder=mCur.getInt(2);
                 }
             } catch (Exception e) {

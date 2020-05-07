@@ -75,17 +75,16 @@ public class PricecheckerHelper {
         String vCode = null;
         LI.OldPrice =0;
 
-        if (BarCode.substring(0,2) =="29"|| BarCode.length()<8 ) {
-            vCode=BarCode.substring(2,6);
-            LI.OldPrice=Integer.valueOf( BarCode.substring(7,5));
+        if (BarCode.length()>2 && BarCode.substring(0,2).equals("29") && BarCode.length()==13 ) {
+            vCode="code="+BarCode.substring(2,8);
+            LI.OldPrice=Integer.valueOf( BarCode.substring(8,13));
             }
             else
-            vCode=BarCode;
+             vCode="BarCode="+BarCode.trim();
 
-        LI.resHttp = Http.HTTPRequest(config.ApiUrl+"PriceTagInfo?code="+vCode, null);
+        LI.resHttp = Http.HTTPRequest(config.ApiUrl+"PriceTagInfo?"+vCode, null);
         LI.HttpState=Http.HttpState;
         return LI;
     }
-
     public String HttpState() {return Http.HttpState.name();}
 }

@@ -6,9 +6,12 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
+
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -18,6 +21,8 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
+import ua.uz.vopak.brb4.brb4.databinding.DocumentLayoutBinding;
+import ua.uz.vopak.brb4.brb4.models.DocumentViewModel;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
@@ -32,19 +37,29 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     List<View> menuItems = new ArrayList<View>();
     GlobalConfig config = GlobalConfig.instance();
     private Scaner scaner;
-    TextView  FilterKey,FilterText;
+    TextView  FilterKey,FilterText,FilterEDRPOText,FilterEDRPO;
+    EditText DocumentZKPO;
+    DocumentViewModel DM= new DocumentViewModel();
 
-
+    DocumentLayoutBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.document_layout);
         tl = findViewById(R.id.RevisionsList);
         documentList = findViewById(R.id.DocumentList);
+        DocumentZKPO =findViewById(R.id.DocumentZKPO);
+        FilterEDRPO =findViewById(R.id.FilterEDRPO);
+        FilterEDRPOText =findViewById(R.id.FilterEDRPOText);
+
         context = this;
 
         Intent i = getIntent();
         DocumentType =  i.getIntExtra("document_type",0);
+
+        DM.TypeDoc.set(DocumentType);
+        //binding = DataBindingUtil.setContentView(this, R.layout.document_layout);
+        //binding.setDM (DM);
 
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
@@ -56,18 +71,33 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.LoadListDoc(context,DocumentType,null);
+                config.Worker.LoadListDoc(context,DocumentType,null,null);
                 return null;
             }
         }).execute();
-        ViewFilter(false);
+        ViewFilter();
     }
 
-    private void ViewFilter(Boolean parIsView)
+    private void ViewFilter()
     {
-        int view = parIsView? View.VISIBLE:View.INVISIBLE;
-        FilterKey.setVisibility(view);
-        FilterText.setVisibility(view);
+        //!!!!TMP Через проблеми з дата біндінгом Жутко костиляю. Буду мати змогу - перероблю. Бо програмно будую Грід.
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                int view = DM.IsFilter.get() ? View.VISIBLE : View.INVISIBLE;
+                FilterKey.setVisibility(view);
+                FilterText.setVisibility(view);
+
+
+                view = DM.IsEnterCodeZKPO.get() ? View.VISIBLE : View.GONE;
+                DocumentZKPO.setText(DM.ZKPO.get());
+                DocumentZKPO.setVisibility(view);
+                DocumentZKPO.setFocusable(DM.IsEnterCodeZKPO.get());
+
+                view = DM.TypeDoc.get() == 2 ? View.VISIBLE : View.GONE;
+                FilterEDRPO.setVisibility(view);
+                FilterEDRPOText.setVisibility(view);
+            }});
     }
 
     @Override
@@ -76,12 +106,13 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.LoadListDoc(context,DocumentType,parBarCode);
+                config.Worker.LoadListDoc(context,DocumentType,parBarCode,null);
 
                 return null;
             }
         }).execute();
-        ViewFilter(true);
+        DM.IsFilter.set(true);
+        ViewFilter();
 
         /*
         new AsyncHelper<Void>(new IAsyncHelper() {
@@ -122,18 +153,41 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                     selectItem();
                     break;
                 case "66":
+                    if(DM.IsEnterCodeZKPO.get())
+                    {
+                        new AsyncHelper<Void>(new IAsyncHelper() {
+                            @Override
+                            public Void Invoke() {
+
+                                String find= DocumentZKPO.getText().toString().replace("\n","").replace(" ","");
+                                DM.ZKPO.set("");
+                                DM.IsEnterCodeZKPO.set(false);
+                                DM.IsFilter.set(true);
+                                ViewFilter();
+                                config.Worker.LoadListDoc(context, DocumentType, null,find);
+                                return null;
+                            }
+                        }).execute();
+                    }
+                    else
                     tl.findViewWithTag("selected").callOnClick();
                     break;
-                case "131": //F1 Перерисовуємо без фільтра
+                case "131": //F2 Пошук по коду ЄДРПОУ для прихідних
+                  DM.IsEnterCodeZKPO.set(true);
+                  ViewFilter();
+                    break;
+                case "132": //F2 Перерисовуємо без фільтра
                     new AsyncHelper<Void>(new IAsyncHelper() {
                         @Override
                         public Void Invoke() {
-                            config.Worker.LoadListDoc(context, DocumentType, null);
+                            config.Worker.LoadListDoc(context, DocumentType, null,null);
 
                             return null;
                         }
                     }).execute();
-                    ViewFilter(false);
+                    DM.IsFilter.set(false);
+                    DM.IsEnterCodeZKPO.set(false);
+                    ViewFilter();
                     break;
             }
         }
@@ -260,7 +314,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                         }
 
                         selectItem();
-
+                    ViewFilter();
                 } catch (Exception e) {
                     e.getMessage();
                 }
