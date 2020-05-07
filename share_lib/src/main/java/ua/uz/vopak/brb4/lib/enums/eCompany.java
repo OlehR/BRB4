@@ -20,4 +20,14 @@ public enum eCompany {
     {
         this.action = action;
     }
+
+    public String GetText() {
+        switch(action) {
+            case 0: return "NotDefined";
+            case 1: return "VopakPSU";
+            case 2: return "SparPSU";
+            case 3: return "SevenEleven";
+            default: return "NotDefined";
+        }
+    }
 }

@@ -110,14 +110,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
             printerConnectionPath[el.getAction()]=el.GetText();
             printerConnectionMap.put(el.GetText(), el.GetStrCode());
         }
-            /*
-      //  String[] printerConnectionPath = new String[]{"Без Принтера", "Тільки при вході", "Авто підключення","Стаціонарний з обрізжчиком"};
-        printerConnectionMap.put(config.printerConnectionPath[0], "0");
-        printerConnectionMap.put(config.printerConnectionPath[1], "1");
-        printerConnectionMap.put(config.printerConnectionPath[2], "2");
-        printerConnectionMap.put(config.printerConnectionPath[3], "3");
-        printerConnectionMap.put(config.printerConnectionPath[4], "4");*/
-            //{"Без Принтера", "Тільки при вході", "Авто підключення", "Стаціонарний з обрізжчиком","Стаціонарні з обрізжчиком(автовибір)"};
+
 
         printerConnectionAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, printerConnectionPath);
         printerConnectionAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
