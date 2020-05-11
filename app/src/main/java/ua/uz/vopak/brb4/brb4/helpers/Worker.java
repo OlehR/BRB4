@@ -79,7 +79,7 @@ public class Worker {
     public void LoadStartData() {
         String strCompany = GetConfigPair("Company");
         if (TextUtils.isEmpty(strCompany))
-            config.Company = eCompany.VopakPSU;
+            config.Company = eCompany.SevenEleven;
         else
             config.Company = eCompany.fromOrdinal(Integer.valueOf(strCompany));
 

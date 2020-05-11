@@ -235,6 +235,8 @@ public class BL_PriceChecker extends BL {
         {
             sb.append(","+s.GetJsonSE());
         }
+        if(sb.length()<=2)
+            return;
         String a = "["+sb.substring(1)+"]";
 
 
