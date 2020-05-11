@@ -13,6 +13,7 @@ public class SetingModel {
     public ObservableField<String> apiURL= new ObservableField<>(config.ApiUrl);
     public ObservableArrayList<String> ListCompany= new ObservableArrayList<>();
     public ObservableInt ListCompanyIdx = new ObservableInt(0);
+    public boolean IsAdmin(){return config.Login.equals("Admin");}
 
     public SetingModel(){
         for(eCompany el : eCompany.values()) {
