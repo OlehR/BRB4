@@ -31,7 +31,7 @@
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
-            android:visibility="@{SM.IsAdmin?View.VISIBLE:View.GONE}"
+            android:enabled ="@{SM.IsAdmin}"
             android:entries="@{SM.ListCompany}"
             android:selectedItemPosition="@={SM.ListCompanyIdx}"
             />
@@ -48,6 +48,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:textSize="10pt"
+        android:enabled ="@{SM.IsAdmin}"
+        android:onClick="@{(view) -> SM.OnClickGen()}"
         android:text="Згенерувати" />
 
      <Button
@@ -55,6 +57,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:textSize="10pt"
+            android:enabled ="@{SM.IsAdmin}"
+            android:onClick="@{(view) -> SM.OnClickSave()}"
             android:text="Зберегти" />
 
     </LinearLayout>
@@ -65,6 +69,7 @@
         android:layout_height="wrap_content"
         android:textSize="9pt"
         android:layout_marginTop="10dp"
+        android:enabled ="@{SM.IsAdmin}"
         android:text="@={SM.apiURL}"
         />
         <!--android:onClick="@{(view) -> SM.OnClickURL(SM)}"-->
