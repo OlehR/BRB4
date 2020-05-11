@@ -2,7 +2,10 @@ package ua.uz.vopak.brb4.brb4.models;
 
 import android.graphics.Color;
 
-public class WaresItemModel {
+public class
+
+
+WaresItemModel {
     public String NumberDoc;
     public int TypeDoc;
     public int OrderDoc;
