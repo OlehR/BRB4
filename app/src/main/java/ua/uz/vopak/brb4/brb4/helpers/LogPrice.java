@@ -21,7 +21,7 @@ public class LogPrice {
     public int LineNumber;
     public double NumberOfReplenishment;
     public String GetJsonPSU() { return "[\""+BarCode+"\","+Status+",\""+DTInsert.toString()+"\","+PackageNumber+"]";}
-    public String GetJsonSE(){return "{\"Barcode\":\""+BarCode+"\",\"Article\":\""+Article+"\",\"Status\":"+Status+",\"LineNumber\":"+LineNumber+",\"NumberOfReplenishment\":"+ Double.toString(NumberOfReplenishment)+"}";}
+    public String GetJsonSE(){return "{\"Barcode\":\""+BarCode+"\",\"Code\":\""+CodeWares+"\",\"Status\":"+Status+",\"LineNumber\":"+LineNumber+",\"NumberOfReplenishment\":"+ Double.toString(NumberOfReplenishment)+"}";}
 
     public LogPrice(){}
     public LogPrice(Cursor pCur)

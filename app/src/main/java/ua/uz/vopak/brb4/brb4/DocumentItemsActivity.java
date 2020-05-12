@@ -25,6 +25,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
@@ -32,7 +33,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener, IIncomeRender {
-    LinearLayout tl;
+    LinearLayout tl,button;
     FrameLayout documentItemsFrame;
     ScrollView documentList;
     Context context;
@@ -57,6 +58,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         documentType = i.getIntExtra("document_type",0);
         btn = findViewById(R.id.F4);
         btnSave = findViewById(R.id.F3);
+        button = findViewById(R.id.DI_Button);
+        button.setVisibility(config.TypeScaner== eTypeScaner.Camera? View.VISIBLE:View.GONE );
         btn.setOnClickListener(this);
         btnSave.setOnClickListener(this);
         //new AsyncInventories(GlobalConfig.GetWorker(), this).execute(number,documentType);

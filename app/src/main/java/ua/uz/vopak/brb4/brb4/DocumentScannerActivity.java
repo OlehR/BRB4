@@ -1,12 +1,18 @@
 package ua.uz.vopak.brb4.brb4;
 
+import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import androidx.databinding.DataBindingUtil;
+
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.media.AudioManager;
+import android.media.ToneGenerator;
+import android.os.Build;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -23,10 +29,17 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+
+import com.google.zxing.ResultPoint;
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
+import com.journeyapps.barcodescanner.BarcodeView;
+
 import java.util.ArrayList;
 import java.util.List;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
+import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
@@ -40,6 +53,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
     ScrollView scrollView;
     RelativeLayout loader;
     TableLayout WaresTableLayout;
+    BarcodeView barcodeView;
 
     Activity context;
     GlobalConfig config = GlobalConfig.instance();
@@ -49,6 +63,23 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
     WaresItemModel WaresItem = new WaresItemModel();
 
     int padding;
+
+    // Калбек штрихкода з камери.
+    private BarcodeCallback callback = new BarcodeCallback() {
+        @Override
+        public void barcodeResult(BarcodeResult result) {
+            if (result.getText() != null) {
+                //barcodeView.pause();
+                ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 1000);
+                toneGen1.startTone(ToneGenerator.TONE_PROP_BEEP,250);
+                Run(result.getText());//config.Scaner.CallBack.
+            }
+        }
+        @Override
+        public void possibleResultPoints(List<ResultPoint> resultPoints) {
+        }
+    };
+    final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +99,26 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
         WaresItem.NumberDoc = i.getStringExtra("inv_number");
 
+        barcodeView=findViewById(R.id.DS_scanner);
+        if(config.TypeScaner== eTypeScaner.Camera) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                    checkSelfPermission(android.Manifest.permission.CAMERA)
+                            != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA},
+                        PERMISSIONS_REQUEST_ACCESS_CAMERA);
+            } else {
+                //barcodeView.setVisibility(View.VISIBLE);
+                barcodeView.decodeContinuous(callback);
+                barcodeView.resume();
+            }
+        }
 
         binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
         binding.setWaresItem(WaresItem);
         //binding.setEmployee(employee);
 
         barCode = findViewById(R.id.RevisionBarCode);
+
         inputCount = findViewById(R.id.RevisionInputCount);
 
         loader = findViewById(R.id.RevisionLoader);
@@ -99,6 +144,9 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 }
             }
         });
+
+        if(config.TypeScaner==eTypeScaner.Camera)
+            barcodeView.resume();
 
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
@@ -141,8 +189,16 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        if(config.TypeScaner==eTypeScaner.Camera)
+            barcodeView.resume();
+        //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
+    }
+    @Override
     public void Run(final String parBarCode) {
-
+        if(config.TypeScaner==eTypeScaner.Camera)
+            barcodeView.pause();
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
@@ -163,6 +219,9 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                     WaresItem.Set(model);
                     WaresItem.BeforeQuantity = CountBeforeQuantity(ListWares, WaresItem.CodeWares);
                 }
+                if(config.TypeScaner==eTypeScaner.Camera)
+                    barcodeView.resume();
+
                 Refresh();
                 SetAlert(WaresItem.CodeWares);
                 return;
@@ -172,7 +231,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
     void Refresh( )    {
         binding.invalidateAll();
-
+        barcodeView.resume();
         if(WaresItem.IsInputQuantity()) {
             //inputCount.setFocusableInTouchMode(true);
             //inputCount.requestFocusFromTouch();

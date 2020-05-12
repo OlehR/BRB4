@@ -48,7 +48,7 @@ import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
-import ua.uz.vopak.brb4.brb4.databinding.PriceCheckerLayoutNewBinding ;
+import ua.uz.vopak.brb4.brb4.databinding.PriceCheckerLayoutNewBinding;
 
 public class PriceCheckerActivity extends FragmentActivity implements ScanCallBack{
     Context context;
