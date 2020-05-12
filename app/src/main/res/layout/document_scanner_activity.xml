@@ -21,14 +21,13 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:background="@drawable/code_128"
-            android:visibility="gone"
+            android:visibility="@{WaresItem.IsUseCamera() ? View.VISIBLE:View.GONE }"
             android:layout_height="0dp"
             android:layout_weight="0.3">
 
             <com.journeyapps.barcodescanner.BarcodeView
+                android:id="@+id/DS_scanner"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:visibility="@{WaresItem.IsUseCamera() ? View.VISIBLE:View.GONE }"
-
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:zxing_use_texture_view="true"
