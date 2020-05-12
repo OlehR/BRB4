@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <import type="android.view.View"/>
@@ -21,9 +22,9 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:background="@drawable/code_128"
-            android:visibility="gone"
+            android:visibility="visible"
             android:layout_height="0dp"
-            android:layout_weight="0.3">
+            android:layout_weight="0.4">
 
             <com.journeyapps.barcodescanner.BarcodeView
                 xmlns:app="http://schemas.android.com/apk/res-auto"
