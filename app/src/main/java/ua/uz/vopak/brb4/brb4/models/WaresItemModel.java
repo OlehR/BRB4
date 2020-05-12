@@ -2,10 +2,13 @@ package ua.uz.vopak.brb4.brb4.models;
 
 import android.graphics.Color;
 
+import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
+
 public class
 
 
 WaresItemModel {
+    GlobalConfig config = GlobalConfig.instance();
     public String NumberDoc;
     public int TypeDoc;
     public int OrderDoc;
@@ -28,6 +31,7 @@ WaresItemModel {
     public String GetBeforeQuantity() { return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity)+ (QuantityMax==Double.MAX_VALUE?"":"/"+String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity))   ;}
 
     public int ColorBackground(){return Color.parseColor(QuantityMax>0d ? "#ffffff" : "#3fffff00");}
+    public boolean IsUseCamera()  {return config.TypeScaner== eTypeScaner.Camera;}
 
     //public boolean IsInput(){return QuantityMax>0d;}
 

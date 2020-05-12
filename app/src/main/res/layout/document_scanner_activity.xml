@@ -2,6 +2,7 @@
 <layout
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
+        <import type="android.view.View"/>
         <variable name="WaresItem" type="ua.uz.vopak.brb4.brb4.models.WaresItemModel"/>
     </data>
 
@@ -15,6 +16,27 @@
     android:weightSum="2"
     android:keepScreenOn="true"
     android:padding="10dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:background="@drawable/code_128"
+            android:visibility="gone"
+            android:layout_height="0dp"
+            android:layout_weight="0.3">
+
+            <com.journeyapps.barcodescanner.BarcodeView
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:visibility="@{WaresItem.IsUseCamera() ? View.VISIBLE:View.GONE }"
+
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:zxing_use_texture_view="true"
+                app:zxing_preview_scaling_strategy="fitCenter"/>
+
+            <!--   android:visibility="@{LI.IsUseCamera() ? View.VISIBLE:View.INVISIBLE }"
+-->
+      </LinearLayout>
 
 
 

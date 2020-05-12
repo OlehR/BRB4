@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import androidx.databinding.DataBindingUtil;
@@ -8,6 +9,8 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
+
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -31,7 +34,7 @@ import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 
-public class DocumentScannerActivity extends Activity   implements ScanCallBack, IIncomeRender {
+public class DocumentScannerActivity extends FragmentActivity implements ScanCallBack, IIncomeRender {
     EditText barCode,  inputCount;
 
     ScrollView scrollView;
@@ -107,6 +110,7 @@ public class DocumentScannerActivity extends Activity   implements ScanCallBack,
 
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_UP) {
