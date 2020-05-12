@@ -130,7 +130,7 @@ public class BL_PriceChecker extends BL {
         try {
 
             int vStatus = config.Company== eCompany.SevenEleven?
-                    (LI.Code==0?1:(parBarCode.substring(0,2)=="29"?(LI.OldPrice == LI.Price?-1:0):(isHandInput?3:2))):
+                    (LI.Code==0?1:(parBarCode.substring(0,2).equals("29")?(LI.OldPrice == LI.Price && LI.PriceOpt==LI.OldPriceOpt?-1:0):(isHandInput?3:2))):
                     (isError ? -9 : (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError != ePrinterError.None ? -1 : 0)))
             ;
 
