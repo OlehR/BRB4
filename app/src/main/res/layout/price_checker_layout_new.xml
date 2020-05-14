@@ -13,7 +13,6 @@
     android:layout_width="match_parent">
 
 <LinearLayout
-    android:id="@+id/priceCheckerLinearLayout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -30,11 +29,11 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:background="@drawable/code_128"
-            android:id="@+id/BarcodeImageLayout_"
+            android:id="@+id/PCh_BarcodeImageLayout"
             android:layout_height="match_parent">
 
             <com.journeyapps.barcodescanner.BarcodeView
-                android:id="@+id/barcode_scanner_"
+                android:id="@+id/PCh_barcode_scanner"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:visibility="@{LI.IsUseCamera() ? View.VISIBLE:View.INVISIBLE }"
@@ -46,7 +45,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/PricecheckerInfoLayout"
+
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="0.75"
@@ -61,7 +60,7 @@
             android:visibility="@{LI.IsLookPackege() ? View.VISIBLE:View.GONE }">
 
             <Button
-                android:id="@+id/ChangePrintType"
+
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="0.25"
@@ -70,7 +69,7 @@
                 android:text="@{LI.NameTypeLabel()}" />
 
             <Button
-                android:id="@+id/AddPrintBlock"
+
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="0.25"
@@ -80,7 +79,6 @@
         </LinearLayout>
 
         <ProgressBar
-            android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="15dp"
@@ -95,7 +93,6 @@
             android:weightSum="6">
 
             <TextView
-                android:id="@+id/code_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -103,7 +100,6 @@
                 android:textSize="7pt"></TextView>
 
             <TextView
-                android:id="@+id/code"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -111,7 +107,6 @@
                 android:textSize="7pt"></TextView>
 
             <TextView
-                android:id="@+id/rest_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -119,7 +114,6 @@
                 android:textSize="7pt"></TextView>
 
             <TextView
-                android:id="@+id/rest"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -127,7 +121,6 @@
                 android:textSize="7pt"></TextView>
 
             <TextView
-                android:id="@+id/per_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -135,7 +128,6 @@
                 android:textSize="7pt"></TextView>
 
             <TextView
-                android:id="@+id/per"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -150,7 +142,6 @@
             android:weightSum="6">
 
             <TextView
-                android:id="@+id/old_price_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
@@ -159,7 +150,6 @@
                 android:textSize="10pt"></TextView>
 
             <TextView
-                android:id="@+id/old_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
@@ -168,7 +158,6 @@
                 android:textSize="14pt"></TextView>
 
             <TextView
-                android:id="@+id/price_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
@@ -177,7 +166,6 @@
                 android:textSize="10pt"></TextView>
 
             <TextView
-                android:id="@+id/price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
@@ -187,7 +175,6 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/tableRowOpt"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -195,7 +182,6 @@
             android:weightSum="6">
 
             <TextView
-                android:id="@+id/old_price_text_opt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
@@ -203,7 +189,6 @@
                 android:textSize="7pt"></TextView>
 
             <TextView
-                android:id="@+id/old_price_opt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
@@ -211,7 +196,6 @@
                 android:textSize="10pt"></TextView>
 
             <TextView
-                android:id="@+id/price_text_opt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
@@ -219,7 +203,6 @@
                 android:textSize="7pt"></TextView>
 
             <TextView
-                android:id="@+id/price_opt"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
@@ -234,7 +217,6 @@
             android:weightSum="6">
 
             <TextView
-                android:id="@+id/title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_span="3"
@@ -251,7 +233,6 @@
             android:weightSum="6">
 
             <TextView
-                android:id="@+id/bar_code_text"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
@@ -259,7 +240,7 @@
                 android:textSize="7pt"></TextView>
 
             <EditText
-                android:id="@+id/bar_code"
+                android:id="@+id/PCh_bar_code"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_span="3"
@@ -290,7 +271,6 @@
                 android:textSize="7pt"></TextView>
 
             <EditText
-                android:id="@+id/NumberOfReplenishment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_span="3"
@@ -321,7 +301,6 @@
                 android:textSize="7pt"></TextView>
 
             <EditText
-                android:id="@+id/GetWares"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_span="3"
@@ -335,7 +314,6 @@
 
 
     <LinearLayout
-        android:id="@+id/StatusBarLinerLayout"
         android:layout_width="match_parent"
         android:layout_height="82dp"
         android:layout_gravity="bottom"
@@ -350,7 +328,6 @@
             android:visibility="@{LI.IsLookPackege() ? View.VISIBLE:View.GONE }">
 
             <Button
-                android:id="@+id/ChangePrintColorType"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="0.25"
@@ -359,7 +336,7 @@
                 android:text="@{LI.NamePrintColorType()}" />
 
             <Spinner
-                android:id="@+id/ChangePrintBlockNumber"
+
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:entries="@{LI.ListPackege}"
@@ -367,7 +344,6 @@
                 android:layout_weight="0.25" />
 <!--    android:selectedItemPosition="@={LI.ListPackegeIdx}"-->
             <Button
-                android:id="@+id/PrintBlock"
                 android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:layout_weight="0.25"
@@ -383,7 +359,6 @@
             android:weightSum="6">
 
             <TextView
-                android:id="@+id/Printer"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
@@ -392,7 +367,6 @@
                 android:textSize="6pt"></TextView>
 
             <TextView
-                android:id="@+id/Network"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
@@ -401,7 +375,6 @@
                 android:textSize="6pt"></TextView>
 
             <TextView
-                android:id="@+id/CountData"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
@@ -450,7 +423,7 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/RevisionLoader"
+        android:id="@+id/PCh_Loader"
         android:background="#A0FFFFFF"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

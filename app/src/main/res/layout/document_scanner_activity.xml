@@ -22,6 +22,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:visibility="@{WaresItem.IsUseCamera() ? View.VISIBLE:View.GONE }"
         android:layout_weight="0.4">
 
         <LinearLayout
@@ -45,8 +46,7 @@
       </LinearLayout>
     </LinearLayout>
 
-
-
+        
     <RelativeLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
@@ -78,7 +78,7 @@
                 android:padding="5dp"
                 android:ems="10"
                 android:background="@drawable/input_style"
-                android:focusableInTouchMode="false"
+                android:focusableInTouchMode="@{WaresItem.IsUseCamera()}"
                 android:focusable="@{WaresItem.IsInputQuantity() ? false : true }"
                 android:enabled="@{WaresItem.IsInputQuantity() ? false : true }"
                 android:inputType="numberDecimal"
@@ -129,7 +129,7 @@
                     android:ems="10"
                     android:background="@drawable/input_style"
                     android:inputType="number|numberDecimal|numberSigned"
-                    android:focusableInTouchMode="false"
+                    android:focusableInTouchMode="@{WaresItem.IsUseCamera()}"
                     android:focusable="@{WaresItem.IsInputQuantity() ? true : false }"
                     android:enabled="@{WaresItem.IsInputQuantity() ? true : false }"
                     android:layout_marginRight="5dp"

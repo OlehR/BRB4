@@ -54,7 +54,7 @@
                 android:text="f4-Переміщення" />
 
             <Button
-                android:id="@+id/Write-off"
+                android:id="@+id/WriteOff"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:state_selected="false"
@@ -85,7 +85,16 @@
                 android:enabled="true"
                 android:focusable="false"
                 android:text="f7-Розхідна" />
-
+            <Button
+                android:id="@+id/ML_Test"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:state_selected="false"
+                android:layout_margin="5dp"
+                android:background="@drawable/selected_button"
+                android:enabled="true"
+                android:focusable="false"
+                android:text="f8-Тест" />
         </LinearLayout>
 
     </RelativeLayout>

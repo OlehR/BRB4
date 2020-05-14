@@ -19,7 +19,7 @@ public abstract class AbstractConfig {
 
     public boolean isAutorized;
     public String Login = "";
-    public String Password = "brb";
+    public String Password = "123";
 
     public String ApiUrl;
 

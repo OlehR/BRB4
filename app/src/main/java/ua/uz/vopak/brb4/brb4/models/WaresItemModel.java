@@ -41,11 +41,10 @@ WaresItemModel {
     public double QuantityOrder;
     public String GetQuantityOrder() { return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",QuantityOrder);}
 
-    public WaresItemModel(){};
+    public   WaresItemModel(){ClearData();}
 
     public String GetQuantityOld(){return String.valueOf(QuantityOld);}
-  public void Set(WaresItemModel parWIM)
-  {
+    public void Set(WaresItemModel parWIM){
       if(parWIM.NumberDoc!=null && parWIM.TypeDoc>0)
       {
           NumberDoc=parWIM.NumberDoc;
@@ -66,13 +65,11 @@ WaresItemModel {
       
   }
 
-    public void ClearData(String parNameWares)
-    {
+    public void ClearData(String parNameWares){
         ClearData();
         NameWares=parNameWares;
     }
-    public void ClearData()
-    {
+    public void ClearData(){
         CodeWares=0 ;
         NameWares="" ;
         Coefficient=0;

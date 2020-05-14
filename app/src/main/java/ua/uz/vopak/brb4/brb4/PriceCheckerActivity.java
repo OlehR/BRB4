@@ -96,14 +96,12 @@ private BarcodeCallback callback = new BarcodeCallback() {
         setContentView(R.layout.price_checker_layout_new);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        textBarcodeView = findViewById(R.id.bar_code);
+        textBarcodeView = findViewById(R.id.PCh_bar_code);
 
-        PriceCheckerInfoLayout = findViewById(R.id.PricecheckerInfoLayout);
-
-
+        //PriceCheckerInfoLayout = findViewById(R.id.PricecheckerInfoLayout);
         //ChangePrintBlockNumber = findViewById(R.id.ChangePrintBlockNumber);
 
-        loader = findViewById(R.id.RevisionLoader);
+        loader = findViewById(R.id.PCh_Loader);
 
         BL.Init(LI,this);
         BL.ReInitBT();
@@ -112,8 +110,8 @@ private BarcodeCallback callback = new BarcodeCallback() {
         binding.setLI (LI);
         binding.setHandler(HandlerPC);
 
-        BarcodeImageLayout = findViewById(R.id.BarcodeImageLayout_);
-        barcodeView = findViewById(R.id.barcode_scanner_);
+        BarcodeImageLayout = findViewById(R.id.PCh_BarcodeImageLayout);
+        barcodeView = findViewById(R.id.PCh_barcode_scanner);
 
         if(config.TypeScaner==eTypeScaner.Camera) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -177,11 +175,6 @@ private BarcodeCallback callback = new BarcodeCallback() {
         }
 
 
-    /*@Override
-    protected void onResume() {
-        super.onResume();
-    }*/
-
     @Override
     public void onResume() {
         super.onResume();
@@ -195,7 +188,6 @@ private BarcodeCallback callback = new BarcodeCallback() {
         super.onPause();
         if(config.TypeScaner==eTypeScaner.Camera)
             barcodeView.pause();
-
     }
 
     public void LoadSpinner() {
@@ -292,6 +284,7 @@ private BarcodeCallback callback = new BarcodeCallback() {
         // TODO Auto-generated method stub
         super.onDestroy();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

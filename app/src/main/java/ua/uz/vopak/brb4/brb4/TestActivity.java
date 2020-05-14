@@ -4,26 +4,23 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-
-import androidx.annotation.NonNull;
-import androidx.databinding.DataBindingUtil;
-
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.FragmentActivity;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -32,6 +29,11 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentActivity;
+
 import com.google.zxing.ResultPoint;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeCallback;
@@ -39,88 +41,84 @@ import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
-import ua.uz.vopak.brb4.lib.enums.MessageType;
-import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
-import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
+
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
-import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
+import ua.uz.vopak.brb4.brb4.databinding.PriceCheckerLayoutNewBinding;
+import ua.uz.vopak.brb4.brb4.databinding.TestLayoutBinding;
+import ua.uz.vopak.brb4.brb4.helpers.BL_PriceChecker;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
+import ua.uz.vopak.brb4.lib.enums.MessageType;
+import ua.uz.vopak.brb4.lib.enums.ePrinterError;
+import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
+import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
+import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
-public class DocumentScannerActivity extends FragmentActivity implements ScanCallBack, IIncomeRender {
-    EditText barCode,  inputCount;
-
-    ScrollView scrollView;
-    RelativeLayout loader;
+public class TestActivity extends FragmentActivity implements ScanCallBack,IIncomeRender{
+    Context context;
+    Activity activity;
+    EditText   barCode,inputCount,textBarcodeView;
     TableLayout WaresTableLayout;
+    ScrollView scrollView;
+    public View BarcodeImageLayout;
+    public RelativeLayout loader;
     BarcodeView barcodeView;
 
-    Activity context;
     GlobalConfig config = GlobalConfig.instance();
-    DocumentScannerActivityBinding binding;
-
-    List<WaresItemModel> ListWares;
     WaresItemModel WaresItem = new WaresItemModel();
+    List<WaresItemModel> ListWares = new ArrayList<>();
+
+    TestLayoutBinding binding;
+    final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
 
     int padding;
-
-    // Калбек штрихкода з камери.
-    private BarcodeCallback callback = new BarcodeCallback() {
-        @Override
-        public void barcodeResult(BarcodeResult result) {
-            if (result.getText() != null) {
-                //barcodeView.pause();
-                ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 1000);
-                toneGen1.startTone(ToneGenerator.TONE_PROP_BEEP,250);
-                Run(result.getText());//config.Scaner.CallBack.
-            }
+// Калбек штрихкода з камери.
+private BarcodeCallback callback = new BarcodeCallback() {
+    @Override
+    public void barcodeResult(BarcodeResult result) {
+        if (result.getText() != null) {
+            barcodeView.pause();
+            ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 1000);
+            toneGen1.startTone(ToneGenerator.TONE_PROP_BEEP,250);
+            Run(result.getText());//config.Scaner.CallBack.
         }
-        @Override
-        public void possibleResultPoints(List<ResultPoint> resultPoints) {
-        }
-    };
-    final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
+    }
+    @Override
+    public void possibleResultPoints(List<ResultPoint> resultPoints) {
+    }
+};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
-        setContentView(R.layout.document_scanner_activity);
+        activity = this;
 
-        binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
+        setContentView(R.layout.test_layout);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        binding = DataBindingUtil.setContentView(this, R.layout.test_layout);
         binding.setWaresItem(WaresItem);
 
-        Intent i = getIntent();
+        loader = findViewById(R.id.TEST_Loader);
+        inputCount = findViewById(R.id.TEST_InputCount);
+        barCode = findViewById(R.id.TEST_BarCode);
+        scrollView = findViewById(R.id.TEST_ScrollView);
 
-        float d = this.getResources().getDisplayMetrics().density;
-        int dpValue = 3;
-        padding = (int) (dpValue * d);
+        BarcodeImageLayout = findViewById(R.id.TEST_BarcodeImageLayout);
+        barcodeView = findViewById(R.id.TEST_barcode_scanner);
+        WaresTableLayout = findViewById(R.id.TEST_ScanItemsTable);
 
-
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setBeepEnabled(true);
-        config.InitScaner(this);
-
-        ListWares = new ArrayList<>();
-        WaresItem.ClearData();
-
-        WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
-        WaresItem.NumberDoc = i.getStringExtra("inv_number");
-
-        barCode = findViewById(R.id.RevisionBarCode);
-        inputCount = findViewById(R.id.RevisionInputCount);
-        loader = findViewById(R.id.RevisionLoader);
-        WaresTableLayout = findViewById(R.id.RevisionScanItemsTable);
-        scrollView = findViewById(R.id.RevisionScrollView);
-        barcodeView=findViewById(R.id.DS_scanner);
-
-        if(config.TypeScaner== eTypeScaner.Camera) {
+        if(config.TypeScaner==eTypeScaner.Camera) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    checkSelfPermission(android.Manifest.permission.CAMERA)
+                    checkSelfPermission(Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.CAMERA},
                         PERMISSIONS_REQUEST_ACCESS_CAMERA);
@@ -129,9 +127,25 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 barcodeView.decodeContinuous(callback);
                 barcodeView.resume();
             }
+        }else{
+            //barcodeView.setVisibility(View.INVISIBLE);
         }
 
-        Refresh();
+
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setBeepEnabled(true);
+        //Для отримання штрихкодів
+        config.InitScaner(this);
+
+        WaresItem.ClearData();
+
+        Intent i = getIntent();
+        WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
+        WaresItem.NumberDoc = i.getStringExtra("document_number");
+
+        float d = this.getResources().getDisplayMetrics().density;
+        int dpValue = 3;
+        padding = (int) (dpValue * d);
 
         inputCount.addTextChangedListener(new TextWatcher() {
             @Override
@@ -150,7 +164,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 }
             }
         });
-
+/*
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
@@ -158,7 +172,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 return null;
             }
         }).execute();
-
+  */
     }
 
     @SuppressLint("RestrictedApi")
@@ -169,9 +183,9 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             switch (keyCode){
                 case "66":
                     if(WaresItem.IsInputQuantity())
-                       saveDocumentItem(false);
+                        saveDocumentItem(false);
                     else
-                        findWareByArticleOrCode(null);
+                        findWareByArticleOrCode();
                     break;
                 case "62"://key SP
                     WaresItem.ClearData();
@@ -186,48 +200,37 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                     focusOnView("down");
                     break;
             }
+
         }
         return super.dispatchKeyEvent(event);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(config.TypeScaner==eTypeScaner.Camera)
-            barcodeView.resume();
-        //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
-    }
-    @Override
-    public void Run(final String parBarCode) {
+    @Override //Приходить штрихкод.
+        public void Run(final String parBarCode) {
         if(config.TypeScaner==eTypeScaner.Camera)
             barcodeView.pause();
-        findWareByArticleOrCode(parBarCode);
-    }
 
-    public void RenderData(final WaresItemModel model){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(model == null)
-                  WaresItem.ClearData("Товар не знайдено");
-                else {
-                    WaresItem.ClearData();
-                    WaresItem.Set(model);
-                    WaresItem.BeforeQuantity = CountBeforeQuantity(ListWares, WaresItem.CodeWares);
-                }
-                if(config.TypeScaner==eTypeScaner.Camera)
-                    barcodeView.resume();
+        new AsyncHelper<WaresItemModel>(
+                new IAsyncHelper<WaresItemModel>() {
+                    @Override
+                    public WaresItemModel Invoke() {
+                        return config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,parBarCode, null);
+                    }
+                },
+                new IPostResult<WaresItemModel>() {
+                    @Override
+                    public void Invoke(WaresItemModel model) {
+                        RenderData(model);
+                    }
+                }).execute();
 
-                Refresh();
-                SetAlert(WaresItem.CodeWares);
-                return;
-            }
-        });
-    }
+        }
 
     void Refresh( ){
         binding.invalidateAll();
-        barcodeView.resume();
+        if(config.TypeScaner==eTypeScaner.Camera)
+            barcodeView.resume();
+
         if(WaresItem.IsInputQuantity()) {
             //inputCount.setFocusableInTouchMode(true);
             //inputCount.requestFocusFromTouch();
@@ -243,6 +246,45 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             barCode.setFocusableInTouchMode(true);
             barCode.requestFocusFromTouch();
             barCode.setFocusableInTouchMode(false);
+        }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(config.TypeScaner==eTypeScaner.Camera)
+             barcodeView.resume();
+        //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(config.TypeScaner==eTypeScaner.Camera)
+            barcodeView.pause();
+    }
+    //We need to handle any incoming intents, so let override the onNewIntent method
+    //Необхідно для Zebta  TC20 Оскільки повідомлення приходять саме так. !!!TMP Можливо перероблю через повідомлення
+    @Override
+    public void onNewIntent(Intent i) {
+        config.GetScaner().handleDecodeData(i);
+    }
+    @Override
+    protected void onDestroy() {
+         // TODO Auto-generated method stub
+        super.onDestroy();
+    }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if(config.TypeScaner==eTypeScaner.Camera) {
+            if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    barcodeView.setVisibility(View.VISIBLE);
+                    barcodeView.decodeContinuous(callback);
+                }
+            }
+        }else{
+            barcodeView.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -297,7 +339,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         params.weight = 1;
         OldQuantity.setLayoutParams(params);
 
-       return tr;
+        return tr;
     }
 
     public void renderTable(final List<WaresItemModel>  parL ) {
@@ -316,35 +358,61 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         });
     }
 
+    public void RenderData(final WaresItemModel model){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if(model == null)
+                    WaresItem.ClearData("Товар не знайдено");
+                else {
+                    WaresItem.ClearData();
+                    WaresItem.Set(model);
+                    WaresItem.BeforeQuantity = CountBeforeQuantity(ListWares, WaresItem.CodeWares);
+                }
+
+                Refresh();
+                SetAlert(WaresItem.CodeWares);
+                return;
+            }
+        });
+    }
+
     public Double CountBeforeQuantity(List<WaresItemModel> parL,int pCodeWares)    {
         Double res=0d;
         for (WaresItemModel item : parL)
             if(item.CodeWares==pCodeWares)
                 res+=item.InputQuantity;
-            return res;
+        return res;
     }
 
     private void saveDocumentItem(final Boolean isNullable) {
-        if (WaresItem.InputQuantity>0 || isNullable) {
+        if (WaresItem.InputQuantity>0) {
+
             loader.setVisibility(View.VISIBLE);
-            if(WaresItem.InputQuantity>0)
-                WaresItem.OrderDoc++;
-            new AsyncHelper<ArrayList>(new IAsyncHelper() {
+            WaresItem.OrderDoc++;
+            new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
-                public ArrayList Invoke() {
-                    return config.Worker.SaveDocWares( WaresItem.TypeDoc ,WaresItem.NumberDoc, WaresItem.CodeWares, WaresItem.OrderDoc, WaresItem.InputQuantity, isNullable, null);
+                public Void Invoke() {
+                    config.Worker.SaveDocWares( WaresItem.TypeDoc ,WaresItem.NumberDoc, WaresItem.CodeWares, WaresItem.OrderDoc, WaresItem.InputQuantity, isNullable, activity);
+                    return null;
                 }
-            },
-                    new IPostResult<ArrayList>() {
-                        @Override
-                        public void Invoke(ArrayList args) {
-                            AfterSave(args);
-                        }}).execute();
+            }).execute();
         }
+/*
+        scrollView.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                barCode.setFocusable(true);
+                barCode.setFocusable(false);
+                barCode.setFocusableInTouchMode(true);
+                barCode.requestFocusFromTouch();
+                barCode.setFocusableInTouchMode(false);
+            }
+        }, 100L);*/
     }
 
     public void AfterSave(final ArrayList args){
-        final DocumentScannerActivity context = this;
+        final TestActivity context = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -401,6 +469,8 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
     private void SetAlert(int pCodeWares){
         ViewGroup rows = WaresTableLayout;
+        if(rows==null)
+            return;
         for (int i = 0; i < rows.getChildCount(); i++) {
             TableRow trc = (TableRow) rows.getChildAt(i);
             View v = trc.getChildAt(0);
@@ -423,22 +493,16 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         //CheckEmptyValue();
     }
 
-    private void  findWareByArticleOrCode(String  pBarCode){
-        final String BarCode = pBarCode==null? barCode.getText().toString(): pBarCode;
-        new AsyncHelper<WaresItemModel>(
-                new IAsyncHelper<WaresItemModel>() {
-                    @Override
-                    public WaresItemModel Invoke() {
-                        return config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,BarCode, null);
-                    }
-                },
-                new IPostResult<WaresItemModel>() {
-                    @Override
-                    public void Invoke(WaresItemModel model) {
-                        RenderData(model);
-                    }
-                }).execute();
+    private void  findWareByArticleOrCode(){
+        //new AsyncRevisionScanHelper(worker, aContext).execute(barCode.getText().toString());
 
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc ,barCode.getText().toString(), activity);
+                return null;
+            }
+        }).execute();
     }
 
     private final void focusOnView(final String prevent){
@@ -463,21 +527,5 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         });
     }
 
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if(config.TypeScaner==eTypeScaner.Camera) {
-            if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    barcodeView.setVisibility(View.VISIBLE);
-                    barcodeView.decodeContinuous(callback);
-                }
-            }
-        }else{
-            barcodeView.setVisibility(View.INVISIBLE);
-        }
-    }
 
 }

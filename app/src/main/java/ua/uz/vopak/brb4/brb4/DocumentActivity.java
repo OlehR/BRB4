@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
 
 import android.view.KeyEvent;
 import android.view.View;
@@ -398,5 +397,11 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
 
             }
         });
+    }
+
+    public static class DocumentScanerEvent {
+        public void onCountTextChanged(CharSequence s, int start, int before, int count) {
+            //Log.w("tag", "onTextChanged " + s);
+        }
     }
 }

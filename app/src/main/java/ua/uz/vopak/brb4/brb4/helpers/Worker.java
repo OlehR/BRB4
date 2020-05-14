@@ -141,22 +141,27 @@ public class Worker {
         context.renderTable(model);
     }
     // Отримати Товар по штрихкоду
-    public void GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode, Activity pContext) {
+    public WaresItemModel GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode, Activity pContext) {
         WaresItemModel model = mDbHelper.GetScanData(pTypeDoc, pNumberDoc, pBarCode);
-        DocumentScannerActivity activity = (DocumentScannerActivity) pContext;
-        activity.RenderData(model);
+        if(pContext!=null) {
+            DocumentScannerActivity activity = (DocumentScannerActivity) pContext;
+            activity.RenderData(model);
+        }
+        return model;
     }
+
     // Збереження товару в БД
-    public void SaveDocWares(int pTypeDoc, String pNumberDoc, int pCodeWares, int pOrderDoc, Double pQuantity, Boolean pIsNullable, Activity pContext) {
+    public ArrayList SaveDocWares(int pTypeDoc, String pNumberDoc, int pCodeWares, int pOrderDoc, Double pQuantity, Boolean pIsNullable, Activity pContext) {
         if (pIsNullable)
             mDbHelper.SetNullableWares(pTypeDoc, pNumberDoc, pCodeWares);
 
         ArrayList args = mDbHelper.SaveDocWares(pTypeDoc, pNumberDoc, pCodeWares, pOrderDoc, pQuantity);
 
-        if (pContext instanceof DocumentScannerActivity) {
+        if (pContext !=null && pContext instanceof DocumentScannerActivity) {
             DocumentScannerActivity activity = (DocumentScannerActivity) pContext;
             activity.AfterSave(args);
         }
+        return args;
     }
     // Зміна стану документа і
     public void UpdateDocState(int pState, int pTypeDoc, String pNumberDoc, Activity pActivity) {

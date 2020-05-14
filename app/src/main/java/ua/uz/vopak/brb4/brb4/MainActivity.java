@@ -31,7 +31,7 @@ import ua.uz.vopak.brb4.lib.models.LabelInfo;
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener, ScanCallBack {
     static GlobalConfig config = GlobalConfig.instance();
     public RelativeLayout loader;
-    Button[] menuItems = new Button[7];
+    Button[] menuItems = new Button[8];
     int current = 0;
     //AuterizationsHelper auth;
     static boolean isFirstRun = true;
@@ -102,10 +102,10 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         menuItems[1] = findViewById(R.id.Revision);
         menuItems[2] = findViewById(R.id.Incom);
         menuItems[3] = findViewById(R.id.Moving);
-        menuItems[4] = findViewById(R.id.Write_off);
+        menuItems[4] = findViewById(R.id.WriteOff);
         menuItems[5] = findViewById(R.id.Returning);
         menuItems[6] = findViewById(R.id.Expenditure);
-
+        menuItems[7] = findViewById(R.id.ML_Test);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         for(int i = 0; i < menuItems.length; i++){
@@ -266,7 +266,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 i.putExtra("document_type", 3);
                 startActivity(i);
                 break;
-            case R.id.Write_off:
+            case R.id.WriteOff:
                 i = new Intent(this, DocumentActivity.class);
                 i.putExtra("document_type", 4);
                 startActivity(i);
@@ -281,6 +281,13 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 i.putExtra("document_type", 6);
                 startActivity(i);
                 break;
+            case R.id.ML_Test:
+                i = new Intent(this, TestActivity.class);
+                i.putExtra("document_type", 1);
+                i.putExtra("document_number", "ПСЮ00003483");
+                startActivity(i);
+                break;
+
         }
     }
 
