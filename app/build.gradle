@@ -6,8 +6,8 @@ android {
         applicationId "ua.uz.vopak.brb4.brb4"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 202
-        versionName "4.2.01"
+        versionCode 205
+        versionName "4.2.05"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -32,9 +32,9 @@ dependencies {
     implementation ('com.journeyapps:zxing-android-embedded:3.6.0') { transitive = false }
     implementation 'com.google.zxing:core:3.3.0'
     implementation project(":share_lib")
-    compileOnly fileTree(include: ['com.symbol.emdk.jar'], dir: 'd:\\AndroidSdk\\add-ons\\addon-symbol_emdk-symbol-26\\libs')
+    compileOnly fileTree(include: ['com.symbol.emdk.jar'], dir: 'c:\\AndroidSdk\\add-ons\\addon-symbol_emdk-symbol-26\\libs')
     implementation fileTree(exclude: ['com.symbol.emdk.jar'], dir: 'libs')
-    compileOnly fileTree(include: ['device.sdk.jar'], dir: 'd:\\AndroidSDK\\point-mobile-sdk\\lib')
+    compileOnly fileTree(include: ['device.sdk.jar'], dir: 'c:\\AndroidSDK\\point-mobile-sdk\\lib')
     implementation fileTree(exclude: ['device.sdk.jar'], dir: 'libs')
     implementation 'com.google.code.gson:gson:2.8.2'
 

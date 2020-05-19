@@ -21,8 +21,10 @@ public class ScanerTC20 extends Scaner {
     @Override
     public boolean Init(ScanCallBack cCallBack,Bundle savedInstanceState)
     {
-        if(emdkWrapper!=null)
-         emdkWrapper.getEMDKManager(savedInstanceState);
+        if(emdkWrapper!=null) {
+            emdkWrapper.getEMDKManager(savedInstanceState);
+            emdkWrapper.initScanner();
+        }
         return super.Init(cCallBack,savedInstanceState);
     }
 

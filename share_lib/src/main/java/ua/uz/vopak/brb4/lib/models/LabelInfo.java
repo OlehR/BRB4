@@ -50,7 +50,7 @@ public class LabelInfo
     public String strPrice() {return  String.format("%.2f", (double) Price/100d);}
     public int OldPrice;
     public String strOldPrice() {return  String.format("%.2f", (double) OldPrice/100d);}
-    public int ColorPrice() {return Color.parseColor(OldPrice != Price ? "#ee4343" : "#3bb46e");}
+    public int ColorPrice() {return Color.parseColor(OldPrice != Price || OldPriceOpt!=PriceOpt? "#ee4343" : "#3bb46e");}
     public int PriceBill;
     public int PriceCoin;
     public String strPriceCoin() {return (PriceCoin < 10 ? "0" : "") + Integer.toString(PriceCoin).trim();}
@@ -141,6 +141,8 @@ public class LabelInfo
         Article = "";
         BarCode.set("");
         Rest = 0;
+        InputFocus.set(IsViewReplenishment()?2:1);
+        NumberOfReplenishment.set("");
     }
 
     public LabelInfo(AbstractConfig pConfig)  {
@@ -238,9 +240,12 @@ public class LabelInfo
                 PriceBillOpt = 0;
                 PriceCoinOpt = 0;
             }
+
+
         }catch (Exception e){
             e.getMessage();
         }
+
     }
 
     /*public void Init(String parData){

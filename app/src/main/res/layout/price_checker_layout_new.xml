@@ -147,7 +147,7 @@
                 android:layout_weight="1.5"
                 android:text="Ціна с:"
                 android:textColor="@{LI.ColorPrice()}"
-                android:textSize="10pt"></TextView>
+                android:textSize="4mm"></TextView>
 
             <TextView
                 android:layout_width="0dp"
@@ -155,7 +155,7 @@
                 android:layout_weight="1.5"
                 android:text="@{LI.strOldPrice()}"
                 android:textColor="@{LI.ColorPrice()}"
-                android:textSize="14pt"></TextView>
+                android:textSize="7mm"></TextView>
 
             <TextView
                 android:layout_width="0dp"
@@ -163,7 +163,7 @@
                 android:layout_weight="1.5"
                 android:text="Ціна н:"
                 android:textColor="@{LI.ColorPrice()}"
-                android:textSize="10pt"></TextView>
+                android:textSize="4mm"></TextView>
 
             <TextView
                 android:layout_width="0dp"
@@ -171,7 +171,7 @@
                 android:layout_weight="1.5"
                 android:text="@{LI.strPrice()}"
                 android:textColor="@{LI.ColorPrice()}"
-                android:textSize="14pt"></TextView>
+                android:textSize="7mm"></TextView>
         </LinearLayout>
 
         <LinearLayout
@@ -185,29 +185,46 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:text="Ціна с. опт:"
-                android:textSize="7pt"></TextView>
+                android:text="Ц. с. опт:"
+                android:textSize="4mm"></TextView>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
                 android:text="@{LI.strOldPriceOpt()}"
-                android:textSize="10pt"></TextView>
+                android:textSize="6mm"></TextView>
+
+            <RelativeLayout
+                android:id="@+id/PCh_Loader"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#A0FFFFFF"
+                android:visibility="invisible">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:progressDrawable="@drawable/circular_progress_bar" />
+
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:text="Ціна н. опт:"
-                android:textSize="7pt"></TextView>
+                android:text="Ц. н. опт:"
+                android:textColor="@{LI.ColorPrice()}"
+                android:textSize="4mm"></TextView>
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
                 android:text="@{LI.strPriceOpt()}"
-                android:textSize="10pt"></TextView>
+                android:textColor="@{LI.ColorPrice()}"
+                android:textSize="6mm"></TextView>
         </LinearLayout>
 
         <LinearLayout
@@ -222,7 +239,7 @@
                 android:layout_span="3"
                 android:layout_weight="6"
                 android:text="@{LI.Name}"
-                android:textSize="10pt"></TextView>
+                android:textSize="6mm"></TextView>
 
         </LinearLayout>
 
@@ -237,7 +254,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="Штрих код:"
-                android:textSize="7pt"></TextView>
+                android:textSize="3mm"></TextView>
 
             <EditText
                 android:id="@+id/PCh_bar_code"
@@ -250,10 +267,10 @@
                 android:inputType="numberSigned"
                 android:focusableInTouchMode="@{LI.IsSoftKeyboard()}"
                 android:hint="штрихкод або артикул"
-                android:text="@{LI.BarCode}"
+                android:text="@={LI.BarCode}"
                 android:focusable="@{LI.InputFocus==1}"
                 android:onClick="@{(view) -> handler.OnClickBarCode(view,LI)}"
-                android:textSize="8pt"></EditText>
+                android:textSize="5mm"></EditText>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -268,7 +285,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="Поповнення:"
-                android:textSize="7pt"></TextView>
+                android:textSize="3mm"></TextView>
 
             <EditText
                 android:layout_width="0dp"
@@ -283,7 +300,7 @@
                 android:hint="кількість поповнення"
                 android:text="@={LI.NumberOfReplenishment}"
                 android:onClick="@{(view) -> handler.OnClickNumberOfReplenishment(view,LI)}"
-                android:textSize="8pt"></EditText>
+                android:textSize="5mm"></EditText>
         </LinearLayout>
 
         <LinearLayout
@@ -421,21 +438,6 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <RelativeLayout
-        android:id="@+id/PCh_Loader"
-        android:background="#A0FFFFFF"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible">
-
-        <ProgressBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:progressDrawable="@drawable/circular_progress_bar"
-            android:layout_centerInParent="true"/>
-
-    </RelativeLayout>
 
 </FrameLayout>
 </layout>

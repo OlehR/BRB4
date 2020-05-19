@@ -339,7 +339,8 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                         @Override
                         public void Invoke(ArrayList args) {
                             AfterSave(args);
-                        }}).execute();
+                        }}
+                        ).execute();
         }
     }
 

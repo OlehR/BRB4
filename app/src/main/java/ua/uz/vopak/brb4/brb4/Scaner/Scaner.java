@@ -1,15 +1,18 @@
 package ua.uz.vopak.brb4.brb4.Scaner;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 
 //getApplicationContext()
 public class Scaner extends Activity {
     Context varApplicationContext;
     public ScanCallBack CallBack;
-    //private final Handler mHandler = new Handler();
+    public String TypeBarCode;
+
 
 
     public Scaner(Context parApplicationContext)
@@ -23,7 +26,7 @@ public class Scaner extends Activity {
             this.registerReceiver(mScanResultReceiverPM, new IntentFilter("device.scanner.EVENT"));*/
 
     }
-
+/*
     //Посилаємо повідомлення (Зараз через CallBack)
     public void Send(String parBarcode) {
 
@@ -38,7 +41,7 @@ public class Scaner extends Activity {
         }
 
     }
-
+*/
     public boolean Init(ScanCallBack cCallBack)
     {
         CallBack=cCallBack;
@@ -50,19 +53,18 @@ public class Scaner extends Activity {
         return Init(cCallBack);
     }
 
+
     public boolean StartScan()
     {
         return true;
     }
+
     public boolean StopScan()
     {
         return true;
     }
 
-    public void Close()
-    {
-
-    }
+    public void Close()   {    }
 
     public void handleDecodeData(Intent i)
     {}

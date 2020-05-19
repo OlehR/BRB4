@@ -2,7 +2,9 @@ package ua.uz.vopak.brb4.brb4;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import androidx.databinding.DataBindingUtil;
 import android.graphics.Color;
@@ -32,8 +34,11 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -71,9 +76,8 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
     PriceCheckerLayoutNewBinding binding;
     final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
 
-
-// Калбек штрихкода з камери.
-private BarcodeCallback callback = new BarcodeCallback() {
+   // Калбек штрихкода з камери.
+   private BarcodeCallback callback = new BarcodeCallback() {
     @Override
     public void barcodeResult(BarcodeResult result) {
         if (result.getText() != null) {
@@ -146,21 +150,28 @@ private BarcodeCallback callback = new BarcodeCallback() {
             {
                 case "66"://Enter
                     if(LI.InputFocus.get()==1)
-                        FindWares(textBarcodeView.getText().toString(), false);
+                        FindWares(LI.BarCode.get(), false);
                     else
                         if(LI.InputFocus.get()==2)
                             new AsyncHelper<Void>(
-                                    new IAsyncHelper<Void>() {
+                                    new IAsyncHelper<Boolean>() {
                                         @Override
-                                        public Void Invoke() {
+                                        public Boolean Invoke() {
                                             BL.SaveReplenishment(Double.valueOf(LI.NumberOfReplenishment.get()) );
-                                            return null;
+                                            return true;
                                         }
-                                    }).execute();
+                                    },
+                                    new IPostResult<Boolean>() {
+                                        @Override
+                                        public void Invoke(Boolean p) {
+                                            LI.NumberOfReplenishment.set("");
+                                            return;
+                                        }}).execute();
 
 
                     break;
                 case "131":
+                    break;
                 case "132"://F2
                     LI.InputFocus.set(LI.InputFocus.get()==1?2:1);
                      break;
@@ -174,20 +185,24 @@ private BarcodeCallback callback = new BarcodeCallback() {
             FindWares(parBarCode,false);
         }
 
-
     @Override
     public void onResume() {
         super.onResume();
+        //Camera
         if(config.TypeScaner==eTypeScaner.Camera)
              barcodeView.resume();
-        //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
+        //Zebra
+        scaner.StartScan();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        //Camera
         if(config.TypeScaner==eTypeScaner.Camera)
             barcodeView.pause();
+        //Zebra
+        scaner.StopScan();
     }
 
     public void LoadSpinner() {
@@ -223,15 +238,9 @@ private BarcodeCallback callback = new BarcodeCallback() {
                 }).execute();
     }
 
-
-    //We need to handle any incoming intents, so let override the onNewIntent method
-    //Необхідно для Zebta  TC20 Оскільки повідомлення приходять саме так. !!!TMP Можливо перероблю через повідомлення
-    @Override
-    public void onNewIntent(Intent i) {
-        config.GetScaner().handleDecodeData(i);
-    }
-
     public void  setScanResult(LabelInfo LI) {
+        if(LI.Code==0&&LI.InputFocus.get()==2)
+            LI.InputFocus.set(1);
         binding.invalidateAll();
         LI.SetListPackege();
 

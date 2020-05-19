@@ -95,8 +95,8 @@ public class Utils {
         String model = MODEL;
         String manufacturer = MANUFACTURER;
 
-        if (model.equals("TC20") && (manufacturer.contains("Zebra Technologies") || manufacturer.contains("Motorola Solutions")))
-            return eTypeScaner.ZebraTC20;
+        if (/*model.equals("TC20") &&*/ (manufacturer.contains("Zebra Technologies") || manufacturer.contains("Motorola Solutions")))
+            return eTypeScaner.Zebra;
         if (model.equals("PM550") && (manufacturer.contains("POINTMOBILE") || manufacturer.contains("Point Mobile Co., Ltd.")))
             return eTypeScaner.PM550;
 
