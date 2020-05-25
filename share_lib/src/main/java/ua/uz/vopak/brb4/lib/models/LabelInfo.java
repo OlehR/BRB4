@@ -210,11 +210,15 @@ public class LabelInfo
                     PriceCoinOpt = Integer.parseInt(varPrice[1]);
                 }
                 PriceOpt = PriceBillOpt * 100 + PriceCoinOpt;
-                if(PriceOpt!=Price)
+                /*if(PriceOpt!=Price)
                 {
                     OldPriceOpt = OldPrice;
                     OldPrice = Price;
-                }
+                }*/
+
+                Price=PriceOpt;
+                PriceBillOpt=0;
+                PriceCoinOpt=0;
             }
 
             if (parData.has("QuantityOpt") && parData.has("PriceOpt")) {

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
@@ -26,12 +27,13 @@
 
         <ImageView
             android:id="@+id/Background"
-            android:background="@drawable/background2spar"
+
             android:focusableInTouchMode="false"
             android:focusable="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
+        <!--   android:background="@drawable/background2spar.png"-->
 
         <LinearLayout
             android:id="@+id/LogoLayout"
@@ -310,7 +312,8 @@
             android:paddingBottom="10dp"
             android:focusableInTouchMode="false"
             android:focusable="false"
-            android:textAlignment="center"/>
+            android:textAlignment="center"
+            tools:ignore="RtlCompat" />
 
         <RelativeLayout
             android:layout_width="match_parent"

@@ -1,0 +1,41 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    defaultConfig {
+        applicationId "ua.uz.vopak.brb4.brb4"
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 206
+        versionName "4.2.06"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation ('com.journeyapps:zxing-android-embedded:3.6.0') { transitive = false }
+    implementation 'com.google.zxing:core:3.3.0'
+    implementation project(":share_lib")
+    compileOnly fileTree(include: ['com.symbol.emdk.jar'], dir: 'c:\\AndroidSdk\\add-ons\\addon-symbol_emdk-symbol-26\\libs')
+    implementation fileTree(exclude: ['com.symbol.emdk.jar'], dir: 'libs')
+    compileOnly fileTree(include: ['device.sdk.jar'], dir: 'c:\\AndroidSDK\\point-mobile-sdk\\lib')
+    implementation fileTree(exclude: ['device.sdk.jar'], dir: 'libs')
+    implementation 'com.google.code.gson:gson:2.8.2'
+
+}

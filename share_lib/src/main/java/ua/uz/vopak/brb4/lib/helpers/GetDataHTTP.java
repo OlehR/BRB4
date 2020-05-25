@@ -2,6 +2,7 @@ package ua.uz.vopak.brb4.lib.helpers;
 
 
 import android.util.Base64;
+import android.util.Log;
 
 import java.io.*;
 //import java.io.UnsupportedEncodingException;
@@ -12,6 +13,7 @@ import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 
 public class GetDataHTTP
 {
+    protected static final String TAG = "BRB4/GetDataHTTP";
     public eStateHTTP HttpState = eStateHTTP.HTTP_OK;
 
   /*  public String GetData(String parCodeShop,String parScanCode,String parCode) {
@@ -74,8 +76,8 @@ public String GetBaseAuth(String pLogin,String pPasWord){
             url = new URL(pURL);
 
              conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000);
-            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(30000);
+            conn.setConnectTimeout(30000);
             conn.setUseCaches(false);
            /* if (pPropertyName != null)
                 conn.setRequestProperty(pPropertyName, pPropertyValue);*/
@@ -95,27 +97,36 @@ public String GetBaseAuth(String pLogin,String pPasWord){
                 writer.close();
                 os.close();
             }
+            Log.d(TAG,"Start");
             int responseCode=conn.getResponseCode();
-
+            Log.d(TAG,"responseCode");
             HttpState = eStateHTTP.fromId(responseCode);
             if (responseCode == HttpsURLConnection.HTTP_OK ) {
+                StringBuilder everything = new StringBuilder();
                 String line;
                 BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                while ((line=br.readLine()) != null) {
-                    response+=line;
+                Log.d(TAG,"StartRead");
+                while ((line=br. readLine()) != null) {
+                    everything.append(line);
+                    //response+=line;
                 }
+                response=everything.toString();
+                Log.d(TAG,"EndRead");
             }
             else {
                 response="";
             }
 
         } catch (Exception e) {
+            Log.e(TAG,e.getMessage());
             e.printStackTrace();
+            HttpState= eStateHTTP.HTTP_Not_Define_Error;
             if(conn!=null)
                 try {
                     int a = conn.getResponseCode();
+                    HttpState = eStateHTTP.fromId(a);
                 }catch (Exception ex){};
-            HttpState= eStateHTTP.HTTP_Not_Define_Error;
+
         }
         return response;
     }
