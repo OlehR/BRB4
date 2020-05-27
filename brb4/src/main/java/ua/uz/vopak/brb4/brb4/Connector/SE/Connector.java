@@ -11,6 +11,8 @@ import com.google.gson.Gson;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
+import ua.uz.vopak.brb4.brb4.models.Doc;
+import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
@@ -178,8 +180,23 @@ public class Connector {
 
     //Робота з документами.
     //Завантаження документів в ТЗД (HTTP)
-    public Boolean LoadDocsData(String parTypeDoc, ObservableInt pProgress) {
-        return true;
+    public Boolean LoadDocsData(int pTypeDoc, ObservableInt pProgress) {
+        pProgress.set(5);
+        String res = Http.HTTPRequest(config.ApiUrl+"documents", null, "application/json;charset=utf-8", config.Login, config.Password);
+        if (Http.HttpState == eStateHTTP.HTTP_OK) {
+            pProgress.set(40);
+            InputDocs data = new Gson().fromJson(res, InputDocs.class);
+            for (Doc v : data.Doc) {
+                mDbHelper.SaveDocs(v);
+            }
+            pProgress.set(60);
+            for (DocWaresSample v : data.DocWaresSample) {
+                mDbHelper.SaveDocWaresSample(v);
+            }
+            pProgress.set(100);
+            return true;
+        }
+        return false;
     }
 
     //Вивантаження документів з ТЗД (HTTP)

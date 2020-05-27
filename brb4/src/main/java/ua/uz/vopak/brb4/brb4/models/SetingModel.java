@@ -63,15 +63,30 @@ public class SetingModel {
                     return null;
                 }
             }).execute();
-
-
-            /*
-            Intent i = new Intent(this, MainActivity.class);
-            i.putExtra("isReload", "true");
-            startActivity(i);*/
         }
+    }
 
-
+    public void OnClickLoadDoc() {
+        if(config.Company== eCompany.SevenEleven)
+        {
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    Connector c = new Connector();
+                    c.LoadDocsData(0,Progress);
+                    return null;
+                }
+            }).execute();
+        }
+        /*else {
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    config.Worker.LoadDocsData( "-1" ,Progress);
+                    return null;
+                }
+            }).execute();
+        }*/
     }
     /*public void OnClickURL( SetingModel pSM ) {
         config.ApiUrl=   apiURL.get();

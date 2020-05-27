@@ -6,7 +6,7 @@ import java.util.Date;
 public class Doc {
    public int TypeDoc;//Тип документа (1-ревізія 2-приходи тощо)
    public String NumberDoc;//  (Номер документа в 1С)
-   public Date DateDoc; // Дата документа
+   public String DateDoc; // Дата документа
    public int IsControl; // 1- Якщо треба контролювати асортимент та кількість, для замовлень та можливо інших документів.
    public String ExtInfo; // Додаткова інформація, яка може вплинути на обробку документа
    public String NameUser; // користувач який створив документ рядок

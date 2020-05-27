@@ -108,6 +108,14 @@
         android:layout_marginTop="10dp"
         android:onClick="@{(view) -> SM.OnClickLoad()}"
         android:text="ЗАВАНТАЖИТИ ДАНІ"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:onClick="@{(view) -> SM.OnClickLoadDoc()}"
+            android:text="ЗАВАНТАЖИТИ Документи"/>
+
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
