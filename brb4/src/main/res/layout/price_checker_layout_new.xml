@@ -270,6 +270,7 @@
                 android:enabled="@{LI.InputFocus==1}"
                 android:inputType="numberSigned"
                 android:focusableInTouchMode="@{LI.IsSoftKeyboard()}"
+                android:selectAllOnFocus="true"
                 android:hint="штрихкод або артикул"
                 android:text="@={LI.BarCode}"
                 android:focusable="@{LI.InputFocus==1}"
@@ -292,20 +293,24 @@
                 android:textSize="3mm"></TextView>
 
             <EditText
+                android:id="@+id/PCh_NumberOfReplenishment"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_span="3"
                 android:layout_weight="4"
+                android:textSize="5mm"
                 android:background="@drawable/input_style"
+
                 android:enabled="@{LI.InputFocus==2}"
                 android:inputType="numberSigned"
                 android:focusableInTouchMode="@{LI.IsSoftKeyboard()}"
+                android:selectAllOnFocus="true"
                 android:focusable="@{LI.InputFocus==2}"
                 android:hint="кількість поповнення"
                 android:text="@={LI.NumberOfReplenishment}"
-                android:onClick="@{(view) -> handler.OnClickNumberOfReplenishment(view,LI)}"
-                android:textSize="5mm"></EditText>
+                ></EditText>
         </LinearLayout>
+        <!--android:onClick="@{(view) -> handler.OnClickNumberOfReplenishment(view,LI)}" -->
 
         <LinearLayout
             android:layout_width="match_parent"

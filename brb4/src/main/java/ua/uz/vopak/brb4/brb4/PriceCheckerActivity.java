@@ -38,9 +38,11 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Queue;
 
 import ua.uz.vopak.brb4.brb4.helpers.BL_PriceChecker;
 import ua.uz.vopak.brb4.lib.enums.ePrinterError;
@@ -59,6 +61,9 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
     Context context;
     private Scaner scaner;
 
+    int SizeDeque=2;
+    ArrayDeque<String> BarCodeQueue = new ArrayDeque<>();
+
     GlobalConfig config = GlobalConfig.instance();
 
     private LabelInfo LI= new LabelInfo(config);
@@ -67,6 +72,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
     HandlerPC HandlerPC=new HandlerPC(this);
 
     EditText textBarcodeView;
+    EditText NumberOfReplenishment;
     public View BarcodeImageLayout;
     BarcodeView barcodeView;
 
@@ -101,6 +107,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         textBarcodeView = findViewById(R.id.PCh_bar_code);
+        NumberOfReplenishment = findViewById(R.id.PCh_NumberOfReplenishment);
 
         //PriceCheckerInfoLayout = findViewById(R.id.PricecheckerInfoLayout);
         //ChangePrintBlockNumber = findViewById(R.id.ChangePrintBlockNumber);
@@ -145,19 +152,32 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         String keyCode = String.valueOf(event.getKeyCode());
+      /*  if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            int KeyCode= Integer.valueOf(keyCode);
+            if (KeyCode >= 7 && KeyCode < 16)
+                if (!LI.isEdit) {
+                    LI.isEdit = true;
+                    LI.NumberOfReplenishment.set("");
+                    binding.invalidateAll();
+                }
+        }*/
         if (event.getAction() == KeyEvent.ACTION_UP) {
+
             switch (keyCode)
             {
                 case "66"://Enter
-                    if(LI.InputFocus.get()==1)
-                        FindWares(LI.BarCode.get(), false);
+                    if(LI.InputFocus.get()==1) {
+                        FindWares(LI.BarCode.get(), true);
+                        LI.InputFocus.set(0);
+                    }
                     else
-                        if(LI.InputFocus.get()==2)
+                        if(LI.InputFocus.get()==2) {
+                            LI.InputFocus.set(0);
                             new AsyncHelper<Void>(
                                     new IAsyncHelper<Boolean>() {
                                         @Override
                                         public Boolean Invoke() {
-                                            BL.SaveReplenishment(Double.valueOf(LI.NumberOfReplenishment.get()) );
+                                            BL.SaveReplenishment(Double.valueOf(LI.NumberOfReplenishment.get()));
                                             return true;
                                         }
                                     },
@@ -166,23 +186,44 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
                                         public void Invoke(Boolean p) {
                                             LI.NumberOfReplenishment.set("");
                                             return;
-                                        }}).execute();
-
+                                        }
+                                    }).execute();
+                        }
 
                     break;
-                case "131":
+                case "131"://F1
                     break;
                 case "132"://F2
                     LI.InputFocus.set(LI.InputFocus.get()==1?2:1);
                      break;
+                case "133"://F3
+                    LI.InputFocus.set(LI.InputFocus.get()==2?0:2);
+                    //LI.InputFocus.set(2);
+                    break;
             }
         }
         return super.dispatchKeyEvent(event);
     }
 
     @Override //Приходить штрихкод.
-        public void Run(String parBarCode) {
-            FindWares(parBarCode,false);
+    public void Run(String parBarCode) {
+        // Не прийшов штрихкод
+        if(parBarCode==null || parBarCode.isEmpty() )
+            return;
+
+        //Якщо в черзі вже є такий штрихкод ігноруємо.
+         if(parBarCode.equals(BarCodeQueue.peekFirst()) || parBarCode.equals(BarCodeQueue.peekLast()))
+             return;
+         //Якщо черга задовга
+         if(BarCodeQueue.size()>SizeDeque)
+            return;
+
+          BarCodeQueue.offer(parBarCode);
+          if(BarCodeQueue.size()==1)
+                 FindWares(parBarCode, false);
+          else
+             return ;
+
         }
 
     @Override
@@ -193,6 +234,18 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
              barcodeView.resume();
         //Zebra
         scaner.StartScan();
+        ManualScan();
+    }
+
+    public void ManualScan()
+    {
+        final String ACTION = "com.symbol.datawedge.api.ACTION";
+        final String  SOFT_SCAN_TRIGGER = "com.symbol.datawedge.api.SOFT_SCAN_TRIGGER";
+        final String START_SCANNING = "START_SCANNING";
+        Intent i = new Intent();
+        i.setAction(ACTION);
+        i.putExtra(SOFT_SCAN_TRIGGER, START_SCANNING);
+        sendBroadcast(i);
     }
 
     @Override
@@ -241,8 +294,11 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
     }
 
     public void  setScanResult(LabelInfo LI) {
+
+        LI.InputFocus.set(LI.IsViewReplenishment()?2:1);
         if(LI.Code==0&&LI.InputFocus.get()==2)
             LI.InputFocus.set(1);
+
         binding.invalidateAll();
         LI.SetListPackege();
 
@@ -262,6 +318,11 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
             if(barcodeView!=null)
                 barcodeView.resume();
         }
+        //очищаємо чергу штрихкодів від
+        BarCodeQueue.poll();
+        if(BarCodeQueue.size()>0)
+            FindWares(BarCodeQueue.peek(),false);
+
     }
 
     public void FindWares(final String parBarCode, final boolean isHandInput){

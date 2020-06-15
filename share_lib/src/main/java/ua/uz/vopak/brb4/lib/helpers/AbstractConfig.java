@@ -54,15 +54,8 @@ public abstract class AbstractConfig {
         return code.substring(code.length() - 9);
     }
 
-
     public String getApiUrl(){
         return this.ApiUrl;
     }
 
-    /*public boolean isSPAR() {
-        //String code = "000000000" + CodeWarehouse;
-        if (CodeWarehouse == null || CodeWarehouse == "")
-            return false;
-        return Integer.parseInt(CodeWarehouse) > 50;
-    }*/
 }

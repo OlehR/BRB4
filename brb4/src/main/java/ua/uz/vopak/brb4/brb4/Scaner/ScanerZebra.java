@@ -12,7 +12,7 @@ public class ScanerZebra extends Scaner {
     IntentFilter filter;
 
     //!!!TMP!!!!
-    final String  Action= "ua.uz.vopak.brb4.brb4";
+    final String  Action= "ua.uz.vopak.brb4";
 
     final String ACTION = "com.symbol.datawedge.api.ACTION";
     final String SWITCH = "com.symbol.datawedge.api.SWITCH_TO_PROFILE";
@@ -59,12 +59,12 @@ public class ScanerZebra extends Scaner {
         return super.Init(cCallBack,savedInstanceState);
     }
 
-        @Override
+    @Override
     public boolean StartScan()
     {
         if(varApplicationContext!=null)
             varApplicationContext.registerReceiver(mybroadcastReceiver,filter);
-
+        //ManualScan();
         return true;
     }
     @Override
@@ -142,6 +142,15 @@ public class ScanerZebra extends Scaner {
             i.putExtra(SET_CONFIG, configBundle);
             this.sendBroadcast(i);
         }
+    }
+
+    @Override
+    public void ManualScan()
+    {
+        Intent i = new Intent();
+        i.setAction(ACTION);
+        i.putExtra(SOFT_SCAN_TRIGGER, START_SCANNING);
+        sendBroadcast(i);
     }
 
 }

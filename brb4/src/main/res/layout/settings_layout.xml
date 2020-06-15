@@ -13,7 +13,15 @@
     android:layout_height="match_parent"
     android:padding="10dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:weightSum="1">
+
     <TextView
+        android:layout_weight="0.7"
         android:id="@+id/Ver"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,13 +29,14 @@
         android:layout_marginTop="5dp"
         android:text="Ver: " />
     <TextView
+        android:layout_weight="0.3"
         android:id="@+id/SN"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="10pt"
         android:layout_marginTop="5dp"
         android:text="SN: " />
-
+        </LinearLayout>
     <Spinner
             android:layout_height="40dp"
             android:layout_marginTop="20dp"
@@ -101,26 +110,36 @@
         android:layout_height="40dp"
         android:layout_marginTop="10dp"/>
 
-    <Button
-        android:id="@+id/LoadDocumentsData"
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:weightSum="2">
+
+    <Button
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
         android:onClick="@{(view) -> SM.OnClickLoad()}"
-        android:text="ЗАВАНТАЖИТИ ДАНІ"/>
+        android:text="Заван. ДАНІ"/>
 
         <Button
+            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="3dp"
             android:onClick="@{(view) -> SM.OnClickLoadDoc()}"
-            android:text="ЗАВАНТАЖИТИ Документи"/>
-
+            android:text="З. Документи"/>
+    </LinearLayout>
         <ProgressBar
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="15dp"
             android:layout_marginTop="5dp"
+            android:layout_alignParentBottom="true"
             android:max="100"
             android:progress="@{SM.Progress}"
             android:progressDrawable="@drawable/progresbar" />

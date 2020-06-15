@@ -12,7 +12,6 @@
     <uses-permission android:name="android.Manifest.permission.READ_PRIVILEGED_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
-
     <permission
         android:name="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
         android:protectionLevel="normal" />
@@ -31,11 +30,13 @@
         android:theme="@style/AppTheme">
 
         <uses-library android:name="com.symbol.emdk" android:required="false"/>
+        <uses-library android:name="device.sdk" android:required="false" />
 
         <activity
             android:name=".AuthActivity"
             android:noHistory="true"
             android:launchMode="singleTop"/>
+
         <activity android:name=".MainActivity"
             android:launchMode="singleTop">
             <intent-filter>
@@ -64,12 +65,12 @@
             android:launchMode="singleTop"/>
         <activity
             android:name=".DocumentScannerActivity"
-            android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop"/>
         <activity
             android:name=".DocumentWeightActivity"
-            android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop"/>
+
+
 
         <receiver
                     android:name=".Scaner.ScanResultReceiverPM"
@@ -79,10 +80,10 @@
                     <intent-filter>
                         <action android:name="device.common.USERMSG" />
                         <action android:name="device.scanner.EVENT" />
-                        <action android:name="ua.uz.vopak.brb4.brb4.RECVR"/>
-                        <action android:name="ua.uz.vopak.brb4.brb4"/>
                     </intent-filter>
         </receiver>
+
+
 
 
         <!--
@@ -109,6 +110,6 @@
                     </intent-filter>
                 </receiver>-->
 
-                <uses-library android:name="device.sdk" android:required="false" />
+
             </application>
         </manifest>

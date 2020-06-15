@@ -69,5 +69,7 @@ public class Scaner extends Activity {
     public void handleDecodeData(Intent i)
     {}
 
+    public void ManualScan(){}
+
 
 }

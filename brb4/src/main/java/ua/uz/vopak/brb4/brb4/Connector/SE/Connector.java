@@ -8,6 +8,9 @@ import androidx.databinding.ObservableInt;
 
 import com.google.gson.Gson;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
@@ -19,6 +22,7 @@ import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 
 public class Connector {
+
     protected static final String TAG = "BRB4/Connector";
     GlobalConfig config = GlobalConfig.instance();
     SQLiteAdapter mDbHelper  = config.GetSQLiteAdapter();
@@ -58,6 +62,8 @@ public class Connector {
         Log.d(TAG, "End");
         pProgress.set(100);
     }
+
+
 
     boolean SaveWares(Nomenclature[] pW)    {
         int i=0;
@@ -186,23 +192,128 @@ public class Connector {
         if (Http.HttpState == eStateHTTP.HTTP_OK) {
             pProgress.set(40);
             InputDocs data = new Gson().fromJson(res, InputDocs.class);
+            db.execSQL("Delete from DOC;Delete from DOC_WARES_sample;Delete from DOC_WARES".trim());
             for (Doc v : data.Doc) {
+                v.TypeDoc=ConvertTypeDoc(v.TypeDoc);
+                v.DateDoc =v.DateDoc.substring(0,10);
                 mDbHelper.SaveDocs(v);
             }
             pProgress.set(60);
-            for (DocWaresSample v : data.DocWaresSample) {
-                mDbHelper.SaveDocWaresSample(v);
-            }
+            SaveDocWaresSample(data.DocWaresSample);
+            /*for (DocWaresSample v : data.DocWaresSample) {
+                try {
+                    v.TypeDoc = ConvertTypeDoc(v.TypeDoc);
+                    mDbHelper.SaveDocWaresSample(v);
+                }
+                catch (Exception e)
+                {
+                    Log.e(TAG,e.getMessage());
+                }
+            }*/
             pProgress.set(100);
             return true;
         }
         return false;
     }
 
-    //Вивантаження документів з ТЗД (HTTP)
-    public String SyncDocsData(int parTypeDoc, String NumberDoc, List<WaresItemModel> Wares)
+    int ConvertTypeDoc(int pTypeDoc)
     {
-        return null;
+        switch (pTypeDoc)
+        {
+            case 2:
+                return 1;
+            case 1:
+                return 2;
+            default:
+                return pTypeDoc;
+        }
+    }
+
+    //Вивантаження документів з ТЗД (HTTP)
+    public String SyncDocsData(int pTypeDoc, String pNumberDoc, List<WaresItemModel> pWares)
+    {
+        Gson gson = new Gson();
+        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        Date date = new Date(System.currentTimeMillis());
+
+        ArrayList<OutputDoc> OD = new ArrayList<>();
+        OutputDoc el = new  OutputDoc(ConvertTypeDoc(pTypeDoc),pNumberDoc,formatter.format(date));
+
+        for (WaresItemModel W : pWares ) {
+            OutputDocWares w = new OutputDocWares(W.CodeWares, W.InputQuantity);
+            el.DocWares.add(w);
+        }
+        OD.add(el);
+        String json = gson.toJson(OD);
+
+        String res = Http.HTTPRequest(config.ApiUrl+"documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
+        if (Http.HttpState == eStateHTTP.HTTP_OK) {
+            return "{\"State\":0,\"TextError\":\"Ok\"}";
+        }
+        return "{\"State\":-1,\"TextError\":\"\"}";
+    }
+
+    boolean SaveDocWaresSample(DocWaresSample []  pDWS)    {
+        int i=0;
+        db.beginTransaction();
+        try {
+            i++;
+            ContentValues values = new ContentValues();
+            for (DocWaresSample DWS : pDWS) {
+                long result = -1;
+
+                values.put("type_doc", DWS.TypeDoc);
+                values.put("number_doc", DWS.NumberDoc);
+                values.put("order_doc", DWS.OrderDoc);
+                values.put("code_wares", DWS.CodeWares);
+                values.put("quantity", DWS.Quantity);
+                values.put("quantity_min", DWS.QuantityMin);
+                values.put("quantity_max", DWS.QuantityMax);
+                result = db.replace("DOC_WARES_sample", null, values);
+
+
+                if(i>=1000) {
+                    i=0;
+                    db.setTransactionSuccessful();
+                    db.endTransaction();
+                    db.beginTransaction();
+                }
+            }
+            db.setTransactionSuccessful();
+        }
+        catch (Exception ex)
+        {
+            Log.e(TAG,"SaveDOC_WARES_sample=>"+ ex.toString());
+        }
+        finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
+}
+
+class OutputDocWares
+{
+    public String CodeWares;
+    public Double Quantity;
+    public OutputDocWares(int pCodeWares, Double pQuantity)
+    {
+        CodeWares= Integer.toString(pCodeWares);
+        Quantity=pQuantity;
+    }
+}
+class OutputDoc
+{
+    public int TypeDoc;
+    public String NumberDoc;
+    public String DateDoc;
+    List<OutputDocWares> DocWares;
+    public OutputDoc(){};
+    public OutputDoc(int pTypeDoc, String pNumberDoc,String pDateDoc)
+    {
+        TypeDoc=pTypeDoc;  NumberDoc= pNumberDoc; DateDoc =pDateDoc;
+        DocWares = new ArrayList<>();
     }
 
 

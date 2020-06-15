@@ -119,6 +119,7 @@ public class LabelInfo
     //public int ColorBarCode(){return Color.parseColor(Action ?  "#3fffff00" : "#ffffff");}
     public ObservableInt  Progress = new ObservableInt(0);
 
+    public boolean isEdit=false;
 
 
 
@@ -141,8 +142,9 @@ public class LabelInfo
         Article = "";
         BarCode.set("");
         Rest = 0;
-        InputFocus.set(IsViewReplenishment()?2:1);
+        InputFocus.set(0);
         NumberOfReplenishment.set("");
+        isEdit=false;
     }
 
     public LabelInfo(AbstractConfig pConfig)  {

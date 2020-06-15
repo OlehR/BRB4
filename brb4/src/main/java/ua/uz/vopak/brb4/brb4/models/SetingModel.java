@@ -1,17 +1,11 @@
 package ua.uz.vopak.brb4.brb4.models;
 
-import android.content.Intent;
-import android.text.TextUtils;
-
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
-
 import ua.uz.vopak.brb4.brb4.Connector.SE.Connector;
-import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
-import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
@@ -78,24 +72,5 @@ public class SetingModel {
                 }
             }).execute();
         }
-        /*else {
-            new AsyncHelper<Void>(new IAsyncHelper() {
-                @Override
-                public Void Invoke() {
-                    config.Worker.LoadDocsData( "-1" ,Progress);
-                    return null;
-                }
-            }).execute();
-        }*/
     }
-    /*public void OnClickURL( SetingModel pSM ) {
-        config.ApiUrl=   apiURL.get();
-        new AsyncHelper<Void>(new IAsyncHelper() {
-            @Override
-            public Void Invoke() {
-                config.Worker.AddConfigPair("ApiUrl", config.ApiUrl);
-                return null;
-            }
-        }).execute();
-    }*/
 }

@@ -18,26 +18,13 @@ public class ScanResultReceiverTC extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if(config.TypeScaner!= eTypeScaner.Zebra)
-            return;
-        ScanerPM500 mScaner=(ScanerPM500)config.GetScaner();
-        if(mScaner!=null) {
-            //mScanerWrapper mScanerW = mScaner.mScanerW;
-
-            if (mScaner != null) {
-                if (ScanConst.INTENT_USERMSG.equals(intent.getAction())) {
-                    mScanner.aDecodeGetResult(mScaner.mDecodeResult.recycle());
-                } else if (ScanConst.INTENT_EVENT.equals(intent.getAction())) {
-                    byte[] decodeBytesValue = intent.getByteArrayExtra(ScanConst.EXTRA_EVENT_DECODE_VALUE);
-                    if (decodeBytesValue != null) {
-                        String value = new String(decodeBytesValue);
-
-                        if(mScaner.CallBack!=null)
-                            mScaner.CallBack.Run(value);
-                    }
-
-                }
-            }
+        {
+            Scaner mScaner=config.GetScaner();
+            String v=intent.getStringExtra("com.symbol.datawedge.data_string");
+            mScaner.CallBack.Run(v);
         }
+
+
     }
 
 }

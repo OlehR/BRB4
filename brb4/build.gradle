@@ -1,4 +1,5 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services'
 
 android {
     compileSdkVersion 29
@@ -6,8 +7,8 @@ android {
         applicationId "ua.uz.vopak.brb4.brb4"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 206
-        versionName "4.2.06"
+        versionCode 212
+        versionName "4.2.12"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -37,5 +38,10 @@ dependencies {
     compileOnly fileTree(include: ['device.sdk.jar'], dir: 'c:\\AndroidSDK\\point-mobile-sdk\\lib')
     implementation fileTree(exclude: ['device.sdk.jar'], dir: 'libs')
     implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.google.firebase:firebase-ml-vision:24.0.2'
+    implementation 'com.google.firebase:firebase-ml-vision-object-detection-model:19.0.4'
 
 }
+
+
+

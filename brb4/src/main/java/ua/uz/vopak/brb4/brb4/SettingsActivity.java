@@ -32,7 +32,7 @@ import ua.uz.vopak.brb4.brb4.helpers.WareListHelper;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class SettingsActivity extends Activity implements View.OnClickListener {
-    Button loadDocsData;
+    //Button loadDocsData;
     TextView SN;
     Spinner connectionPrinterType;
     Spinner warList;
@@ -102,8 +102,8 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         SN = findViewById(R.id.ApiUrl);
         SN.setText( config.ApiUrl);
 
-        loadDocsData = findViewById(R.id.LoadDocumentsData);
-        loadDocsData.setOnClickListener(this);
+        //loadDocsData = findViewById(R.id.LoadDocumentsData);
+       // loadDocsData.setOnClickListener(this);
         connectionPrinterType = findViewById(R.id.connectionPrinterType);
         //yellowpriceAutoprint = findViewById(R.id.yellowAutoPrint);
 

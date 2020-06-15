@@ -24,6 +24,7 @@ import androidx.databinding.ObservableInt;
 import com.google.gson.Gson;
 import org.json.JSONObject;
 
+import ua.uz.vopak.brb4.brb4.Connector.SE.Connector;
 import ua.uz.vopak.brb4.brb4.DocumentWeightActivity;
 import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
@@ -183,7 +184,9 @@ public class Worker {
     public String UpdateDocState(int pState, int pTypeDoc, String pNumberDoc) {
         mDbHelper.UpdateDocState(pState, pTypeDoc, pNumberDoc);
         List<WaresItemModel> wares = mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, 1);
-        return SyncDocsData(pTypeDoc, pNumberDoc, wares);
+        if(config.Company==eCompany.SevenEleven) //TMP!!! Треба буде зробити полюдськи
+                return new Connector().SyncDocsData(pTypeDoc, pNumberDoc, wares);
+            else return SyncDocsData(pTypeDoc, pNumberDoc, wares);
     }
 
 

@@ -55,10 +55,10 @@ public class PricecheckerHelper {
          _barCode =  "\"BarCode\":\"" + BarCode + "\"" ;
 
         if(!CodeWares.equals(""))
-         if (!isHandInput)
-            _codeWares ="\"CodeWares\":\"" + CodeWares + "\"" ;
+         if (isHandInput)
+             _article = "\"Article\":\"" + CodeWares + "\"";
          else
-            _article = "\"Article\":\"" + CodeWares + "\"";
+             _codeWares ="\"CodeWares\":\"" + CodeWares + "\"" ;
 
         String data = config.GetApiJson(154, _barCode + _codeWares + _article);
         LI.resHttp = Http.HTTPRequest(config.getApiUrl(), data);

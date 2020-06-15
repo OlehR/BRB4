@@ -20,6 +20,7 @@ import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 
 public class SQLiteAdapter
 {
@@ -314,8 +315,10 @@ public class SQLiteAdapter
                     document.BarCode = mCur.getString(5);
                     document.Description = mCur.getString(6);
                     //Костиль для вагового товару.
-                    document.WaresType = document.Description.substring(0,1);
-                    document.Description = document.Description.replace(document.WaresType,"");
+                    if(document.Description.length()>1) {
+                        document.WaresType = document.Description.substring(0, 1);
+                        document.Description = document.Description.replace(document.WaresType, "");
+                    }
                     document.DateInsert = mCur.getString(7);
                     document.State = mCur.getString(8);
                     model.add(document);
@@ -384,8 +387,8 @@ public class SQLiteAdapter
         WaresItemModel model = null;
         Cursor mCur;
         String sql;
-
-        Integer intNum = 0;
+        Log.d(TAG, "Find in DB  >>"+ number );
+         Integer intNum = 0;
         boolean isBarCode = true;
         if (number.length() <= 8 && !number.equals("")) {
             intNum = Integer.parseInt(number);
@@ -400,11 +403,12 @@ public class SQLiteAdapter
                     "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
                     "where bc.BAR_CODE='" + number.trim() + "'";
         } else {
+            String Find= config.Company== eCompany.SevenEleven? "w.code_wares="+ number : "w.ARTICL='" + number + "'";
             sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                     "from WARES w " +
                     "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +
                     "join UNIT_DIMENSION ud on w.CODE_UNIT=ud.CODE_UNIT " +
-                    "where w.ARTICL='" + number + "'";
+                    "where "+Find;
         }
 
         try {
@@ -441,7 +445,7 @@ public class SQLiteAdapter
             }
 
         }
-
+        Log.d(TAG, "Found in DB  >>"+ (model==null ? "Not Found": model.NameWares) );
         return model;
     }
 

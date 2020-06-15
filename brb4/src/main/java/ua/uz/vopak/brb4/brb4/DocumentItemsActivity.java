@@ -62,15 +62,20 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         button.setVisibility(config.TypeScaner== eTypeScaner.Camera? View.VISIBLE:View.GONE );
         btn.setOnClickListener(this);
         btnSave.setOnClickListener(this);
+
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
         GetDoc();
     }
+
     void GetDoc()
     {
         new AsyncHelper<List<WaresItemModel>>(new IAsyncHelper() {
             @Override
-            public Void Invoke() {
-                config.Worker.GetDoc(documentType,number,1);
-                return null;
+            public List<WaresItemModel> Invoke() {
+                return config.Worker.GetDoc(documentType,number,1);
             }
         },
                 new IPostResult<List<WaresItemModel>>() {

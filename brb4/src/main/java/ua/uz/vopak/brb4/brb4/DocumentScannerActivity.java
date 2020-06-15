@@ -24,6 +24,7 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -40,6 +41,8 @@ import com.journeyapps.barcodescanner.BarcodeView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
@@ -53,7 +56,7 @@ import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 
 public class DocumentScannerActivity extends FragmentActivity implements ScanCallBack, IIncomeRender {
     EditText barCode,  inputCount;
-
+    private Scaner scaner;
     ScrollView scrollView;
     RelativeLayout loader;
     TableLayout WaresTableLayout;
@@ -68,6 +71,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
     int padding;
 
+    final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
     // Калбек штрихкода з камери.
     private BarcodeCallback callback = new BarcodeCallback() {
         @Override
@@ -83,27 +87,24 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         public void possibleResultPoints(List<ResultPoint> resultPoints) {
         }
     };
-    final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
         setContentView(R.layout.document_scanner_activity);
-
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
         binding.setWaresItem(WaresItem);
 
         Intent i = getIntent();
 
+
         float d = this.getResources().getDisplayMetrics().density;
         int dpValue = 3;
         padding = (int) (dpValue * d);
 
-
-        IntentIntegrator integrator = new IntentIntegrator(this);
-        integrator.setBeepEnabled(true);
-        config.InitScaner(this);
 
         ListWares = new ArrayList<>();
         WaresItem.ClearData();
@@ -150,16 +151,21 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 }
             }
         });
+
         GetDoc();
+
+        IntentIntegrator integrator = new IntentIntegrator(this);
+        integrator.setBeepEnabled(true);
+        //Для отримання штрихкодів
+        scaner=config.GetScaner();
+        scaner.Init(this,savedInstanceState);
     }
 
-    void GetDoc()
-    {
+    void GetDoc()    {
         new AsyncHelper<List<WaresItemModel>>(new IAsyncHelper() {
             @Override
-            public Void Invoke() {
-                config.Worker.GetDoc(WaresItem.TypeDoc,WaresItem.NumberDoc,2);
-                return null;
+            public List<WaresItemModel> Invoke() {
+                 return  config.Worker.GetDoc(WaresItem.TypeDoc,WaresItem.NumberDoc,2);
             }
         },
                 new IPostResult<List<WaresItemModel>>() {
@@ -204,8 +210,24 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         super.onResume();
         if(config.TypeScaner==eTypeScaner.Camera)
             barcodeView.resume();
+        //Zebra
+        scaner.StartScan();
+
         //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
     }
+
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Camera
+        if(config.TypeScaner==eTypeScaner.Camera)
+            barcodeView.pause();
+        //Zebra
+        scaner.StopScan();
+    }
+
     @Override
     public void Run(final String parBarCode) {
         if(config.TypeScaner==eTypeScaner.Camera)
@@ -258,6 +280,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
     public TableRow RenderTableItem (WaresItemModel parWM ) {
         LinearLayout.LayoutParams params;
         TableRow tr = new TableRow(this);
+        tr.setTag(parWM.GetCodeWares());
         tr.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.MATCH_PARENT, TableRow.LayoutParams.MATCH_PARENT));
 
         TextView Position = new TextView(this);
@@ -265,7 +288,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         Position.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
         Position.setText(parWM.GetOrderDoc());
         Position.setTextColor(Color.parseColor("#000000"));
-        Position.setTag(parWM.GetCodeWares());
+        //Position.setTag(parWM.GetCodeWares());
         tr.addView(Position);
 
         params = (LinearLayout.LayoutParams)Position.getLayoutParams();
@@ -382,7 +405,8 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
     }
 
     private void setNullToExistingPosition(){
-        ArrayList<View> existPos = getViewsByTag(WaresTableLayout,"nullable");
+        String Tag=String.valueOf(WaresItem.CodeWares);
+        ArrayList<View> existPos = getViewsByTag(WaresTableLayout,Tag);
         for(View item: existPos){
             if(item instanceof ViewGroup){
                 View tx = ((ViewGroup) item).getChildAt(2);
@@ -414,7 +438,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         for (int i = 0; i < rows.getChildCount(); i++) {
             TableRow trc = (TableRow) rows.getChildAt(i);
             View v = trc.getChildAt(0);
-            String tag = (String) v.getTag();
+            Object tag = trc.getTag();
             if(tag != null && tag.equals(String.valueOf(pCodeWares))){
                 for (int j = 0; j < trc.getChildCount(); j++) {
                     TextView vI = (TextView)trc.getChildAt(j);

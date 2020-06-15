@@ -1,5 +1,6 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
@@ -27,6 +28,7 @@ import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class BL_PriceChecker extends BL {
+    protected static final String TAG = "BRB4/BL_PriceChecker";
     GlobalConfig config = GlobalConfig.instance();
     public LabelInfo LI;
     public BluetoothPrinter Printer = new BluetoothPrinter(config);
@@ -89,6 +91,7 @@ public class BL_PriceChecker extends BL {
         if (BarCode != null && BarCode.length() > 0) {
             try {
                 new PricecheckerHelper().getPriceCheckerData(LI, BarCode, isHandInput, config);
+               // Thread.sleep(10000);
                 SetProgress(50);
                 if (LI.resHttp != null && !LI.resHttp.isEmpty()) {
                     LI.Init(new JSONObject(LI.resHttp));
@@ -135,9 +138,10 @@ public class BL_PriceChecker extends BL {
             ;
 
             mDbHelper.InsLogPrice(parBarCode,vStatus , LI.ActionType, config.NumberPackege, LI.Code,LI.Article,config.LineNumber);
+            Log.e(TAG, "vStatus  >>"+ vStatus );
             SetProgress(100);
         } catch (Exception e) {
-
+            Log.e(TAG, "InsLogPrice  >>"+ e.getMessage() );
         }
         return LI;
     }

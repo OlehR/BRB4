@@ -77,9 +77,8 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
     {
         new AsyncHelper<List<WaresItemModel>>(new IAsyncHelper() {
             @Override
-            public Void Invoke() {
-                config.Worker.GetDoc(documentType,number,1);
-                return null;
+            public List<WaresItemModel> Invoke() {
+                return config.Worker.GetDoc(documentType,number,1);
             }
         },
                 new IPostResult<List<WaresItemModel>>() {

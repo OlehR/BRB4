@@ -60,7 +60,22 @@ import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
+/*
 
+import com.google.android.material.chip.Chip;
+import com.google.common.base.Objects;
+
+
+import com.google.firebase.ml.md.java.camera.GraphicOverlay;
+import com.google.firebase.ml.md.java.camera.WorkflowModel;
+import com.google.firebase.ml.md.java.camera.WorkflowModel.WorkflowState;
+import com.google.firebase.ml.md.java.barcodedetection.BarcodeField;
+import com.google.firebase.ml.md.java.barcodedetection.BarcodeProcessor;
+import com.google.firebase.ml.md.java.barcodedetection.BarcodeResultFragment;
+import com.google.firebase.ml.md.java.camera.CameraSource;
+import com.google.firebase.ml.md.java.camera.CameraSourcePreview;
+import com.google.firebase.ml.md.java.settings.SettingsActivity;
+*/
 public class TestActivity extends FragmentActivity implements ScanCallBack,IIncomeRender{
     Context context;
     Activity activity;
@@ -79,6 +94,10 @@ public class TestActivity extends FragmentActivity implements ScanCallBack,IInco
     final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
 
     int padding;
+
+  //  private WorkflowModel workflowModel;
+   // private WorkflowState currentWorkflowState;
+
 // Калбек штрихкода з камери.
 private BarcodeCallback callback = new BarcodeCallback() {
     @Override
