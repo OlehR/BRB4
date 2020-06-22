@@ -197,7 +197,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
                     LI.InputFocus.set(LI.InputFocus.get()==1?2:1);
                      break;
                 case "133"://F3
-                    LI.InputFocus.set(LI.InputFocus.get()==2?0:2);
+                    LI.InputFocus.set(1);
                     //LI.InputFocus.set(2);
                     break;
             }

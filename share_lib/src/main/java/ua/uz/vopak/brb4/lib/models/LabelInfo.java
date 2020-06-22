@@ -70,6 +70,7 @@ public class LabelInfo
     public String Article="";
     public ObservableField<String> BarCode= new ObservableField<String>("");
     public double Rest=0;
+    public double Sum=0;
     public String  strRest(){return String.format("%.2f", Rest);}
 
     public int AllScan=0; //Кількість відсканованих позицій
@@ -112,14 +113,14 @@ public class LabelInfo
     public void SetListPackege(){};
     public boolean IsSoftKeyboard(){return config.TypeScaner==eTypeScaner.Camera;}
     public ObservableField<String> NumberOfReplenishment= new ObservableField<>("");
-    public boolean IsViewReplenishment(){return config.Company==eCompany.SevenEleven;}
+    public boolean IsViewReplenishment(){ return config.Company==eCompany.SevenEleven;}
 
     public ObservableInt InputFocus = new  ObservableInt(1);//1- штрихкод,2-Поповнення
 
     //public int ColorBarCode(){return Color.parseColor(Action ?  "#3fffff00" : "#ffffff");}
     public ObservableInt  Progress = new ObservableInt(0);
 
-    public boolean isEdit=false;
+    //public boolean isEdit=false;
 
 
 
@@ -142,9 +143,10 @@ public class LabelInfo
         Article = "";
         BarCode.set("");
         Rest = 0;
+        Sum=0;
         InputFocus.set(0);
         NumberOfReplenishment.set("");
-        isEdit=false;
+        //isEdit=false;
     }
 
     public LabelInfo(AbstractConfig pConfig)  {
@@ -191,7 +193,9 @@ public class LabelInfo
 
             Unit = parData.getString("Unit");
             Article =  parData.getString("Article");
-            BarCode.set(parData.getString("BarCodes").replace("\"","").replace("[","").replace("]",""));
+
+            if(parData.has("BarCodes"))
+                BarCode.set(parData.getString("BarCodes").replace("\"","").replace("[","").replace("]",""));
 
             ActionType = 0;
             if(parData.has("ActionType"))
@@ -245,6 +249,10 @@ public class LabelInfo
                 PriceOpt = 0;
                 PriceBillOpt = 0;
                 PriceCoinOpt = 0;
+            }
+
+            if (parData.has("Sum")) {
+                Sum = parData.getDouble("Sum");
             }
 
 

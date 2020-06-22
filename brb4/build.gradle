@@ -7,8 +7,8 @@ android {
         applicationId "ua.uz.vopak.brb4.brb4"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 212
-        versionName "4.2.12"
+        versionCode 215
+        versionName "4.2.15"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -17,9 +17,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    dataBinding {
-        enabled = true
+    buildFeatures{
+        dataBinding = true
+        // for view binding :
+        viewBinding = true
     }
+    /*dataBinding {
+        enabled = true
+    }*/
 
 }
 
@@ -33,9 +38,9 @@ dependencies {
     implementation ('com.journeyapps:zxing-android-embedded:3.6.0') { transitive = false }
     implementation 'com.google.zxing:core:3.3.0'
     implementation project(":share_lib")
-    compileOnly fileTree(include: ['com.symbol.emdk.jar'], dir: 'c:\\AndroidSdk\\add-ons\\addon-symbol_emdk-symbol-26\\libs')
+    compileOnly fileTree(include: ['com.symbol.emdk.jar'], dir: 'd:\\AndroidSdk\\add-ons\\addon-symbol_emdk-symbol-26\\libs')
     implementation fileTree(exclude: ['com.symbol.emdk.jar'], dir: 'libs')
-    compileOnly fileTree(include: ['device.sdk.jar'], dir: 'c:\\AndroidSDK\\point-mobile-sdk\\lib')
+    compileOnly fileTree(include: ['device.sdk.jar'], dir: 'd:\\AndroidSDK\\point-mobile-sdk\\lib')
     implementation fileTree(exclude: ['device.sdk.jar'], dir: 'libs')
     implementation 'com.google.code.gson:gson:2.8.2'
     implementation 'com.google.firebase:firebase-ml-vision:24.0.2'
