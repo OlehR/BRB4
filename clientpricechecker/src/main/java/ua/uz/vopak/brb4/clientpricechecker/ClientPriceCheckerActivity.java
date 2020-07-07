@@ -37,7 +37,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ClientPriceCheckerActivity extends Activity {
-    TextView Title, BarCodeView, Article, ActionView, PriceBill, PriceCoin, PriceBillOpt, PriceCoinOpt, OptTitle;
+    TextView Title, BarCodeView, Article, ActionView, PriceBill, PriceCoin, PriceBillOpt, PriceCoinOpt, OptTitle,Sum;
     RelativeLayout InfoLayout;
     LinearLayout LogoLayout, OptPriceBlock, VideoWatermark, HideInfoLayout;
     ImageView Background,Logo,Logo2;
@@ -113,9 +113,10 @@ public class ClientPriceCheckerActivity extends Activity {
         OptPriceBlock = findViewById(R.id.OptPriceBlock);
         Logo=findViewById(R.id.Logo);
         Logo2=findViewById(R.id.Logo2);
+        Sum = findViewById(R.id.Sum);
         Resources res = getResources();
 
-        Drawable background = res.getDrawable(config.IsSpar?R.drawable.background2spar:R.drawable.background2vopak);
+        Drawable background = res.getDrawable(config.IsSpar?R.drawable.background2spar:R.drawable.background1vopak);
         Background.setBackground(background);
         background = res.getDrawable(config.IsSpar?R.drawable.logo1spar:R.drawable.logo1vopak);
         Logo.setBackground(background);
@@ -210,17 +211,11 @@ public class ClientPriceCheckerActivity extends Activity {
         PriceCoinOpt.setText(Li.strPriceCoinOpt());
         OptTitle.setText("від "+ (Math.round(Li.QuantityOpt)==(long) Li.QuantityOpt ? Long.toString((long)  Li.QuantityOpt) : Double.toString(Li.QuantityOpt)) + " " + Li.Unit);
 
-        if(Li.PriceBillOpt > 0 || Li.PriceCoinOpt > 0){
-            OptPriceBlock.setVisibility(View.VISIBLE);
-        }else{
-            OptPriceBlock.setVisibility(View.INVISIBLE);
-        }
+        OptPriceBlock.setVisibility(Li.PriceBillOpt > 0 || Li.PriceCoinOpt > 0?View.VISIBLE:View.INVISIBLE);
 
-        if(Li.Action()){
-            ActionView.setVisibility(View.VISIBLE);
-        }else {
-            ActionView.setVisibility(View.INVISIBLE);
-        }
+        ActionView.setVisibility(Li.Action()?View.VISIBLE:View.INVISIBLE);
+        Sum.setText(Double.toString(Li.Sum)+" грн");
+        Sum.setVisibility(Li.Sum>0?View.VISIBLE:View.INVISIBLE);
 
 
         Drawable background = res.getDrawable(config.IsSpar?R.drawable.background1spar:R.drawable.background1vopak);
