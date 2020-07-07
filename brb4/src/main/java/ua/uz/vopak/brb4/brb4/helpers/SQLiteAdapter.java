@@ -2,7 +2,6 @@ package ua.uz.vopak.brb4.brb4.helpers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,12 +14,14 @@ import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 
+import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
+import ua.uz.vopak.brb4.lib.models.Result;
 
 public class SQLiteAdapter
 {
@@ -240,7 +241,7 @@ public class SQLiteAdapter
 //                    mDb.execSQL(sql);
                     ContentValues cv = new ContentValues();
                     cv.put("is_send",-1);
-                    mDb.update("LogPrice",cv,"rowid  IN (SELECT rowid FROM LogPrice WHERE is_send=0 LIMIT 100)",null);
+                    mDb.update("LogPrice",cv,"rowid  IN (SELECT rowid FROM LogPrice WHERE is_send=0 LIMIT 200)",null);
                 }
             }
 
@@ -268,6 +269,7 @@ public class SQLiteAdapter
         cv.put("is_send",1);
         mDb.update("LogPrice",cv,"is_send=-1",null);
     }
+    //Пповнення стелажу СКЮ
     public void UpdateReplenishment(int pLineNumber,double pNumberOfReplenishment){
         try {
             ContentValues values = new ContentValues();
@@ -281,29 +283,32 @@ public class SQLiteAdapter
         }
 
     }
-
-
     //Робота з документами.
     public List<DocumentModel> GetDocumentList(int pTypeDoc,String pBarCode,String pExtInfo) {
 
         List<DocumentModel> model = new ArrayList<DocumentModel>();
         Cursor mCur;
-        String sql;
-        if(pBarCode==null||pBarCode.isEmpty())
-            sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+pTypeDoc+"'"+
-                    " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-5 day') AND datetime(CURRENT_TIMESTAMP)" + (pExtInfo==null?"":" and ext_info like'%"+ pExtInfo.trim()+"%'") + (config.IsDebug ? " limit 10" :"");
-        else
-            sql="SELECT DISTINCT d.date_doc,d.type_doc,d.number_doc,d.ext_info,d.name_user,d.bar_code,d.description,d.dt_insert,d.state -- ,bc.BAR_CODE, dw.*\n" +
-                    "FROM DOC d \n" +
-                    "Join DOC_WARES_SAMPLE dw on dw.number_doc=d.number_doc and dw.type_doc=d.type_doc\n" +
-                    "join bar_code bc on dw.code_wares=bc.CODE_WARES\n" +
-                    "WHERE d.type_doc = '"+pTypeDoc+"'"+
-                    " AND d.date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)"+
-                    "and bc.BAR_CODE= '"+pBarCode+"'" + (config.IsDebug ? " limit 10" :"");
+        String sql=null;
 
         try {
-            //mDb.delete("INVENTORY_WARES", null, null);
+            sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+pTypeDoc+"'"+
+                    " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-5 day') AND datetime(CURRENT_TIMESTAMP)" +
+                    (pExtInfo==null?"":" and ext_info like'%"+ pExtInfo.trim()+"%'") +
+                    (pBarCode==null?"":" and bar_code like'%"+ pBarCode.trim()+"%'") +
+                    (config.IsDebug ? " limit 10" :"");
             mCur = mDb.rawQuery(sql, null);
+            // якщо нічого не найшли і штрихкод не порожній шукаємо по товарам.
+            if (pBarCode!=null && !pBarCode.isEmpty() && mCur==null && mCur.getCount() == 0 ) {
+                sql="SELECT DISTINCT d.date_doc,d.type_doc,d.number_doc,d.ext_info,d.name_user,d.bar_code,d.description,d.dt_insert,d.state -- ,bc.BAR_CODE, dw.*\n" +
+                        "FROM DOC d \n" +
+                        "Join DOC_WARES_SAMPLE dw on dw.number_doc=d.number_doc and dw.type_doc=d.type_doc\n" +
+                        "join bar_code bc on dw.code_wares=bc.CODE_WARES\n" +
+                        "WHERE d.type_doc = '"+pTypeDoc+"'"+
+                        " AND d.date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-2 day') AND datetime(CURRENT_TIMESTAMP)"+
+                        "and bc.BAR_CODE= '"+pBarCode+"'" + (config.IsDebug ? " limit 10" :"");
+            }
+            mCur = mDb.rawQuery(sql, null);
+
             if (mCur!=null && mCur.getCount() > 0) {
                 while (mCur.moveToNext()){
                     DocumentModel document = new DocumentModel();
@@ -336,13 +341,19 @@ public class SQLiteAdapter
         String sql="";
         if(pTypeResult==1)
           sql = " select dw1.order_doc, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
-                "    from Doc d  \n" +
-                "    join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,max(dw.order_doc) as order_doc,sum(quantity_old) as quantity_old from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
+                ",dw1.quantity_reason as quantity_reason \n" +
+                  ", case when coalesce(dws.quantity,0) - coalesce(dw1.quantity_input,0) <0 then 3 \n" +
+                  "        when coalesce(dws.quantity,0) - coalesce(dw1.quantity_input,0) >0 then 2\n" +
+                  "        when coalesce(dws.quantity,0) - coalesce(dw1.quantity_input,0)=0 and quantity_reason>0 then 1\n" +
+                  "   else 0 end as Ord\n"+
+                  "    from Doc d  \n" +
+                "    join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,max(dw.order_doc) as order_doc,sum(quantity_old) as quantity_old,  sum(case when dw.CODE_Reason>0 then  dw.quantity else 0 end) as quantity_reason  from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
                 "    join wares w on dw1.code_wares = w.code_wares \n" +
                 "    left join DOC_WARES_sample dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = w.code_wares\n" +
                 "    where d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                 " union all\n" + 
                 " select dws.order_doc+100000, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
+                "     ,0 as  quantity_reason , 3 as Ord\n"+
                 "    from Doc d  \n" +
                 "    join DOC_WARES_sample dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc --and dws.code_wares = w.code_wares\n" +
                 "    join wares w on dws.code_wares = w.code_wares \n" +
@@ -351,7 +362,8 @@ public class SQLiteAdapter
                 " order by 1";
 
         if(pTypeResult==2)
-            sql="select dw1.order_doc, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old \n" +
+            sql="select dw1.order_doc, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old,dw1.CODE_Reason \n" +
+
                     "    from Doc d  \n" +
                     "    join doc_wares dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
                     "    join wares w on dw1.code_wares = w.code_wares \n" +
@@ -374,6 +386,12 @@ public class SQLiteAdapter
                     WaresModel.QuantityMin = mCur.getDouble(5);
                     WaresModel.QuantityMax=(mCur.getInt(7)==1?mCur.getDouble(6):Double.MAX_VALUE);
                     WaresModel.QuantityOld=mCur.getDouble(8);
+                    if(pTypeResult==2)
+                        WaresModel.CodeReason=  mCur.getInt(9);
+                    else {
+                        WaresModel.QuantityReason = mCur.getDouble(9);
+                        WaresModel.Ord=mCur.getInt(10);
+                    }
                     model.add(WaresModel);
                 }
             }
@@ -449,6 +467,23 @@ public class SQLiteAdapter
         return model;
     }
 
+    public Reason[] GetReason() {
+        ArrayList<Reason> model = new ArrayList<Reason>(){{add(new Reason(0,"Ok"));}};
+        Cursor mCur;
+        String sql ="select CODE_Reason as СodeReason, NAME_Reason as NameReason from reason";
+        try {
+            mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null && mCur.getCount() > 0) {
+                while (mCur.moveToNext()){
+                    model.add(new Reason(mCur.getInt(0),mCur.getString(1)));
+                }
+            }
+        }catch (Exception e){
+            Log.e(TAG, "GetReason>>"+  e.getMessage());
+        }
+        return model.toArray(new Reason[model.size()]);
+    }
+
     public void UpdateDocState(int pState,int pTypeDoc, String pNumberDoc){
         try {
             SQLiteDatabase db = mDb;
@@ -465,12 +500,12 @@ public class SQLiteAdapter
 
     public void SetNullableWares(int parTypeDoc,String parNumberDoc,int CodeWares ){
         long result = -1;
-        String s = "";
+        String Where = "code_wares = "+ CodeWares +" and type_doc="+ parTypeDoc+" and number_doc=\""+ parNumberDoc+"\"";
         try {
-            SQLiteDatabase db = mDb;
+            mDb.execSQL("update DOC_WARES set quantity_old=quantity where quantity>0 and "+Where);
             ContentValues cv = new ContentValues();
             cv.put("quantity",0);
-            mDb.update("DOC_WARES",cv,"code_wares = "+ CodeWares +" and type_doc="+ parTypeDoc+" and number_doc=\""+ parNumberDoc+"\"",null);
+            mDb.update("DOC_WARES",cv,Where,null);
         }
         catch (Exception e)
         {
@@ -478,9 +513,9 @@ public class SQLiteAdapter
         }
     }
 
-    public ArrayList SaveDocWares(int pTypeDoc,String pNumberDoc,int pCodeWares, int pOrderDoc, Double pQuantity ){
+    public Result SaveDocWares(int pTypeDoc, String pNumberDoc, int pCodeWares, int pOrderDoc, Double pQuantity, int pCodeReason ){
         long result = -1;
-        String s = "";
+        String s = "Ok";
         try {
             SQLiteDatabase db = mDb;
             ContentValues values = new ContentValues();
@@ -490,21 +525,15 @@ public class SQLiteAdapter
             values.put("order_doc", pOrderDoc);
             values.put("quantity", pQuantity);
             values.put("quantity_old", 0);
+            values.put("CODE_Reason", pCodeReason);
             result = db.insert("DOC_WARES", null, values);
         }
         catch (Exception e)
         {
+            s=e.getMessage();
             Log.e(TAG, "SaveDocWares >>"+  e.getMessage());
-
         }
-
-        final boolean status = result != -1;
-        final String msg = s;
-
-        return new ArrayList(){{
-            add(status);
-            add(msg);
-        }};
+       return new Result((int)result,s);
     }
 
     public boolean SaveDocs(Doc pDoc ) {
@@ -538,6 +567,5 @@ public class SQLiteAdapter
         result = mDb.replace("DOC_WARES_sample", null, values);
         return result != -1;
     }
-
 
 }

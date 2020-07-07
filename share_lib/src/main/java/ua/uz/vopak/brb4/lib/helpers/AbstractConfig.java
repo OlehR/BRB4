@@ -9,7 +9,7 @@ import static android.os.Build.USER;
 
 public abstract class AbstractConfig {
 
-    public Boolean IsDebug = false;
+    public Boolean IsDebug = true;
     public Context context;
     public String CodeWarehouse = "0";
     public eCompany Company = eCompany.VopakPSU;
@@ -21,7 +21,7 @@ public abstract class AbstractConfig {
     public String Login = "";
     public String Password = "brb";
 
-    public String ApiUrl;
+    public String ApiUrl,ApiURLadd;
 
     public eTypeScaner TypeScaner = eTypeScaner.NotDefine;
     public eTypeUsePrinter TypeUsePrinter;

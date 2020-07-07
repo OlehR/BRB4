@@ -4,11 +4,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import device.common.ScanConst;
+//import device.common.ScanConst;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 
-import static ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500.mScanner;
+//import static ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500.mScanner;
 
 public class ScanResultReceiverTC extends BroadcastReceiver {
 

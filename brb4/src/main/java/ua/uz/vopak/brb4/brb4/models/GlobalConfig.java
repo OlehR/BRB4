@@ -16,7 +16,9 @@ import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class GlobalConfig extends AbstractConfig {
     private static GlobalConfig Instance = null;
-    public static boolean IsLoadStartData= false;
+    public static boolean IsLoadStartData = false;
+
+    public DocSetting[] DocsSetting;
 
     //public String ApiUrl ="http://195.16.78.134:7654/api/api_v1_utf8.php";//"http://znp.vopak.local/api/api_v1_utf8.php";
     //private String UrlLocal = "znp.vopak.local";
@@ -32,9 +34,11 @@ public class GlobalConfig extends AbstractConfig {
 
     public boolean yellowAutoPrint;
 
+    public Reason Reasons[];
+
     @Override
     public String GetApiJson(int parCodeData, String parData) {
-        return "{\"CodeData\":" + parCodeData + ",\"SerialNumber\":\"" + SN + "\",\"NameDCT\":\"" + NameDCT + "\", \"Ver\":\"" + BuildConfig.VERSION_CODE +  "\", \"CodeWarehouse\":\"" + this.getCodeWarehouse() + "\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
+        return "{\"CodeData\":" + parCodeData + ",\"SerialNumber\":\"" + SN + "\",\"NameDCT\":\"" + NameDCT + "\", \"Ver\":\"" + BuildConfig.VERSION_CODE + "\", \"CodeWarehouse\":\"" + this.getCodeWarehouse() + "\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData == null ? "" : "," + parData) + "}";
     }
 
@@ -48,10 +52,17 @@ public class GlobalConfig extends AbstractConfig {
         }
         return Instance;
     }
+    public DocSetting GetDocSetting(int pDocumentType)
+    {
+    for( int ind = 0; ind<DocsSetting.length;ind++)
+            if(DocsSetting[ind].TypeDoc==pDocumentType)
+                return  DocsSetting[ind];
+            return null;
+    }
+
 
     public void Init(Context parApplicationContext) {
        super.Init(parApplicationContext);
-
         //SQLite
         GetSQLiteAdapter(context);
         //Worker
@@ -94,7 +105,6 @@ public class GlobalConfig extends AbstractConfig {
     }
 
     public Scaner GetScaner() {
-
         if (Scaner != null)
             return Scaner;
 

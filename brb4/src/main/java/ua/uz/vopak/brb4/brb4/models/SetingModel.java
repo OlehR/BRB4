@@ -11,7 +11,8 @@ import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
 public class SetingModel {
     GlobalConfig config = GlobalConfig.instance();
-    public ObservableField<String> apiURL= new ObservableField<>(config.ApiUrl);
+    public ObservableField<String> apiURL    = new ObservableField<>(config.ApiUrl);
+    public ObservableField<String> apiURLadd = new ObservableField<>(config.ApiURLadd);
     public ObservableArrayList<String> ListCompany= new ObservableArrayList<>();
     public ObservableInt ListCompanyIdx = new ObservableInt(0);
     public boolean IsAdmin(){return config.Login.equals("Admin");}
@@ -24,10 +25,14 @@ public class SetingModel {
         ListCompanyIdx.set(config.Company.getAction());
     }
 
+    public boolean IsSevenEleven() {return config.Company==eCompany.SevenEleven;}
     public void OnClickGen(){
         eCompany Company= eCompany.fromOrdinal(ListCompanyIdx.get());
-        apiURL.set(Company==eCompany.SevenEleven?"http://176.241.128.13/RetailShop/hs/TSD/":config.IsDebug? "http://195.16.78.134:7654/api/api_v1_utf8.php":"http://znp.vopak.local/api/api_v1_utf8.php");
+        apiURL.set(Company==eCompany.SevenEleven?"http://93.183.216.37:80/dev1/hs/TSD/":config.IsDebug? "http://195.16.78.134:7654/api/api_v1_utf8.php":"http://znp.vopak.local/api/api_v1_utf8.php");
         config.ApiUrl=apiURL.get();
+        apiURLadd.set("http://93.183.216.37:80/copy_tk/hs/TSD/");
+        config.ApiURLadd=apiURLadd.get();
+
     }
 
     public void OnClickSave() {
@@ -35,42 +40,31 @@ public class SetingModel {
         config.Company = eCompany.fromOrdinal(ListCompanyIdx.get());
         worker.AddConfigPair("Company", Integer.toString(config.Company.getAction()));
         worker.AddConfigPair("ApiUrl", apiURL.get().trim());
+        worker.AddConfigPair("ApiUrladd", apiURLadd.get().trim());
     }
 
     public void OnClickLoad() {
-        if(config.Company== eCompany.SevenEleven)
-        {
+
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    Connector c = new Connector();
-                    c.LoadData(true,Progress);
+                    config.Worker.LoadData( -1 ,null,Progress,false);
                     return null;
                 }
             }).execute();
-        }
-        else {
-            new AsyncHelper<Void>(new IAsyncHelper() {
-                @Override
-                public Void Invoke() {
-                    config.Worker.LoadDocsData( "-1" ,Progress);
-                    return null;
-                }
-            }).execute();
-        }
+
     }
 
     public void OnClickLoadDoc() {
-        if(config.Company== eCompany.SevenEleven)
-        {
+
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    Connector c = new Connector();
-                    c.LoadDocsData(0,Progress);
+
+                    config.Worker.LoadData(0,null,Progress,true);
                     return null;
                 }
             }).execute();
-        }
+
     }
 }

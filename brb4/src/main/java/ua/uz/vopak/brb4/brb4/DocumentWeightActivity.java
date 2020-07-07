@@ -264,7 +264,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    config.Worker.SaveDocWares(documentType, number,Integer.parseInt( Model.get(position).CodeWares),scanNN,  Double.valueOf( value), true, context);
+                    config.Worker.SaveDocWares(documentType, number,Integer.parseInt( Model.get(position).CodeWares),scanNN,  Double.valueOf( value), 0,true);
                     return null;
                 }
             }).execute();
@@ -303,7 +303,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
 
     private void syncData(){
         //new AsyncUpdateDocState(GlobalConfig.GetWorker(),this).execute("1",number,documentType);
-        new AsyncHelper<String>(new IAsyncHelper() {
+    /*    new AsyncHelper<String>(new IAsyncHelper() {
             @Override
             public String Invoke() {
                 return config.Worker.UpdateDocState(1, documentType, number);
@@ -315,7 +315,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
                         AfterSave(p);
                         return;
                     }}
-        ).execute();
+        ).execute();*/
     }
 
     public void AfterSave(final String pMessage) {

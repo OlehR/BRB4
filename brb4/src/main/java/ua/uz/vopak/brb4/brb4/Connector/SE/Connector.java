@@ -2,11 +2,13 @@ package ua.uz.vopak.brb4.brb4.Connector.SE;
 
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.nfc.Tag;
 import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
+import ua.uz.vopak.brb4.lib.models.Result;
 
 public class Connector {
 
@@ -28,7 +31,8 @@ public class Connector {
     SQLiteAdapter mDbHelper  = config.GetSQLiteAdapter();
     SQLiteDatabase db=mDbHelper.GetDB();
     GetDataHTTP Http = new GetDataHTTP();
-    public void LoadData(boolean IsFull, ObservableInt pProgress)    {
+    //Завантаження довідників.
+    public void LoadGuidData(boolean IsFull, ObservableInt pProgress)    {
         Log.d(TAG, "Start");
         pProgress.set(5);
         String res = Http.HTTPRequest(config.ApiUrl+"nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
@@ -59,11 +63,39 @@ public class Connector {
         }
         else
             Log.d(TAG,  Http.HttpState.name());
-        Log.d(TAG, "End");
+
+        res = Http.HTTPRequest(config.ApiURLadd+"reasons", null, "application/json;charset=utf-8", config.Login, config.Password);
+        if (Http.HttpState == eStateHTTP.HTTP_OK) {
+            pProgress.set(95);
+            List<Reason> Reasons = new Gson().fromJson(res, new TypeToken<List<Reason>>(){}.getType());
+            SaveReason(Reasons);
+        }
         pProgress.set(100);
+        Log.d(TAG, "End");
     }
 
+    boolean SaveReason(List<Reason> pReasons)
+    {
+        db.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            for (Reason R : pReasons) {
+                values.put("CODE_REASON", R.code);
+                values.put("NAME_REASON", R.reason);
+                db.replace("Reason", null, values);
+            }
+            db.setTransactionSuccessful();
+        }
+        catch (Exception ex)
+        {
+            Log.e(TAG,"SaveReason=>"+ ex.toString());
+        }
+        finally {
+            db.endTransaction();
+        }
+        return true;
 
+    }
 
     boolean SaveWares(Nomenclature[] pW)    {
         int i=0;
@@ -186,71 +218,67 @@ public class Connector {
 
     //Робота з документами.
     //Завантаження документів в ТЗД (HTTP)
-    public Boolean LoadDocsData(int pTypeDoc, ObservableInt pProgress) {
-        pProgress.set(5);
-        String res = Http.HTTPRequest(config.ApiUrl+"documents", null, "application/json;charset=utf-8", config.Login, config.Password);
-        if (Http.HttpState == eStateHTTP.HTTP_OK) {
-            pProgress.set(40);
-            InputDocs data = new Gson().fromJson(res, InputDocs.class);
-            db.execSQL("Delete from DOC;Delete from DOC_WARES_sample;Delete from DOC_WARES".trim());
-            for (Doc v : data.Doc) {
-                v.TypeDoc=ConvertTypeDoc(v.TypeDoc);
-                v.DateDoc =v.DateDoc.substring(0,10);
-                mDbHelper.SaveDocs(v);
+    public Boolean LoadDocsData(int pTypeDoc,String  pNumberDoc,ObservableInt pProgress,boolean pIsClear) {
+
+
+
+        if(pProgress!=null)
+            pProgress.set(5);
+        String res;
+        try {
+            if (pTypeDoc == 5) {
+                res = Http.HTTPRequest(config.ApiURLadd + "documents\\" + pNumberDoc, null, "application/json;charset=utf-8", config.Login, config.Password);
+            } else
+                res = Http.HTTPRequest(config.ApiUrl + "documents", null, "application/json;charset=utf-8", config.Login, config.Password);
+            if (Http.HttpState == eStateHTTP.HTTP_OK) {
+                if (pProgress != null)
+                    pProgress.set(40);
+                InputDocs data = new Gson().fromJson(res, InputDocs.class);
+                if (pIsClear)
+                    db.execSQL("Delete from DOC;Delete from DOC_WARES_sample;Delete from DOC_WARES".trim());
+
+                for (Doc v : data.Doc) {
+                    //v.TypeDoc = ConvertTypeDoc(v.TypeDoc);
+                    v.DateDoc = v.DateDoc.substring(0, 10);
+                    mDbHelper.SaveDocs(v);
+                }
+                if (pProgress != null)
+                    pProgress.set(60);
+                SaveDocWaresSample(data.DocWaresSample);
+                if (pProgress != null)
+                    pProgress.set(100);
+                return true;
             }
-            pProgress.set(60);
-            SaveDocWaresSample(data.DocWaresSample);
-            /*for (DocWaresSample v : data.DocWaresSample) {
-                try {
-                    v.TypeDoc = ConvertTypeDoc(v.TypeDoc);
-                    mDbHelper.SaveDocWaresSample(v);
-                }
-                catch (Exception e)
-                {
-                    Log.e(TAG,e.getMessage());
-                }
-            }*/
-            pProgress.set(100);
-            return true;
+
+        }
+        catch (Exception ex) {
+            Log.e(TAG, "LoadDocsData=>"+ex.getMessage());
         }
         return false;
     }
 
-    int ConvertTypeDoc(int pTypeDoc)
-    {
-        switch (pTypeDoc)
-        {
-            case 2:
-                return 1;
-            case 1:
-                return 2;
-            default:
-                return pTypeDoc;
-        }
-    }
-
     //Вивантаження документів з ТЗД (HTTP)
-    public String SyncDocsData(int pTypeDoc, String pNumberDoc, List<WaresItemModel> pWares)
+    public Result SyncDocsData(int pTypeDoc, String pNumberDoc, List<WaresItemModel> pWares)
     {
         Gson gson = new Gson();
         SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         Date date = new Date(System.currentTimeMillis());
 
         ArrayList<OutputDoc> OD = new ArrayList<>();
-        OutputDoc el = new  OutputDoc(ConvertTypeDoc(pTypeDoc),pNumberDoc,formatter.format(date));
+        OutputDoc el = new  OutputDoc(pTypeDoc,pNumberDoc,formatter.format(date));
 
         for (WaresItemModel W : pWares ) {
-            OutputDocWares w = new OutputDocWares(W.CodeWares, W.InputQuantity);
+            OutputDocWares w = new OutputDocWares(W.CodeWares, W.InputQuantity,W.CodeReason);
             el.DocWares.add(w);
         }
         OD.add(el);
         String json = gson.toJson(OD);
 
-        String res = Http.HTTPRequest(config.ApiUrl+"documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
+        String res = Http.HTTPRequest( (pTypeDoc==5? config.ApiURLadd :config.ApiUrl)+"documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
         if (Http.HttpState == eStateHTTP.HTTP_OK) {
-            return "{\"State\":0,\"TextError\":\"Ok\"}";
+            return new Result();
         }
-        return "{\"State\":-1,\"TextError\":\"\"}";
+        return new Result(-1,Http.HttpState.toString());
     }
 
     boolean SaveDocWaresSample(DocWaresSample []  pDWS)    {
@@ -297,10 +325,12 @@ class OutputDocWares
 {
     public String CodeWares;
     public Double Quantity;
-    public OutputDocWares(int pCodeWares, Double pQuantity)
+    public int Reason;
+    public OutputDocWares(int pCodeWares, Double pQuantity,int pReason)
     {
         CodeWares= Integer.toString(pCodeWares);
         Quantity=pQuantity;
+        Reason=pReason;
     }
 }
 class OutputDoc
@@ -317,4 +347,9 @@ class OutputDoc
     }
 
 
+}
+
+ class InputDoc {
+    Doc  Doc;
+    DocWaresSample [] DocWaresSample;
 }

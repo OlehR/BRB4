@@ -22,7 +22,6 @@ import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 
 import static android.os.Build.MANUFACTURER;
 import static android.os.Build.MODEL;
-import static android.os.Build.SERIAL;
 import static android.os.Build.getSerial;
 
 public class Utils {
@@ -79,7 +78,8 @@ public class Utils {
                 }
                 return getSerial();
             }
-            return SERIAL;
+            else
+              return Build.SERIAL;
         }
         catch (Exception e )
         {

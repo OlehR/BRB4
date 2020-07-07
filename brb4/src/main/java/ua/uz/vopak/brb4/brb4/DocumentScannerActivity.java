@@ -21,6 +21,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,8 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
+import ua.uz.vopak.brb4.brb4.models.DocSetting;
+import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
@@ -53,6 +56,7 @@ import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.models.Result;
 
 public class DocumentScannerActivity extends FragmentActivity implements ScanCallBack, IIncomeRender {
     EditText barCode,  inputCount;
@@ -68,6 +72,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
     List<WaresItemModel> ListWares;
     WaresItemModel WaresItem = new WaresItemModel();
+    DocSetting DocSetting;
 
     int padding;
 
@@ -111,6 +116,9 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
         WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
         WaresItem.NumberDoc = i.getStringExtra("inv_number");
+
+        DocSetting=config.GetDocSetting(WaresItem.TypeDoc);
+        WaresItem.IsViewReason=DocSetting.IsViewReason;
 
         barCode = findViewById(R.id.RevisionBarCode);
         inputCount = findViewById(R.id.RevisionInputCount);
@@ -159,6 +167,8 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         //Для отримання штрихкодів
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
+        for (Reason el: config.Reasons)
+            WaresItem.ListReason.add(el.NameReason);
     }
 
     void GetDoc()    {
@@ -192,12 +202,12 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                     WaresItem.ClearData();
                     Refresh();
                     break;
-                case "131":
+                case "131": //F1
                     setNullToExistingPosition();
                     break;
-                case "132":
+                case "132": //F2
                     focusOnView("up");
-                case "133":
+                case "133": //F3
                     focusOnView("down");
                     break;
             }
@@ -361,30 +371,38 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             loader.setVisibility(View.VISIBLE);
             if(WaresItem.InputQuantity>0)
                 WaresItem.OrderDoc++;
-            new AsyncHelper<ArrayList>(new IAsyncHelper() {
+            new AsyncHelper<Result>(new IAsyncHelper() {
                 @Override
-                public ArrayList Invoke() {
-                    return config.Worker.SaveDocWares( WaresItem.TypeDoc ,WaresItem.NumberDoc, WaresItem.CodeWares, WaresItem.OrderDoc, WaresItem.InputQuantity, isNullable, null);
+                public Result Invoke() {
+                    WaresItem.CodeReason = config.Reasons[WaresItem.ListReasonIdx.get()].СodeReason;
+                    return config.Worker.SaveDocWares( WaresItem.TypeDoc ,WaresItem.NumberDoc, WaresItem.CodeWares, WaresItem.OrderDoc, WaresItem.InputQuantity, WaresItem.CodeReason,isNullable);
                 }
             },
-                    new IPostResult<ArrayList>() {
+                    new IPostResult<Result>() {
                         @Override
-                        public void Invoke(ArrayList args) {
+                        public void Invoke(Result args) {
                             AfterSave(args);
                         }}
                         ).execute();
         }
     }
 
-    public void AfterSave(final ArrayList args){
+    public void AfterSave(final Result pResult){
         final DocumentScannerActivity context = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                boolean isSave = (boolean) args.get(0);
-                String message = (String) args.get(1);
+                boolean isSave = pResult.State!=-1;
 
                 if(isSave) {
+try {
+    WaresItemModel el = (WaresItemModel) WaresItem.clone();
+    ListWares.add(el);
+}catch (Exception e)
+{
+    Log.e("TAG","AfterSave=>"+e.getMessage());
+};
+
                     ListWares.add(WaresItem);
                     WaresTableLayout.addView(RenderTableItem(WaresItem));
                 }
@@ -396,7 +414,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 if (!isSave) {
                     Intent i = new Intent(context, MessageActivity.class);
                     i.putExtra("messageHeader", "Невдалося зберегти значення!");
-                    i.putExtra("message", message);
+                    i.putExtra("message", pResult.TextError);
                     i.putExtra("type", MessageType.ErrorMessage);
                     startActivityForResult(i, 1);
                 }
@@ -409,8 +427,12 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         ArrayList<View> existPos = getViewsByTag(WaresTableLayout,Tag);
         for(View item: existPos){
             if(item instanceof ViewGroup){
-                View tx = ((ViewGroup) item).getChildAt(2);
-                ((TextView)tx).setText("0");
+                TextView tx = (TextView)((ViewGroup) item).getChildAt(2);
+                TextView txOld = (TextView)((ViewGroup) item).getChildAt(3);
+                if(tx.getText()!="0") {
+                    txOld.setText(tx.getText());
+                    tx.setText("0");
+                }
             }
         }
         saveDocumentItem(true);
@@ -456,6 +478,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         }
         //CheckEmptyValue();
     }
+
 
     private void  findWareByArticleOrCode(String  pBarCode){
         final String BarCode = pBarCode==null? barCode.getText().toString(): pBarCode;

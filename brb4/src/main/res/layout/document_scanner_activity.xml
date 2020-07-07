@@ -101,7 +101,7 @@
                 android:focusable="false"
                 android:enabled="false"
                 android:layout_weight="2"
-                android:text="@{ WaresItem.GetBeforeQuantity}"/>
+                android:text="@{ WaresItem.GetBeforeQuantity()}"/>
 
         </LinearLayout>
 
@@ -111,7 +111,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
             android:orientation="horizontal"
-            android:layout_above="@+id/RevisionBottomLayout"
+            android:layout_above="@+id/DS_Reason"
             android:weightSum="5">
 
             <LinearLayout
@@ -180,6 +180,22 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/DS_Reason"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:layout_above="@+id/RevisionBottomLayout"
+            android:weightSum="5">
+        <Spinner
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:visibility="@{WaresItem.IsViewReason ? View.VISIBLE:View.GONE }"
+            android:entries="@{WaresItem.ListReason}"
+            android:selectedItemPosition="@={WaresItem.ListReasonIdx}"
+            android:layout_weight="0.25" />
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/RevisionBottomLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -227,7 +243,6 @@
                         android:weightSum="6">
 
                         <TableRow>
-
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -251,13 +266,10 @@
                                 android:layout_height="wrap_content"
                                 android:text="ст. к-сть"
                                 android:layout_weight="1"/>
-
                         </TableRow>
 
                     </TableLayout>
-
                 </ScrollView>
-
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -333,7 +345,7 @@
                         android:layout_height="wrap_content"
                         android:progressDrawable="@drawable/circular_progress_bar"
                         android:layout_centerInParent="true"/>
-                </RelativeLayout>
+    </RelativeLayout>
 
 </FrameLayout>
 </layout>

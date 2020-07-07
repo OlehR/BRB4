@@ -22,6 +22,8 @@ import android.widget.ProgressBar;
 import androidx.databinding.ObservableInt;
 
 import com.google.gson.Gson;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import ua.uz.vopak.brb4.brb4.Connector.SE.Connector;
@@ -31,6 +33,7 @@ import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.DocumentActivity;
 import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
 import ua.uz.vopak.brb4.brb4.DocumentScannerActivity;
+import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
@@ -43,35 +46,39 @@ import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
+import ua.uz.vopak.brb4.lib.models.Result;
 
 public class Worker {
     protected static final String TAG = "BRB4/Worker";
     GlobalConfig config = GlobalConfig.instance();
 
-
     public GetDataHTTP Http = new GetDataHTTP();
     SQLiteAdapter mDbHelper  = config.GetSQLiteAdapter();
-
-
+    public Connector c = new Connector();
 
     public Worker() {
-      /*Printer.findBT();
-      try {
-          Printer.openBT();
-          LI.InfoPrinter= (Printer.varPrinterError==ePrinterError.None? Printer.varTypePrinter.name():Printer.varPrinterError.name());
-      } catch (IOException e) {
-          e.printStackTrace();
-          LI.InfoPrinter="Error";
-      }*/
-     /*   mDbHelper = config.GetSQLiteAdapter();
-        int[] varRes = mDbHelper.GetCountScanCode();
-        LI.AllScan = varRes[0];
-        LI.BadScan = varRes[1];*/
     }
 
-    public Worker(ProgressBar parProgressBar) {
-        this();
-        //Progress = parProgressBar;
+    public DocSetting[] GenSettingDocs(eCompany pCompany) {
+        DocSetting[] Setting=null;
+        switch (pCompany)
+        {
+            case SevenEleven:
+                Setting =  new  DocSetting[2];
+                Setting[0] = new DocSetting(2,"Ревізія");
+                Setting[1] = new DocSetting(5,"РЦ Лоти",true,true,true,true);
+                break;
+            case SparPSU:
+            case VopakPSU:
+                Setting =  new  DocSetting[5];
+                Setting[0] = new DocSetting(1,"Ревізія");
+                Setting[1] = new DocSetting(2,"Прийомка");
+                Setting[2] = new DocSetting(3,"Переміщення");
+                Setting[3] = new DocSetting(4,"Списання");
+                Setting[4] = new DocSetting(5,"Повернення");
+                break;
+        }
+       return Setting;
     }
 
     public void AddConfigPair(String name, String value) {
@@ -89,10 +96,13 @@ public class Worker {
         else
             config.Company = eCompany.fromOrdinal(Integer.valueOf(strCompany));
 
+        config.DocsSetting=GenSettingDocs(config.Company);
+
+
         config.ApiUrl=GetConfigPair("ApiUrl");
         if(config.ApiUrl==null || config.ApiUrl.isEmpty() )
                 config.ApiUrl=(config.Company==eCompany.SevenEleven? "http://176.241.128.13/RetailShop/hs/TSD/":"http://znp.vopak.local/api/api_v1_utf8.php");
-
+        config.ApiURLadd=GetConfigPair("ApiUrladd");
 
         config.Login = GetConfigPair("Login");
         config.CodeWarehouse = GetConfigPair("Warehouse");
@@ -110,15 +120,28 @@ public class Worker {
 
         config.NumberPackege = Integer.valueOf(varNumberPackege);
         config.IsLoadStartData=true;
+
+        config.Reasons= mDbHelper.GetReason();
+    }
+    //Робота з документами.
+    // Завантаження документів в ТЗД (HTTP)
+    public Boolean LoadData(int pTypeDoc,String  pNumberDoc,ObservableInt pProgress,boolean pIsClearDoc) {
+        if(config.Company==eCompany.SevenEleven) {
+            if(pTypeDoc==-1)
+                c.LoadGuidData((pTypeDoc==-1),pProgress);
+            return c.LoadDocsData(pTypeDoc, pNumberDoc, pProgress, pIsClearDoc);
+        }
+        else
+          return  LoadDocsData(pTypeDoc,pProgress);
     }
 
-
-    //Робота з документами.
     //Завантаження документів в ТЗД (HTTP)
-    public Boolean LoadDocsData(String parTypeDoc, ObservableInt pProgress) {
+    //PSU Треба перенести в окремий конектор
+    public Boolean LoadDocsData(int pTypeDoc, ObservableInt pProgress) {
         if(pProgress!=null)
             pProgress.set(5);
-        String data = config.GetApiJson(150, "\"TypeDoc\":" + parTypeDoc);
+
+        String data = config.GetApiJson(150, "\"TypeDoc\":" + pTypeDoc);
         String result = Http.HTTPRequest(config.ApiUrl, data);
         Log.d(TAG, "Load=>"+result.length());
         if(Http.HttpState!= eStateHTTP.HTTP_OK) {
@@ -132,7 +155,7 @@ public class Worker {
     }
 
     //Вивантаження документів з ТЗД (HTTP)
-    public String SyncDocsData(int parTypeDoc, String NumberDoc, List<WaresItemModel> Wares) {
+    public Result SyncDocsData(int parTypeDoc, String NumberDoc, List<WaresItemModel> Wares) {
         List<String> wares = new ArrayList<String>();
         for (WaresItemModel ware : Wares) {
             String war = "";
@@ -142,8 +165,16 @@ public class Worker {
             wares.add(war);
         }
         String data = config.GetApiJson(153, "\"TypeDoc\":" + parTypeDoc + ",\"NumberDoc\":\"" + NumberDoc + "\",\"Wares\":[" + TextUtils.join(",", wares) + "]");
-        String result = Http.HTTPRequest(config.ApiUrl, data);
-        return result;
+        try {
+            String result = Http.HTTPRequest(config.ApiUrl, data);
+            Gson gson = new Gson();
+            Result res= gson.fromJson(result, Result.class);
+            return  res;
+        }
+        catch(Exception e)
+        {
+            return new Result(-1,e.getMessage());
+        }
     }
 
     // Отримати список документів з БД
@@ -166,28 +197,20 @@ public class Worker {
         }
         return model;
     }
-
     // Збереження товару в БД
-    public ArrayList SaveDocWares(int pTypeDoc, String pNumberDoc, int pCodeWares, int pOrderDoc, Double pQuantity, Boolean pIsNullable, Activity pContext) {
+    public Result SaveDocWares(int pTypeDoc, String pNumberDoc, int pCodeWares, int pOrderDoc, Double pQuantity, int pCodeReason , Boolean pIsNullable) {
         if (pIsNullable)
             mDbHelper.SetNullableWares(pTypeDoc, pNumberDoc, pCodeWares);
 
-        ArrayList args = mDbHelper.SaveDocWares(pTypeDoc, pNumberDoc, pCodeWares, pOrderDoc, pQuantity);
-
-        if (pContext !=null && pContext instanceof DocumentScannerActivity) {
-            DocumentScannerActivity activity = (DocumentScannerActivity) pContext;
-            activity.AfterSave(args);
-        }
-        return args;
+        return mDbHelper.SaveDocWares(pTypeDoc, pNumberDoc, pCodeWares, pOrderDoc, pQuantity, pCodeReason);
     }
     // Зміна стану документа і відправляємо в 1С
-    public String UpdateDocState(int pState, int pTypeDoc, String pNumberDoc) {
+    public Result UpdateDocState(int pState, int pTypeDoc, String pNumberDoc) {
         mDbHelper.UpdateDocState(pState, pTypeDoc, pNumberDoc);
-        List<WaresItemModel> wares = mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, 1);
+        List<WaresItemModel> wares = mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, 2);
         if(config.Company==eCompany.SevenEleven) //TMP!!! Треба буде зробити полюдськи
-                return new Connector().SyncDocsData(pTypeDoc, pNumberDoc, wares);
+                return c.SyncDocsData(pTypeDoc, pNumberDoc, wares);
             else return SyncDocsData(pTypeDoc, pNumberDoc, wares);
     }
-
 
 }

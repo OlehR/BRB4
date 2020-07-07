@@ -11,15 +11,21 @@ import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import android.view.KeyEvent;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
+import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
+import ua.uz.vopak.brb4.brb4.databinding.MainLayoutBinding;
+import ua.uz.vopak.brb4.brb4.models.MainModel;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
@@ -29,103 +35,100 @@ import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener, ScanCallBack {
+    MainLayoutBinding binding;
     static GlobalConfig config = GlobalConfig.instance();
     public RelativeLayout loader;
-    Button[] menuItems = new Button[8];
+    private LinearLayout linearLayout;
+    Button[] menuItems;
     int current = 0;
-    //AuterizationsHelper auth;
     static boolean isFirstRun = true;
-    boolean isReload = false;
+
     private Scaner scaner;
     Context context;
+    static MainModel MM = new MainModel();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
 
-        //auth = new AuterizationsHelper();
-/*
-        if(!config.isAutorized){
-
-        }*/
-
         //ініціалізація класа при старті.
         Utils.instance(context);
         config.Init(context);
 
-
         setContentView(R.layout.main_layout);
-        loader = findViewById(R.id.RevisionLoader);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        binding = DataBindingUtil.setContentView(this, R.layout.main_layout);
+        binding.setMM (MM);
 
+        loader = findViewById(R.id.RevisionLoader);
+        linearLayout = findViewById(R.id.M_ButtonLayout);
         Intent in = getIntent();
-        isReload = Boolean.parseBoolean(in.getStringExtra("isReload"));
+
 
         //---!!!!!TMP Not Load
-        if((isFirstRun || isReload) ){
-            ShowLoader();
-            //new AsyncLoadDocsData(config.GetWorker(), this).execute(isReload?"-1":"0");
+        if((isFirstRun ) ){
+          //  ShowLoader();
+
             new AsyncHelper<Boolean>(new IAsyncHelper() {
                 @Override
                 public Boolean Invoke() {
                     config.Worker.LoadStartData();
                     if(!config.isAutorized) return false;
                     if(!config.getCodeWarehouse().equals("000000000")) {
-                        isFirstRun = false;
-                        return config.Worker.LoadDocsData(isReload ? "-1" : "0",null);
 
+                        return config.Worker.LoadData(-1,null,MM.Progress,false);
                     }
                     return false;
                 }},
                         new IPostResult<Boolean>() {
                     @Override
                     public void Invoke(Boolean p) {
-                        if(config.isAutorized)
-                         HideLoader();
-                        else
-                        {
-                            Intent i = new Intent(context, AuthActivity.class);
-                            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(i);
-                            finish();
-                        }
-
+                        isFirstRun = false;
+                        if(!config.isAutorized)
+                            RunAuth();
                     }
                 }
             ).execute();
-            if(!isReload)
             setAlarm(60 * 30, 60 * 30);
         }
         ////////////////////////////////
 
-        menuItems[0] = findViewById(R.id.PriceCheker);
-        menuItems[1] = findViewById(R.id.Revision);
-        menuItems[2] = findViewById(R.id.Incom);
-        menuItems[3] = findViewById(R.id.Moving);
-        menuItems[4] = findViewById(R.id.WriteOff);
-        menuItems[5] = findViewById(R.id.Returning);
-        menuItems[6] = findViewById(R.id.Expenditure);
-        menuItems[7] = findViewById(R.id.ML_Test);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        if(config.isAutorized) {
+           int SizeArray= config.DocsSetting==null? 1: config.DocsSetting.length + 1;
+            menuItems = new Button[SizeArray];
+            menuItems[0] = findViewById(R.id.M_PriceCheker);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
 
-        for(int i = 0; i < menuItems.length; i++){
-            menuItems[i].setOnFocusChangeListener(new View.OnFocusChangeListener() {
-                @Override
-                public void onFocusChange(View v, boolean hasFocus) {
-                    // TODO Auto-generated method stub
-                    if (hasFocus) {
-                        ((Button)v).setTextColor(ContextCompat.getColor(context,android.R.color.white));
-                    }else {
-                        ((Button)v).setTextColor(ContextCompat.getColor(context,android.R.color.black));
+            if(config.DocsSetting!=null)
+            for (int i = 0; i < config.DocsSetting.length; i++) {
+                Button btn = new Button(this);
+                btn.setText("F" + String.valueOf(i + 2) + "-" + config.DocsSetting[i].NameDoc);
+                btn.setId(btn.generateViewId());//setId(some_random_id);
+                linearLayout.addView(btn, params);
+                menuItems[i + 1] = btn;
+            }
+
+            for (int i = 0; i < menuItems.length; i++) {
+                menuItems[i].setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                    @Override
+                    public void onFocusChange(View v, boolean hasFocus) {
+                        // TODO Auto-generated method stub
+                        if (hasFocus) {
+                            ((Button) v).setTextColor(ContextCompat.getColor(context, android.R.color.white));
+                        } else {
+                            ((Button) v).setTextColor(ContextCompat.getColor(context, android.R.color.black));
+                        }
                     }
-                }
 
-            });
-
-            menuItems[i].setOnClickListener(this);
+                });
+                menuItems[i].setOnClickListener(this);
+            }
+            scaner = config.GetScaner();
+            scaner.Init(this);
         }
-        scaner=config.GetScaner();
-        scaner.Init(this);
     }
 
 
@@ -137,10 +140,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
                 finish();
-
             }
         });
-
     }
 
     @Override
@@ -176,7 +177,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_settings:
@@ -194,8 +194,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         super.onResume();
 
         if(!config.isAutorized){
-            Intent i = new Intent(this, AuthActivity.class);
-            startActivity(i);
+            RunAuth();
         }
         else {
    /*         new AsyncHelper<Void>(new IAsyncHelper() {
@@ -214,7 +213,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         Intent i;
         String keyCode = String.valueOf(event.getKeyCode());
         if(event.getAction() == KeyEvent.ACTION_UP) {
-
             switch (keyCode)
             {
                 case "19":
@@ -226,11 +224,11 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 case "285":
                     menuItems[current].callOnClick();
                     break;
-                case "131":
+                case "131": //F1 -Прайсчекер
                     i = new Intent(this, PriceCheckerActivity.class);
                     startActivity(i);
                     break;
-                default:
+                default: //F2-F9
                     if(Integer.valueOf(keyCode)>=132 && Integer.valueOf(keyCode)<=137)
                     {
                         i = new Intent(this, DocumentActivity.class);
@@ -244,51 +242,28 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        Intent i;
-        int Id=v.getId();
-        switch (v.getId()) {
-            case R.id.PriceCheker:
-                i = new Intent(this, PriceCheckerActivity.class);
-                startActivity(i);
-                break;
-            case R.id.Revision:
-                i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", 1);
-                startActivity(i);
-                break;
-            case R.id.Incom:
-                i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", 2);
-                startActivity(i);
-                break;
-            case R.id.Moving:
-                i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", 3);
-                startActivity(i);
-                break;
-            case R.id.WriteOff:
-                i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", 4);
-                startActivity(i);
-                break;
-            case R.id.Returning:
-                i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", 5);
-                startActivity(i);
-                break;
-            case R.id.Expenditure:
-                i = new Intent(this, DocumentActivity.class);
-                i.putExtra("document_type", 6);
-                startActivity(i);
-                break;
-            case R.id.ML_Test:
+        Intent intent;
+        int Id = v.getId();
+        if (Id == R.id.M_PriceCheker) {
+            intent = new Intent(this, PriceCheckerActivity.class);
+            startActivity(intent);
+            return;
+        }
+
+        for(int i = 1; i < menuItems.length; i++){
+           if( menuItems[i].getId()==Id)
+           {
+               intent = new Intent(this, DocumentActivity.class);
+               intent.putExtra("document_type", config.DocsSetting[i-1].TypeDoc);
+               startActivity(intent);
+           }
+        }
+         /* case R.id.ML_Test:
                 i = new Intent(this, TestActivity.class);
                 i.putExtra("document_type", 1);
                 i.putExtra("document_number", "ПСЮ00003483");
                 startActivity(i);
-                break;
-
-        }
+                break;*/
     }
 
     public final void setAlarm(int start, int interval) {
@@ -307,19 +282,17 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     public static class AlarmReceiver extends BroadcastReceiver {
         public void onReceive(Context context, Intent intent) {
             if(!config.getCodeWarehouse().equals("000000000")) {
-                //new AsyncLoadDocsData(config.GetWorker(), null).execute("0");
                 new AsyncHelper<Void>(new IAsyncHelper() {
                     @Override
                     public Void Invoke() {
-                        config.Worker.LoadDocsData("0",null);
+                        config.Worker.LoadData(0,null,MM.Progress,false);
                         return null;
                     }
                 }).execute();
             }
-
         }
     }
-
+/*
     public void HideLoader(){
         runOnUiThread(new Runnable() {
             @Override
@@ -337,7 +310,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
-
+*/
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)

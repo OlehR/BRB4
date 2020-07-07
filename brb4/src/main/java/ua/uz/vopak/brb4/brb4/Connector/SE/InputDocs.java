@@ -7,3 +7,5 @@ public class InputDocs {
     Doc [] Doc;
     DocWaresSample [] DocWaresSample;
 }
+
+

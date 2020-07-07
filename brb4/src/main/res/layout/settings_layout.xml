@@ -25,7 +25,7 @@
         android:id="@+id/Ver"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="10pt"
+        android:textSize="9pt"
         android:layout_marginTop="5dp"
         android:text="Ver: " />
     <TextView
@@ -33,7 +33,7 @@
         android:id="@+id/SN"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="10pt"
+        android:textSize="9pt"
         android:layout_marginTop="5dp"
         android:text="SN: " />
         </LinearLayout>
@@ -57,7 +57,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textSize="10pt"
+        android:textSize="9pt"
         android:enabled ="@{SM.IsAdmin}"
         android:onClick="@{(view) -> SM.OnClickGen()}"
         android:text="Згенерувати" />
@@ -66,7 +66,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="10pt"
+            android:textSize="9pt"
             android:enabled ="@{SM.IsAdmin}"
             android:onClick="@{(view) -> SM.OnClickSave()}"
             android:text="Зберегти" />
@@ -74,24 +74,25 @@
     </LinearLayout>
 
     <EditText
-        android:id="@+id/ApiUrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="9pt"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="1dp"
         android:enabled ="@{SM.IsAdmin}"
         android:text="@={SM.apiURL}"
         />
-        <!--android:onClick="@{(view) -> SM.OnClickURL(SM)}"-->
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="10pt"
-        android:text="Склад" />
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="@{SM.IsSevenEleven() ? View.VISIBLE:View.GONE }"
+            android:textSize="9pt"
+            android:layout_marginTop="1dp"
+            android:enabled ="@{SM.IsAdmin}"
+            android:text="@={SM.apiURLadd}"
+            />
 
-    <Spinner
+     <Spinner
         android:id="@+id/wares"
         android:layout_width="match_parent"
         android:layout_height="40dp"
@@ -124,7 +125,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:onClick="@{(view) -> SM.OnClickLoad()}"
-        android:text="Заван. ДАНІ"/>
+        android:text="З. Довідники"/>
 
         <Button
             android:layout_weight="1"
@@ -138,7 +139,7 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="15dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="2dp"
             android:layout_alignParentBottom="true"
             android:max="100"
             android:progress="@{SM.Progress}"

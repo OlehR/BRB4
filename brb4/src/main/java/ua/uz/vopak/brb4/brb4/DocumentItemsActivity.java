@@ -32,6 +32,7 @@ import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.models.Result;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener, IIncomeRender {
     LinearLayout tl,button;
@@ -122,15 +123,15 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     }
 
     public void SendDoc()    {
-        new AsyncHelper<String>(new IAsyncHelper() {
+        new AsyncHelper<Result>(new IAsyncHelper() {
             @Override
-            public String Invoke() {
+            public Result Invoke() {
                 return config.Worker.UpdateDocState(1, documentType, number);
             }
         },
-                new IPostResult<String>() {
+                new IPostResult<Result>() {
                     @Override
-                    public void Invoke(String p) {
+                    public void Invoke(Result p) {
                         AfterSave(p);
                         return;
                     }}
@@ -162,7 +163,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
+                menuItems.clear();
                 tl.removeAllViews();
                 try {
                     int dpValue = 5;
@@ -189,7 +190,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             LinearLayout tl0 = new LinearLayout(context);
                             tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                             tl0.setOrientation(LinearLayout.VERTICAL);
-
 
                             LinearLayout tr0 = new LinearLayout(context);
                             tr0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -287,7 +287,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                                     for(int j = 0; j < trc.getChildCount(); j++){
                                         trc.getChildAt(j).setBackground(ContextCompat.getDrawable(context, R.drawable.odd_row_bordered));
                                     }
-
                                 }
                             }
 
@@ -495,27 +494,18 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         });
     }
 
-    public void AfterSave(final String pMessage) {
-        JSONObject jObject;
-        String vMessage="Документ успішно збережено!!!\n";
-        try {
-            jObject = new JSONObject(pMessage);
-            if( jObject.getInt("State")!=0)
-                vMessage="Помилка збереження документа:\n"+jObject.getString("TextError");
-            else
-                if(documentType==2)
-                  vMessage+=jObject.getString("Info");
-        } catch (JSONException e) {
-            vMessage="Помилка збереження документа:\n"+pMessage;
-            e.printStackTrace();
-        }
+    public void AfterSave(final Result pResult) {
+        final String vMessage;
+        if(pResult.State==-1)
+            vMessage="Документ успішно збережено!!!\n"+pResult.Info!=null?pResult.Info:"";
+         else
+            vMessage="Помилка збереження документа:\n"+pResult.TextError;
 
-        final String Message=vMessage;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Context context = getApplicationContext();
-                Toast toast = Toast.makeText(context, Message, Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(context, vMessage, Toast.LENGTH_LONG);
                 toast.show();
             }
         });

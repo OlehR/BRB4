@@ -99,8 +99,8 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         SN.setText("SN: " + config.SN);
         SN = findViewById(R.id.Ver);
         SN.setText("Ver: " + BuildConfig.VERSION_NAME);
-        SN = findViewById(R.id.ApiUrl);
-        SN.setText( config.ApiUrl);
+        //SN = findViewById(R.id.ApiUrl);
+        //SN.setText( config.ApiUrl);
 
         //loadDocsData = findViewById(R.id.LoadDocumentsData);
        // loadDocsData.setOnClickListener(this);

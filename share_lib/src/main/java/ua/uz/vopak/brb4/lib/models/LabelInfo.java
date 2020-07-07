@@ -33,8 +33,6 @@ import ua.uz.vopak.brb4.lib.helpers.Utils;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.*;
 
-import static android.os.Environment.*;
-
 public class LabelInfo
 {
 
@@ -579,7 +577,7 @@ public class LabelInfo
 
 
         }
-        String path= getExternalStorageDirectory()+"/Download/label.prn";
+        String path= Environment.getExternalStorageDirectory()+"/Download/label.prn";
         try (FileOutputStream stream = new FileOutputStream(path)) {
             stream.write(res);
         }

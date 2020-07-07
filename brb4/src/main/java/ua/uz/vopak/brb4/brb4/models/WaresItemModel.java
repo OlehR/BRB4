@@ -2,12 +2,15 @@ package ua.uz.vopak.brb4.brb4.models;
 
 import android.graphics.Color;
 
+import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableInt;
+
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 
 public class
 
 
-WaresItemModel {
+WaresItemModel implements Cloneable{
     GlobalConfig config = GlobalConfig.instance();
     public String NumberDoc;
     public int TypeDoc;
@@ -28,7 +31,9 @@ WaresItemModel {
     public String GetInputQuantityZero() {return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",InputQuantity);}
     public String GetQuantityBase() {return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",(double)Coefficient*InputQuantity);}
     public double BeforeQuantity;
-    public String GetBeforeQuantity() { return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity)+ (QuantityMax==Double.MAX_VALUE?"":"/"+String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity))   ;}
+    public String GetBeforeQuantity() {
+        return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity)+ (QuantityMax==Double.MAX_VALUE?"":"/"+String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity)) +
+                (QuantityOrder>0 && QuantityMax==Double.MAX_VALUE?String.format(CodeUnit == 7 ? "%.3f" : "%.0f",QuantityOrder):"")  ;}
 
     public int ColorBackground(){return Color.parseColor(QuantityMax>0d ? "#ffffff" : "#3fffff00");}
     public boolean IsUseCamera()  {return config.TypeScaner== eTypeScaner.Camera;}
@@ -39,9 +44,19 @@ WaresItemModel {
     public double QuantityMax;
     public double QuantityOld;
     public double QuantityOrder;
+    public double QuantityReason;
+    public int CodeReason;
+    public int Ord;//3- недостача. //2 - надлишок, // 1 - є з причиною // 0 - все ОК.
+
+
+    public ObservableArrayList<String> ListReason = new ObservableArrayList<>();
+    public ObservableInt ListReasonIdx = new ObservableInt(0);
+    public boolean IsViewReason=false;
+
     public String GetQuantityOrder() { return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",QuantityOrder);}
 
-    public   WaresItemModel(){ClearData();}
+    public  WaresItemModel(){ClearData();}
+   // public  WaresItemModel(WaresItemModel p){return (WaresItemModel)clone(p);}
 
     public String GetQuantityOld(){return String.valueOf(QuantityOld);}
     public void Set(WaresItemModel parWIM){
@@ -62,6 +77,7 @@ WaresItemModel {
       BaseCodeUnit =parWIM.BaseCodeUnit;
       QuantityMin=parWIM.QuantityMin ;
       QuantityMax=parWIM.QuantityMax ;
+      CodeReason= parWIM.CodeReason;
       
   }
 
@@ -81,9 +97,15 @@ WaresItemModel {
         QuantityMin=0 ;
         InputQuantity=0;
         QuantityMax=Double.MAX_VALUE ;
+        CodeReason=0;
 
     }
     public Boolean IsInputQuantity() { return (Coefficient>0 && QuantityMax>0d);}
+
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
 }
 
 

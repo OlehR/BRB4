@@ -21,6 +21,7 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentLayoutBinding;
+import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocumentViewModel;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
@@ -28,6 +29,7 @@ import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 
 public class DocumentActivity extends Activity implements View.OnClickListener, ScanCallBack {
+    DocSetting DS;
     LinearLayout tl;
     ScrollView documentList;
     int DocumentType;
@@ -56,6 +58,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         Intent i = getIntent();
         DocumentType =  i.getIntExtra("document_type",0);
 
+        DS=config.GetDocSetting(DocumentType);
         DM.TypeDoc.set(DocumentType);
         //binding = DataBindingUtil.setContentView(this, R.layout.document_layout);
         //binding.setDM (DM);
@@ -87,7 +90,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                 FilterKey.setVisibility(view);
                 FilterText.setVisibility(view);
 
-
                 view = DM.IsEnterCodeZKPO.get() ? View.VISIBLE : View.GONE;
                 DocumentZKPO.setText(DM.ZKPO.get());
                 DocumentZKPO.setVisibility(view);
@@ -100,13 +102,14 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     }
 
     @Override
-    public void Run(final String parBarCode) {
+    public void Run(final String pBarCode) {
 
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.LoadListDoc(context,DocumentType,parBarCode,null);
-
+                if(DS.IsAddBarCode)
+                    config.Worker.LoadData(DocumentType,pBarCode,null,false);
+                config.Worker.LoadListDoc(context,DocumentType,pBarCode,null);
                 return null;
             }
         }).execute();
