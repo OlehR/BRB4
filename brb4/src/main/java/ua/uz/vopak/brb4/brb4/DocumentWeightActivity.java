@@ -32,13 +32,13 @@ import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 
-public class DocumentWeightActivity extends Activity implements IIncomeRender {
+public class DocumentWeightActivity extends Activity  {
     String number;
     int documentType;
     List<Double> PrevValues = new ArrayList<>();
     LinearLayout tl;
     HashMap<Integer, DocWaresModelIncome> data = new HashMap<Integer, DocWaresModelIncome>();
-    List<DocWaresModelIncome> Model;
+    List<WaresItemModel> Model;
     int position = 0;
     EditText searchField;
     static Integer scanNN = 0;
@@ -101,7 +101,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
 
     public void RenderTableIncome(final List<WaresItemModel> model) {
         final DocumentWeightActivity context = this;
-        //Model = model;
+        Model = model;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -230,7 +230,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
     }
 
     public void renderTable(final List<WaresItemModel> model) {
-
+        RenderTableIncome(model);
     }
 
     private void onFocus(int index) {
@@ -249,7 +249,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
             v.setText(String.format("%.3f", PrevValues.get(index)));
         } else {
             PrevValues.set(index,Double.parseDouble(v.getText().toString()));
-            data.put(index, Model.get(index));
+            //data.put(index, Model.get(index));
         }
     }
 
@@ -264,7 +264,7 @@ public class DocumentWeightActivity extends Activity implements IIncomeRender {
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    config.Worker.SaveDocWares(documentType, number,Integer.parseInt( Model.get(position).CodeWares),scanNN,  Double.valueOf( value), 0,true);
+                    config.Worker.SaveDocWares(documentType, number, Model.get(position).CodeWares,scanNN,  Double.valueOf( value), 0,true);
                     return null;
                 }
             }).execute();

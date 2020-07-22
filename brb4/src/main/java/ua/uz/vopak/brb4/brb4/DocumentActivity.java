@@ -27,6 +27,8 @@ import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 
 public class DocumentActivity extends Activity implements View.OnClickListener, ScanCallBack {
     DocSetting DS;
@@ -37,6 +39,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
     GlobalConfig config = GlobalConfig.instance();
+    UtilsUI UtilsUI = new UtilsUI();
     private Scaner scaner;
     TextView  FilterKey,FilterText,FilterEDRPOText,FilterEDRPO;
     EditText DocumentZKPO;
@@ -70,19 +73,12 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         FilterText=findViewById(R.id.FilterText);
         //new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute(DocumentType);
 
-        new AsyncHelper<Void>(new IAsyncHelper() {
-            @Override
-            public Void Invoke() {
-                config.Worker.LoadListDoc(context,DocumentType,null,null);
-                return null;
-            }
-        }).execute();
-        ViewFilter();
+        RefreshTable(null,null);
     }
 
     private void ViewFilter()
     {
-        //!!!!TMP Через проблеми з дата біндінгом Жутко костиляю. Буду мати змогу - перероблю. Бо програмно будую Грід.
+        //!!!!TMP Через проблеми з дата біндінгом  костиляю. Буду мати змогу - перероблю. Бо програмно будую Грід.
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -93,7 +89,12 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                 view = DM.IsEnterCodeZKPO.get() ? View.VISIBLE : View.GONE;
                 DocumentZKPO.setText(DM.ZKPO.get());
                 DocumentZKPO.setVisibility(view);
-                DocumentZKPO.setFocusable(DM.IsEnterCodeZKPO.get());
+
+                DocumentZKPO.requestFocus();
+                DocumentZKPO.setFocusableInTouchMode(true);
+                DocumentZKPO.requestFocusFromTouch();
+                DocumentZKPO.setFocusableInTouchMode(false);
+
 
                 view = DM.TypeDoc.get() == 2 ? View.VISIBLE : View.GONE;
                 FilterEDRPO.setVisibility(view);
@@ -103,27 +104,31 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
 
     @Override
     public void Run(final String pBarCode) {
+        RefreshTable(pBarCode,null);
+    }
 
-        new AsyncHelper<Void>(new IAsyncHelper() {
+    private void RefreshTable(final String pBarCode,final String pExtInfo)    {
+        DM.IsFilter.set(pBarCode!=null ||pExtInfo!=null);
+        DM.IsEnterCodeZKPO.set(false);
+
+        new AsyncHelper<List<DocumentModel>>(new IAsyncHelper() {
             @Override
-            public Void Invoke() {
+            public List<DocumentModel> Invoke() {
+                if(DS==null)
+                    return null;
                 if(DS.IsAddBarCode)
                     config.Worker.LoadData(DocumentType,pBarCode,null,false);
-                config.Worker.LoadListDoc(context,DocumentType,pBarCode,null);
-                return null;
+                return config.Worker.LoadListDoc(DocumentType,pBarCode,pExtInfo);
             }
-        }).execute();
-        DM.IsFilter.set(true);
-        ViewFilter();
+        },
+                new IPostResult<List<DocumentModel>>() {
+                    @Override
+                    public void Invoke(List<DocumentModel> p) {
+                        renderTable(p);
+                        return;
+                    }}).execute();
 
-        /*
-        new AsyncHelper<Void>(new IAsyncHelper() {
-            @Override
-            public Void Invoke() {
-                config.Worker.GetRevisionScannerData(parBarCode, context);
-                return null;
-            }
-        }).execute();*/
+
     }
 
     @Override
@@ -131,11 +136,11 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         TextView currentNumber = v.findViewWithTag("number_inv");
         Intent i;
         Object tag = ((ViewGroup)v).getChildAt(0).getTag();
-        if(tag != null && tag.toString().equals("2")){
+        if(tag != null && (tag.toString().equals("2")|| tag.toString().equals("0")))
             i = new Intent(context, DocumentWeightActivity.class);
-        }else{
+        else
           i = new Intent(context, DocumentItemsActivity.class);
-        }
+
         i.putExtra("number", currentNumber.getText().toString());
         i.putExtra("document_type", DocumentType);
         startActivity(i);
@@ -147,49 +152,28 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
             String keyCode = String.valueOf(event.getKeyCode());
             switch (keyCode) {
                 case "15":
-                    selectNext();
-                    selectItem();
+                    if(!DM.IsEnterCodeZKPO.get())
+                        selectNext();
                     break;
                 case "9":
-                    selectPrev();
-                    selectItem();
+                    if(!DM.IsEnterCodeZKPO.get())
+                        selectPrev();
                     break;
                 case "66":
-                    if(DM.IsEnterCodeZKPO.get())
-                    {
-                        new AsyncHelper<Void>(new IAsyncHelper() {
-                            @Override
-                            public Void Invoke() {
-
-                                String find= DocumentZKPO.getText().toString().replace("\n","").replace(" ","");
-                                DM.ZKPO.set("");
-                                DM.IsEnterCodeZKPO.set(false);
-                                DM.IsFilter.set(true);
-                                ViewFilter();
-                                config.Worker.LoadListDoc(context, DocumentType, null,find);
-                                return null;
-                            }
-                        }).execute();
+                    if(DM.IsEnterCodeZKPO.get()) {
+                        String find = DocumentZKPO.getText().toString().replace("\n", "").replace(" ", "");
+                        DM.ZKPO.set("");
+                        RefreshTable(null, find);
                     }
                     else
-                    tl.findViewWithTag("selected").callOnClick();
+                     tl.findViewWithTag("selected").callOnClick();
                     break;
                 case "131": //F2 Пошук по коду ЄДРПОУ для прихідних
                   DM.IsEnterCodeZKPO.set(true);
                   ViewFilter();
                     break;
                 case "132": //F2 Перерисовуємо без фільтра
-                    new AsyncHelper<Void>(new IAsyncHelper() {
-                        @Override
-                        public Void Invoke() {
-                            config.Worker.LoadListDoc(context, DocumentType, null,null);
-
-                            return null;
-                        }
-                    }).execute();
-                    DM.IsFilter.set(false);
-                    DM.IsEnterCodeZKPO.set(false);
-                    ViewFilter();
+                    RefreshTable(null, null);
                     break;
             }
         }
@@ -301,67 +285,39 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                             menuItems.add(tr0);
 
                             int index = model.indexOf(item);
-                            if((index % 2)==0) {
-                                ViewGroup rows = tl0;
-                                for (int i = 0; i < rows.getChildCount(); i++) {
-                                    LinearLayout trc = (LinearLayout) rows.getChildAt(i);
-                                    for(int j = 0; j < trc.getChildCount(); j++){
-                                        trc.getChildAt(j).setBackground(ContextCompat.getDrawable(context, R.drawable.odd_row_bordered));
-                                    }
-
-                                }
-                            }
+                            UtilsUI.SetColor(tl0,"#000000","#"+((index % 2)==0?"FF":"80")+"fff3cd");
 
                             tl.addView(tr0);
                         }
 
                         selectItem();
-                    ViewFilter();
+
                 } catch (Exception e) {
                     e.getMessage();
                 }
-
+                ViewFilter();
             }
         });
     }
 
     private void selectItem(){
         ViewGroup selectedItem = tl.findViewWithTag("selected");
-
         if(selectedItem != null){
             int index = menuItems.indexOf(selectedItem);
-            if((index % 2)==0) {
-                setBackgroundToTableRow(selectedItem, R.drawable.odd_row_bordered, "#000000");
-            }else {
-                setBackgroundToTableRow(selectedItem, R.drawable.table_cell_border, "#000000");
-            }
+            UtilsUI.SetColor(selectedItem,"#000000","#"+((index % 2)==0?"FF":"80")+"fff3cd");
             selectedItem.setTag(null);
         }
         ViewGroup currentRows = (ViewGroup) menuItems.get(current);
         currentRows.setTag("selected");
-        setBackgroundToTableRow(currentRows, R.drawable.table_cell_selected, "#ffffff");
+        UtilsUI.SetColor(currentRows,"#ffffff","#008577");
     }
 
-    private void setBackgroundToTableRow(ViewGroup rows, int backgroundId, String textColor) {
-        ViewGroup tr = (ViewGroup) rows.getChildAt(0);
-        for (int i = 0; i < tr.getChildCount(); i++) {
-            ViewGroup row = (ViewGroup) tr.getChildAt(i);
-            for (int j = 0; j < row.getChildCount(); j++) {
-                TextView v = (TextView) row.getChildAt(j);
-                v.setBackground(ContextCompat.getDrawable(context, backgroundId));
-                if(v.getTag() != null && v.getTag().toString().equals("extInfo") && backgroundId != R.drawable.table_cell_selected) {
-                    v.setTextColor(ContextCompat.getColor(context,R.color.messageSuccess));
-                }else{
-                    v.setTextColor(Color.parseColor(textColor));
-                }
-            }
-        }
-    }
 
     private void selectNext(){
         if(current < menuItems.size()-1){
             current++;
             focusOnView("next");
+            selectItem();
         }
     }
 
@@ -369,6 +325,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         if(current > 0){
             current--;
             focusOnView("prev");
+            selectItem();
         }
     }
 
@@ -402,9 +359,5 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         });
     }
 
-    public static class DocumentScanerEvent {
-        public void onCountTextChanged(CharSequence s, int start, int before, int count) {
-            //Log.w("tag", "onTextChanged " + s);
-        }
-    }
+
 }

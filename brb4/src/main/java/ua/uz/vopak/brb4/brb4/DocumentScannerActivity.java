@@ -118,8 +118,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         WaresItem.NumberDoc = i.getStringExtra("inv_number");
 
         DocSetting=config.GetDocSetting(WaresItem.TypeDoc);
-        WaresItem.IsViewReason=DocSetting.IsViewReason;
-
+        WaresItem.DocSetting=DocSetting;
         barCode = findViewById(R.id.RevisionBarCode);
         inputCount = findViewById(R.id.RevisionInputCount);
         loader = findViewById(R.id.RevisionLoader);
@@ -269,11 +268,11 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
     void Refresh( ){
         binding.invalidateAll();
         barcodeView.resume();
-        if(WaresItem.IsInputQuantity()) {
+
+       if(WaresItem.IsInputQuantity()) {
             //inputCount.setFocusableInTouchMode(true);
             //inputCount.requestFocusFromTouch();
             inputCount.requestFocus();
-            // inputCount.setFocusableInTouchMode(false);
             inputCount.setFocusableInTouchMode(true);
             inputCount.requestFocusFromTouch();
             inputCount.setFocusableInTouchMode(false);
@@ -285,6 +284,8 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             barCode.requestFocusFromTouch();
             barCode.setFocusableInTouchMode(false);
         }
+        barCode.setFocusableInTouchMode(false);
+        inputCount.setFocusableInTouchMode(false);
     }
 
     public TableRow RenderTableItem (WaresItemModel parWM ) {
@@ -486,7 +487,7 @@ try {
                 new IAsyncHelper<WaresItemModel>() {
                     @Override
                     public WaresItemModel Invoke() {
-                        return config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,BarCode, null);
+                        return config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,BarCode);
                     }
                 },
                 new IPostResult<WaresItemModel>() {

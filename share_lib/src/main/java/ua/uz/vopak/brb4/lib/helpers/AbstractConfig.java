@@ -20,6 +20,7 @@ public abstract class AbstractConfig {
     public boolean isAutorized;
     public String Login = "";
     public String Password = "brb";
+    public int GetCodeUnitWeight() { return Company == eCompany.VopakPSU?7:166;}
 
     public String ApiUrl,ApiURLadd;
 

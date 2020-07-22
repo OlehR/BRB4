@@ -65,8 +65,8 @@ public class Worker {
         {
             case SevenEleven:
                 Setting =  new  DocSetting[2];
-                Setting[0] = new DocSetting(2,"Ревізія");
-                Setting[1] = new DocSetting(5,"РЦ Лоти",true,true,true,true);
+                Setting[0] = new DocSetting(2,"Ревізія",false,false,false,false,false);
+                Setting[1] = new DocSetting(5,"РЦ Лоти",true,true,true,true,true);
                 break;
             case SparPSU:
             case VopakPSU:
@@ -178,10 +178,9 @@ public class Worker {
     }
 
     // Отримати список документів з БД
-    public void LoadListDoc(Activity context, int parTypeDoc, String parBarCode,String pExtInfo ) {
-        List<DocumentModel> model = mDbHelper.GetDocumentList(parTypeDoc, parBarCode,pExtInfo);
-        DocumentActivity activity = (DocumentActivity) context;
-        activity.renderTable(model);
+    public List<DocumentModel> LoadListDoc( int parTypeDoc, String parBarCode,String pExtInfo ) {
+        return   mDbHelper.GetDocumentList(parTypeDoc, parBarCode,pExtInfo);
+
     }
     // Отримати Товари документа з БД
     public List<WaresItemModel> GetDoc(int pTypeDoc, String pNumberDoc, int pTypeResult) {
@@ -189,13 +188,8 @@ public class Worker {
         //context.renderTable(model);
     }
     // Отримати Товар по штрихкоду
-    public WaresItemModel GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode, Activity pContext) {
-        WaresItemModel model = mDbHelper.GetScanData(pTypeDoc, pNumberDoc, pBarCode);
-        if(pContext!=null) {
-            DocumentScannerActivity activity = (DocumentScannerActivity) pContext;
-            activity.RenderData(model);
-        }
-        return model;
+    public WaresItemModel GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode) {
+        return mDbHelper.GetScanData(pTypeDoc, pNumberDoc, pBarCode);
     }
     // Збереження товару в БД
     public Result SaveDocWares(int pTypeDoc, String pNumberDoc, int pCodeWares, int pOrderDoc, Double pQuantity, int pCodeReason , Boolean pIsNullable) {

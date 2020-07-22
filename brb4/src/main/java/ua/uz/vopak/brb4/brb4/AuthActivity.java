@@ -21,18 +21,20 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
+import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
-public class AuthActivity extends Activity  implements View.OnClickListener {
+public class AuthActivity extends Activity  implements View.OnClickListener, ScanCallBack {
     GlobalConfig config = GlobalConfig.instance();
     Button loginBtn;
     EditText login, password;
     AuterizationsHelper aHelper=new AuterizationsHelper();
     final Activity activity = this;
-
+    private Scaner scaner=config.GetScaner();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +49,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
             password.setText(config.Password);
         login.setText(config.Login);
 
+        scaner.Init(this,savedInstanceState);
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -75,10 +78,6 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
                 final String Login = login.getText().toString();
                 final String PassWord = password.getText().toString();
 
-                if(Login.equals("Admin")&&PassWord.equals("13579")) {
-                    aHelper.ExecuteMainActivity(activity, Login, PassWord);
-                    return;
-                }
                 new AsyncHelper<Void>(new IAsyncHelper() {
                     @Override
                     public Void Invoke() {
@@ -92,10 +91,33 @@ public class AuthActivity extends Activity  implements View.OnClickListener {
     }
 
     @Override
+    public void Run(final String pBarCode) {
+        final String LP[] = pBarCode.split(",");
+        if (LP.length > 1) {
+            new AsyncHelper<Void>(new IAsyncHelper() {
+                @Override
+                public Void Invoke() {
+                    aHelper.Login(activity, LP[0], LP[1]);
+                    return null;
+                }
+            }).execute();
+        } else {
+            login.setText(LP[0]);
+            SetFocusPassWord();
+        }
+
+    }
+
+    private void SetFocusPassWord()
+    {
+        password.requestFocus();
+    }
+
+    @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
-                .setTitle("Выйти из приложения?")
-                .setMessage("Вы действительно хотите выйти?")
+                .setTitle("Вийти з програми?")
+                .setMessage("Ви справді хочете вийти?")
                 .setNegativeButton(android.R.string.no, null)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {

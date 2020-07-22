@@ -7,19 +7,21 @@ public class DocSetting {
     public boolean IsUrlAdd=false;
     public boolean IsAddBarCode = false;
     public boolean IsViewReason =false;
+    public boolean IsViewPlan =false;
 
     public DocSetting(int pTypeDoc,String pNameDoc)
     {
         TypeDoc=pTypeDoc;
         NameDoc=pNameDoc;
     }
-    public DocSetting(int pTypeDoc,String pNameDoc,boolean pIsControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason)
+    public DocSetting(int pTypeDoc,String pNameDoc,boolean pIsControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan)
     {
         this(pTypeDoc, pNameDoc);
         IsControlQuantity=pIsControlQuantity;
         IsUrlAdd=pIsUrlAdd;
         IsAddBarCode=pIsAddBarCode;
         IsViewReason= pIsViewReason;
+        IsViewPlan=pIsViewPlan;
     }
 
 }

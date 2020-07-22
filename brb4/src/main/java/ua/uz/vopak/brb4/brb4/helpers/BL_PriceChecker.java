@@ -231,56 +231,66 @@ public class BL_PriceChecker extends BL {
     }
 
     public void SendLogPriceSevenEleve() {
-        List<LogPrice> list = mDbHelper.GetSendData();
-        //List<String> ll = new ArrayList<>(list.size());
+        for (int i = 0; i < 20; i++) {
+            SetProgress(5+i*5);
+            List<LogPrice> list = mDbHelper.GetSendData(100);
+            //List<String> ll = new ArrayList<>(list.size());
+            if(list==null&&list.size()==0)
+                break;
+            StringBuilder sb = new StringBuilder();
+            for (LogPrice s : list) {
+                sb.append("," + s.GetJsonSE());
+            }
+            if (sb.length() <= 2)
+                return;
+            String a = "[" + sb.substring(1) + "]";
 
-        StringBuilder sb = new StringBuilder();
-        for (LogPrice s : list)
-        {
-            sb.append(","+s.GetJsonSE());
-        }
-        if(sb.length()<=2)
-            return;
-        String a = "["+sb.substring(1)+"]";
+            String data = a;
 
-
-        String data = a;
-
-        String res = Http.HTTPRequest(config.ApiUrl+"pricetag", data, "application/json;charset=utf-8", config.Login, config.Password);
-        if (Http.HttpState == eStateHTTP.HTTP_OK) {
-            try {
-                mDbHelper.AfterSendData();
-                int[] varRes = mDbHelper.GetCountScanCode();
-                LI.AllScan = varRes[0];
-                LI.BadScan = varRes[1];
-            } catch (Exception e) {
+            String res = Http.HTTPRequest(config.ApiUrl + "pricetag", data, "application/json;charset=utf-8", config.Login, config.Password);
+            if (Http.HttpState == eStateHTTP.HTTP_OK) {
+                try {
+                    mDbHelper.AfterSendData();
+                    int[] varRes = mDbHelper.GetCountScanCode();
+                    LI.AllScan = varRes[0];
+                    LI.BadScan = varRes[1];
+                } catch (Exception e) {
+                    Log.e(TAG, "SendLogPriceSevenEleve  >>" + e.getMessage());
+                }
             }
         }
+        SetProgress(100);
     }
     public void SendLogPricePSU() {
-        List<LogPrice> list = mDbHelper.GetSendData();
-        List<String> ll= new ArrayList<>(list.size());
-        for (LogPrice el : list)
-            ll.add(el.GetJsonPSU());
+        for (int i = 0; i < 20; i++) {
+            SetProgress(5+i*5);
+            List<LogPrice> list = mDbHelper.GetSendData(100);
+            //List<String> ll = new ArrayList<>(list.size());
+            if (list == null && list.size() == 0)
+                break;
+            List<String> ll = new ArrayList<>(list.size());
+            for (LogPrice el : list)
+                ll.add(el.GetJsonPSU());
 
-        String a = new Gson().toJson(ll);
-        String data = config.GetApiJson(141, "\"LogPrice\":" + a);
+            String a = new Gson().toJson(ll);
+            String data = config.GetApiJson(141, "\"LogPrice\":" + a);
 
-        String result = Http.HTTPRequest(config.ApiUrl, data);
+            String result = Http.HTTPRequest(config.ApiUrl, data);
 
-        try {
-            JSONObject jObject = new JSONObject(result);
+            try {
+                JSONObject jObject = new JSONObject(result);
 
-            if (jObject.getInt("State") == 0) {
-                mDbHelper.AfterSendData();
-                int[] varRes = mDbHelper.GetCountScanCode();
-                LI.AllScan = varRes[0];
-                LI.BadScan = varRes[1];
+                if (jObject.getInt("State") == 0) {
+                    mDbHelper.AfterSendData();
+                    int[] varRes = mDbHelper.GetCountScanCode();
+                    LI.AllScan = varRes[0];
+                    LI.BadScan = varRes[1];
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "SendLogPricePSU  >>" + e.getMessage());
             }
-        } catch (Exception e) {
-
         }
-
+        SetProgress(100);
     }
 
     public HashMap<String, String[]> getPrintBlockItemsCount() {

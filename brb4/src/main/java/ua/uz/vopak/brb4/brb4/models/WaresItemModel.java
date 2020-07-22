@@ -7,13 +7,11 @@ import androidx.databinding.ObservableInt;
 
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 
-public class
-
-
-WaresItemModel implements Cloneable{
+public class WaresItemModel implements Cloneable{
     GlobalConfig config = GlobalConfig.instance();
     public String NumberDoc;
     public int TypeDoc;
+    public DocSetting DocSetting;
     public int OrderDoc;
     public String GetOrderDoc(){return String.valueOf(OrderDoc);}
     public int CodeWares;
@@ -27,13 +25,13 @@ WaresItemModel implements Cloneable{
     public String BarCode;
     public int BaseCodeUnit;
     public double InputQuantity;
-    public String GetInputQuantity() {return InputQuantity==0.0d ? "": String.format(CodeUnit == 7 ? "%.3f" : "%.0f",InputQuantity);}
-    public String GetInputQuantityZero() {return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",InputQuantity);}
-    public String GetQuantityBase() {return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",(double)Coefficient*InputQuantity);}
+    public String GetInputQuantity() {return InputQuantity==0.0d ? "": String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",InputQuantity);}
+    public String GetInputQuantityZero() {return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",InputQuantity);}
+    public String GetQuantityBase() {return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",(double)Coefficient*InputQuantity);}
     public double BeforeQuantity;
     public String GetBeforeQuantity() {
-        return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity)+ (QuantityMax==Double.MAX_VALUE?"":"/"+String.format(CodeUnit == 7 ? "%.3f" : "%.0f",BeforeQuantity)) +
-                (QuantityOrder>0 && QuantityMax==Double.MAX_VALUE?String.format(CodeUnit == 7 ? "%.3f" : "%.0f",QuantityOrder):"")  ;}
+        return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",BeforeQuantity)+ (QuantityMax==Double.MAX_VALUE?"":"/"+String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",BeforeQuantity)) +
+                (QuantityOrder>0 && QuantityMax==Double.MAX_VALUE?String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityOrder):"")  ;}
 
     public int ColorBackground(){return Color.parseColor(QuantityMax>0d ? "#ffffff" : "#3fffff00");}
     public boolean IsUseCamera()  {return config.TypeScaner== eTypeScaner.Camera;}
@@ -48,12 +46,35 @@ WaresItemModel implements Cloneable{
     public int CodeReason;
     public int Ord;//3- недостача. //2 - надлишок, // 1 - є з причиною // 0 - все ОК.
 
+    public String GetBackgroundColor()
+    {
+        if(!DocSetting.IsViewPlan)
+            return "fff3cd";
+        switch (Ord) {
+            case 3:
+                return "FFB0B0";
+            case 2:
+                return "FFC050";
+            case 1:
+                return "FFFF80";
+            case 0:
+                return "80FF80";
+            default:
+                return "fff3cd";
+        }
+    }
+
 
     public ObservableArrayList<String> ListReason = new ObservableArrayList<>();
     public ObservableInt ListReasonIdx = new ObservableInt(0);
-    public boolean IsViewReason=false;
 
-    public String GetQuantityOrder() { return String.format(CodeUnit == 7 ? "%.3f" : "%.0f",QuantityOrder);}
+    public boolean GetIsViewReason(){return DocSetting.IsViewReason;}
+    //public boolean IsViewReason=false;
+    //public boolean IsViewPlan=false;
+
+
+    public String GetQuantityOrder() { return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityOrder);}
+    public String GetQuantityReason() { return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityReason);}
 
     public  WaresItemModel(){ClearData();}
    // public  WaresItemModel(WaresItemModel p){return (WaresItemModel)clone(p);}
@@ -101,6 +122,8 @@ WaresItemModel implements Cloneable{
 
     }
     public Boolean IsInputQuantity() { return (Coefficient>0 && QuantityMax>0d);}
+    public Boolean IsInputQuantityTouch() { return IsInputQuantity() && IsUseCamera();}
+    public Boolean IsInputBarCodeTouch() { return !IsInputQuantity() && IsUseCamera();}
 
     public Object clone() throws CloneNotSupportedException {
         return super.clone();

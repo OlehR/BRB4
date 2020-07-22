@@ -14,6 +14,7 @@ import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 
+import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
@@ -224,7 +225,7 @@ public class SQLiteAdapter
         return data;
     }
 
-    public List<LogPrice> GetSendData() {
+    public List<LogPrice> GetSendData(int pLimit) {
         int varN;
         Cursor mCur;
         List<LogPrice> list = new ArrayList<>();
@@ -236,12 +237,12 @@ public class SQLiteAdapter
             if (mCur!=null) {
                 mCur.moveToFirst();
                 varN = mCur.getInt(0);
-                if (varN <= 100) {
+                if (varN < pLimit) {
 //                    sql = "UPDATE LogPrice SET is_send=-1 WHERE `rowid` IN (SELECT `rowid` FROM LogPrice WHERE is_send=0 LIMIT 100)";
 //                    mDb.execSQL(sql);
                     ContentValues cv = new ContentValues();
                     cv.put("is_send",-1);
-                    mDb.update("LogPrice",cv,"rowid  IN (SELECT rowid FROM LogPrice WHERE is_send=0 LIMIT 200)",null);
+                    mDb.update("LogPrice",cv,"rowid  IN (SELECT rowid FROM LogPrice WHERE is_send=0 LIMIT " +pLimit+")",null);
                 }
             }
 
@@ -291,7 +292,10 @@ public class SQLiteAdapter
         String sql=null;
 
         try {
-            sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state FROM DOC WHERE type_doc = '"+pTypeDoc+"'"+
+            sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state \n"+
+                    ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT="+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as Weight\n" +
+                    ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT<>"+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as NoWeight\n"+
+                    "FROM DOC d WHERE type_doc = '"+pTypeDoc+"'"+
                     " AND date_doc BETWEEN datetime(CURRENT_TIMESTAMP,'-5 day') AND datetime(CURRENT_TIMESTAMP)" +
                     (pExtInfo==null?"":" and ext_info like'%"+ pExtInfo.trim()+"%'") +
                     (pBarCode==null?"":" and bar_code like'%"+ pBarCode.trim()+"%'") +
@@ -300,6 +304,8 @@ public class SQLiteAdapter
             // якщо нічого не найшли і штрихкод не порожній шукаємо по товарам.
             if (pBarCode!=null && !pBarCode.isEmpty() && mCur==null && mCur.getCount() == 0 ) {
                 sql="SELECT DISTINCT d.date_doc,d.type_doc,d.number_doc,d.ext_info,d.name_user,d.bar_code,d.description,d.dt_insert,d.state -- ,bc.BAR_CODE, dw.*\n" +
+                        ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT="+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as Weight\n" +
+                        ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT<>"+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as NoWeight\n"+
                         "FROM DOC d \n" +
                         "Join DOC_WARES_SAMPLE dw on dw.number_doc=d.number_doc and dw.type_doc=d.type_doc\n" +
                         "join bar_code bc on dw.code_wares=bc.CODE_WARES\n" +
@@ -313,19 +319,17 @@ public class SQLiteAdapter
                 while (mCur.moveToNext()){
                     DocumentModel document = new DocumentModel();
                     document.DateDoc = mCur.getString(0);
-                    document.TypeDoc = mCur.getString(1);
+                    document.TypeDoc = mCur.getInt(1);
                     document.NumberDoc = mCur.getString(2);
                     document.ExtInfo = mCur.getString(3);
                     document.NameUser = mCur.getString(4);
                     document.BarCode = mCur.getString(5);
                     document.Description = mCur.getString(6);
-                    //Костиль для вагового товару.
-                    if(document.Description.length()>1) {
-                        document.WaresType = document.Description.substring(0, 1);
-                        document.Description = document.Description.replace(document.WaresType, "");
-                    }
                     document.DateInsert = mCur.getString(7);
-                    document.State = mCur.getString(8);
+                    document.State = mCur.getInt(8);
+                    int Weight=mCur.getInt(9);
+                    int NoWeight=mCur.getInt(10);
+                    document.WaresType = (Weight>0 && NoWeight>0)? 0: (Weight>0?2:1);
                     model.add(document);
                 }
             }
@@ -346,6 +350,7 @@ public class SQLiteAdapter
                   "        when coalesce(dws.quantity,0) - coalesce(dw1.quantity_input,0) >0 then 2\n" +
                   "        when coalesce(dws.quantity,0) - coalesce(dw1.quantity_input,0)=0 and quantity_reason>0 then 1\n" +
                   "   else 0 end as Ord\n"+
+                  ",w.code_unit\n"+
                   "    from Doc d  \n" +
                 "    join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,max(dw.order_doc) as order_doc,sum(quantity_old) as quantity_old,  sum(case when dw.CODE_Reason>0 then  dw.quantity else 0 end) as quantity_reason  from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
                 "    join wares w on dw1.code_wares = w.code_wares \n" +
@@ -354,6 +359,7 @@ public class SQLiteAdapter
                 " union all\n" + 
                 " select dws.order_doc+100000, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
                 "     ,0 as  quantity_reason , 3 as Ord\n"+
+                  ",w.code_unit\n"+
                 "    from Doc d  \n" +
                 "    join DOC_WARES_sample dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc --and dws.code_wares = w.code_wares\n" +
                 "    join wares w on dws.code_wares = w.code_wares \n" +
@@ -363,7 +369,7 @@ public class SQLiteAdapter
 
         if(pTypeResult==2)
             sql="select dw1.order_doc, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old,dw1.CODE_Reason \n" +
-
+                    ",0 as Ord,w.code_unit\n"+
                     "    from Doc d  \n" +
                     "    join doc_wares dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
                     "    join wares w on dw1.code_wares = w.code_wares \n" +
@@ -372,12 +378,14 @@ public class SQLiteAdapter
                     " order by 1";
 
 
-
+        DocSetting DocSetting=config.GetDocSetting(pTypeDoc);
         try {
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null && mCur.getCount() > 0) {
                 while (mCur.moveToNext()){
                     WaresItemModel WaresModel = new WaresItemModel();
+                    WaresModel.TypeDoc=pTypeDoc;
+                    WaresModel.DocSetting=DocSetting;
                     WaresModel.OrderDoc = mCur.getInt(0);
                     WaresModel.CodeWares = mCur.getInt(1);
                     WaresModel.NameWares = mCur.getString(2);
@@ -390,8 +398,9 @@ public class SQLiteAdapter
                         WaresModel.CodeReason=  mCur.getInt(9);
                     else {
                         WaresModel.QuantityReason = mCur.getDouble(9);
-                        WaresModel.Ord=mCur.getInt(10);
                     }
+                    WaresModel.Ord=mCur.getInt(10);
+                    WaresModel.CodeUnit=mCur.getInt(11);
                     model.add(WaresModel);
                 }
             }

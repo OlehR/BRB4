@@ -233,7 +233,7 @@ private BarcodeCallback callback = new BarcodeCallback() {
                 new IAsyncHelper<WaresItemModel>() {
                     @Override
                     public WaresItemModel Invoke() {
-                        return config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,parBarCode, null);
+                        return config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,parBarCode);
                     }
                 },
                 new IPostResult<WaresItemModel>() {
@@ -518,7 +518,7 @@ private BarcodeCallback callback = new BarcodeCallback() {
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc ,barCode.getText().toString(), activity);
+                config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc ,barCode.getText().toString());
                 return null;
             }
         }).execute();

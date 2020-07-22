@@ -78,7 +78,7 @@
                 android:padding="5dp"
                 android:ems="10"
                 android:background="@drawable/input_style"
-                android:focusableInTouchMode="@{WaresItem.IsUseCamera()}"
+                android:focusableInTouchMode="@{WaresItem.IsInputBarCodeTouch()}"
                 android:focusable="@{WaresItem.IsInputQuantity() ? false : true }"
                 android:enabled="@{WaresItem.IsInputQuantity() ? false : true }"
                 android:inputType="numberDecimal"
@@ -129,7 +129,7 @@
                     android:ems="10"
                     android:background="@drawable/input_style"
                     android:inputType="number|numberDecimal|numberSigned"
-                    android:focusableInTouchMode="@{WaresItem.IsUseCamera()}"
+                    android:focusableInTouchMode="@{WaresItem.IsInputBarCodeTouch()}"
                     android:focusable="@{WaresItem.IsInputQuantity() ? true : false }"
                     android:enabled="@{WaresItem.IsInputQuantity() ? true : false }"
                     android:layout_marginRight="5dp"
@@ -190,7 +190,7 @@
         <Spinner
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:visibility="@{WaresItem.IsViewReason ? View.VISIBLE:View.GONE }"
+            android:visibility="@{WaresItem.GetIsViewReason() ? View.VISIBLE:View.GONE }"
             android:entries="@{WaresItem.ListReason}"
             android:selectedItemPosition="@={WaresItem.ListReasonIdx}"
             android:layout_weight="0.25" />
