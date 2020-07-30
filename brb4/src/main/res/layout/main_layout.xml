@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:background="@drawable/selected_button"
-                android:text="f1-Провірка ціни" >
+                android:text="f1-Перевірка цінників" >
             </Button>
 
 

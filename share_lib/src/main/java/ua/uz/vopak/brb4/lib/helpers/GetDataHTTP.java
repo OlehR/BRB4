@@ -63,7 +63,7 @@ public String GetBaseAuth(String pLogin,String pPasWord){
         return HTTPRequest( pURL, pData, pContentType,null,null);
     }
     public String HTTPRequest(String pURL,String pData,String pContentType,final String pLogin,final String pPassWord){
-
+        String log="\n"+pURL+"\nData=>"+pData;
      if(pLogin!=null)
         Authenticator.setDefault(new Authenticator(){
             protected PasswordAuthentication getPasswordAuthentication() {
@@ -116,6 +116,7 @@ public String GetBaseAuth(String pLogin,String pPasWord){
             else {
                 response="";
             }
+            log+= "\nResponse=>"+ (response.length()>2000? response.substring(0,2000):response);
 
         } catch (Exception e) {
             Log.e(TAG,e.getMessage());
@@ -125,10 +126,14 @@ public String GetBaseAuth(String pLogin,String pPasWord){
                 try {
                     int a = conn.getResponseCode();
                     HttpState = eStateHTTP.fromId(a);
+                    log+="\n Error=>"+e.getMessage();
                 }catch (Exception ex){};
 
         }
+        Utils.WriteLog(log);
         return response;
+
+
     }
 
 

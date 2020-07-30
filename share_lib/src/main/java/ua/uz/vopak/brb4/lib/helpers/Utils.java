@@ -5,18 +5,28 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.file.StandardOpenOption;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 
@@ -25,6 +35,7 @@ import static android.os.Build.MODEL;
 import static android.os.Build.getSerial;
 
 public class Utils {
+    static final String TAG="Utils";
     private static Utils Instance = null;
     public Context vApplicationContext;
     Vibrator v;
@@ -133,7 +144,37 @@ public class Utils {
         }
     }
 
+    static public void SaveData(String pFileName,byte[] pData){
+        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = new File(path, pFileName);
+        try {
+            FileOutputStream stream = new FileOutputStream(file, true);
+            stream.write(pData);
+            stream.close();
+            Log.i(TAG, "Data Saved");
+        } catch (IOException e) {
+            Log.e(TAG, "Could not write file " + e.getMessage());
+        }
+    }
 
+   static public void  WriteLog(String pText)
+   {
+       try {
+           DateFormat df = new SimpleDateFormat("yyyyMMdd");
+           Date today = Calendar.getInstance().getTime();
+           String FileName = "Log_" + df.format(today) + ".txt";
+
+           SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+           Date date = new Date(System.currentTimeMillis());
+           String Text = formatter.format(date) + "Log=>\n" + pText;
+           SaveData(FileName, Text.getBytes("UTF-8"));
+       }
+       catch(Exception e) {
+           Log.e(TAG, "WriteLog=> " + e.getMessage());
+       }
+
+
+   }
 
 
 }

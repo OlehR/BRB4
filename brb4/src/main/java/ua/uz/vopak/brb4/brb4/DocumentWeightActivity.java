@@ -15,7 +15,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,14 +25,13 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
-import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 
 public class DocumentWeightActivity extends Activity  {
-    String number;
+    String NumberDoc;
     int documentType;
     List<Double> PrevValues = new ArrayList<>();
     LinearLayout tl;
@@ -41,7 +39,7 @@ public class DocumentWeightActivity extends Activity  {
     List<WaresItemModel> Model;
     int position = 0;
     EditText searchField;
-    static Integer scanNN = 0;
+    Integer scanNN = 0;
     GlobalConfig config = GlobalConfig.instance();
     Activity context;
 
@@ -51,7 +49,7 @@ public class DocumentWeightActivity extends Activity  {
         setContentView(R.layout.document_weight_layout);
         context = this;
         Intent i = getIntent();
-        number = i.getStringExtra("number");
+        NumberDoc = i.getStringExtra("number");
         documentType = i.getIntExtra("document_type",0);
         GetDoc();
 
@@ -78,7 +76,7 @@ public class DocumentWeightActivity extends Activity  {
         new AsyncHelper<List<WaresItemModel>>(new IAsyncHelper() {
             @Override
             public List<WaresItemModel> Invoke() {
-                return config.Worker.GetDoc(documentType,number,1);
+                return config.Worker.GetDoc(documentType, NumberDoc,1);
             }
         },
                 new IPostResult<List<WaresItemModel>>() {
@@ -91,10 +89,10 @@ public class DocumentWeightActivity extends Activity  {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         String keyCode = String.valueOf(event.getKeyCode());
-
+/*
         if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
             syncData();
-        }
+        }*/
 
         return super.dispatchKeyEvent(event);
     }
@@ -102,15 +100,19 @@ public class DocumentWeightActivity extends Activity  {
     public void RenderTableIncome(final List<WaresItemModel> model) {
         final DocumentWeightActivity context = this;
         Model = model;
+        scanNN=0;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
+
                     int dpValue = 3;
                     float d = context.getResources().getDisplayMetrics().density;
                     int padding = (int) (dpValue * d);
 
                     for (WaresItemModel item : model) {
+                        if(item.OrderDoc>scanNN&& item.OrderDoc<100000)
+                            scanNN=item.OrderDoc;
 
                         final LinearLayout tl0 = new LinearLayout(context);
                         tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
@@ -264,7 +266,7 @@ public class DocumentWeightActivity extends Activity  {
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    config.Worker.SaveDocWares(documentType, number, Model.get(position).CodeWares,scanNN,  Double.valueOf( value), 0,true);
+                    config.Worker.SaveDocWares(documentType, NumberDoc, Model.get(position).CodeWares,scanNN,  Double.valueOf( value), 0,true);
                     return null;
                 }
             }).execute();
@@ -298,38 +300,6 @@ public class DocumentWeightActivity extends Activity  {
             }else{
                 row.setVisibility(View.GONE);
             }
-        }
-    }
-
-    private void syncData(){
-        //new AsyncUpdateDocState(GlobalConfig.GetWorker(),this).execute("1",number,documentType);
-    /*    new AsyncHelper<String>(new IAsyncHelper() {
-            @Override
-            public String Invoke() {
-                return config.Worker.UpdateDocState(1, documentType, number);
-            }
-        },
-                new IPostResult<String>() {
-                    @Override
-                    public void Invoke(String p) {
-                        AfterSave(p);
-                        return;
-                    }}
-        ).execute();*/
-    }
-
-    public void AfterSave(final String pMessage) {
-        JSONObject jObject;
-        String vMessage = "Документ успішно збережено!!!\n";
-        try {
-            jObject = new JSONObject(pMessage);
-            if (jObject.getInt("State") != 0)
-                vMessage = "Помилка збереження документа:\n" + jObject.getString("TextError");
-            else if (documentType == 2)
-                vMessage += jObject.getString("Info");
-        } catch (JSONException e) {
-            vMessage = "Помилка збереження документа:\n" + pMessage;
-            e.printStackTrace();
         }
     }
 

@@ -50,7 +50,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        context = this;
+        context = this.getApplicationContext();
 
         //ініціалізація класа при старті.
         Utils.instance(context);

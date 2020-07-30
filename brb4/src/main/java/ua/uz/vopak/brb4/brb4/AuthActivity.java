@@ -25,6 +25,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
@@ -59,6 +60,21 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
                 return false;
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Zebra
+        scaner.StartScan();
+        //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Zebra
+        scaner.StopScan();
     }
 
     @Override
@@ -127,23 +143,5 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
                     }
                 }).create().show();
     }
-/*
-    public void setLogin(final String LastLogin) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        EditText edit = (EditText) findViewById(R.id.Login);
-                        EditText editpass = (EditText) findViewById(R.id.Password);
-                        edit.setText(LastLogin);
-                        //editpass.requestFocus();
-                        editpass.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
-                        editpass.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
-                    }
-                }, 100);
-            }
-        });
-    }*/
+
 }

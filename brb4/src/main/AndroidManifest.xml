@@ -71,8 +71,6 @@
             android:name=".DocumentWeightActivity"
             android:launchMode="singleTop"/>
 
-
-
         <receiver
                     android:name=".Scaner.ScanResultReceiverPM"
                     android:enabled="true"

@@ -6,6 +6,7 @@ import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableInt;
 
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
+import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class WaresItemModel implements Cloneable{
     GlobalConfig config = GlobalConfig.instance();
@@ -43,6 +44,7 @@ public class WaresItemModel implements Cloneable{
     public double QuantityOld;
     public double QuantityOrder;
     public double QuantityReason;
+    public double QuantityBarCode;
     public int CodeReason;
     public int Ord;//3- недостача. //2 - надлишок, // 1 - є з причиною // 0 - все ОК.
 
@@ -99,6 +101,7 @@ public class WaresItemModel implements Cloneable{
       QuantityMin=parWIM.QuantityMin ;
       QuantityMax=parWIM.QuantityMax ;
       CodeReason= parWIM.CodeReason;
+      QuantityBarCode=parWIM.QuantityBarCode;
       
   }
 
@@ -127,6 +130,15 @@ public class WaresItemModel implements Cloneable{
 
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
+    }
+
+    // Трохи через Ж
+    public void SetLI(LabelInfo pLI)
+    {
+        pLI.Code= CodeWares;
+        pLI.Name=NameWares;
+        pLI.Unit =NameUnit;
+        pLI.BarCode.set(BarCode);
     }
 
 }

@@ -118,6 +118,15 @@ public class LabelInfo
     //public int ColorBarCode(){return Color.parseColor(Action ?  "#3fffff00" : "#ffffff");}
     public ObservableInt  Progress = new ObservableInt(0);
 
+    public ObservableBoolean IsOnLine = new ObservableBoolean((true));
+    public ObservableField<String> OnLineText =new ObservableField<String>("OffLine");
+
+
+    public void ChangeOnLineState()
+    {
+        IsOnLine.set(!IsOnLine.get());
+        OnLineText.set(IsOnLine.get()?"OffLine":"OnLine");
+    }
     //public boolean isEdit=false;
 
 
@@ -259,8 +268,8 @@ public class LabelInfo
         }
 
     }
-
-    /*public void Init(String parData){
+/*
+    public void Init(String parData){
         String [] varData = parData.split(";");
         if(varData.length<5)
             return;

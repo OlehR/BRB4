@@ -71,7 +71,7 @@ public class GlobalConfig extends AbstractConfig {
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                Utils cUtils=new Utils(context);
+    //            Utils cUtils=new Utils(context);
   /*              if (cUtils.GetAddressReachable(Url, Port, 1000))
                     ApiUrl = "http://" + Url + ":" + String.valueOf(Port) + PathApi;
                 else

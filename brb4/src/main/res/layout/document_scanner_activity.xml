@@ -101,6 +101,7 @@
                 android:focusable="false"
                 android:enabled="false"
                 android:layout_weight="2"
+                android:windowSoftInputMode="stateHidden"
                 android:text="@{ WaresItem.GetBeforeQuantity()}"/>
 
         </LinearLayout>
@@ -135,7 +136,7 @@
                     android:layout_marginRight="5dp"
                     android:layout_weight="2.4"
                     android:windowSoftInputMode="stateHidden"
-                    android:text="@{WaresItem.GetInputQuantity()}"
+                    android:text=""
                     />
                 <TextView
                     android:id="@+id/RevisionNameUnit"

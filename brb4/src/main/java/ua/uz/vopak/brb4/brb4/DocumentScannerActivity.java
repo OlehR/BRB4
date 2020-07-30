@@ -115,7 +115,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         WaresItem.ClearData();
 
         WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
-        WaresItem.NumberDoc = i.getStringExtra("inv_number");
+        WaresItem.NumberDoc = i.getStringExtra("number");
 
         DocSetting=config.GetDocSetting(WaresItem.TypeDoc);
         WaresItem.DocSetting=DocSetting;
@@ -154,7 +154,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 if (s.length() != 0) {
-                    WaresItem.InputQuantity= Float.parseFloat(inputCount.getText().toString());
+                    WaresItem.InputQuantity= Float.parseFloat(inputCount.getText().toString().replace(",","."));
                 }
             }
         });
@@ -221,7 +221,6 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             barcodeView.resume();
         //Zebra
         scaner.StartScan();
-
         //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
     }
 
@@ -254,11 +253,16 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                     WaresItem.ClearData();
                     WaresItem.Set(model);
                     WaresItem.BeforeQuantity = CountBeforeQuantity(ListWares, WaresItem.CodeWares);
+                   // WaresItem.InputQuantity = WaresItem.QuantityBarCode;
+
+
                 }
                 if(config.TypeScaner==eTypeScaner.Camera)
                     barcodeView.resume();
 
                 Refresh();
+                if(WaresItem.QuantityBarCode>0)
+                    inputCount.setText(Double.toString(WaresItem.QuantityBarCode));
                 SetAlert(WaresItem.CodeWares);
                 return;
             }
@@ -268,6 +272,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
     void Refresh( ){
         binding.invalidateAll();
         barcodeView.resume();
+
 
        if(WaresItem.IsInputQuantity()) {
             //inputCount.setFocusableInTouchMode(true);
@@ -368,43 +373,53 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
     }
 
     private void saveDocumentItem(final Boolean isNullable) {
-        if (WaresItem.InputQuantity>0 || isNullable) {
+        inputCount.setText("");
+        if (WaresItem.InputQuantity > 0 || isNullable) {
             loader.setVisibility(View.VISIBLE);
-            if(WaresItem.InputQuantity>0)
+            if (WaresItem.InputQuantity > 0)
                 WaresItem.OrderDoc++;
+            if (isNullable)
+                for (WaresItemModel el : ListWares) {
+                    if (el.CodeWares == WaresItem.CodeWares)
+                        if (el.InputQuantity > 0) {
+                            el.InputQuantity = el.QuantityOrder;
+                            el.InputQuantity = 0;
+                        }
+                }
+
             new AsyncHelper<Result>(new IAsyncHelper() {
                 @Override
                 public Result Invoke() {
                     WaresItem.CodeReason = config.Reasons[WaresItem.ListReasonIdx.get()].СodeReason;
-                    return config.Worker.SaveDocWares( WaresItem.TypeDoc ,WaresItem.NumberDoc, WaresItem.CodeWares, WaresItem.OrderDoc, WaresItem.InputQuantity, WaresItem.CodeReason,isNullable);
+                    return config.Worker.SaveDocWares(WaresItem.TypeDoc, WaresItem.NumberDoc, WaresItem.CodeWares, WaresItem.OrderDoc, WaresItem.InputQuantity, WaresItem.CodeReason, isNullable);
                 }
             },
                     new IPostResult<Result>() {
                         @Override
                         public void Invoke(Result args) {
                             AfterSave(args);
-                        }}
-                        ).execute();
+                        }
+                    }
+            ).execute();
         }
     }
 
-    public void AfterSave(final Result pResult){
+    public void AfterSave(final Result pResult) {
         final DocumentScannerActivity context = this;
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                boolean isSave = pResult.State!=-1;
+                boolean isSave = pResult.State != -1;
 
-                if(isSave) {
-try {
-    WaresItemModel el = (WaresItemModel) WaresItem.clone();
-    ListWares.add(el);
-}catch (Exception e)
-{
-    Log.e("TAG","AfterSave=>"+e.getMessage());
-};
+                if (isSave) {
+                    try {
+                        WaresItemModel el = (WaresItemModel) WaresItem.clone();
+                        ListWares.add(el);
+                    } catch (Exception e) {
+                        Log.e("TAG", "AfterSave=>" + e.getMessage());
+                    }
+                    ;
 
-                    ListWares.add(WaresItem);
                     WaresTableLayout.addView(RenderTableItem(WaresItem));
                 }
 

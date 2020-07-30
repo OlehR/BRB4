@@ -36,21 +36,29 @@
         android:layout_height="70dp">
 
         <Button
-            android:id="@+id/F3"
+            android:id="@+id/F2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Зберегти"
             android:layout_weight="1"/>
         <Button
+            android:id="@+id/F3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Сканувати товари"
+            android:layout_weight="1"/>
+
+        <Button
             android:id="@+id/F4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Додати товари"
+            android:text="Спис Товарів"
             android:layout_weight="1"/>
-        android:visibility="gone"
+
     </LinearLayout>
 
     <LinearLayout
+        android:focusable="false"
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_gravity="bottom"
@@ -59,55 +67,31 @@
         android:paddingRight="5dp"
         android:layout_height="25dp"
         android:background="@color/SuccessBackground">
-        <RelativeLayout
+
+        <LinearLayout
             android:layout_width="0dp"
             android:orientation="horizontal"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_weight="2">
 
             <TextView
-                android:id="@+id/f3Text"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageError"
                 android:textSize="18dp"
-                android:text="f3-"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageAlert"
-                android:textSize="18dp"
-                android:layout_toRightOf="@+id/f3Text"
-                android:text="зберегти"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageError"
-                android:textSize="18dp"
-                android:layout_toLeftOf="@+id/downtext"
                 android:text=" 8-"/>
 
             <TextView
-                android:id="@+id/downtext"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp"
-                android:layout_alignParentRight="true"
-                android:text="↓ "/>
-
-        </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="0dp"
-        android:orientation="horizontal"
-        android:layout_height="wrap_content"
-        android:layout_weight="1">
+                android:text="↑"/>
 
             <TextView
-                android:id="@+id/uptext"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageError"
@@ -115,33 +99,57 @@
                 android:text=" 2-"/>
 
             <TextView
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp"
-                android:layout_toRightOf="@+id/uptext"
-                android:text="↑"/>
+                android:text="↓"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageError"
-                android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/f4Text"
                 android:textSize="18dp"
-                android:text=" f4-"/>
-
+                android:text="F2-"/>
             <TextView
-                android:id="@+id/f4Text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageAlert"
-                android:layout_alignParentRight="true"
                 android:textSize="18dp"
-                android:text="додати"/>
+                android:text="Зберегти"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/messageError"
+                android:textSize="18dp"
+                android:text=" F3-"/>
+            <TextView
 
-    </RelativeLayout>
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/messageAlert"
+                android:textSize="18dp"
+                android:text="Сканувати"/>
 
+            <TextView
+                android:id="@+id/FilterKey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/messageError"
+                android:textSize="18dp"
+                android:text=" F4-"/>
+
+            <TextView
+                android:id="@+id/FilterText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/messageAlert"
+                android:textSize="18dp"
+                android:text="Список"/>
+
+
+        </LinearLayout>
 
     </LinearLayout>
 

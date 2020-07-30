@@ -22,6 +22,7 @@ import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
+import ua.uz.vopak.brb4.lib.models.PriceBarCode;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class SQLiteAdapter
@@ -411,35 +412,76 @@ public class SQLiteAdapter
     }
 
     public WaresItemModel GetScanData(int TypeDoc, String DocNumber,String number) {
+        number=number.trim();
         WaresItemModel model = null;
-        Cursor mCur;
+        Cursor mCur=null;
         String sql;
         Log.d(TAG, "Find in DB  >>"+ number );
          Integer intNum = 0;
         boolean isBarCode = true;
         if (number.length() <= 8 && !number.equals("")) {
             intNum = Integer.parseInt(number);
-            isBarCode = intNum.toString().length() >= 8;
+            isBarCode = (intNum.toString().length() >= 8);
         }
-
-        if (isBarCode) {
-            sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.ABR_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
-                    "from BAR_CODE bc " +
-                    "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
-                    "join wares w on w.CODE_WARES=bc.CODE_WARES " +
-                    "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
-                    "where bc.BAR_CODE='" + number.trim() + "'";
-        } else {
-            String Find= config.Company== eCompany.SevenEleven? "w.code_wares="+ number : "w.ARTICL='" + number + "'";
-            sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
-                    "from WARES w " +
-                    "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +
-                    "join UNIT_DIMENSION ud on w.CODE_UNIT=ud.CODE_UNIT " +
-                    "where "+Find;
-        }
-
+   /*     else {
+            PriceBarCode v = new PriceBarCode(number,config.Company);
+            if(v.Code>0) {
+                number=Integer.toString( v.Code);
+                isBarCode=false;
+            }
+        }*/
         try {
-            mCur = mDb.rawQuery(sql, null);
+            if (isBarCode) {
+                sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.ABR_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
+                        "from BAR_CODE bc " +
+                        "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
+                        "join wares w on w.CODE_WARES=bc.CODE_WARES " +
+                        "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
+                        "where bc.BAR_CODE='" + number + "'";
+                mCur = mDb.rawQuery(sql, null);
+                if (mCur == null || mCur.getCount() == 0) {
+                    sql = "select bc.code_wares,bc.BAR_CODE from BAR_CODE bc \n" +
+                            " join wares w on bc.code_wares=w.code_wares and w.code_unit=" + config.GetCodeUnitWeight() + "\n" +
+                            " where substr(bc.BAR_CODE,1,6)='" + number.substring(0, 6) + "'";
+                    mCur = mDb.rawQuery(sql, null);
+                    if (mCur == null || mCur.getCount() == 0) {
+
+                        PriceBarCode v = new PriceBarCode(number, config.Company);
+                        if (v.Code > 0) {
+                            number = Integer.toString(v.Code);
+                            return GetScanData(TypeDoc, DocNumber, number);
+                        }
+
+                    } else {
+                        while (mCur.moveToNext()) {
+                            String CodeWares = mCur.getString(0);
+                            String BarCode = mCur.getString(1);
+                            if (number.substring(0, BarCode.length()).equals(BarCode)) {
+
+                                WaresItemModel res = GetScanData(TypeDoc, DocNumber, CodeWares);
+                                try {
+                                    String Weight;
+                                    Weight = number.substring(8, 12);
+                                    res.QuantityBarCode = Double.parseDouble(Weight) / 1000;
+                                } catch (NumberFormatException e) {
+                                    res.QuantityBarCode = 0d;
+                                }
+                                return res;
+                            }
+                        }
+                    }
+                }
+            }else {
+                    String Find = config.Company == eCompany.SevenEleven ? "w.code_wares=" + number : "w.ARTICL='" + number + "'";
+                    sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
+                            "from WARES w " +
+                            "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +
+                            "join UNIT_DIMENSION ud on w.CODE_UNIT=ud.CODE_UNIT " +
+                            "where " + Find;
+                    mCur = mDb.rawQuery(sql, null);
+
+            }
+
             if (mCur != null && mCur.getCount() > 0) {
                 mCur.moveToFirst();
                 model = new WaresItemModel();
@@ -456,7 +498,7 @@ public class SQLiteAdapter
             Log.e(TAG, "GetScanData >>"+  e.getMessage());
 
         }
-        if (model != null) {
+        if (model != null && DocNumber!=null) {
             sql = "select coalesce(d.Is_Control,0) as Is_Control, coalesce(quantity_max,0) as quantity_max, coalesce(quantity,0) as quantity from DOC d\n" +
                     " left join DOC_WARES_sample dws on d.Type_doc=dws.Type_doc and d.number_doc=dws.number_doc and dws.code_wares=" + model.CodeWares +
                     " \nwhere  d.Type_doc=" + TypeDoc + " and d.number_doc=\"" + DocNumber + "\"";

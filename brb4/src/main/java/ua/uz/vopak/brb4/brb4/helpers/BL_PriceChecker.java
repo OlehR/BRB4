@@ -15,6 +15,7 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.ePrinterError;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
@@ -24,6 +25,7 @@ import ua.uz.vopak.brb4.lib.helpers.BL;
 import ua.uz.vopak.brb4.lib.helpers.BluetoothPrinter;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
@@ -87,53 +89,62 @@ public class BL_PriceChecker extends BL {
         boolean isError = false;
         SetProgress(10);
         String BarCode = parBarCode.trim();
-
         if (BarCode != null && BarCode.length() > 0) {
-            try {
-                new PricecheckerHelper().getPriceCheckerData(LI, BarCode, isHandInput, config);
-               // Thread.sleep(10000);
-                SetProgress(50);
-                if (LI.resHttp != null && !LI.resHttp.isEmpty()) {
-                    LI.Init(new JSONObject(LI.resHttp));
-                    LI.AllScan++;
-                    if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
-                        utils.Vibrate(500);
-                        LI.BadScan++;
-                        //Папір не відповідає ціннику
-                        if ((LI.Action() && LI.printType != 1) || (!LI.Action() && LI.printType != 0)) {
-                            isError = true;
-                        } else {//Друкуємо
 
-                            byte[] b = new byte[0];
-                            try {
-                                b = LI.LevelForPrinter(Printer.GetTypeLanguagePrinter());
-                            } catch (UnsupportedEncodingException e) {
-                                //e.printStackTrace();
+            if (LI.IsOnLine.get()) {
+
+
+                try {
+                    new PricecheckerHelper().getPriceCheckerData(LI, BarCode, isHandInput, config);
+                    // Thread.sleep(10000);
+                    SetProgress(50);
+                    if (LI.resHttp != null && !LI.resHttp.isEmpty()) {
+                        LI.Init(new JSONObject(LI.resHttp));
+                        LI.AllScan++;
+                        if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
+                            utils.Vibrate(500);
+                            LI.BadScan++;
+                            //Папір не відповідає ціннику
+                            if ((LI.Action() && LI.printType != 1) || (!LI.Action() && LI.printType != 0)) {
+                                isError = true;
+                            } else {//Друкуємо
+
+                                byte[] b = new byte[0];
+                                try {
+                                    b = LI.LevelForPrinter(Printer.GetTypeLanguagePrinter());
+                                } catch (UnsupportedEncodingException e) {
+                                    //e.printStackTrace();
+                                }
+                                try {
+                                    Printer.sendData(b);
+                                } catch (IOException e) {
+                                    //LI.InfoPrinter="Lost Connect";
+                                    //e.printStackTrace();
+                                }
+                                if (Printer.varPrinterError != ePrinterError.None)
+                                    LI.PrinterError = Printer.varPrinterError;
                             }
-                            try {
-                                Printer.sendData(b);
-                            } catch (IOException e) {
-                                //LI.InfoPrinter="Lost Connect";
-                                //e.printStackTrace();
-                            }
-                            if (Printer.varPrinterError != ePrinterError.None)
-                                LI.PrinterError = Printer.varPrinterError;
-                        }
+                        } else
+                            utils.Vibrate(100);
+                        if (LI.Action())
+                            utils.Vibrate(500);
+
                     } else
-                        utils.Vibrate(100);
-                    if (LI.Action())
-                        utils.Vibrate(500);
+                        utils.Vibrate(250);
+                } catch (Exception ex) {
+                    isError = true;
+                }
+            } else {
+                WaresItemModel el = config.Worker.GetWaresFromBarcode(0, null, BarCode);
+                if(el!=null)
+                    el.SetLI(LI);
 
-                } else
-                    utils.Vibrate(250);
-            } catch (Exception ex) {
-                isError = true;
             }
         }
         try {
 
             int vStatus = config.Company== eCompany.SevenEleven?
-                    (LI.Code==0?1:(parBarCode.substring(0,2).equals("29")?(LI.OldPrice == LI.Price && LI.PriceOpt==LI.OldPriceOpt?-1:0):(isHandInput?3:2))):
+                    (!LI.IsOnLine.get()?-999 : (LI.Code==0?1:(parBarCode.substring(0,2).equals("29")?(LI.OldPrice == LI.Price && LI.PriceOpt==LI.OldPriceOpt?-1:0):(isHandInput?3:2)))):
                     (isError ? -9 : (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError != ePrinterError.None ? -1 : 0)))
             ;
 
@@ -314,4 +325,5 @@ public class BL_PriceChecker extends BL {
         if (LI != null)
             LI.Progress.set(parProgress);
     }
+
 }

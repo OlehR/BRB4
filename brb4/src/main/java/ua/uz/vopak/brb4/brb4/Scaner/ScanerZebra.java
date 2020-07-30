@@ -5,12 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.Log;
 
 
 public class ScanerZebra extends Scaner {
     BroadcastReceiver mybroadcastReceiver;
     IntentFilter filter;
-
+     boolean StatusScan=false;
     //!!!TMP!!!!
     final String  Action= "ua.uz.vopak.brb4";
 
@@ -44,6 +45,7 @@ public class ScanerZebra extends Scaner {
                     TypeBarCode = intent.getStringExtra(LABEL_TYPE_TAG);
                     String decodeData = intent.getStringExtra(DATA_STRING_TAG);
                     CallBack.Run(decodeData);
+                    Log.d( "Zebra","onReceive =>"+decodeData + " Type=>"+TypeBarCode);
                 }
             }
         };
@@ -51,29 +53,56 @@ public class ScanerZebra extends Scaner {
         filter = new IntentFilter();
         filter.addAction(Action);
         filter.addCategory("android.intent.category.DEFAULT");
+        StartScan1();
+
     }
 
     @Override
     public boolean Init(ScanCallBack cCallBack,Bundle savedInstanceState)
     {
+        Log.d( "Zebra","Init");
         return super.Init(cCallBack,savedInstanceState);
     }
 
     @Override
-    public boolean StartScan()
+    public boolean StartScan() {
+        return true;
+    }
+
+
+    public boolean StartScan1()
     {
+        Log.d( "Zebra","StartScan Status=>"+ (StatusScan?"On":"Off"));
+        if (StatusScan)
+            return false;
         if(varApplicationContext!=null)
             varApplicationContext.registerReceiver(mybroadcastReceiver,filter);
         //ManualScan();
+        StatusScan=true;
+        Log.d( "Zebra","StartScan End Status=>"+ (StatusScan?"On":"Off"));
         return true;
     }
     @Override
-    public boolean StopScan()
+    public boolean StopScan() {
+    return true;
+    }
+
+    public boolean StopScan1()
     {
+        Log.d( "Zebra","StopScan Status=>"+ (StatusScan?"On":"Off"));
+        if (!StatusScan)
+            return false;
         if(varApplicationContext!=null)
             varApplicationContext.unregisterReceiver(mybroadcastReceiver);
        // unregisterReceiver(mybroadcastReceiver);
+
+        StatusScan=false;
+        Log.d( "Zebra","StopScan End Status=>"+ (StatusScan?"On":"Off"));
         return true;
+    }
+
+    public void finalize() {
+        StopScan1();
     }
 
     @Override

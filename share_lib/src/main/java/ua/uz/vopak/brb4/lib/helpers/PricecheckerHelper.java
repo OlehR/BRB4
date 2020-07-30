@@ -2,6 +2,7 @@ package ua.uz.vopak.brb4.lib.helpers;
 
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
+import ua.uz.vopak.brb4.lib.models.PriceBarCode;
 
 public class PricecheckerHelper {
     private GetDataHTTP Http = new GetDataHTTP();
@@ -87,4 +88,6 @@ public class PricecheckerHelper {
         return LI;
     }
     public String HttpState() {return Http.HttpState.name();}
+
+
 }

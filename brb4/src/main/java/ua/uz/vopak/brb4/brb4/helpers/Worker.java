@@ -65,8 +65,8 @@ public class Worker {
         {
             case SevenEleven:
                 Setting =  new  DocSetting[2];
-                Setting[0] = new DocSetting(2,"Ревізія",false,false,false,false,false);
-                Setting[1] = new DocSetting(5,"РЦ Лоти",true,true,true,true,true);
+                Setting[0] = new DocSetting(2,"Мініревізія",false,false,false,false,false);
+                Setting[1] = new DocSetting(5,"Перевірка Лотів з ЛЦ",true,true,true,true,true);
                 break;
             case SparPSU:
             case VopakPSU:

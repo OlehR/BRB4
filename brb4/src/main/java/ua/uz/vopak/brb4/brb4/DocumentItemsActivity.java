@@ -1,7 +1,9 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -41,6 +43,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     final Context context=this;
     Button btn, btnSave;
     String NumberDoc;
+    int TypeWeight=0;
     int TypeDoc;
     DocSetting DocSetting;
     //List<DocWaresModel> InventoryItems;
@@ -60,6 +63,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         Intent i = getIntent();
         NumberDoc = i.getStringExtra("number");
         TypeDoc = i.getIntExtra("document_type",0);
+        TypeWeight =i.getIntExtra("TypeWeight",0);
         DocSetting=config.GetDocSetting(TypeDoc);
         btn = findViewById(R.id.F4);
         btnSave = findViewById(R.id.F3);
@@ -76,8 +80,16 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     public void onResume() {
         super.onResume();
         GetDoc();
+        //Zebra
+        scaner.StartScan();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        //Zebra
+        scaner.StopScan();
+    }
     @Override
     public void Run(final String pBarCode) {
 
@@ -85,7 +97,18 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 new IAsyncHelper<WaresItemModel>() {
                     @Override
                     public WaresItemModel Invoke() {
-                        return config.Worker.GetWaresFromBarcode(TypeDoc,NumberDoc,pBarCode);
+
+                        WaresItemModel res= config.Worker.GetWaresFromBarcode(TypeDoc,NumberDoc,pBarCode);
+                        if(res==null)
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Dialog("Товар не знайдено", "Даний штрихкод=> "+pBarCode+" відсутній в базі");
+                                }});
+
+                        return res;
+
+                        //return config.Worker.GetWaresFromBarcode(TypeDoc,NumberDoc,pBarCode);
                     }
                 },
                 new IPostResult<WaresItemModel>() {
@@ -96,11 +119,11 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 }).execute();
     }
     void Find(final WaresItemModel pWIM) {
-        if (pWIM == null)
-            return;
         runOnUiThread(new Runnable() {
+
             @Override
             public void run() {
+
                 int i = 0;
                 for (WaresItemModel wim : ListWares) {
                     if (wim.CodeWares == pWIM.CodeWares)
@@ -112,10 +135,24 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     focusOnView("prev");
                     selectItem();
                 }
+                else
+                {
+                    Dialog("Товар відсутній",pWIM.NameWares);
+
+                }
             }
         });
     }
 
+ void Dialog(String pHead,String pText)
+ {
+     new AlertDialog.Builder(context)
+             .setTitle(pHead)
+             .setMessage(pText)
+             .setNegativeButton(android.R.string.ok, null)
+             .create().show();
+
+ }
 
     void GetDoc()
     {
@@ -137,20 +174,24 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         String keyCode = String.valueOf(event.getKeyCode());
         if(event.getAction() == KeyEvent.ACTION_UP) {
             switch (keyCode) {
-                case "134":
-                    ExecuteDocumentScannerActivity();
-                    break;
-                case "133":
-                    SendDoc();
-                    break;
-                case "15":
-                    selectNext();
-                    selectItem();
-                    break;
-                case "9":
+                case "9": //2
                     selectPrev();
                     selectItem();
                     break;
+                case "15": //8
+                    selectNext();
+                    selectItem();
+                    break;
+                case "132":
+                    SendDoc(); //F2 Зберегти (відправити документ в 1С
+                    break;
+                case "133": //F3 Режим сканування.
+                    ExecuteDocumentScannerActivity();
+                    break;
+                case "134": //F4 Ваговий режим
+                    ExecuteDocumentWeightActivity();
+                    break;
+
             }
         }
         return super.dispatchKeyEvent(event);
@@ -186,7 +227,13 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
     public void ExecuteDocumentScannerActivity() {
         Intent i = new Intent(this, DocumentScannerActivity.class);
-        i.putExtra("inv_number", NumberDoc);
+        i.putExtra("number", NumberDoc);
+        i.putExtra("document_type", TypeDoc);
+        startActivity(i);
+    }
+    public void ExecuteDocumentWeightActivity() {
+        Intent i = new Intent(this, DocumentWeightActivity.class);
+        i.putExtra("number", NumberDoc);
         i.putExtra("document_type", TypeDoc);
         startActivity(i);
     }
