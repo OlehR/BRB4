@@ -26,6 +26,7 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
+import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
@@ -45,6 +46,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     String NumberDoc;
     int TypeWeight=0;
     int TypeDoc;
+    eTypeOrder TypeOrder = eTypeOrder.Scan;
     DocSetting DocSetting;
     //List<DocWaresModel> InventoryItems;
     int current = 0;
@@ -81,6 +83,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         super.onResume();
         GetDoc();
         //Zebra
+        scaner.Init(this);
         scaner.StartScan();
     }
 
@@ -149,7 +152,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
      new AlertDialog.Builder(context)
              .setTitle(pHead)
              .setMessage(pText)
-             .setNegativeButton(android.R.string.ok, null)
+             .setPositiveButton(android.R.string.ok, null)
              .create().show();
 
  }
@@ -159,7 +162,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         new AsyncHelper<List<WaresItemModel>>(new IAsyncHelper() {
             @Override
             public List<WaresItemModel> Invoke() {
-                return config.Worker.GetDoc(TypeDoc, NumberDoc,1);
+                return config.Worker.GetDoc(TypeDoc, NumberDoc,1,TypeOrder);
             }
         },
                 new IPostResult<List<WaresItemModel>>() {
@@ -190,6 +193,10 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     break;
                 case "134": //F4 Ваговий режим
                     ExecuteDocumentWeightActivity();
+                    break;
+                case "135": //F5 Сортування Назва,Порядок сканування
+                    TypeOrder= (TypeOrder == eTypeOrder.Scan)? eTypeOrder.Name :eTypeOrder.Scan;
+                    GetDoc();
                     break;
 
             }
@@ -247,7 +254,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         ListWares=model;
         if(model.size() == 0)
             return;
-
+        menuItems.clear();
         final DocumentItemsActivity context = this;
         //InventoryItems = inventoryModel;
         runOnUiThread(new Runnable() {
@@ -435,7 +442,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
                         int index = model.indexOf(item);
 
-                        UtilsUI.SetColor(TableBlock,"#000000","#"+((index % 2)==0?"FF":"80")+item.GetBackgroundColor());
+                        UtilsUI.SetColor(TableBlock,"#000000","#"+((index % 2)==0?"FF":"70")+item.GetBackgroundColor());
 
                         /*if((index % 2)==0) {
                             ViewGroup rows = TableBlock;
@@ -490,7 +497,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         if(selectedItem != null){
             int index = menuItems.indexOf(selectedItem);
             String BackgroundColor=ListWares.get(index).GetBackgroundColor();
-            UtilsUI.SetColor(selectedItem,"#000000","#"+((index % 2)==0?"FF":"20")+BackgroundColor);
+            UtilsUI.SetColor(selectedItem,"#000000","#"+((index % 2)==0?"FF":"70")+BackgroundColor);
             selectedItem.setTag(null);
         }
         ViewGroup currentRows = (ViewGroup) menuItems.get(current);

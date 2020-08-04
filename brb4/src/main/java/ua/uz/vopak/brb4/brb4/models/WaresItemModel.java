@@ -26,6 +26,7 @@ public class WaresItemModel implements Cloneable{
     public String BarCode;
     public int BaseCodeUnit;
     public double InputQuantity;
+    public boolean IsRecord =false;
     public String GetInputQuantity() {return InputQuantity==0.0d ? "": String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",InputQuantity);}
     public String GetInputQuantityZero() {return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",InputQuantity);}
     public String GetQuantityBase() {return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",(double)Coefficient*InputQuantity);}
@@ -46,12 +47,15 @@ public class WaresItemModel implements Cloneable{
     public double QuantityReason;
     public double QuantityBarCode;
     public int CodeReason;
-    public int Ord;//3- недостача. //2 - надлишок, // 1 - є з причиною // 0 - все ОК.
+    // Лоти  3- недостача. //2 - надлишок, // 1 - є з причиною // 0 - все ОК.
+    // Ревізія. // 0- Зеленим кольором пораховані, 2- оранжевим додані вручну, 0- жовтим непораховані.
+    public int Ord;
 
+    // 3 - червоний, 2- оранжевий, 1 - жовтий, 0 - зелений, інше грязно жовтий-ранжевий.
     public String GetBackgroundColor()
     {
-        if(!DocSetting.IsViewPlan)
-            return "fff3cd";
+      /*  if(!DocSetting.IsViewPlan)
+            return "fff3cd";*/
         switch (Ord) {
             case 3:
                 return "FFB0B0";

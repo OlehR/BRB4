@@ -32,10 +32,11 @@ import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 
 public class DocumentActivity extends Activity implements View.OnClickListener, ScanCallBack {
     DocSetting DS;
-    LinearLayout tl;
+    LinearLayout Table;
     ScrollView documentList;
     int DocumentType;
     DocumentActivity context;
+    List<DocumentModel> modelDoc;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
     GlobalConfig config = GlobalConfig.instance();
@@ -50,7 +51,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.document_layout);
-        tl = findViewById(R.id.RevisionsList);
+        Table = findViewById(R.id.RevisionsList);
         documentList = findViewById(R.id.DocumentList);
         DocumentZKPO =findViewById(R.id.DocumentZKPO);
         FilterEDRPO =findViewById(R.id.FilterEDRPO);
@@ -73,6 +74,16 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         FilterText=findViewById(R.id.FilterText);
         //new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute(DocumentType);
 
+     //  RefreshTable(null,null);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Zebra
+        scaner.Init(this);
+        scaner.StartScan();
         RefreshTable(null,null);
     }
 
@@ -127,8 +138,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                         renderTable(p);
                         return;
                     }}).execute();
-
-
     }
 
     @Override
@@ -171,7 +180,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                         RefreshTable(null, find);
                     }
                     else
-                     tl.findViewWithTag("selected").callOnClick();
+                     Table.findViewWithTag("selected").callOnClick();
                     break;
                 case "131": //F2 Пошук по коду ЄДРПОУ для прихідних
                   DM.IsEnterCodeZKPO.set(true);
@@ -187,6 +196,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
 
     public void renderTable(final List<DocumentModel> model){
         current=0;
+        modelDoc=model;
         final DocumentActivity context = this;
         menuItems.clear();
         runOnUiThread(new Runnable() {
@@ -199,7 +209,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                         dpValue = 3;
                         int padding = (int)(dpValue * d);
                         LinearLayout.LayoutParams lp;
-                        tl.removeAllViews();
+                        Table.removeAllViews();
                         for (DocumentModel item : model) {
 
                             String date = item.DateDoc;
@@ -215,25 +225,16 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                             tr0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                             tr0.setOrientation(LinearLayout.VERTICAL);
 
-                            LinearLayout tr = new LinearLayout(context);
-                            tr.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                            tr.setOrientation(LinearLayout.HORIZONTAL);
-                            tr.setWeightSum(2f);
+                            LinearLayout Line1 = new LinearLayout(context);
+                            Line1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            Line1.setOrientation(LinearLayout.HORIZONTAL);
+                            Line1.setWeightSum(2f);
 
-                            LinearLayout tr1 = new LinearLayout(context);
-                            tr1.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                            tr1.setOrientation(LinearLayout.HORIZONTAL);
-                            tr1.setWeightSum(2f);
-
-                            LinearLayout tr2 = new LinearLayout(context);
-                            tr2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                            tr2.setOrientation(LinearLayout.HORIZONTAL);
-                            tr2.setWeightSum(2f);
 
                             TextView Date = new TextView(context);
                             Date.setText(date);
                             Date.setTextColor(Color.parseColor("#000000"));
-                            tr.addView(Date);
+                            Line1.addView(Date);
 
                             Date.setPadding(padding, padding, padding, padding);
                             Date.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
@@ -246,7 +247,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                             NumberInv.setText(numberInv);
                             NumberInv.setTextColor(Color.parseColor("#000000"));
                             NumberInv.setTag("number_inv");
-                            tr.addView(NumberInv);
+                            Line1.addView(NumberInv);
 
                             NumberInv.setPadding(padding, padding, padding, padding);
                             NumberInv.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
@@ -254,12 +255,19 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                             params1.width = 0;
                             params1.weight = 1;
                             NumberInv.setLayoutParams(params1);
+                            tl0.addView(Line1);
+
+
+                            LinearLayout Line2 = new LinearLayout(context);
+                            Line2.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                            Line2.setOrientation(LinearLayout.HORIZONTAL);
+                            Line2.setWeightSum(2f);
 
                             TextView ExtInfo = new TextView(context);
                             ExtInfo.setText(extInfo);
                             ExtInfo.setTag("extInfo");
                             ExtInfo.setTextColor(ContextCompat.getColor(context,R.color.messageSuccess));
-                            tr1.addView(ExtInfo);
+                            Line2.addView(ExtInfo);
 
                             LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)ExtInfo.getLayoutParams();
                             params2.width = 0;
@@ -268,21 +276,28 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                             ExtInfo.setPadding(padding, padding, padding, padding);
                             ExtInfo.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
-                            TextView UserName = new TextView(context);
-                            UserName.setText(userName);
-                            UserName.setTextColor(Color.parseColor("#000000"));
-                            tr2.addView(UserName);
+                            tl0.addView(Line2);
 
-                            LinearLayout.LayoutParams params3 = (LinearLayout.LayoutParams)UserName.getLayoutParams();
-                            params3.width = 0;
-                            params3.weight = 2;
-                            UserName.setLayoutParams(params3);
-                            UserName.setPadding(padding, padding, padding, padding);
-                            UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
+                            if(DS.IsShowUser) {
+                                LinearLayout Line3 = new LinearLayout(context);
+                                Line3.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                                Line3.setOrientation(LinearLayout.HORIZONTAL);
+                                Line3.setWeightSum(2f);
+                                TextView UserName = new TextView(context);
+                                UserName.setText(userName);
+                                UserName.setTextColor(Color.parseColor("#000000"));
+                                Line3.addView(UserName);
 
-                            tl0.addView(tr);
-                            tl0.addView(tr1);
-                            tl0.addView(tr2);
+                                LinearLayout.LayoutParams params3 = (LinearLayout.LayoutParams) UserName.getLayoutParams();
+                                params3.width = 0;
+                                params3.weight = 2;
+                                UserName.setLayoutParams(params3);
+                                UserName.setPadding(padding, padding, padding, padding);
+                                UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
+
+
+                                tl0.addView(Line3);
+                            }
                             tl0.setTag(item.WaresType);
 
                             tr0.addView(tl0);
@@ -290,9 +305,9 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                             menuItems.add(tr0);
 
                             int index = model.indexOf(item);
-                            UtilsUI.SetColor(tl0,"#000000","#"+((index % 2)==0?"FF":"80")+"fff3cd");
+                            UtilsUI.SetColor(tl0,"#000000","#"+((index % 2)==0?"FF":"80")+item.GetBackgroundColor());
 
-                            tl.addView(tr0);
+                            Table.addView(tr0);
                         }
 
                         selectItem();
@@ -306,10 +321,10 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     }
 
     private void selectItem(){
-        ViewGroup selectedItem = tl.findViewWithTag("selected");
+        ViewGroup selectedItem = Table.findViewWithTag("selected");
         if(selectedItem != null){
             int index = menuItems.indexOf(selectedItem);
-            UtilsUI.SetColor(selectedItem,"#000000","#"+((index % 2)==0?"FF":"80")+"fff3cd");
+            UtilsUI.SetColor(selectedItem,"#000000","#"+((index % 2)==0?"FF":"80")+modelDoc.get(index).GetBackgroundColor()); //"fff3cd";
             selectedItem.setTag(null);
         }
         ViewGroup currentRows = (ViewGroup) menuItems.get(current);

@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.models.DocSetting;
+import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
@@ -33,6 +35,7 @@ import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 public class DocumentWeightActivity extends Activity  {
     String NumberDoc;
     int documentType;
+    DocSetting DocSetting;
     List<Double> PrevValues = new ArrayList<>();
     LinearLayout tl;
     HashMap<Integer, DocWaresModelIncome> data = new HashMap<Integer, DocWaresModelIncome>();
@@ -51,6 +54,7 @@ public class DocumentWeightActivity extends Activity  {
         Intent i = getIntent();
         NumberDoc = i.getStringExtra("number");
         documentType = i.getIntExtra("document_type",0);
+        DocSetting=config.GetDocSetting(documentType);
         GetDoc();
 
         tl = findViewById(R.id.ItemsTable);
@@ -76,7 +80,7 @@ public class DocumentWeightActivity extends Activity  {
         new AsyncHelper<List<WaresItemModel>>(new IAsyncHelper() {
             @Override
             public List<WaresItemModel> Invoke() {
-                return config.Worker.GetDoc(documentType, NumberDoc,1);
+                return config.Worker.GetDoc(documentType, NumberDoc,1, eTypeOrder.Scan);
             }
         },
                 new IPostResult<List<WaresItemModel>>() {
@@ -111,26 +115,26 @@ public class DocumentWeightActivity extends Activity  {
                     int padding = (int) (dpValue * d);
 
                     for (WaresItemModel item : model) {
-                        if(item.OrderDoc>scanNN&& item.OrderDoc<100000)
-                            scanNN=item.OrderDoc;
+                        if (item.OrderDoc > scanNN && item.OrderDoc < 100000)
+                            scanNN = item.OrderDoc;
 
                         final LinearLayout tl0 = new LinearLayout(context);
                         tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                         tl0.setOrientation(LinearLayout.VERTICAL);
 
-                        LinearLayout tr = new LinearLayout(context);
-                        tr.setOrientation(LinearLayout.HORIZONTAL);
-                        tr.setWeightSum(2f);
+                        LinearLayout Line1 = new LinearLayout(context);
+                        Line1.setOrientation(LinearLayout.HORIZONTAL);
+                        Line1.setWeightSum(2f);
 
-                        LinearLayout tr1 = new LinearLayout(context);
-                        tr1.setOrientation(LinearLayout.HORIZONTAL);
-                        tr1.setWeightSum(2f);
+                        LinearLayout Line2 = new LinearLayout(context);
+                        Line2.setOrientation(LinearLayout.HORIZONTAL);
+                        Line2.setWeightSum(2f);
 
                         TextView Title = new TextView(context);
                         Title.setText(item.NameWares);
                         Title.setTextSize((int) (12 * d));
                         Title.setTextColor(Color.parseColor("#000000"));
-                        tr.addView(Title);
+                        Line1.addView(Title);
 
                         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) Title.getLayoutParams();
                         params.width = 0;
@@ -138,23 +142,24 @@ public class DocumentWeightActivity extends Activity  {
                         Title.setLayoutParams(params);
                         Title.setPadding(padding, padding, padding, padding);
                         Title.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+                        if(DocSetting.IsViewPlan) {
+                            TextView QuantityOrdered = new TextView(context);
+                            QuantityOrdered.setText(item.GetQuantityOrder());
+                            QuantityOrdered.setTextSize((int) (12 * d));
+                            QuantityOrdered.setTextColor(Color.parseColor("#000000"));
+                            Line2.addView(QuantityOrdered);
 
-                        TextView QuantityOrdered = new TextView(context);
-                        QuantityOrdered.setText(item.GetQuantityOrder());
-                        QuantityOrdered.setTextSize((int) (12 * d));
-                        QuantityOrdered.setTextColor(Color.parseColor("#000000"));
-                        tr1.addView(QuantityOrdered);
-
-                        LinearLayout.LayoutParams params1 = (LinearLayout.LayoutParams) QuantityOrdered.getLayoutParams();
-                        params1.width = 0;
-                        params1.weight = 1;
-                        params1.height = LinearLayout.LayoutParams.MATCH_PARENT;
-                        QuantityOrdered.setPadding(padding, padding, padding, padding);
-                        QuantityOrdered.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
-                        QuantityOrdered.setLayoutParams(params1);
+                            LinearLayout.LayoutParams params1 = (LinearLayout.LayoutParams) QuantityOrdered.getLayoutParams();
+                            params1.width = 0;
+                            params1.weight = 1;
+                            params1.height = LinearLayout.LayoutParams.MATCH_PARENT;
+                            QuantityOrdered.setPadding(padding, padding, padding, padding);
+                            QuantityOrdered.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+                            QuantityOrdered.setLayoutParams(params1);
+                        }
 
                         PrevValues.add(item.InputQuantity);
-                        EditText QuantityIncomed = new EditText(context);
+                        final EditText QuantityIncomed = new EditText(context);
                         QuantityIncomed.setText( item.GetInputQuantity());
                         QuantityIncomed.setTextColor(Color.parseColor("#000000"));
                         QuantityIncomed.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_DECIMAL | InputType.TYPE_NUMBER_FLAG_SIGNED);
@@ -169,7 +174,7 @@ public class DocumentWeightActivity extends Activity  {
                                 return false;
                             }
                         });
-                        tr1.addView(QuantityIncomed);
+                        Line2.addView(QuantityIncomed);
 
                         LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams) QuantityIncomed.getLayoutParams();
                         params2.width = 0;
@@ -190,21 +195,25 @@ public class DocumentWeightActivity extends Activity  {
                                 v.setFocusableInTouchMode(false);
                             }
                         });
+
+                        tl0.addView(Line1);
+                        tl0.addView(Line2);
+                        tl.addView(tl0);
+
                         QuantityIncomed.setOnFocusChangeListener(new View.OnFocusChangeListener() {
                             @Override
                             public void onFocusChange(View view, boolean hasFocus) {
                                 if (hasFocus) {
-                                    int index = tl.indexOfChild(tl0);
-                                    onFocus(index);
+                                    QuantityIncomed.setText("");
+                                    position = tl.indexOfChild(tl0);
                                 } else {
                                     int index = tl.indexOfChild(tl0);
-                                    onBlur(index);
+                                    onBlur(index,QuantityIncomed);
                                 }
                             }
                         });
 
-                        tl0.addView(tr);
-                        tl0.addView(tr1);
+
 
                         int index = model.indexOf(item);
                         if ((index % 2) == 0) {
@@ -220,7 +229,7 @@ public class DocumentWeightActivity extends Activity  {
                             }
                         }
 
-                        tl.addView(tl0);
+
                     }
 
 
@@ -235,6 +244,8 @@ public class DocumentWeightActivity extends Activity  {
         RenderTableIncome(model);
     }
 
+
+
     private void onFocus(int index) {
         position = index;
         ViewGroup row = (ViewGroup) tl.getChildAt(index);
@@ -243,10 +254,7 @@ public class DocumentWeightActivity extends Activity  {
         v.setText("");
     }
 
-    private void onBlur(int index) {
-        ViewGroup row = (ViewGroup) tl.getChildAt(index);
-        ViewGroup innerRow = (ViewGroup) row.getChildAt(1);
-        EditText v = (EditText) innerRow.getChildAt(1);
+    private void onBlur(int index,EditText v ) {
         if (v.getText().toString().equals("") || PrevValues.get(index) == Float.parseFloat(v.getText().toString())) {
             v.setText(String.format("%.3f", PrevValues.get(index)));
         } else {
@@ -258,7 +266,7 @@ public class DocumentWeightActivity extends Activity  {
     private void savePosition(){
         ViewGroup row = (ViewGroup) tl.getChildAt(position);
         ViewGroup innerRow = (ViewGroup) row.getChildAt(1);
-        EditText v = (EditText) innerRow.getChildAt(1);
+        EditText v = (EditText) innerRow.getChildAt(DocSetting.IsViewPlan?1:0);
         final String value = v.getText().toString();
         if(!value.equals("") && Float.parseFloat(value) != 0){
             scanNN++;
@@ -278,7 +286,7 @@ public class DocumentWeightActivity extends Activity  {
         if(position < Model.size()-1){
             ViewGroup row = (ViewGroup) tl.getChildAt(position+1);
             ViewGroup innerRow = (ViewGroup) row.getChildAt(1);
-            EditText v = (EditText) innerRow.getChildAt(1);
+            EditText v = (EditText) innerRow.getChildAt(DocSetting.IsViewPlan?1:0);
             v.setFocusableInTouchMode(true);
             v.requestFocusFromTouch();
             v.setFocusableInTouchMode(false);

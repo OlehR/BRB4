@@ -39,6 +39,8 @@ import ua.uz.vopak.brb4.lib.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
+import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
+import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.BluetoothPrinter;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
@@ -65,8 +67,8 @@ public class Worker {
         {
             case SevenEleven:
                 Setting =  new  DocSetting[2];
-                Setting[0] = new DocSetting(2,"Мініревізія",false,false,false,false,false);
-                Setting[1] = new DocSetting(5,"Перевірка Лотів з ЛЦ",true,true,true,true,true);
+                Setting[0] = new DocSetting(2,"Мініревізія", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0);
+                Setting[1] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0);
                 break;
             case SparPSU:
             case VopakPSU:
@@ -179,13 +181,12 @@ public class Worker {
 
     // Отримати список документів з БД
     public List<DocumentModel> LoadListDoc( int parTypeDoc, String parBarCode,String pExtInfo ) {
-        return   mDbHelper.GetDocumentList(parTypeDoc, parBarCode,pExtInfo);
 
+        return   mDbHelper.GetDocumentList(parTypeDoc, parBarCode,pExtInfo);
     }
     // Отримати Товари документа з БД
-    public List<WaresItemModel> GetDoc(int pTypeDoc, String pNumberDoc, int pTypeResult) {
-          return mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, pTypeResult);
-        //context.renderTable(model);
+    public List<WaresItemModel> GetDoc(int pTypeDoc, String pNumberDoc, int pTypeResult,eTypeOrder pTypeOrder) {
+          return mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, pTypeResult,pTypeOrder);
     }
     // Отримати Товар по штрихкоду
     public WaresItemModel GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode) {
@@ -196,12 +197,15 @@ public class Worker {
         if (pIsNullable)
             mDbHelper.SetNullableWares(pTypeDoc, pNumberDoc, pCodeWares);
 
-        return mDbHelper.SaveDocWares(pTypeDoc, pNumberDoc, pCodeWares, pOrderDoc, pQuantity, pCodeReason);
+        Result r = mDbHelper.SaveDocWares(pTypeDoc, pNumberDoc, pCodeWares, pOrderDoc, pQuantity, pCodeReason);
+        // міняємо стан документа на готується при зміні кількості.
+        mDbHelper.UpdateDocState(0, pTypeDoc, pNumberDoc);
+        return r;
     }
     // Зміна стану документа і відправляємо в 1С
     public Result UpdateDocState(int pState, int pTypeDoc, String pNumberDoc) {
         mDbHelper.UpdateDocState(pState, pTypeDoc, pNumberDoc);
-        List<WaresItemModel> wares = mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, 2);
+        List<WaresItemModel> wares = mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, 2, eTypeOrder.NoOrder);
         if(config.Company==eCompany.SevenEleven) //TMP!!! Треба буде зробити полюдськи
                 return c.SyncDocsData(pTypeDoc, pNumberDoc, wares);
             else return SyncDocsData(pTypeDoc, pNumberDoc, wares);

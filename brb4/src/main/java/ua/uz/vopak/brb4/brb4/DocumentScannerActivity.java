@@ -4,6 +4,8 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 
 import androidx.annotation.NonNull;
@@ -33,6 +35,7 @@ import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.ResultPoint;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -48,6 +51,8 @@ import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
+import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
+import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
@@ -174,7 +179,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         new AsyncHelper<List<WaresItemModel>>(new IAsyncHelper() {
             @Override
             public List<WaresItemModel> Invoke() {
-                 return  config.Worker.GetDoc(WaresItem.TypeDoc,WaresItem.NumberDoc,2);
+                 return  config.Worker.GetDoc(WaresItem.TypeDoc,WaresItem.NumberDoc,2, eTypeOrder.NoOrder);
             }
         },
                 new IPostResult<List<WaresItemModel>>() {
@@ -193,7 +198,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             switch (keyCode){
                 case "66":
                     if(WaresItem.IsInputQuantity())
-                       saveDocumentItem(false);
+                       saveDocumentItem(false,true);
                     else
                         findWareByArticleOrCode(null);
                     break;
@@ -209,6 +214,10 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 case "133": //F3
                     focusOnView("down");
                     break;
+                case "138": //F8
+                    saveDocumentItem(false,false);
+                    break;
+
             }
         }
         return super.dispatchKeyEvent(event);
@@ -251,10 +260,19 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                   WaresItem.ClearData("Товар не знайдено");
                 else {
                     WaresItem.ClearData();
-                    WaresItem.Set(model);
-                    WaresItem.BeforeQuantity = CountBeforeQuantity(ListWares, WaresItem.CodeWares);
-                   // WaresItem.InputQuantity = WaresItem.QuantityBarCode;
 
+                    if(  !model.IsRecord) {
+                        if (WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Ask) {
+                            AskAddAbsentWares(model);
+                            return;
+                        }
+
+                    }
+                    else {
+                        WaresItem.Set(model);
+                        WaresItem.BeforeQuantity = CountBeforeQuantity(ListWares, WaresItem.CodeWares);
+                        // WaresItem.InputQuantity = WaresItem.QuantityBarCode;
+                    }
 
                 }
                 if(config.TypeScaner==eTypeScaner.Camera)
@@ -353,11 +371,18 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             @Override
             public void run() {
                 ListWares = parL;
+               // WaresTableLayout.removeAllViews();
+                int childCount = WaresTableLayout.getChildCount();
+                // Remove all rows except the first one
+                if (childCount > 1) {
+                    WaresTableLayout.removeViews(1, childCount - 1);
+                }
+
                 if (ListWares.size() > 0) {
                     WaresItem.OrderDoc = ListWares.get(ListWares.size() - 1).OrderDoc;
                     for (WaresItemModel item : parL) {
                         TableRow tbl = RenderTableItem(item);
-                        WaresTableLayout.addView(tbl);
+                        WaresTableLayout.addView(tbl,1);
                     }
                 }
             }
@@ -372,7 +397,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             return res;
     }
 
-    private void saveDocumentItem(final Boolean isNullable) {
+    private void saveDocumentItem(final Boolean isNullable,final boolean IsAdd) {
         inputCount.setText("");
         if (WaresItem.InputQuantity > 0 || isNullable) {
             loader.setVisibility(View.VISIBLE);
@@ -386,7 +411,16 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                             el.InputQuantity = 0;
                         }
                 }
-
+            if(!IsAdd)
+                if(WaresItem.BeforeQuantity>= WaresItem.InputQuantity)
+                     WaresItem.InputQuantity=-WaresItem.InputQuantity;
+                else {
+                    loader.setVisibility(View.INVISIBLE);
+                    Toast toast = Toast.makeText(getApplicationContext(),
+                            "Не можна відняти більше існуючої кількості", Toast.LENGTH_SHORT);
+                    toast.show();
+                    return;
+                }
             new AsyncHelper<Result>(new IAsyncHelper() {
                 @Override
                 public Result Invoke() {
@@ -418,9 +452,8 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                     } catch (Exception e) {
                         Log.e("TAG", "AfterSave=>" + e.getMessage());
                     }
-                    ;
 
-                    WaresTableLayout.addView(RenderTableItem(WaresItem));
+                    WaresTableLayout.addView(RenderTableItem(WaresItem),1);
                 }
 
                 loader.setVisibility(View.INVISIBLE);
@@ -451,7 +484,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 }
             }
         }
-        saveDocumentItem(true);
+        saveDocumentItem(true,true);
     }
 
     private static ArrayList<View> getViewsByTag(ViewGroup root, String tag){
@@ -508,7 +541,9 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 new IPostResult<WaresItemModel>() {
                     @Override
                     public void Invoke(WaresItemModel model) {
+                        //model.DocSetting.
                         RenderData(model);
+
                     }
                 }).execute();
 
@@ -551,6 +586,20 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         }else{
             barcodeView.setVisibility(View.INVISIBLE);
         }
+    }
+
+
+    public void AskAddAbsentWares(final WaresItemModel model) {
+        new AlertDialog.Builder(this)
+                .setTitle("Добавити відсутній товар?")
+                .setMessage(model.NameWares)
+                .setNegativeButton(android.R.string.no, null)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        model.IsRecord=true;
+                        RenderData(model);
+                    }
+                }).create().show();
     }
 
 }

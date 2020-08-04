@@ -329,6 +329,19 @@
                             android:textColor="@color/messageAlert"
                             android:textSize="18dp"
                             android:text="↓"/>
+                     <TextView
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:textColor="@color/messageError"
+                         android:textSize="18dp"
+                         android:text=" f8-"/>
+
+                     <TextView
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:textColor="@color/messageAlert"
+                         android:textSize="18dp"
+                         android:text="-"/>
 
                     </LinearLayout>
 

@@ -21,10 +21,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import java.util.List;
+
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.brb4.databinding.MainLayoutBinding;
+import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.MainModel;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
@@ -230,11 +233,9 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                     break;
                 default: //F2-F9
                     if(Integer.valueOf(keyCode)>=132 && Integer.valueOf(keyCode)<=137)
-                    {
-                        i = new Intent(this, DocumentActivity.class);
-                        i.putExtra("document_type", Integer.valueOf(keyCode)-131);
-                        startActivity(i);
-                    }
+                        RunDoc(config.DocsSetting[Integer.valueOf(keyCode)-131].TypeDoc);
+
+
             }
         }
         return super.dispatchKeyEvent(event);
@@ -252,11 +253,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
         for(int i = 1; i < menuItems.length; i++){
            if( menuItems[i].getId()==Id)
-           {
-               intent = new Intent(this, DocumentActivity.class);
-               intent.putExtra("document_type", config.DocsSetting[i-1].TypeDoc);
-               startActivity(intent);
-           }
+               RunDoc(config.DocsSetting[i-1].TypeDoc);
+
         }
          /* case R.id.ML_Test:
                 i = new Intent(this, TestActivity.class);
@@ -264,6 +262,33 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 i.putExtra("document_number", "ПСЮ00003483");
                 startActivity(i);
                 break;*/
+    }
+
+
+
+    public void RunDoc(final int pTypeDoc) {
+
+
+        new AsyncHelper<Boolean>(new IAsyncHelper() {
+            @Override
+            public Boolean Invoke() {
+                    config.Worker.LoadData(pTypeDoc,null,MM.Progress,false);
+                    return true;
+            }
+        },
+                new IPostResult<Boolean>() {
+                    @Override
+                    public void Invoke(Boolean p) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(context, DocumentActivity.class);
+                                intent.putExtra("document_type", pTypeDoc);
+                                startActivity(intent);
+                            }
+                        });
+                        return;
+                    }}).execute();
     }
 
     public final void setAlarm(int start, int interval) {
