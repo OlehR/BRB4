@@ -266,13 +266,12 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                             AskAddAbsentWares(model);
                             return;
                         }
-
                     }
-                    else {
+
                         WaresItem.Set(model);
                         WaresItem.BeforeQuantity = CountBeforeQuantity(ListWares, WaresItem.CodeWares);
                         // WaresItem.InputQuantity = WaresItem.QuantityBarCode;
-                    }
+
 
                 }
                 if(config.TypeScaner==eTypeScaner.Camera)

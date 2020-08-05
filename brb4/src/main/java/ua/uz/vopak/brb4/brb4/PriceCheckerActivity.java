@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Queue;
 
 import ua.uz.vopak.brb4.brb4.helpers.BL_PriceChecker;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.ePrinterError;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
@@ -200,7 +201,8 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
                     LI.InputFocus.set(1);
                     break;
                 case "134"://F4
-                    LI.ChangeOnLineState();
+                    if(config.Company== eCompany.SevenEleven)
+                        LI.ChangeOnLineState();
                     break;
             }
         }

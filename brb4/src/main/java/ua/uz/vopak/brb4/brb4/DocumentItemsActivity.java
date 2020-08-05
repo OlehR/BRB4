@@ -472,8 +472,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
     public void AfterSave(final Result pResult) {
         final String vMessage;
-        if(pResult.State==-1)
-            vMessage="Документ успішно збережено!!!\n"+pResult.Info!=null?pResult.Info:"";
+        if(pResult.State==0)
+            vMessage="Документ успішно збережено!!!\n"+(pResult.Info!=null?pResult.Info:"");
          else
             vMessage="Помилка збереження документа:\n"+pResult.TextError;
 

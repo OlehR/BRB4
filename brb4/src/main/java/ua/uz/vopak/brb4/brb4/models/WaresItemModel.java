@@ -85,7 +85,7 @@ public class WaresItemModel implements Cloneable{
     public  WaresItemModel(){ClearData();}
    // public  WaresItemModel(WaresItemModel p){return (WaresItemModel)clone(p);}
 
-    public String GetQuantityOld(){return String.valueOf(QuantityOld);}
+    public String GetQuantityOld(){return  QuantityOld==0.0d ? "": String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityOld);}
     public void Set(WaresItemModel parWIM){
       if(parWIM.NumberDoc!=null && parWIM.TypeDoc>0)
       {
