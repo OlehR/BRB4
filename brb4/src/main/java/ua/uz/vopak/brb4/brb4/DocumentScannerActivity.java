@@ -266,6 +266,10 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                             AskAddAbsentWares(model);
                             return;
                         }
+                        if(WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Control) {
+                            Dialog("Товар відсутній в документі", model.NameWares);
+                            return;
+                        }
                     }
 
                         WaresItem.Set(model);
@@ -402,14 +406,16 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             loader.setVisibility(View.VISIBLE);
             if (WaresItem.InputQuantity > 0)
                 WaresItem.OrderDoc++;
+
             if (isNullable)
                 for (WaresItemModel el : ListWares) {
                     if (el.CodeWares == WaresItem.CodeWares)
-                        if (el.InputQuantity > 0) {
+                        if (el.InputQuantity != 0) {
                             el.InputQuantity = el.QuantityOrder;
                             el.InputQuantity = 0;
                         }
                 }
+
             if(!IsAdd)
                 if(WaresItem.BeforeQuantity>= WaresItem.InputQuantity)
                      WaresItem.InputQuantity=-WaresItem.InputQuantity;
@@ -420,6 +426,15 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                     toast.show();
                     return;
                 }
+                //Контроль введеної кількості.
+            double FullQuantity = isNullable? WaresItem.InputQuantity: WaresItem.InputQuantity+WaresItem.BeforeQuantity;
+            if(WaresItem.QuantityMax<FullQuantity){
+                loader.setVisibility(View.INVISIBLE);
+                Dialog("Введено завелику кількість","Ви перелімітили=>"+String.format(WaresItem.CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",FullQuantity-WaresItem.QuantityMax)) ;
+                return;
+            }
+
+
             new AsyncHelper<Result>(new IAsyncHelper() {
                 @Override
                 public Result Invoke() {
@@ -599,6 +614,14 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                         RenderData(model);
                     }
                 }).create().show();
+    }
+    void Dialog(String pHead,String pText)
+    {
+        new AlertDialog.Builder(context)
+                .setTitle(pHead)
+                .setMessage(pText)
+                .setPositiveButton(android.R.string.ok, null)
+                .create().show();
     }
 
 }

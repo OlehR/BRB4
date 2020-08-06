@@ -4,6 +4,33 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="2">
+
+        <EditText
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/messageError"
+            android:textSize="18dp"
+            android:windowSoftInputMode="stateHidden"
+             android:text=""/>
+
+        <EditText
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/messageAlert"
+            android:textSize="18dp"
+            android:windowSoftInputMode="stateHidden"
+            android:text=""/>
+    </LinearLayout>
+
     <ScrollView
         android:id="@+id/DocumentItemsList"
         android:layout_width="match_parent"

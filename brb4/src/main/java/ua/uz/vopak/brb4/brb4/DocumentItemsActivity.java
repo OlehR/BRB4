@@ -154,7 +154,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
              .setMessage(pText)
              .setPositiveButton(android.R.string.ok, null)
              .create().show();
-
  }
 
     void GetDoc()

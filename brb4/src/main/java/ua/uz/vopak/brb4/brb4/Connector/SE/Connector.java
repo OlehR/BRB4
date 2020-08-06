@@ -338,12 +338,20 @@ class OutputDoc
     public int TypeDoc;
     public String NumberDoc;
     public String DateDoc;
+    public String DateOutInvoice; // YYYY-MM-DD
+    public String NumberOutInvoice;
     List<OutputDocWares> DocWares;
     public OutputDoc(){};
     public OutputDoc(int pTypeDoc, String pNumberDoc,String pDateDoc)
     {
         TypeDoc=pTypeDoc;  NumberDoc= pNumberDoc; DateDoc =pDateDoc;
         DocWares = new ArrayList<>();
+    }
+    public OutputDoc(int pTypeDoc, String pNumberDoc,String pDateDoc,String pNumberOutInvoice,String pDateOutInvoice)
+    {
+        this(pTypeDoc,pNumberDoc,pDateDoc);
+        NumberOutInvoice=pNumberOutInvoice;
+        DateOutInvoice=pDateOutInvoice;
     }
 
 

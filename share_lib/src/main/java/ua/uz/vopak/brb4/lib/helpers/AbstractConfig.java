@@ -9,7 +9,7 @@ import static android.os.Build.USER;
 
 public abstract class AbstractConfig {
 
-    public Boolean IsDebug = true;
+    public Boolean IsDebug = false;
     public Context context;
     public String CodeWarehouse = "0";
     public eCompany Company = eCompany.VopakPSU;

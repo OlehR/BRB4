@@ -122,6 +122,10 @@ public String GetBaseAuth(String pLogin,String pPasWord){
             Log.e(TAG,e.getMessage());
             e.printStackTrace();
             HttpState= eStateHTTP.HTTP_Not_Define_Error;
+            if(e.getMessage().equals("Read timed out")) {
+                HttpState = eStateHTTP.HTTP_CLIENT_TIMEOUT;
+                return response;
+            }
             if(conn!=null)
                 try {
                     int a = conn.getResponseCode();

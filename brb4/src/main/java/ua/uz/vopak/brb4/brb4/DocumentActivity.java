@@ -179,8 +179,11 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                         DM.ZKPO.set("");
                         RefreshTable(null, find);
                     }
-                    else
-                     Table.findViewWithTag("selected").callOnClick();
+                    else {
+                        View r = Table.findViewWithTag("selected");
+                        if(r!=null)
+                            r.callOnClick();
+                    }
                     break;
                 case "131": //F2 Пошук по коду ЄДРПОУ для прихідних
                   DM.IsEnterCodeZKPO.set(true);
