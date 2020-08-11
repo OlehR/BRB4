@@ -25,6 +25,8 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
+import ua.uz.vopak.brb4.brb4.databinding.DocumentItemsLayoutBinding;
+import ua.uz.vopak.brb4.brb4.databinding.PriceCheckerLayoutNewBinding;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
@@ -41,6 +43,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     LinearLayout DataTable,button;
     FrameLayout documentItemsFrame;
     ScrollView documentList;
+    DocumentItemsLayoutBinding binding;
     final Context context=this;
     Button btn, btnSave;
     String NumberDoc;
@@ -54,7 +57,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     List<WaresItemModel> ListWares;
     GlobalConfig config = GlobalConfig.instance();
     UtilsUI UtilsUI = new UtilsUI();
-
+   
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

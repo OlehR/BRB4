@@ -142,7 +142,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        TextView currentNumber = v.findViewWithTag("number_inv");
+        TextView currentNumber = v.findViewWithTag("number");
         Intent i;
 
         Object tag = ((ViewGroup)v).getChildAt(0).getTag();
@@ -217,7 +217,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
 
                             String date = item.DateDoc;
                             String numberInv = item.NumberDoc;
-                            String extInfo = item.Description;
+                            String Description = item.Description;
                             String userName = item.NameUser;
 
                             LinearLayout tl0 = new LinearLayout(context);
@@ -249,7 +249,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                             TextView NumberInv = new TextView(context);
                             NumberInv.setText(numberInv);
                             NumberInv.setTextColor(Color.parseColor("#000000"));
-                            NumberInv.setTag("number_inv");
+                            NumberInv.setTag("number");
                             Line1.addView(NumberInv);
 
                             NumberInv.setPadding(padding, padding, padding, padding);
@@ -266,18 +266,18 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                             Line2.setOrientation(LinearLayout.HORIZONTAL);
                             Line2.setWeightSum(2f);
 
-                            TextView ExtInfo = new TextView(context);
-                            ExtInfo.setText(extInfo);
-                            ExtInfo.setTag("extInfo");
-                            ExtInfo.setTextColor(ContextCompat.getColor(context,R.color.messageSuccess));
-                            Line2.addView(ExtInfo);
+                            TextView eDescription = new TextView(context);
+                            eDescription.setText(Description);
+                            eDescription.setTag("extInfo");
+                            eDescription.setTextColor(ContextCompat.getColor(context,R.color.messageSuccess));
+                            Line2.addView(eDescription);
 
-                            LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)ExtInfo.getLayoutParams();
+                            LinearLayout.LayoutParams params2 = (LinearLayout.LayoutParams)eDescription.getLayoutParams();
                             params2.width = 0;
                             params2.weight = 2;
-                            ExtInfo.setLayoutParams(params2);
-                            ExtInfo.setPadding(padding, padding, padding, padding);
-                            ExtInfo.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
+                            eDescription.setLayoutParams(params2);
+                            eDescription.setPadding(padding, padding, padding, padding);
+                            eDescription.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
                             tl0.addView(Line2);
 
@@ -297,7 +297,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                                 UserName.setLayoutParams(params3);
                                 UserName.setPadding(padding, padding, padding, padding);
                                 UserName.setBackground(ContextCompat.getDrawable(context, R.drawable.row_border));
-
 
                                 tl0.addView(Line3);
                             }
