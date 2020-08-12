@@ -13,6 +13,7 @@
         android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/DocumentOutLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
@@ -26,7 +27,7 @@
             android:entries="@{DWI.ListDate}"
             android:selectedItemPosition="@={DWI.ListDateIdx}"
             android:focusable="true"
-            android:layout_weight="0.25" />
+            android:layout_weight="1" />
 
         <EditText
             android:layout_weight="1"
@@ -41,11 +42,13 @@
     <ScrollView
         android:id="@+id/DocumentItemsList"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:paddingRight="5dp"
         android:paddingLeft="5dp"
-        android:paddingTop="45dp"
+
         android:paddingBottom="25dp"
-        android:layout_height="match_parent">
+        android:layout_below  ="@+id/DocumentOutLL"
+      >
 
         <LinearLayout
             android:orientation="vertical"

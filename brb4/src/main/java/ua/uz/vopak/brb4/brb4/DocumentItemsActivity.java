@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,6 +29,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentItemsLayoutBinding;
 import ua.uz.vopak.brb4.brb4.databinding.PriceCheckerLayoutNewBinding;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
+import ua.uz.vopak.brb4.brb4.models.DocWaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
@@ -51,6 +53,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     int TypeDoc;
     eTypeOrder TypeOrder = eTypeOrder.Scan;
     DocSetting DocSetting;
+    DocWaresItemModel DocWaresItemModel = new DocWaresItemModel();
     //List<DocWaresModel> InventoryItems;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
@@ -76,6 +79,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         button.setVisibility(config.TypeScaner== eTypeScaner.Camera? View.VISIBLE:View.GONE );
         btn.setOnClickListener(this);
         btnSave.setOnClickListener(this);
+        binding=  DataBindingUtil.setContentView(this, R.layout.document_items_layout);
+        binding.setDWI (DocWaresItemModel);
         //Для отримання штрихкодів
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);

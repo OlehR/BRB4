@@ -77,7 +77,7 @@ public class Worker {
             case VopakPSU:
                 Setting =  new  DocSetting[5];
                 Setting[0] = new DocSetting(1,"Ревізія");
-                Setting[1] = new DocSetting(2,"Прийомка");
+                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Control,false,true,false,true,true,1,4,3);
                 Setting[2] = new DocSetting(3,"Переміщення");
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");
