@@ -7,20 +7,21 @@
         <variable name="DWI" type="ua.uz.vopak.brb4.brb4.models.DocWaresItemModel"/>
     </data>
 
-    <FrameLayout
-        android:id="@+id/DocumentItemsFrame"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
 
     <LinearLayout
         android:id="@+id/DocumentOutLL"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="0dp"
         android:orientation="horizontal"
-        android:visibility="@{DWI.IsView ? View.VISIBLE : View.GONE}"
+        android:visibility="gone"
         android:weightSum="2">
-
+        <!--"@{DWI.IsView ? View.VISIBLE : View.GONE}"-->
         <Spinner
             android:layout_width="0dp"
             android:layout_height="40dp"
@@ -39,27 +40,34 @@
             android:text=""/>
     </LinearLayout>
 
-    <ScrollView
-        android:id="@+id/DocumentItemsList"
+    <FrameLayout
+        android:id="@+id/DocumentItemsFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingRight="5dp"
-        android:paddingLeft="5dp"
+        android:orientation="vertical"
+        >
 
-        android:paddingBottom="25dp"
-        android:layout_below  ="@+id/DocumentOutLL"
-      >
+    <ScrollView
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:id="@+id/InventoriesList"
+            android:id="@+id/DocumentItemsList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:layout_below  ="@+id/DocumentOutLL"
+
+            >
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:id="@+id/InventoriesList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            </LinearLayout>
+
+        </ScrollView>
 
 
-        </LinearLayout>
-
-    </ScrollView>
 
     <LinearLayout
         android:id="@+id/DI_Button"
@@ -191,4 +199,5 @@
     </LinearLayout>
 
 </FrameLayout>
+    </LinearLayout>
 </layout>

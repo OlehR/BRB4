@@ -5,7 +5,7 @@ import ua.uz.vopak.brb4.brb4.BuildConfig;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500;
-import ua.uz.vopak.brb4.brb4.Scaner.ScanerTC20;
+//import ua.uz.vopak.brb4.brb4.Scaner.ScanerTC20;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerZebra;
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;

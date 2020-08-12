@@ -79,8 +79,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         button.setVisibility(config.TypeScaner== eTypeScaner.Camera? View.VISIBLE:View.GONE );
         btn.setOnClickListener(this);
         btnSave.setOnClickListener(this);
-        binding=  DataBindingUtil.setContentView(this, R.layout.document_items_layout);
-        binding.setDWI (DocWaresItemModel);
+       // binding=  DataBindingUtil.setContentView(this, R.layout.document_items_layout);
+        //binding.setDWI (DocWaresItemModel);
         //Для отримання штрихкодів
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);

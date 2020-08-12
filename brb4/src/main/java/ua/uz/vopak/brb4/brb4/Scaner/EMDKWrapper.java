@@ -1,5 +1,5 @@
 package ua.uz.vopak.brb4.brb4.Scaner;
-
+/*
 import com.symbol.emdk.EMDKManager;
 import com.symbol.emdk.EMDKManager.EMDKListener;
 import com.symbol.emdk.EMDKResults;
@@ -87,7 +87,7 @@ public class EMDKWrapper implements EMDKListener, Scanner.DataListener, Scanner.
             }
 
 
-        }*/
+        }/
 
         initScanner();
     }
@@ -96,7 +96,7 @@ public class EMDKWrapper implements EMDKListener, Scanner.DataListener, Scanner.
     @Override
     public void onClosed() {
         deInitScanner();
-        /* EMDKManager is closed abruptly. Call EmdkManager.release() to free the resources used by the current EMDK instance. */
+        /* EMDKManager is closed abruptly. Call EmdkManager.release() to free the resources used by the current EMDK instance. /
         if (emdkManager != null) {
             emdkManager.release();
             emdkManager = null;
@@ -118,7 +118,7 @@ public class EMDKWrapper implements EMDKListener, Scanner.DataListener, Scanner.
 
     /**
      * Initialize the barcode manager to scan the barcode
-     */
+     /
     public void initScanner() {
 
         if(emdkManager != null) {
@@ -153,7 +153,7 @@ public class EMDKWrapper implements EMDKListener, Scanner.DataListener, Scanner.
 
     /**
      *  Release the barcode manager resources
-     */
+     /
     private void deInitScanner() {
 
         if (barcodeManager != null) {
@@ -245,7 +245,7 @@ public class EMDKWrapper implements EMDKListener, Scanner.DataListener, Scanner.
             }
         });
     }
-*/
+/
     private void setDecoders() {
 
         try {
@@ -285,4 +285,4 @@ public class EMDKWrapper implements EMDKListener, Scanner.DataListener, Scanner.
     }
 
 }
-
+*/

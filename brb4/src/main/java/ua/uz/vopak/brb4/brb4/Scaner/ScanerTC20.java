@@ -1,5 +1,5 @@
 package ua.uz.vopak.brb4.brb4.Scaner;
-
+/*
         import android.app.Activity;
         import android.content.Context;
         import android.content.Intent;
@@ -77,7 +77,8 @@ public class ScanerTC20 extends Scaner {
             });
         }
     };
-*/
+* /
 
 
 }
+*/
