@@ -306,7 +306,7 @@ public class SQLiteAdapter
                     (config.IsDebug ? " limit 10" :"");
             mCur = mDb.rawQuery(sql, null);
             // якщо нічого не найшли і штрихкод не порожній шукаємо по товарам.
-            if (pBarCode!=null && !pBarCode.isEmpty() && mCur==null && mCur.getCount() == 0 ) {
+            if (pBarCode!=null && !pBarCode.isEmpty() && (mCur==null || mCur.getCount() <= 0) ) {
                 sql="SELECT DISTINCT d.date_doc,d.type_doc,d.number_doc,d.ext_info,d.name_user,d.bar_code,d.description,d.dt_insert,d.state -- ,bc.BAR_CODE, dw.*\n" +
                         ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT="+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as Weight\n" +
                         ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT<>"+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as NoWeight\n"+
@@ -316,8 +316,8 @@ public class SQLiteAdapter
                         "WHERE d.type_doc = '"+pTypeDoc+"'"+
                         " AND d.date_doc BETWEEN date(datetime(CURRENT_TIMESTAMP,'-"+DS.DayBefore+" day')) AND datetime(CURRENT_TIMESTAMP)"+
                         "and bc.BAR_CODE= '"+pBarCode+"'" + (config.IsDebug ? " limit 10" :"");
+                mCur = mDb.rawQuery(sql, null);
             }
-            mCur = mDb.rawQuery(sql, null);
 
             if (mCur!=null && mCur.getCount() > 0) {
                 while (mCur.moveToNext()){

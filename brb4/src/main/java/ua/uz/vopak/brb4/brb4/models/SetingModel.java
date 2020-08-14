@@ -39,8 +39,11 @@ public class SetingModel {
         Worker worker = config.GetWorker();
         config.Company = eCompany.fromOrdinal(ListCompanyIdx.get());
         worker.AddConfigPair("Company", Integer.toString(config.Company.getAction()));
+        config.ApiUrl=apiURL.get();
+        config.ApiURLadd=apiURLadd.get();
         worker.AddConfigPair("ApiUrl", apiURL.get().trim());
         worker.AddConfigPair("ApiUrladd", apiURLadd.get().trim());
+
     }
 
     public void OnClickLoad() {

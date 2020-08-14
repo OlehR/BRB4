@@ -229,7 +229,7 @@
 
                 </RelativeLayout>
 
-                <ScrollView
+     <ScrollView
                     android:id="@+id/RevisionScrollView"
                     android:fillViewport="true"
                     android:layout_width="match_parent"

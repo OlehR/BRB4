@@ -32,8 +32,11 @@ public class WaresItemModel implements Cloneable{
     public String GetQuantityBase() {return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",(double)Coefficient*InputQuantity);}
     public double BeforeQuantity;
     public String GetBeforeQuantity() {
-        return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",BeforeQuantity)+ (QuantityMax==Double.MAX_VALUE?"":"/"+String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityMax))
-                +(QuantityOrder>0 && QuantityMax==Double.MAX_VALUE?String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityOrder):"")  ;}
+        return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",BeforeQuantity)+
+                (QuantityOrder>0 ?  "/"+String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityOrder):"")+
+                (QuantityMax==Double.MAX_VALUE || QuantityMax==1000000 ?"":"/"+String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityMax))
+                ;}
+
 
     public int ColorBackground(){return Color.parseColor(QuantityMax>0d ? "#ffffff" : "#3fffff00");}
     public boolean IsUseCamera()  {return config.TypeScaner== eTypeScaner.Camera;}
@@ -106,6 +109,7 @@ public class WaresItemModel implements Cloneable{
       QuantityMax=parWIM.QuantityMax ;
       CodeReason= parWIM.CodeReason;
       QuantityBarCode=parWIM.QuantityBarCode;
+      QuantityOrder=parWIM.QuantityOrder;
       
   }
 

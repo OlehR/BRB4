@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -463,6 +464,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             }
                         }*/
 
+                        //TableRow TableRowBlock = new TableRow(context);
+                        //TableRowBlock.addView(TableBlock);
                         DataTable.addView(TableBlock);
                     }
 
