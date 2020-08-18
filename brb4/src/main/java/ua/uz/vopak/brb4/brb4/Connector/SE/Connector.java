@@ -236,6 +236,8 @@ public class Connector {
                 InputDocs data = new Gson().fromJson(res, InputDocs.class);
                 if (pIsClear)
                     db.execSQL("Delete from DOC;Delete from DOC_WARES_sample;Delete from DOC_WARES".trim());
+                else
+                    db.execSQL("update doc set state=-1 where type_doc<>5"+(pTypeDoc>0?" and type_doc="+pTypeDoc:""));
 
                 for (Doc v : data.Doc) {
                     //v.TypeDoc = ConvertTypeDoc(v.TypeDoc);
@@ -258,14 +260,15 @@ public class Connector {
     }
 
     //Вивантаження документів з ТЗД (HTTP)
-    public Result SyncDocsData(int pTypeDoc, String pNumberDoc, List<WaresItemModel> pWares)
+    public Result SyncDocsData(int pTypeDoc, String pNumberDoc, List<WaresItemModel> pWares,Date pDateOutInvoice,String pNumberOutInvoice, int pIsClose)
     {
         Gson gson = new Gson();
-        SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat formatterDT= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat formatterD= new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date(System.currentTimeMillis());
 
         ArrayList<OutputDoc> OD = new ArrayList<>();
-        OutputDoc el = new  OutputDoc(pTypeDoc,pNumberDoc,formatter.format(date));
+        OutputDoc el = new  OutputDoc(pTypeDoc,pNumberDoc,formatterDT.format(date),formatterD.format(pDateOutInvoice),pNumberOutInvoice,pIsClose);
 
         for (WaresItemModel W : pWares ) {
             OutputDocWares w = new OutputDocWares(W.CodeWares, W.InputQuantity,W.CodeReason);
@@ -340,6 +343,7 @@ class OutputDoc
     public String DateDoc;
     public String DateOutInvoice; // YYYY-MM-DD
     public String NumberOutInvoice;
+    public int  IsClose;
     List<OutputDocWares> DocWares;
     public OutputDoc(){};
     public OutputDoc(int pTypeDoc, String pNumberDoc,String pDateDoc)
@@ -347,17 +351,17 @@ class OutputDoc
         TypeDoc=pTypeDoc;  NumberDoc= pNumberDoc; DateDoc =pDateDoc;
         DocWares = new ArrayList<>();
     }
-    public OutputDoc(int pTypeDoc, String pNumberDoc,String pDateDoc,String pNumberOutInvoice,String pDateOutInvoice)
+    public OutputDoc(int pTypeDoc, String pNumberDoc,String pDateDoc,String pDateOutInvoice,String pNumberOutInvoice,int pIsClose)
     {
         this(pTypeDoc,pNumberDoc,pDateDoc);
         NumberOutInvoice=pNumberOutInvoice;
         DateOutInvoice=pDateOutInvoice;
+        IsClose=pIsClose;
     }
-
-
 }
 
- class InputDoc {
-    Doc  Doc;
+ class InputDocs {
+    Doc[]  Doc;
     DocWaresSample [] DocWaresSample;
 }
+

@@ -22,12 +22,13 @@ public class DocSetting {
     // Скільки днів дивитись документи До і Після сьогодня.
     public int DayBefore =2;
     public int DayAfter = 5;
+    public boolean IsViewOut = false;
     public DocSetting(int pTypeDoc,String pNameDoc)
     {
         TypeDoc=pTypeDoc;
         NameDoc=pNameDoc;
     }
-    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter)
+    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut)
     {
         this(pTypeDoc, pNameDoc);
         TypeControlQuantity =pTypeControlQuantity;
@@ -39,6 +40,8 @@ public class DocSetting {
         TypeColor=pTypeColor;
         DayBefore=pDayBefore;
         DayAfter=pDayAfter;
+        IsViewOut=pIsViewOut;
+
     }
 
 }

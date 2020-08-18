@@ -179,7 +179,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         new AsyncHelper<List<WaresItemModel>>(new IAsyncHelper() {
             @Override
             public List<WaresItemModel> Invoke() {
-                 return  config.Worker.GetDoc(WaresItem.TypeDoc,WaresItem.NumberDoc,2, eTypeOrder.NoOrder);
+                 return  config.Worker.GetDocWares(WaresItem.TypeDoc,WaresItem.NumberDoc,2, eTypeOrder.NoOrder);
             }
         },
                 new IPostResult<List<WaresItemModel>>() {

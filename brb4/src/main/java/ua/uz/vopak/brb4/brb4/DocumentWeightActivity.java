@@ -16,9 +16,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +77,7 @@ public class DocumentWeightActivity extends Activity  {
         new AsyncHelper<List<WaresItemModel>>(new IAsyncHelper() {
             @Override
             public List<WaresItemModel> Invoke() {
-                return config.Worker.GetDoc(documentType, NumberDoc,1, eTypeOrder.Scan);
+                return config.Worker.GetDocWares(documentType, NumberDoc,1, eTypeOrder.Scan);
             }
         },
                 new IPostResult<List<WaresItemModel>>() {

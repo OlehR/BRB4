@@ -33,6 +33,8 @@ import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.DocumentActivity;
 import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
 import ua.uz.vopak.brb4.brb4.DocumentScannerActivity;
+import ua.uz.vopak.brb4.brb4.models.Doc;
+import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.ePrinterError;
@@ -67,9 +69,9 @@ public class Worker {
         {
             case SevenEleven:
                 Setting =  new  DocSetting[3];
-                Setting[0] = new DocSetting(2,"Мініревізія", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0);
-                Setting[1] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0);
-                Setting[2] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,4,3);
+                Setting[0] = new DocSetting(2,"Мініревізія", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0,false);
+                Setting[1] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false);
+                Setting[2] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,4,3,true);
                // Setting[3] = new DocSetting(9,"Прихід ntcn",eTypeControlDoc.Control,false,true,false,true,true,1,4,3);
 
                 break;
@@ -77,7 +79,7 @@ public class Worker {
             case VopakPSU:
                 Setting =  new  DocSetting[5];
                 Setting[0] = new DocSetting(1,"Ревізія");
-                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,4,3);
+                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true);
                 Setting[2] = new DocSetting(3,"Переміщення");
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");
@@ -188,7 +190,7 @@ public class Worker {
         return   mDbHelper.GetDocumentList(parTypeDoc, parBarCode,pExtInfo);
     }
     // Отримати Товари документа з БД
-    public List<WaresItemModel> GetDoc(int pTypeDoc, String pNumberDoc, int pTypeResult,eTypeOrder pTypeOrder) {
+    public List<WaresItemModel> GetDocWares(int pTypeDoc, String pNumberDoc, int pTypeResult, eTypeOrder pTypeOrder) {
           return mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, pTypeResult,pTypeOrder);
     }
     // Отримати Товар по штрихкоду
@@ -206,12 +208,24 @@ public class Worker {
         return r;
     }
     // Зміна стану документа і відправляємо в 1С
-    public Result UpdateDocState(int pState, int pTypeDoc, String pNumberDoc) {
+    public Result UpdateDocState(int pState, int pTypeDoc, String pNumberDoc,Date pDateOutInvoice,String pNumberOutInvoice, int pIsClose) {
         mDbHelper.UpdateDocState(pState, pTypeDoc, pNumberDoc);
         List<WaresItemModel> wares = mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, 2, eTypeOrder.NoOrder);
         if(config.Company==eCompany.SevenEleven) //TMP!!! Треба буде зробити полюдськи
-                return c.SyncDocsData(pTypeDoc, pNumberDoc, wares);
+                return c.SyncDocsData(pTypeDoc, pNumberDoc, wares,pDateOutInvoice,pNumberOutInvoice,pIsClose);
             else return SyncDocsData(pTypeDoc, pNumberDoc, wares);
+    }
+
+    public DocModel GetDocOut(int pTypeDoc, String pNumberDoc){
+        return mDbHelper.GetDocOut(pTypeDoc,pNumberDoc);
+    }
+
+    public void SaveDocOut(Doc pDoc ){mDbHelper.SaveDocOut(pDoc);}
+
+    public DocModel GetDoc(int pTypeDoc, String pNumberDoc, int pTypeResult, eTypeOrder pTypeOrder) {
+        DocModel result= GetDocOut(pTypeDoc, pNumberDoc);
+         result.WaresItem= mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, pTypeResult,pTypeOrder);
+        return result;
     }
 
 }

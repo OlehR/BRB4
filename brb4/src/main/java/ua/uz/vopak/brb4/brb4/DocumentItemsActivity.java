@@ -3,34 +3,38 @@ package ua.uz.vopak.brb4.brb4;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
-import androidx.databinding.DataBindingUtil;
 
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.TableRow;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentItemsLayoutBinding;
-import ua.uz.vopak.brb4.brb4.databinding.PriceCheckerLayoutNewBinding;
+import ua.uz.vopak.brb4.brb4.models.Doc;
+import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
-import ua.uz.vopak.brb4.brb4.models.DocWaresItemModel;
+import ua.uz.vopak.brb4.brb4.models.DocItemModel;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
@@ -43,9 +47,12 @@ import ua.uz.vopak.brb4.lib.models.Result;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener, ScanCallBack {
     private Scaner scaner;
-    LinearLayout DataTable,button;
+    LinearLayout DataTable,button,DIOut;
     FrameLayout documentItemsFrame;
     ScrollView documentList;
+    EditText NumberOut;
+    Spinner DateOut;
+    CheckBox IsClose;
     DocumentItemsLayoutBinding binding;
     final Context context=this;
     Button btn, btnSave;
@@ -54,7 +61,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     int TypeDoc;
     eTypeOrder TypeOrder = eTypeOrder.Scan;
     DocSetting DocSetting;
-    DocWaresItemModel DocWaresItemModel = new DocWaresItemModel();
+    DocItemModel DocItemModel = new DocItemModel();
     //List<DocWaresModel> InventoryItems;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
@@ -68,25 +75,53 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         setContentView(R.layout.document_items_layout);
         documentList = findViewById(R.id.DocumentItemsList);
         documentItemsFrame = findViewById(R.id.DocumentItemsFrame);
-        DataTable = findViewById(R.id.InventoriesList);
+        DataTable = findViewById(R.id.DI_Table);
         Intent i = getIntent();
         NumberDoc = i.getStringExtra("number");
         TypeDoc = i.getIntExtra("document_type",0);
         TypeWeight =i.getIntExtra("TypeWeight",0);
         DocSetting=config.GetDocSetting(TypeDoc);
-        btn = findViewById(R.id.F4);
+
         btnSave = findViewById(R.id.F3);
         button = findViewById(R.id.DI_Button);
+        DIOut = findViewById(R.id.DI_OutLL);
+        NumberOut=findViewById(R.id.DI_NumberOut);
+        IsClose = findViewById(R.id.DI_IsClose);
+
+
+        btn = findViewById(R.id.F4);
+
         button.setVisibility(config.TypeScaner== eTypeScaner.Camera? View.VISIBLE:View.GONE );
         btn.setOnClickListener(this);
         btnSave.setOnClickListener(this);
+
        // binding=  DataBindingUtil.setContentView(this, R.layout.document_items_layout);
         //binding.setDWI (DocWaresItemModel);
         //Для отримання штрихкодів
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
 
+        DateOut = (Spinner) findViewById(R.id.DI_DateOut);
+        DateOut.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long id) {
+                // TODO Auto-generated method stub
+                DocItemModel.ListDateIdx.set(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+            }
+        });
+
+        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,DocItemModel.ListDate);
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        DateOut.setAdapter(aa);
+
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -156,8 +191,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         });
     }
 
- void Dialog(String pHead,String pText)
- {
+ void Dialog(String pHead,String pText) {
      new AlertDialog.Builder(context)
              .setTitle(pHead)
              .setMessage(pText)
@@ -165,17 +199,19 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
              .create().show();
  }
 
-    void GetDoc()
-    {
-        new AsyncHelper<List<WaresItemModel>>(new IAsyncHelper() {
+    void GetDoc()    {
+        new AsyncHelper<DocModel>(new IAsyncHelper() {
             @Override
-            public List<WaresItemModel> Invoke() {
+            public DocModel Invoke() {
+                Doc d= config.Worker.GetDocOut(TypeDoc, NumberDoc);
+                DocItemModel.SetDate(d.GetDateOutInvoice());
+                DocItemModel.NumberOutInvoice.set(d.NumberOutInvoice);
                 return config.Worker.GetDoc(TypeDoc, NumberDoc,1,TypeOrder);
             }
         },
-                new IPostResult<List<WaresItemModel>>() {
+                new IPostResult<DocModel>() {
                     @Override
-                    public void Invoke(List<WaresItemModel> p) {
+                    public void Invoke(DocModel p) {
                         renderTable(p);
                         return;
                     }}).execute();
@@ -206,7 +242,9 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     TypeOrder= (TypeOrder == eTypeOrder.Scan)? eTypeOrder.Name :eTypeOrder.Scan;
                     GetDoc();
                     break;
-
+                case "136": //F6 Ввід даних розхідної накладної
+                    SetViewOut();
+                    break;
             }
         }
         return super.dispatchKeyEvent(event);
@@ -225,10 +263,15 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     }
 
     public void SendDoc()    {
+        GetDIM();
+        final Date DateOut = DocItemModel.GetDate();
+        final String NumberOut = DocItemModel.NumberOutInvoice.get();
+
+
         new AsyncHelper<Result>(new IAsyncHelper() {
             @Override
             public Result Invoke() {
-                return config.Worker.UpdateDocState(1, TypeDoc, NumberDoc);
+                return config.Worker.UpdateDocState(1, TypeDoc, NumberDoc,DateOut,NumberOut,DocItemModel.IsClose);
             }
         },
                 new IPostResult<Result>() {
@@ -258,7 +301,9 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         GetDoc();
     }
 
-    public void renderTable(final List<WaresItemModel> model){
+    public void renderTable(final DocModel pDoc){
+
+        final List<WaresItemModel> model=pDoc.WaresItem;
         ListWares=model;
         if(model.size() == 0)
             return;
@@ -268,6 +313,9 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                DocItemModel.SetDate(pDoc.GetDateOutInvoice());
+                DocItemModel.NumberOutInvoice.set(pDoc.NumberOutInvoice);
+                RefreshOut();
 
                 int dpValue = 3;
                 float d = context.getResources().getDisplayMetrics().density;
@@ -564,4 +612,43 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             }
         });
     }
+
+    private  void SetViewOut()    {
+        if(!DocSetting.IsViewOut)
+            return;
+        GetDIM();
+        if(DocItemModel.IsView.get())
+        {
+            Doc d = new Doc(TypeDoc,NumberDoc);
+            d.DateOutInvoice= DocItemModel.GetStrDate();
+            d.NumberOutInvoice= DocItemModel.NumberOutInvoice.get();
+            config.Worker.SaveDocOut(d);
+        }
+
+        DocItemModel.SetView();
+
+        int view = DocItemModel.IsView.get() ? View.VISIBLE : View.INVISIBLE;
+        DIOut.setVisibility(view);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0,  DocItemModel.IsView.get()?120:0, 0, 0);
+        documentItemsFrame.setLayoutParams(params);
+
+    }
+
+    private  void RefreshOut(){
+        NumberOut.setText(DocItemModel.NumberOutInvoice.get());
+        IsClose.setChecked(true);
+        DateOut.setSelection(DocItemModel.ListDateIdx.get());
+    }
+
+    private void GetDIM()
+    {
+        DocItemModel.NumberOutInvoice.set(NumberOut.getText().toString());
+        DocItemModel.IsClose= IsClose.isChecked()?1:0;
+    }
+
 }

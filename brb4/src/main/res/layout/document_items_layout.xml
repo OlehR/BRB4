@@ -4,66 +4,98 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <import type="android.view.View"/>
-        <variable name="DWI" type="ua.uz.vopak.brb4.brb4.models.DocWaresItemModel"/>
+        <variable name="DWI" type="ua.uz.vopak.brb4.brb4.models.DocItemModel"/>
     </data>
 
     <FrameLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="0dp">
 
-        >
 
-    <LinearLayout
-        android:id="@+id/DocumentOutLL"
+        <LinearLayout
+            android:id="@+id/DI_OutLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:weightSum="2">
+
+        <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="0dp"
         android:orientation="horizontal"
-        android:visibility="visible"
         android:weightSum="2">
         <!--"@{DWI.IsView ? View.VISIBLE : View.GONE}"-->
         <Spinner
+            android:id="@+id/DI_DateOut"
             android:layout_width="0dp"
             android:layout_height="40dp"
-            android:entries="@{DWI.ListDate}"
-            android:selectedItemPosition="@={DWI.ListDateIdx}"
             android:focusable="true"
-            android:layout_weight="1" />
+            android:layout_weight="0.9" />
+
+            <!--android:entries="@{DWI.ListDate}"
+            android:selectedItemPosition="@={DWI.ListDateIdx}"-->
 
         <EditText
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/messageAlert"
+            android:id="@+id/DI_NumberOut"
+            android:layout_weight="1.1"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:background="@drawable/input_style"
             android:textSize="18dp"
             android:windowSoftInputMode="stateHidden"
             android:text=""/>
-    </LinearLayout>
+        </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="18dp"
+                android:text=" Закрити "/>
+
+            <CheckBox
+                android:id="@+id/DI_IsClose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+        </LinearLayout>
     <FrameLayout
         android:id="@+id/DocumentItemsFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_below="@+id/DI_OutLL"
         android:orientation="vertical"
         >
 
-    <ScrollView
-
+        <ScrollView
             android:id="@+id/DocumentItemsList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+
             android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
-            android:layout_below  ="@+id/DocumentOutLL">
+            android:layout_marginBottom="0dp">
 
             <LinearLayout
-                android:orientation="vertical"
-                android:id="@+id/InventoriesList"
+                android:id="@+id/DI_Table"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-            </LinearLayout>
+                android:layout_height="match_parent"
+                android:orientation="vertical"></LinearLayout>
 
-        <!--        <TableLayout
+            <!--        <TableLayout
                     android:id="@+id/InventoriesList"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -71,137 +103,133 @@
                 </TableLayout>-->
         </ScrollView>
 
-
-
-    <LinearLayout
-        android:id="@+id/DI_Button"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_gravity="bottom"
-        android:weightSum="2"
-        android:visibility="gone"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:layout_height="70dp">
-
-        <Button
-            android:id="@+id/F2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Зберегти"
-            android:layout_weight="1"/>
-        <Button
-            android:id="@+id/F3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Сканувати товари"
-            android:layout_weight="1"/>
-
-        <Button
-            android:id="@+id/F4"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Спис Товарів"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:focusable="false"
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_gravity="bottom"
-        android:weightSum="2"
-        android:paddingLeft="5dp"
-        android:paddingRight="5dp"
-        android:layout_height="25dp"
-        android:background="@color/SuccessBackground">
-
+        </FrameLayout>
         <LinearLayout
-            android:layout_width="0dp"
+            android:id="@+id/DI_Button"
             android:orientation="horizontal"
-            android:layout_height="wrap_content"
-            android:layout_weight="2">
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom"
+            android:weightSum="2"
+            android:visibility="gone"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:layout_height="70dp">
 
-            <TextView
-                android:visibility="gone"
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/F2"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/messageError"
-                android:textSize="18dp"
-                android:text=" 8-"/>
+                android:text="Зберегти"
+                android:layout_weight="1"/>
+            <Button
+                android:id="@+id/F3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Сканувати товари"
+                android:layout_weight="1"/>
 
-            <TextView
-                android:visibility="gone"
-                android:layout_width="wrap_content"
+            <Button
+                android:id="@+id/F4"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:textColor="@color/messageAlert"
-                android:textSize="18dp"
-                android:text="↑"/>
-
-            <TextView
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageError"
-                android:textSize="18dp"
-                android:text=" 2-"/>
-
-            <TextView
-                android:visibility="gone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageAlert"
-                android:textSize="18dp"
-                android:text="↓"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageError"
-                android:textSize="18dp"
-                android:text="F2-"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageAlert"
-                android:textSize="18dp"
-                android:text="Зберегти"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageError"
-                android:textSize="18dp"
-                android:text=" F3-"/>
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageAlert"
-                android:textSize="18dp"
-                android:text="Сканувати"/>
-
-            <TextView
-                android:id="@+id/FilterKey"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageError"
-                android:textSize="18dp"
-                android:text=" F4-"/>
-
-            <TextView
-                android:id="@+id/FilterText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/messageAlert"
-                android:textSize="18dp"
-                android:text="Список"/>
-
+                android:text="Спис Товарів"
+                android:layout_weight="1"/>
 
         </LinearLayout>
+        <LinearLayout
+            android:focusable="false"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom"
+            android:weightSum="2"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:layout_height="25dp"
+            android:background="@color/SuccessBackground">
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="0dp"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content"
+                android:layout_weight="2">
 
-</FrameLayout>
+                <TextView
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp"
+                    android:text=" 8-"/>
+
+                <TextView
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp"
+                    android:text="↑"/>
+
+                <TextView
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp"
+                    android:text=" 2-"/>
+
+                <TextView
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp"
+                    android:text="↓"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp"
+                    android:text="F2-"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp"
+                    android:text="Зберегти"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp"
+                    android:text=" F3-"/>
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp"
+                    android:text="Сканувати"/>
+
+                <TextView
+                    android:id="@+id/FilterKey"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp"
+                    android:text=" F4-"/>
+
+                <TextView
+                    android:id="@+id/FilterText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp"
+                    android:text="Список"/>
+
+
+            </LinearLayout>
+
+        </LinearLayout>
     </FrameLayout>
 </layout>

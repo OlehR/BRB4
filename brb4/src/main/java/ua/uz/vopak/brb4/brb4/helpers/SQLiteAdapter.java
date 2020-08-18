@@ -1,7 +1,9 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
@@ -14,6 +16,7 @@ import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 
+import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.brb4.models.Doc;
@@ -29,7 +32,7 @@ import ua.uz.vopak.brb4.lib.models.Result;
 public class SQLiteAdapter
 {
     protected static final String TAG = "BRB4/SQLiteAdapter";
-
+  //  SimpleDateFormat formatterDate= new SimpleDateFormat("yyyy-MM-dd");
     private final Context mContext;
     private SQLiteDatabase mDb;
     private DataBaseHelper mDbHelper;
@@ -299,8 +302,8 @@ public class SQLiteAdapter
             sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state \n"+
                     ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT="+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as Weight\n" +
                     ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT<>"+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as NoWeight\n"+
-                    "FROM DOC d WHERE type_doc = '"+pTypeDoc+"'"+
-                    " AND date_doc BETWEEN date(datetime(CURRENT_TIMESTAMP,'-"+DS.DayBefore+" day')) AND datetime(CURRENT_TIMESTAMP)" +
+                    "FROM DOC d WHERE d.state>=0 and type_doc = '"+pTypeDoc+"'"+
+                    " AND date_doc >= date(datetime(CURRENT_TIMESTAMP,'-"+DS.DayBefore+" day')) --AND datetime(CURRENT_TIMESTAMP)" +
                     (pExtInfo==null?"":" and ext_info like'%"+ pExtInfo.trim()+"%'") +
                     (pBarCode==null?"":" and bar_code like'%"+ pBarCode.trim()+"%'") +
                     (config.IsDebug ? " limit 10" :"");
@@ -313,7 +316,7 @@ public class SQLiteAdapter
                         "FROM DOC d \n" +
                         "Join DOC_WARES_SAMPLE dw on dw.number_doc=d.number_doc and dw.type_doc=d.type_doc\n" +
                         "join bar_code bc on dw.code_wares=bc.CODE_WARES\n" +
-                        "WHERE d.type_doc = '"+pTypeDoc+"'"+
+                        "WHERE d.state>=0 and d.type_doc = '"+pTypeDoc+"'"+
                         " AND d.date_doc BETWEEN date(datetime(CURRENT_TIMESTAMP,'-"+DS.DayBefore+" day')) AND datetime(CURRENT_TIMESTAMP)"+
                         "and bc.BAR_CODE= '"+pBarCode+"'" + (config.IsDebug ? " limit 10" :"");
                 mCur = mDb.rawQuery(sql, null);
@@ -629,6 +632,8 @@ public class SQLiteAdapter
     public boolean SaveDocs(Doc pDoc ) {
         long result = -1;
         int State=GetStateDoc(pDoc.TypeDoc,pDoc.NumberDoc);
+        if(State<0)
+            State=0;
         ContentValues values = new ContentValues();
         values.put("type_doc", pDoc.TypeDoc);
         values.put("number_doc", pDoc.NumberDoc);
@@ -639,6 +644,9 @@ public class SQLiteAdapter
         values.put("bar_code", pDoc.BarCode);
         values.put("description", pDoc.Description);
         values.put("number_doc_1C", pDoc.NumberDoc1C);
+        values.put("Date_Out_Invoice", pDoc.DateOutInvoice);
+        values.put("Number_Out_Invoice", pDoc.NumberOutInvoice);
+
         values.put("state",State);
         result = mDb.replace("DOC", null, values);
     return result != -1;
@@ -659,4 +667,44 @@ public class SQLiteAdapter
         return result != -1;
     }
 
+    public void SaveDocOut(Doc pDoc ){
+        long result = -1;
+        String Where = "type_doc="+ pDoc.TypeDoc+" and number_doc=\""+ pDoc.NumberDoc+"\"";
+        try {
+
+            ContentValues cv = new ContentValues();
+            cv.put("Date_Out_Invoice",pDoc.DateOutInvoice.toString());
+            cv.put("Number_Out_Invoice",pDoc.NumberOutInvoice);
+            mDb.update("DOC",cv,Where,null);
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, "SaveDocOut >>"+  e.getMessage());
+        }
+    }
+
+    public DocModel GetDocOut(int pTypeDoc, String pNumberDoc){
+        DocModel result = new DocModel(pTypeDoc,pNumberDoc);
+        String sql = "select Date_Out_Invoice,Number_Out_Invoice from doc where type_doc="+ pTypeDoc+" and number_doc=\""+ pNumberDoc+"\"";
+        try {
+              Cursor mCur = mDb.rawQuery(sql, null);
+            if (mCur != null && mCur.getCount() > 0) {
+                mCur.moveToFirst();
+               /* try {
+                    result.DateOutInvoice = formatterDate.parse(  mCur.getString(0));
+                }catch (Exception e)
+                {
+                    result.DateOutInvoice= formatterDate.parse(formatterDate.format(Calendar.getInstance().getTime()));
+                }*/
+                result.DateOutInvoice = mCur.getString(0);
+                result.NumberOutInvoice =mCur.getString(1);
+
+            }
+        }
+        catch (Exception e)
+        {
+            Log.e(TAG, "GetDocOut >>"+  e.getMessage());
+        }
+        return result;
+    }
 }
