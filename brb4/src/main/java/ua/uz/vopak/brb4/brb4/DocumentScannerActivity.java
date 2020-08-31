@@ -61,6 +61,7 @@ import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class DocumentScannerActivity extends FragmentActivity implements ScanCallBack, IIncomeRender {
@@ -73,6 +74,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
     Activity context;
     GlobalConfig config = GlobalConfig.instance();
+    ua.uz.vopak.brb4.lib.helpers.UtilsUI UtilsUI = new UtilsUI(this);
     DocumentScannerActivityBinding binding;
 
     List<WaresItemModel> ListWares;
@@ -267,7 +269,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                             return;
                         }
                         if(WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Control) {
-                            Dialog("Товар відсутній в документі", model.NameWares);
+                            UtilsUI.Dialog("Товар відсутній в документі", model.NameWares);
                             return;
                         }
                     }
@@ -430,7 +432,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             double FullQuantity = isNullable? WaresItem.InputQuantity: WaresItem.InputQuantity+WaresItem.BeforeQuantity;
             if(WaresItem.QuantityMax<FullQuantity){
                 loader.setVisibility(View.INVISIBLE);
-                Dialog("Введено завелику кількість","Ви перелімітили=>"+String.format(WaresItem.CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",FullQuantity-WaresItem.QuantityMax)) ;
+                UtilsUI.Dialog("Введено завелику кількість","Ви перелімітили=>"+String.format(WaresItem.CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",FullQuantity-WaresItem.QuantityMax)) ;
                 return;
             }
 
@@ -549,7 +551,14 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 new IAsyncHelper<WaresItemModel>() {
                     @Override
                     public WaresItemModel Invoke() {
-                        return config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,BarCode);
+                        WaresItemModel res= config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,BarCode);
+                        if(res==null)
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    UtilsUI.Dialog("Товар не знайдено", "Даний штрихкод=> "+BarCode+" відсутній в базі");
+                                }});
+                        return res;
                     }
                 },
                 new IPostResult<WaresItemModel>() {
@@ -615,13 +624,6 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                     }
                 }).create().show();
     }
-    void Dialog(String pHead,String pText)
-    {
-        new AlertDialog.Builder(context)
-                .setTitle(pHead)
-                .setMessage(pText)
-                .setPositiveButton(android.R.string.ok, null)
-                .create().show();
-    }
+
 
 }

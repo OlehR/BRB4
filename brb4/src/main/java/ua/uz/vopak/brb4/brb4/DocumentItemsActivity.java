@@ -67,7 +67,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     List<View> menuItems = new ArrayList<View>();
     List<WaresItemModel> ListWares;
     GlobalConfig config = GlobalConfig.instance();
-    UtilsUI UtilsUI = new UtilsUI();
+    UtilsUI UtilsUI = new UtilsUI(this);
    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +150,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Dialog("Товар не знайдено", "Даний штрихкод=> "+pBarCode+" відсутній в базі");
+                                    UtilsUI.Dialog("Товар не знайдено", "Даний штрихкод=> "+pBarCode+" відсутній в базі");
                                 }});
 
                         return res;
@@ -184,20 +184,12 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 }
                 else
                 {
-                    Dialog("Товар відсутній",pWIM.NameWares);
-
+                   UtilsUI.Dialog("Товар відсутній",pWIM.NameWares);
                 }
             }
         });
     }
 
- void Dialog(String pHead,String pText) {
-     new AlertDialog.Builder(context)
-             .setTitle(pHead)
-             .setMessage(pText)
-             .setPositiveButton(android.R.string.ok, null)
-             .create().show();
- }
 
     void GetDoc()    {
         new AsyncHelper<DocModel>(new IAsyncHelper() {

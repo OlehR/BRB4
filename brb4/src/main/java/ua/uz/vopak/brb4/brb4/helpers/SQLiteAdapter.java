@@ -303,7 +303,7 @@ public class SQLiteAdapter
                     ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT="+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as Weight\n" +
                     ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT<>"+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as NoWeight\n"+
                     "FROM DOC d WHERE d.state>=0 and type_doc = '"+pTypeDoc+"'"+
-                    " AND date_doc >= date(datetime(CURRENT_TIMESTAMP,'-"+DS.DayBefore+" day')) --AND datetime(CURRENT_TIMESTAMP)" +
+                    " AND date_doc >= date(datetime(CURRENT_TIMESTAMP,'-"+DS.DayBefore+" day')) \n" +//AND datetime(CURRENT_TIMESTAMP)
                     (pExtInfo==null?"":" and ext_info like'%"+ pExtInfo.trim()+"%'") +
                     (pBarCode==null?"":" and bar_code like'%"+ pBarCode.trim()+"%'") +
                     (config.IsDebug ? " limit 10" :"");
@@ -510,6 +510,7 @@ public class SQLiteAdapter
                                 return res;
                             }
                         }
+                        mCur=null;
                     }
                 }
             }else {

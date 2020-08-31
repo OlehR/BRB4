@@ -5,6 +5,8 @@ import android.graphics.Color;
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableInt;
 
+import java.util.Locale;
+
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
@@ -28,7 +30,7 @@ public class WaresItemModel implements Cloneable{
     public double InputQuantity;
     public boolean IsRecord =false;
     public String GetInputQuantity() {return InputQuantity==0.0d ? "": String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",InputQuantity);}
-    public String GetInputQuantityZero() {return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",InputQuantity);}
+    public String GetInputQuantityZero() {return String.format(Locale.US,CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",InputQuantity);}
     public String GetQuantityBase() {return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",(double)Coefficient*InputQuantity);}
     public double BeforeQuantity;
     public String GetBeforeQuantity() {

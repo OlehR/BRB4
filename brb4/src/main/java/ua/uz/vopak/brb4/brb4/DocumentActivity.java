@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -40,7 +41,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
     GlobalConfig config = GlobalConfig.instance();
-    UtilsUI UtilsUI = new UtilsUI();
+    UtilsUI UtilsUI = new UtilsUI( this);
     private Scaner scaner;
     TextView  FilterKey,FilterText,FilterEDRPOText,FilterEDRPO;
     EditText DocumentZKPO;
@@ -106,7 +107,6 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                 DocumentZKPO.requestFocusFromTouch();
                 DocumentZKPO.setFocusableInTouchMode(false);
 
-
                 view = DM.TypeDoc.get() == 2 ? View.VISIBLE : View.GONE;
                 FilterEDRPO.setVisibility(view);
                 FilterEDRPOText.setVisibility(view);
@@ -152,7 +152,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
  //       if(tag != null && (tag.toString().equals("2")|| tag.toString().equals("0")))
 //            i = new Intent(context, DocumentWeightActivity.class);
  //       else
-          i = new Intent(context, DocumentItemsActivity.class);
+          i = new Intent((Context) this, DocumentItemsActivity.class);
 
         i.putExtra("number", currentNumber.getText().toString());
         i.putExtra("document_type", DocumentType);
