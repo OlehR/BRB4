@@ -2,8 +2,13 @@ package ua.uz.vopak.brb4.lib.helpers;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.os.VibrationEffect;
@@ -11,19 +16,25 @@ import android.os.Vibrator;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -32,6 +43,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+
 
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 
@@ -188,8 +201,9 @@ public class Utils {
             return false;
         }
 
-        public  void GetFile( String link,String            fileName) throws Throwable
+        public InputStream GetHTTP( String link)  throws Throwable
         {
+
             URL url  = new URL( link );
             HttpURLConnection http = (HttpURLConnection)url.openConnection();
             Map< String, List< String >> header = http.getHeaderFields();
@@ -199,7 +213,18 @@ public class Utils {
                 http   = (HttpURLConnection)url.openConnection();
                 header = http.getHeaderFields();
             }
+
             InputStream  input  = http.getInputStream();
+            return input;
+        }
+
+        public  void GetFile( String link,String  fileName) throws Throwable
+        {
+            File file = new File(fileName);
+            if (file.exists())
+                file.delete();
+
+            InputStream  input  =GetHTTP(link);
             byte[]       buffer = new byte[4096];
             int          n      = -1;
             OutputStream output = new FileOutputStream( new File( fileName ));
@@ -208,6 +233,129 @@ public class Utils {
             }
             output.close();
         }
+
+    public String isToString(InputStream is) throws Throwable {
+        if(is == null)
+            return null;
+        final int bufferSize = 4096;
+        final char[] buffer = new char[bufferSize];
+        final StringBuilder out = new StringBuilder();
+        Reader in = new InputStreamReader(is, "UTF-8");
+        int          n      = -1;
+        while ((n = in.read(buffer)) != -1) {
+            out.append(buffer, 0, n);
+        }
+        return out.toString();
+    }
+
+    public void InstallAPK(File file,String ApplicationId) {
+        try {
+            if (file.exists()) {
+                String[] fileNameArray = file.getName().split(Pattern.quote("."));
+                if (fileNameArray[fileNameArray.length - 1].equals("apk")) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                       // Uri downloaded_apk = getFileUri(vApplicationContext, file);
+
+                        Uri downloaded_apk = FileProvider.getUriForFile(vApplicationContext, ApplicationId + ".provider", file);
+                        Intent intent = new Intent(Intent.ACTION_VIEW).setDataAndType(downloaded_apk,
+                                "application/vnd.android.package-archive");
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        vApplicationContext.startActivity(intent);
+                    } else {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setDataAndType(Uri.fromFile(file),
+                                "application/vnd.android.package-archive");
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        vApplicationContext.startActivity(intent);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static String readFile(String path, Charset encoding)
+            throws IOException
+    {
+        byte[] encoded = new byte[0];
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            encoded = Files.readAllBytes(Paths.get(path));
+        }
+        return new String(encoded, encoding);
+    }
+
+
+    public String FileToString(String pFileName)
+    {
+        StringBuffer fileContent = new StringBuffer("");
+        File file = new File(pFileName);
+        if (!file.exists())
+            return null;
+        try(FileInputStream fis = new FileInputStream(file)) {
+
+            byte[] buffer = new byte[4096];
+            int n = -1;
+            while ((n = fis.read(buffer)) != -1) {
+                fileContent.append(new String(buffer, 0, n));
+            }
+        }
+        catch(IOException ex){
+            return null;
+        }
+        return fileContent.toString();
+    }
+/*
+        void InstallAPK()
+        {
+            //get destination to update file and set Uri
+            //TODO: First I wanted to store my update .apk file on internal storage for my app but apparently android does not allow you to open and install
+            //aplication with existing package from there. So for me, alternative solution is Download directory in external storage. If there is better
+            //solution, please inform us in comment
+            String destination = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/";
+            String fileName = "AppName.apk";
+            destination += fileName;
+            final Uri uri = Uri.parse("file://" + destination);
+
+            //Delete update file if exists
+            File file = new File(destination);
+            if (file.exists())
+                //file.delete() - test this, I think sometimes it doesnt work
+                file.delete();
+
+            //get url of app on server
+            String url = Main.this.getString(R.string.update_app_url);
+
+            //set downloadmanager
+            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+            request.setDescription(Main.this.getString(R.string.notification_description));
+            request.setTitle(Main.this.getString(R.string.app_name));
+
+            //set destination
+            request.setDestinationUri(uri);
+
+            // get download service and enqueue file
+            final DownloadManager manager = (DownloadManager) vApplicationContext.getSystemService(Context.DOWNLOAD_SERVICE);
+            final long downloadId = manager.enqueue(request);
+
+            //set BroadcastReceiver to install app when .apk is downloaded
+            BroadcastReceiver onComplete = new BroadcastReceiver() {
+                public void onReceive(Context ctxt, Intent intent) {
+                    Intent install = new Intent(Intent.ACTION_VIEW);
+                    install.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    install.setDataAndType(uri,
+                            manager.getMimeTypeForDownloadedFile(downloadId));
+                    vApplicationContext.startActivity(install);
+
+                    vApplicationContext.unregisterReceiver(this);
+                    vApplicationContext.finish();
+                }
+            };
+            //register receiver for when .apk download is compete
+            vApplicationContext.registerReceiver(onComplete, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
+
+        }*/
 
 
 

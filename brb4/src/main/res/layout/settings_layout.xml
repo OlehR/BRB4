@@ -135,7 +135,23 @@
             android:onClick="@{(view) -> SM.OnClickLoadDoc()}"
             android:text="З. Документи"/>
     </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:weightSum="2">
 
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:layout_weight="1"
+                android:onClick="@{(view) -> SM.OnClickUpdate()}"
+                android:text="Нова версія" />
+
+
+        </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

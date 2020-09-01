@@ -33,6 +33,7 @@ public abstract class AbstractConfig {
 
     //Номер сканування цінників за день
     public int LineNumber=0;
+    public  Utils cUtils;
 
     public AbstractConfig(){};
     public AbstractConfig(String url){
@@ -40,7 +41,7 @@ public abstract class AbstractConfig {
     }
     public void Init(Context pContext) {
         context = pContext;
-        Utils cUtils=new Utils(context);
+        cUtils=new Utils(context);
         SN= cUtils.GetSN();
         //Визначаємо тип Сканера
         TypeScaner =cUtils.GetTypeScaner();

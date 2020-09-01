@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ua.uz.vopak.brb4.brb4">
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera"/>
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
@@ -11,6 +11,7 @@
     <uses-permission android:name="android.Manifest.permission.READ_PRIVILEGED_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!--
      <uses-permission android:name="com.symbol.emdk.permission.EMDK" />
@@ -19,6 +20,7 @@
         android:name="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
         android:protectionLevel="normal" />
 -->
+
 
 
     <application
@@ -79,6 +81,7 @@
                         <action android:name="device.scanner.EVENT" />
                     </intent-filter>
         </receiver>
+
 <!-- <action android:name="device.common.USERMSG" />
  android:permission="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
 android:priority="0"
@@ -91,25 +94,14 @@ android:priority="0"
                 </receiver>
         -->
 
-                <!--        <receiver
-                            android:name=".RevisionScannerActivity$ScanResultReceiver"
-                            android:enabled="true"
-                            android:permission="device.sdk.sample.scanner.permission.SCANNER_RESULT_RECEIVER"
-                            android:priority="0" >
-                            <intent-filter>
-                                <action android:name="device.common.USERMSG" />
-                                <action android:name="device.scanner.EVENT" />
-                            </intent-filter>
-                        </receiver>
-                <receiver
-                    android:name=".PriceCheckerActivity$ReceiverBarCode"
-                    android:enabled="true"
-                    android:priority="0" >
-                    <intent-filter>
-                        <action android:name="BRB4.BARCODE" />
-                    </intent-filter>
-                </receiver>-->
-
-
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
             </application>
         </manifest>

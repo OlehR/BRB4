@@ -1,13 +1,20 @@
 package ua.uz.vopak.brb4.brb4.models;
 
+import android.os.Environment;
+
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
+
+import java.io.File;
+
+import ua.uz.vopak.brb4.brb4.BuildConfig;
 import ua.uz.vopak.brb4.brb4.Connector.SE.Connector;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class SetingModel {
     GlobalConfig config = GlobalConfig.instance();
@@ -47,7 +54,6 @@ public class SetingModel {
     }
 
     public void OnClickLoad() {
-
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
@@ -60,14 +66,52 @@ public class SetingModel {
 
     public void OnClickLoadDoc() {
 
-            new AsyncHelper<Void>(new IAsyncHelper() {
-                @Override
-                public Void Invoke() {
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                config.Worker.LoadData(0, null, Progress, true);
+                return null;
+            }
+        }).execute();
+    }
 
-                    config.Worker.LoadData(0,null,Progress,true);
-                    return null;
+    public void OnClickUpdate() {
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                try {
+                    Progress.set(0);
+                    String FileNameVer = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/"+"Ver.txt";
+                    config.cUtils.GetFile("https://github.com/OlehR/BRB4/raw/master/apk/test/Ver.txt", FileNameVer );
+                    String Ver= config.cUtils.FileToString(FileNameVer);
+                    Progress.set(10);
+                    if(Ver!=null&&Ver.length()>0) {
+                        int ver=0;
+                        try {
+                            ver= Integer.parseInt(Ver);
+                        } catch (NumberFormatException e) {
+
+                        }
+                        if(ver>BuildConfig.VERSION_CODE) {
+                            String FileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + "brb4.apk";
+                            config.cUtils.GetFile("https://github.com/OlehR/BRB4/raw/master/apk/test/brb4.apk", FileName);
+                            Progress.set(60);
+                            File file = new File(FileName);
+                            config.cUtils.InstallAPK(file, BuildConfig.APPLICATION_ID);
+                        }
+                    }
                 }
-            }).execute();
+                catch (Exception e){}
+                catch (Throwable throwable) {
+                    throwable.printStackTrace();
+                }
+                Progress.set(100);
+                return null;
+            }
+        }).execute();
+
 
     }
+
+
 }
