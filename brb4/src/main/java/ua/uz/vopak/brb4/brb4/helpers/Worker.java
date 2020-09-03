@@ -1,54 +1,25 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import android.app.Activity;
-import android.content.Context;
-import android.os.Build;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 
 import androidx.databinding.ObservableInt;
 
-import com.google.gson.Gson;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import ua.uz.vopak.brb4.brb4.Connector.SE.Connector;
-import ua.uz.vopak.brb4.brb4.DocumentWeightActivity;
-import ua.uz.vopak.brb4.brb4.MainActivity;
-import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
-import ua.uz.vopak.brb4.brb4.DocumentActivity;
-import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
-import ua.uz.vopak.brb4.brb4.DocumentScannerActivity;
+import ua.uz.vopak.brb4.brb4.Connector.Connector;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
-import ua.uz.vopak.brb4.lib.enums.eCompany;
-import ua.uz.vopak.brb4.lib.enums.ePrinterError;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
-import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
+import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
-import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
-import ua.uz.vopak.brb4.lib.helpers.BluetoothPrinter;
-import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
-import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
-import ua.uz.vopak.brb4.lib.models.LabelInfo;
-import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.models.Result;
 
@@ -58,7 +29,7 @@ public class Worker {
 
     public GetDataHTTP Http = new GetDataHTTP();
     SQLiteAdapter mDbHelper  = config.GetSQLiteAdapter();
-    public Connector c = new Connector();
+    //public Connector c = Connector.instance();
 
     public Worker() {
     }
@@ -69,10 +40,10 @@ public class Worker {
         {
             case SevenEleven:
                 Setting =  new  DocSetting[4];
-                Setting[0] = new DocSetting(2,"Мініревізія", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0,false);
-                Setting[1] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false);
-                Setting[2] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true);
-                Setting[3] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false);
+                Setting[0] = new DocSetting(2,"Мініревізія", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0,false,true,false);
+                Setting[1] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false,true,true);
+                Setting[2] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true);
+                Setting[3] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true);
 
                 // Setting[3] = new DocSetting(9,"Прихід ntcn",eTypeControlDoc.Control,false,true,false,true,true,1,4,3);
 
@@ -81,7 +52,7 @@ public class Worker {
             case VopakPSU:
                 Setting =  new  DocSetting[5];
                 Setting[0] = new DocSetting(1,"Ревізія");
-                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,3,3,true);
+                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,3,3,true,true,true);
                 Setting[2] = new DocSetting(3,"Переміщення");
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");
@@ -108,13 +79,17 @@ public class Worker {
         config.DocsSetting=GenSettingDocs(config.Company);
 
 
+
         config.ApiUrl=GetConfigPair("ApiUrl");
         if(config.ApiUrl==null || config.ApiUrl.isEmpty() )
                 config.ApiUrl=(config.Company==eCompany.SevenEleven? "http://176.241.128.13/RetailShop/hs/TSD/":"http://znp.vopak.local/api/api_v1_utf8.php");
         config.ApiURLadd=GetConfigPair("ApiUrladd");
 
         config.Login = GetConfigPair("Login");
-        config.CodeWarehouse = GetConfigPair("Warehouse");
+        try {
+            config.CodeWarehouse = Integer.parseInt(GetConfigPair("Warehouse"));
+        }
+        catch (Exception e){config.CodeWarehouse=0;}
 
         DateFormat df = new SimpleDateFormat("yyyyMMdd");
         Date today = Calendar.getInstance().getTime();
@@ -135,56 +110,14 @@ public class Worker {
     //Робота з документами.
     // Завантаження документів в ТЗД (HTTP)
     public Boolean LoadData(int pTypeDoc,String  pNumberDoc,ObservableInt pProgress,boolean pIsClearDoc) {
+        Connector c = Connector.instance();
         if(config.Company==eCompany.SevenEleven) {
-            if(pTypeDoc==-1)
-                c.LoadGuidData((pTypeDoc==-1),pProgress);
+            if (pTypeDoc == -1)
+                c.LoadGuidData((pTypeDoc == -1), pProgress);
+        }
             return c.LoadDocsData(pTypeDoc, pNumberDoc, pProgress, pIsClearDoc);
-        }
-        else
-          return  LoadDocsData(pTypeDoc,pProgress);
     }
 
-    //Завантаження документів в ТЗД (HTTP)
-    //PSU Треба перенести в окремий конектор
-    public Boolean LoadDocsData(int pTypeDoc, ObservableInt pProgress) {
-        if(pProgress!=null)
-            pProgress.set(5);
-
-        String data = config.GetApiJson(150, "\"TypeDoc\":" + pTypeDoc);
-        String result = Http.HTTPRequest(config.ApiUrl, data);
-        Log.d(TAG, "Load=>"+result.length());
-        if(Http.HttpState!= eStateHTTP.HTTP_OK) {
-            if(pProgress!=null)
-                pProgress.set(0);
-            return false;
-        }
-        if(pProgress!=null)
-            pProgress.set(45);
-        return mDbHelper.LoadDataDoc(result,pProgress);
-    }
-
-    //Вивантаження документів з ТЗД (HTTP)
-    public Result SyncDocsData(int parTypeDoc, String NumberDoc, List<WaresItemModel> Wares) {
-        List<String> wares = new ArrayList<String>();
-        for (WaresItemModel ware : Wares) {
-            String war = "";
-            war += "[" + ware.GetOrderDoc() + ",";
-            war += ware.GetCodeWares() + ",";
-            war += ware.GetInputQuantityZero() + "]";
-            wares.add(war);
-        }
-        String data = config.GetApiJson(153, "\"TypeDoc\":" + parTypeDoc + ",\"NumberDoc\":\"" + NumberDoc + "\",\"Wares\":[" + TextUtils.join(",", wares) + "]");
-        try {
-            String result = Http.HTTPRequest(config.ApiUrl, data);
-            Gson gson = new Gson();
-            Result res= gson.fromJson(result, Result.class);
-            return  res;
-        }
-        catch(Exception e)
-        {
-            return new Result(-1,e.getMessage());
-        }
-    }
 
     // Отримати список документів з БД
     public List<DocumentModel> LoadListDoc( int parTypeDoc, String parBarCode,String pExtInfo ) {
@@ -211,11 +144,19 @@ public class Worker {
     }
     // Зміна стану документа і відправляємо в 1С
     public Result UpdateDocState(int pState, int pTypeDoc, String pNumberDoc,Date pDateOutInvoice,String pNumberOutInvoice, int pIsClose) {
+        DocSetting DS= config.GetDocSetting(pTypeDoc);
+        if(DS!=null && !DS.IsmultipleSave)
+        {
+           int State= mDbHelper.GetStateDoc(pTypeDoc,pNumberDoc);
+           if(State>=1)
+               return new Result(-2,"Даний документ не можна повторно зберігати!");
+        }
+
+        Connector c = Connector.instance();
         mDbHelper.UpdateDocState(pState, pTypeDoc, pNumberDoc);
-        List<WaresItemModel> wares = mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, 2, eTypeOrder.NoOrder);
-        if(config.Company==eCompany.SevenEleven) //TMP!!! Треба буде зробити полюдськи
-                return c.SyncDocsData(pTypeDoc, pNumberDoc, wares,pDateOutInvoice,pNumberOutInvoice,pIsClose);
-            else return SyncDocsData(pTypeDoc, pNumberDoc, wares);
+        List<WaresItemModel> wares = mDbHelper.GetDocWares(pTypeDoc, pNumberDoc,( DS==null || DS.IsSaveOnlyScan?2:1), eTypeOrder.Scan);
+        return c.SyncDocsData(pTypeDoc, pNumberDoc, wares,pDateOutInvoice,pNumberOutInvoice,pIsClose);
+
     }
 
     public DocModel GetDocOut(int pTypeDoc, String pNumberDoc){

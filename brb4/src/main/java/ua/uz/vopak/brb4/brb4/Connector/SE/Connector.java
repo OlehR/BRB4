@@ -19,29 +19,27 @@ import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.models.Result;
 
-public class Connector {
+public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     protected static final String TAG = "BRB4/Connector";
-    GlobalConfig config = GlobalConfig.instance();
-    SQLiteAdapter mDbHelper  = config.GetSQLiteAdapter();
-    SQLiteDatabase db=mDbHelper.GetDB();
-    GetDataHTTP Http = new GetDataHTTP();
+
+
     //Завантаження довідників.
-    public void LoadGuidData(boolean IsFull, ObservableInt pProgress)    {
+    public void LoadGuidData(boolean IsFull, ObservableInt pProgress) {
         Log.d(TAG, "Start");
         pProgress.set(5);
-        String res = Http.HTTPRequest(config.ApiUrl+"nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
+        String res = Http.HTTPRequest(config.ApiUrl + "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
         if (Http.HttpState == eStateHTTP.HTTP_OK) {
-            Log.d(TAG, "LoadData=>"+res.length());
+            Log.d(TAG, "LoadData=>" + res.length());
             pProgress.set(40);
-            if(IsFull)
-            {
-                String sql="DELETE FROM Wares; DELETE FROM ADDITION_UNIT; DELETE FROM  BAR_CODE;DELETE FROM UNIT_DIMENSION;";
+            if (IsFull) {
+                String sql = "DELETE FROM Wares; DELETE FROM ADDITION_UNIT; DELETE FROM  BAR_CODE;DELETE FROM UNIT_DIMENSION;";
                 db.execSQL(sql.trim());
             }
             Log.d(TAG, "DELETE");
@@ -60,22 +58,21 @@ public class Connector {
             Log.d(TAG, "Barcodes");
             pProgress.set(90);
             SaveUnitDimension(data.Dimentions);
-        }
-        else
-            Log.d(TAG,  Http.HttpState.name());
+        } else
+            Log.d(TAG, Http.HttpState.name());
 
-        res = Http.HTTPRequest(config.ApiURLadd+"reasons", null, "application/json;charset=utf-8", config.Login, config.Password);
+        res = Http.HTTPRequest(config.ApiURLadd + "reasons", null, "application/json;charset=utf-8", config.Login, config.Password);
         if (Http.HttpState == eStateHTTP.HTTP_OK) {
             pProgress.set(95);
-            List<Reason> Reasons = new Gson().fromJson(res, new TypeToken<List<Reason>>(){}.getType());
+            List<Reason> Reasons = new Gson().fromJson(res, new TypeToken<List<Reason>>() {
+            }.getType());
             SaveReason(Reasons);
         }
         pProgress.set(100);
         Log.d(TAG, "End");
     }
 
-    boolean SaveReason(List<Reason> pReasons)
-    {
+    boolean SaveReason(List<Reason> pReasons) {
         db.beginTransaction();
         try {
             ContentValues values = new ContentValues();
@@ -85,20 +82,17 @@ public class Connector {
                 db.replace("Reason", null, values);
             }
             db.setTransactionSuccessful();
-        }
-        catch (Exception ex)
-        {
-            Log.e(TAG,"SaveReason=>"+ ex.toString());
-        }
-        finally {
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveReason=>" + ex.toString());
+        } finally {
             db.endTransaction();
         }
         return true;
 
     }
 
-    boolean SaveWares(Nomenclature[] pW)    {
-        int i=0;
+    boolean SaveWares(Nomenclature[] pW) {
+        int i = 0;
         db.beginTransaction();
         try {
             i++;
@@ -113,27 +107,24 @@ public class Connector {
                 values.put("CODE_GROUP", wares.CODE_GROUP);
                 values.put("VAT_OPERATION", wares.VAT_OPERATION);
                 db.replace("Wares", null, values);
-                if(i>=1000) {
-                i=0;
+                if (i >= 1000) {
+                    i = 0;
                     db.setTransactionSuccessful();
                     db.endTransaction();
                     db.beginTransaction();
                 }
             }
             db.setTransactionSuccessful();
-        }
-        catch (Exception ex)
-        {
-            Log.e(TAG,"SaveWares=>"+ ex.toString());
-        }
-        finally {
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveWares=>" + ex.toString());
+        } finally {
             db.endTransaction();
         }
         return true;
     }
 
-    boolean SaveAdditionUnit(Units[] pUnits)    {
-        int i=0;
+    boolean SaveAdditionUnit(Units[] pUnits) {
+        int i = 0;
         db.beginTransaction();
         try {
             i++;
@@ -143,27 +134,24 @@ public class Connector {
                 values.put("CODE_UNIT", Units.CODE_UNIT);
                 values.put("COEFFICIENT", Units.COEF_WARES);
                 db.replace("ADDITION_UNIT", null, values);
-                if(i>=1000) {
-                    i=0;
+                if (i >= 1000) {
+                    i = 0;
                     db.setTransactionSuccessful();
                     db.endTransaction();
                     db.beginTransaction();
                 }
             }
             db.setTransactionSuccessful();
-        }
-        catch (Exception ex)
-        {
-            Log.e(TAG,"SaveAdditionUnit=>"+ ex.toString());
-        }
-        finally {
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveAdditionUnit=>" + ex.toString());
+        } finally {
             db.endTransaction();
         }
         return true;
     }
 
-    boolean SaveBarCode(Barcode[] pBarCode)    {
-        int i=0;
+    boolean SaveBarCode(Barcode[] pBarCode) {
+        int i = 0;
         db.beginTransaction();
         try {
             i++;
@@ -173,27 +161,24 @@ public class Connector {
                 values.put("CODE_UNIT", BarCode.CODE_UNIT);
                 values.put("BAR_CODE", BarCode.BAR_CODE);
                 db.replace("BAR_CODE", null, values);
-                if(i>=1000) {
-                    i=0;
+                if (i >= 1000) {
+                    i = 0;
                     db.setTransactionSuccessful();
                     db.endTransaction();
                     db.beginTransaction();
                 }
             }
             db.setTransactionSuccessful();
-        }
-        catch (Exception ex)
-        {
-            Log.e(TAG,"SaveBarCode=>"+ ex.toString());
-        }
-        finally {
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveBarCode=>" + ex.toString());
+        } finally {
             db.endTransaction();
         }
         return true;
     }
 
-    boolean SaveUnitDimension(UnitDimension[] pUD)  {
-         db.beginTransaction();
+    boolean SaveUnitDimension(UnitDimension[] pUD) {
+        db.beginTransaction();
         try {
             ContentValues values = new ContentValues();
             for (UnitDimension UD : pUD) {
@@ -205,12 +190,9 @@ public class Connector {
                 db.replace("UNIT_DIMENSION", null, values);
             }
             db.setTransactionSuccessful();
-        }
-        catch (Exception ex)
-        {
-            Log.e(TAG,"SaveUnitDimension=>"+ ex.toString());
-        }
-        finally {
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveUnitDimension=>" + ex.toString());
+        } finally {
             db.endTransaction();
         }
         return true;
@@ -218,26 +200,23 @@ public class Connector {
 
     //Робота з документами.
     //Завантаження документів в ТЗД (HTTP)
-    public Boolean LoadDocsData(int pTypeDoc,String  pNumberDoc,ObservableInt pProgress,boolean pIsClear) {
-
-
-
-        if(pProgress!=null)
+    public Boolean LoadDocsData(int pTypeDoc, String pNumberDoc, ObservableInt pProgress, boolean pIsClear) {
+        if (pProgress != null)
             pProgress.set(5);
         String res;
         try {
-            if (pTypeDoc == 5) {
-                res = Http.HTTPRequest(config.ApiURLadd + "documents\\" + pNumberDoc, null, "application/json;charset=utf-8", config.Login, config.Password);
+            if (pTypeDoc == 5|| pTypeDoc == 6 ) {
+                res = Http.HTTPRequest(config.ApiURLadd + "documents"+(pTypeDoc == 5?"\\" + pNumberDoc: "?StoreSetting="+config.CodeWarehouse ), null, "application/json;charset=utf-8", config.Login, config.Password);
             } else
-                res = Http.HTTPRequest(config.ApiUrl + "documents", null, "application/json;charset=utf-8", config.Login, config.Password);
+                res = Http.HTTPRequest(config.ApiUrl + "documents" , null, "application/json;charset=utf-8", config.Login, config.Password);
             if (Http.HttpState == eStateHTTP.HTTP_OK) {
                 if (pProgress != null)
                     pProgress.set(40);
                 InputDocs data = new Gson().fromJson(res, InputDocs.class);
                 if (pIsClear)
-                    db.execSQL("Delete from DOC;Delete from DOC_WARES_sample;Delete from DOC_WARES".trim());
+                    db.execSQL("Delete from DOC;Delete from DOC_WARES_sample;Delete from DOC_WARES");
                 else
-                    db.execSQL("update doc set state=-1 where type_doc<>5"+(pTypeDoc>0?" and type_doc="+pTypeDoc:""));
+                    db.execSQL("update doc set state=-1 where type_doc not in (5,6)" + (pTypeDoc > 0 ? " and type_doc=" + pTypeDoc : ""));
 
                 for (Doc v : data.Doc) {
                     //v.TypeDoc = ConvertTypeDoc(v.TypeDoc);
@@ -252,40 +231,38 @@ public class Connector {
                 return true;
             }
 
-        }
-        catch (Exception ex) {
-            Log.e(TAG, "LoadDocsData=>"+ex.getMessage());
+        } catch (Exception ex) {
+            Log.e(TAG, "LoadDocsData=>" + ex.getMessage());
         }
         return false;
     }
 
     //Вивантаження документів з ТЗД (HTTP)
-    public Result SyncDocsData(int pTypeDoc, String pNumberDoc, List<WaresItemModel> pWares,Date pDateOutInvoice,String pNumberOutInvoice, int pIsClose)
-    {
+    public Result SyncDocsData(int pTypeDoc, String pNumberDoc, List<WaresItemModel> pWares, Date pDateOutInvoice, String pNumberOutInvoice, int pIsClose) {
         Gson gson = new Gson();
-        SimpleDateFormat formatterDT= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-        SimpleDateFormat formatterD= new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatterDT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        SimpleDateFormat formatterD = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date(System.currentTimeMillis());
 
         ArrayList<OutputDoc> OD = new ArrayList<>();
-        OutputDoc el = new  OutputDoc(pTypeDoc,pNumberDoc,formatterDT.format(date),formatterD.format(pDateOutInvoice),pNumberOutInvoice,pIsClose);
+        OutputDoc el = new OutputDoc(pTypeDoc, pNumberDoc, formatterDT.format(date), formatterD.format(pDateOutInvoice), pNumberOutInvoice, pIsClose);
 
-        for (WaresItemModel W : pWares ) {
-            OutputDocWares w = new OutputDocWares(W.CodeWares, W.InputQuantity,W.CodeReason);
+        for (WaresItemModel W : pWares) {
+            OutputDocWares w = new OutputDocWares(W.CodeWares, W.InputQuantity, W.CodeReason);
             el.DocWares.add(w);
         }
         OD.add(el);
         String json = gson.toJson(OD);
 
-        String res = Http.HTTPRequest( (pTypeDoc==5? config.ApiURLadd :config.ApiUrl)+"documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
+        String res = Http.HTTPRequest((pTypeDoc == 5 || pTypeDoc == 6  ? config.ApiURLadd : config.ApiUrl) + "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
         if (Http.HttpState == eStateHTTP.HTTP_OK) {
             return new Result();
         }
-        return new Result(-1,Http.HttpState.toString());
+        return new Result(-1, Http.HttpState.toString());
     }
 
-    boolean SaveDocWaresSample(DocWaresSample []  pDWS)    {
-        int i=0;
+    boolean SaveDocWaresSample(DocWaresSample[] pDWS) {
+        int i = 0;
         db.beginTransaction();
         try {
             i++;
@@ -303,23 +280,44 @@ public class Connector {
                 result = db.replace("DOC_WARES_sample", null, values);
 
 
-                if(i>=1000) {
-                    i=0;
+                if (i >= 1000) {
+                    i = 0;
                     db.setTransactionSuccessful();
                     db.endTransaction();
                     db.beginTransaction();
                 }
             }
             db.setTransactionSuccessful();
-        }
-        catch (Exception ex)
-        {
-            Log.e(TAG,"SaveDOC_WARES_sample=>"+ ex.toString());
-        }
-        finally {
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveDOC_WARES_sample=>" + ex.toString());
+        } finally {
             db.endTransaction();
         }
         return true;
+    }
+
+
+    //Завантаження Списку складів (HTTP)
+    public Warehouse[] LoadWarehouse() {
+
+        String res;
+        try {
+
+            res = Http.HTTPRequest(config.ApiURLadd + "StoreSettings", null, "application/json;charset=utf-8", config.Login, config.Password);
+
+            if (Http.HttpState == eStateHTTP.HTTP_OK) {
+                InputWarehouse[] data = new Gson().fromJson(res, InputWarehouse[].class);
+                Warehouse [] WH = new Warehouse[data.length];
+                for (int i = 0; i <WH.length ; i++) {
+                    WH[i]=data[i].GetWarehouse();
+                }
+                return WH;
+            }
+
+        } catch (Exception ex) {
+            Log.e(TAG, "LoadWarehouse=>" + ex.getMessage());
+        }
+        return null;
     }
 
 }
@@ -363,5 +361,18 @@ class OutputDoc
  class InputDocs {
     Doc[]  Doc;
     DocWaresSample [] DocWaresSample;
+}
+
+ class InputWarehouse {
+    public int Code;
+    public String StoreCode; //Number
+    public String Name; //Url
+    public String Unit; //Name
+    public String InternalIP;
+    public String ExternalIP;
+    Warehouse GetWarehouse()
+    {
+        return new Warehouse(Code,StoreCode,Unit,Name,InternalIP,ExternalIP);
+    }
 }
 

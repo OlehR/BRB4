@@ -31,7 +31,7 @@ public class BluetoothPrinter {
 
     public TypeLanguagePrinter GetTypeLanguagePrinter()    {
         //Для вилка бо не прошитий Argox потрібними шрифтами.
-        if(varTypePrinter== eTypePrinter.Argox_3230 && Integer.parseInt(config.CodeWarehouse)==89)
+        if(varTypePrinter== eTypePrinter.Argox_3230 && config.CodeWarehouse==89)
             return  TypeLanguagePrinter.ZPL; //TypeLanguagePrinter.ZPL;
         if(varTypePrinter== eTypePrinter.Argox_3230)
             return  TypeLanguagePrinter.ZPL_ARGOX; //TypeLanguagePrinter.ZPL;

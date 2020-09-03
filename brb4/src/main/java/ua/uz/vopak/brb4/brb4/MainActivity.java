@@ -35,7 +35,6 @@ import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
-import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener, ScanCallBack {
     MainLayoutBinding binding;
@@ -54,13 +53,14 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this.getApplicationContext();
+        getSupportActionBar().setTitle("BRB "+BuildConfig.VERSION_NAME);
 
         //ініціалізація класа при старті.
         Utils.instance(context);
         config.Init(context);
 
         setContentView(R.layout.main_layout);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         binding = DataBindingUtil.setContentView(this, R.layout.main_layout);
         binding.setMM (MM);
 

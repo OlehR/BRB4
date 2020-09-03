@@ -37,39 +37,31 @@
         android:layout_marginTop="5dp"
         android:text="SN: " />
         </LinearLayout>
-    <Spinner
-            android:layout_height="40dp"
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:enabled ="@{SM.IsAdmin}"
-            android:entries="@{SM.ListCompany}"
-            android:selectedItemPosition="@={SM.ListCompanyIdx}"
-            />
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:orientation="horizontal"
-        android:weightSum="2">
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textSize="9pt"
-        android:enabled ="@{SM.IsAdmin}"
-        android:onClick="@{(view) -> SM.OnClickGen()}"
-        android:text="Згенерувати" />
-
-     <Button
+        android:weightSum="5">
+        <Spinner
+            android:layout_height="40dp"
+            android:layout_weight="2"
+            android:layout_width="match_parent"
+            android:enabled ="@{SM.IsAdmin}"
+            android:entries="@{SM.ListCompany}"
+            android:selectedItemPosition="@={SM.ListCompanyIdx}"
+            />
+        <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="9pt"
+            android:layout_weight="3"
+            android:textSize="8pt"
             android:enabled ="@{SM.IsAdmin}"
-            android:onClick="@{(view) -> SM.OnClickSave()}"
-            android:text="Зберегти" />
+            android:onClick="@{(view) -> SM.OnClickGen()}"
+            android:text="Згенерувати" />
+
 
     </LinearLayout>
 
@@ -95,19 +87,18 @@
      <Spinner
         android:id="@+id/wares"
         android:layout_width="match_parent"
+        android:entries="@{SM.ListWarehouse}"
+        android:selectedItemPosition="@={SM.ListWarehouseIdx}"
+
         android:layout_height="40dp"
         android:layout_marginTop="10dp"/>
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="10pt"
-        android:text="Підключення принтера" />
 
     <Spinner
         android:id="@+id/connectionPrinterType"
         android:layout_width="match_parent"
+        android:entries="@{SM.ListPrinterType}"
+        android:selectedItemPosition="@={SM.ListPrinterTypeIdx}"
         android:layout_height="40dp"
         android:layout_marginTop="10dp"/>
 
@@ -141,11 +132,19 @@
             android:layout_marginTop="5dp"
             android:orientation="horizontal"
             android:weightSum="2">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="9pt"
+                android:onClick="@{(view) -> SM.OnClickSave()}"
+                android:text="Зберегти" />
+
+            <!--  android:enabled ="@{SM.IsAdmin}"-->
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
                 android:layout_weight="1"
                 android:onClick="@{(view) -> SM.OnClickUpdate()}"
                 android:text="Нова версія" />

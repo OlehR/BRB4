@@ -22,6 +22,7 @@ import java.util.Map;
 import ua.uz.vopak.brb4.brb4.Connector.SE.Connector;
 import ua.uz.vopak.brb4.brb4.databinding.SettingsLayoutBinding;
 import ua.uz.vopak.brb4.brb4.models.SetingModel;
+import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
@@ -34,11 +35,12 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 public class SettingsActivity extends Activity implements View.OnClickListener {
     //Button loadDocsData;
     TextView SN;
-    Spinner connectionPrinterType;
-    Spinner warList;
-    //CheckBox yellowpriceAutoprint;
-    public Map<String, String> printerConnectionMap = new HashMap<String, String>();
-    public ArrayAdapter<String> printerConnectionAdapter;
+    //Spinner connectionPrinterType;
+
+    ua.uz.vopak.brb4.brb4.Connector.Connector con = ua.uz.vopak.brb4.brb4.Connector.Connector.instance();
+
+   // public Map<String, String> printerConnectionMap = new HashMap<String, String>();
+   // public ArrayAdapter<String> printerConnectionAdapter;
     GlobalConfig config = GlobalConfig.instance();
     Context context;
     SettingsLayoutBinding binding;
@@ -51,8 +53,12 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         context = this;
 
         binding = DataBindingUtil.setContentView(this, R.layout.settings_layout);
-        binding.setSM (SM);
+        binding.setSM(SM);
 
+
+
+        BildWarehouse();
+/*
         //new AsyncWaresHelper(new WareListHelper(this)).execute();
 
         new AsyncHelper<WareListHelper>(
@@ -65,7 +71,6 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                 new IPostResult<WareListHelper>() {
                     @Override
                     public void Invoke(final WareListHelper wH) {
-                        warList = wH.activity.findViewById(R.id.wares);
 
                         warList.setAdapter(wH.adapter);
                         warList.setPrompt("Склад");
@@ -94,22 +99,22 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                         });
                     }
                 }).execute();
-
+*/
         SN = findViewById(R.id.SN);
         SN.setText("SN: " + config.SN);
         SN = findViewById(R.id.Ver);
         SN.setText("Ver: " + BuildConfig.VERSION_NAME);
         //SN = findViewById(R.id.ApiUrl);
         //SN.setText( config.ApiUrl);
-
+/*
         //loadDocsData = findViewById(R.id.LoadDocumentsData);
-       // loadDocsData.setOnClickListener(this);
+        // loadDocsData.setOnClickListener(this);
         connectionPrinterType = findViewById(R.id.connectionPrinterType);
         //yellowpriceAutoprint = findViewById(R.id.yellowAutoPrint);
 
         String[] printerConnectionPath = new String[eTypeUsePrinter.values().length];
-        for(eTypeUsePrinter el : eTypeUsePrinter.values()) {
-            printerConnectionPath[el.getAction()]=el.GetText();
+        for (eTypeUsePrinter el : eTypeUsePrinter.values()) {
+            printerConnectionPath[el.getAction()] = el.GetText();
             printerConnectionMap.put(el.GetText(), el.GetStrCode());
         }
 
@@ -142,39 +147,6 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
-        });
-
-/*
-        yellowpriceAutoprint.setChecked(config.yellowAutoPrint);
-
-
-        yellowpriceAutoprint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    new AsyncHelper<Void>(new IAsyncHelper() {
-                        @Override
-                        public Void Invoke() {
-                            config.yellowAutoPrint = true;
-                            config.Worker.AddConfigPair("yellowAutoPrint", "true");
-                            yellowpriceAutoprint.setChecked(config.yellowAutoPrint);
-                            return null;
-                        }
-                    }).execute();
-                } else {
-                    new AsyncHelper<Void>(new IAsyncHelper() {
-                        @Override
-                        public Void Invoke() {
-                            config.yellowAutoPrint = false;
-                            config.Worker.AddConfigPair("yellowAutoPrint", "false");
-                            yellowpriceAutoprint.setChecked(config.yellowAutoPrint);
-                            return null;
-                        }
-                    }).execute();
-                }
-
-            }
         });*/
     }
 
@@ -189,7 +161,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         if (event.getAction() == KeyEvent.ACTION_UP) {
             switch (keyCode) {
                 case "66"://Enter
-                    config.ApiUrl = SM.apiURL.get().trim().replace("\n","");
+                    config.ApiUrl = SM.apiURL.get().trim().replace("\n", "");
                     new AsyncHelper<Void>(new IAsyncHelper() {
                         @Override
                         public Void Invoke() {
@@ -203,5 +175,60 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
             }
         }
         return super.dispatchKeyEvent(event);
+    }
+
+    void BildWarehouse() {
+        SM.Progress.set(5);
+
+        new AsyncHelper<WareListHelper>(
+                new IAsyncHelper<Warehouse[]>() {
+                    @Override
+                    public Warehouse[] Invoke() {
+
+                        return con.LoadWarehouse();
+
+                    }
+                },
+                new IPostResult<Warehouse[]>() {
+                    @Override
+                    public void Invoke(final Warehouse[] wH) {
+
+                        SM.Warehouse=wH;
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                SM.Progress.set(75);
+                                SM.ListWarehouseIdx.set(0);
+                                SM.ListWarehouse.clear();
+                                for (int i = 0; i < wH.length; i++) {
+                                    SM.ListWarehouse.add(wH[i].Name);
+                                    if (wH[i].Code == config.CodeWarehouse)
+                                        SM.ListWarehouseIdx.set(i);
+                                }
+                                SM.Progress.set(100);
+                               /* warList.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                        config.CodeWarehouse = SM.Warehouse[SM.ListWarehouseIdx.get()].Code ;
+
+                                        //new AsyncConfigPairAdd(config.GetWorker()).execute("Warehouse", config.CodeWarehouse);
+                                        new AsyncHelper<Void>(new IAsyncHelper() {
+                                            @Override
+                                            public Void Invoke() {
+                                                config.Worker.AddConfigPair("Warehouse",Integer.toString(config.CodeWarehouse));
+                                                return null;
+                                            }
+                                        }).execute();
+                                    }
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> arg0) {
+                                    }
+                                });*/
+
+                            }});
+
+
+                    }
+                }).execute();
     }
 }

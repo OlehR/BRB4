@@ -23,12 +23,14 @@ public class DocSetting {
     public int DayBefore =2;
     public int DayAfter = 5;
     public boolean IsViewOut = false;
+    public boolean IsmultipleSave=true;
+    public boolean IsSaveOnlyScan=true;
     public DocSetting(int pTypeDoc,String pNameDoc)
     {
         TypeDoc=pTypeDoc;
         NameDoc=pNameDoc;
     }
-    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut)
+    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut,boolean pIsmultipleSave,boolean pIsSaveOnlyScan)
     {
         this(pTypeDoc, pNameDoc);
         TypeControlQuantity =pTypeControlQuantity;
@@ -41,6 +43,9 @@ public class DocSetting {
         DayBefore=pDayBefore;
         DayAfter=pDayAfter;
         IsViewOut=pIsViewOut;
+        IsmultipleSave=pIsmultipleSave;
+        IsSaveOnlyScan=pIsSaveOnlyScan;
+
 
     }
 
