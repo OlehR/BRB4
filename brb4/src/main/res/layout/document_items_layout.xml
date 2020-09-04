@@ -196,7 +196,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageAlert"
                     android:textSize="18dp"
-                    android:text="Зберегти"/>
+                    android:text="Збер"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -209,7 +209,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageAlert"
                     android:textSize="18dp"
-                    android:text="Сканувати"/>
+                    android:text="Скан"/>
 
                 <TextView
                     android:id="@+id/FilterKey"
@@ -225,7 +225,22 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageAlert"
                     android:textSize="18dp"
-                    android:text="Список"/>
+                    android:text="Спис"/>
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp"
+                    android:text=" F6-"/>
+
+                <TextView
+
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp"
+                    android:text="Док"/>
 
 
             </LinearLayout>
