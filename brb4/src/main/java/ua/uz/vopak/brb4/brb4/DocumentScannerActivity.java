@@ -404,11 +404,12 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
     private void saveDocumentItem(final Boolean isNullable,final boolean IsAdd) {
         inputCount.setText("");
-        if (WaresItem.InputQuantity > 0 || isNullable) {
+        if (WaresItem.InputQuantity > 0 || DocSetting.IsAddZero || isNullable) {
             loader.setVisibility(View.VISIBLE);
-            if (WaresItem.InputQuantity > 0)
+            if (WaresItem.InputQuantity > 0 | DocSetting.IsAddZero )
                 WaresItem.OrderDoc++;
 
+            //Занулюємо раніше введені кількості.
             if (isNullable)
                 for (WaresItemModel el : ListWares) {
                     if (el.CodeWares == WaresItem.CodeWares)
