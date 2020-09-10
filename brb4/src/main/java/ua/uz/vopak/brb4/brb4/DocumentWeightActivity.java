@@ -39,9 +39,13 @@ public class DocumentWeightActivity extends Activity  {
     List<WaresItemModel> Model;
     int position = 0;
     EditText searchField;
+    TextView IsOnlyOrderTB;
     Integer scanNN = 0;
     GlobalConfig config = GlobalConfig.instance();
     Activity context;
+    String strFilter="";
+
+    boolean IsOnlyOrder =true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,7 @@ public class DocumentWeightActivity extends Activity  {
 
         tl = findViewById(R.id.ItemsTable);
         searchField = findViewById(R.id.searchFild);
+        IsOnlyOrderTB= findViewById(R.id.f3NameText);
         searchField.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {}
@@ -66,11 +71,13 @@ public class DocumentWeightActivity extends Activity  {
 
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
-                filter(s.toString().toLowerCase());
+                strFilter=s.toString().toLowerCase().replace("\n","").trim();
+                if(s.toString().contains("\n"))
+                    searchField.setText("");
+                filter();
             }
         });
     }
-
 
     void GetDoc()
     {
@@ -90,15 +97,17 @@ public class DocumentWeightActivity extends Activity  {
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         String keyCode = String.valueOf(event.getKeyCode());
-/*
+
         if(keyCode.equals("133") && event.getAction() == KeyEvent.ACTION_UP){
-            syncData();
-        }*/
+         IsOnlyOrder=!IsOnlyOrder;
+         IsOnlyOrderTB.setText(IsOnlyOrder?"Всі":"Замовлені");
+         filter();
+        }
 
         return super.dispatchKeyEvent(event);
     }
 
-    public void RenderTableIncome(final List<WaresItemModel> model) {
+    public void renderTable(final List<WaresItemModel> model) {
         final DocumentWeightActivity context = this;
         Model = model;
         scanNN=0;
@@ -139,11 +148,12 @@ public class DocumentWeightActivity extends Activity  {
                         Title.setLayoutParams(params);
                         Title.setPadding(padding, padding, padding, padding);
                         Title.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
-                        if(DocSetting.IsViewPlan) {
+                        //if(DocSetting.IsViewPlan) {
                             TextView QuantityOrdered = new TextView(context);
                             QuantityOrdered.setText(item.GetQuantityOrder());
                             QuantityOrdered.setTextSize((int) (12 * d));
                             QuantityOrdered.setTextColor(Color.parseColor("#000000"));
+                            QuantityOrdered.setVisibility(DocSetting.IsViewPlan?View.VISIBLE:View.GONE);
                             Line2.addView(QuantityOrdered);
 
                             LinearLayout.LayoutParams params1 = (LinearLayout.LayoutParams) QuantityOrdered.getLayoutParams();
@@ -153,7 +163,7 @@ public class DocumentWeightActivity extends Activity  {
                             QuantityOrdered.setPadding(padding, padding, padding, padding);
                             QuantityOrdered.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                             QuantityOrdered.setLayoutParams(params1);
-                        }
+                        //}
 
                         PrevValues.add(item.InputQuantity);
                         final EditText QuantityIncomed = new EditText(context);
@@ -229,26 +239,13 @@ public class DocumentWeightActivity extends Activity  {
 
                     }
 
-
+                filter();
                 } catch (Exception e) {
                     e.getMessage();
                 }
             }
+
         });
-    }
-
-    public void renderTable(final List<WaresItemModel> model) {
-        RenderTableIncome(model);
-    }
-
-
-
-    private void onFocus(int index) {
-        position = index;
-        ViewGroup row = (ViewGroup) tl.getChildAt(index);
-        ViewGroup innerRow = (ViewGroup) row.getChildAt(1);
-        EditText v = (EditText) innerRow.getChildAt(1);
-        v.setText("");
     }
 
     private void onBlur(int index,EditText v ) {
@@ -263,7 +260,7 @@ public class DocumentWeightActivity extends Activity  {
     private void savePosition(){
         ViewGroup row = (ViewGroup) tl.getChildAt(position);
         ViewGroup innerRow = (ViewGroup) row.getChildAt(1);
-        EditText v = (EditText) innerRow.getChildAt(DocSetting.IsViewPlan?1:0);
+        EditText v = (EditText) innerRow.getChildAt(1);//DocSetting.IsViewPlan?1:0
         final String value = v.getText().toString();
         if(!value.equals("") && Float.parseFloat(value) != 0){
             scanNN++;
@@ -283,28 +280,22 @@ public class DocumentWeightActivity extends Activity  {
         if(position < Model.size()-1){
             ViewGroup row = (ViewGroup) tl.getChildAt(position+1);
             ViewGroup innerRow = (ViewGroup) row.getChildAt(1);
-            EditText v = (EditText) innerRow.getChildAt(DocSetting.IsViewPlan?1:0);
+            EditText v = (EditText) innerRow.getChildAt(1);//DocSetting.IsViewPlan?1:0
             v.setFocusableInTouchMode(true);
             v.requestFocusFromTouch();
             v.setFocusableInTouchMode(false);
         }
     }
 
-    private void filter(String content){
+    private void filter(){
         for(int i = 0; i<tl.getChildCount(); i++ ) {
             ViewGroup row = (ViewGroup) tl.getChildAt(i);
-            ViewGroup innerRow = (ViewGroup)row.getChildAt(0);
-            TextView title = (TextView) innerRow.getChildAt(0);
-            if(content == null || content.length() == 0){
-                row.setVisibility(View.VISIBLE);
-                return;
-            }
-
-            if(title.getText().toString().toLowerCase().contains(content)){
-                row.setVisibility(View.VISIBLE);
-            }else{
-                row.setVisibility(View.GONE);
-            }
+            int IsVisible=View.VISIBLE;
+            if(! Model.get(i).NameWares.toLowerCase().contains(strFilter))
+                IsVisible=View.GONE;
+            if(IsOnlyOrder &&  Model.get(i).QuantityOrder==0d)
+              IsVisible=View.GONE;
+            row.setVisibility(IsVisible);
         }
     }
 
