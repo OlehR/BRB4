@@ -32,7 +32,7 @@ public abstract class Connector {
     }
 
     //Завантаження довідників.
-    public abstract void LoadGuidData(boolean IsFull, ObservableInt pProgress);
+    public abstract boolean LoadGuidData(boolean IsFull, ObservableInt pProgress);
 
     //Робота з документами.
     //Завантаження документів в ТЗД (HTTP)

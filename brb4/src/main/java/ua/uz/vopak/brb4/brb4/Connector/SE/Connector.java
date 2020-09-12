@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.nfc.Tag;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.databinding.ObservableInt;
 
@@ -31,45 +32,53 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
 
     //Завантаження довідників.
-    public void LoadGuidData(boolean IsFull, ObservableInt pProgress) {
-        Log.d(TAG, "Start");
-        pProgress.set(5);
-        String res = Http.HTTPRequest(config.ApiUrl + "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
-        if (Http.HttpState == eStateHTTP.HTTP_OK) {
-            Log.d(TAG, "LoadData=>" + res.length());
-            pProgress.set(40);
-            if (IsFull) {
-                String sql = "DELETE FROM Wares; DELETE FROM ADDITION_UNIT; DELETE FROM  BAR_CODE;DELETE FROM UNIT_DIMENSION;";
-                db.execSQL(sql.trim());
+    public boolean LoadGuidData(boolean IsFull, ObservableInt pProgress) {
+        try {
+            Log.d(TAG, "Start");
+            pProgress.set(5);
+            String res = Http.HTTPRequest(config.ApiUrl + "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
+            if (Http.HttpState == eStateHTTP.HTTP_OK) {
+                Log.d(TAG, "LoadData=>" + res.length());
+                pProgress.set(40);
+                if (IsFull) {
+                    String sql = "DELETE FROM Wares; DELETE FROM ADDITION_UNIT; DELETE FROM  BAR_CODE;DELETE FROM UNIT_DIMENSION;";
+                    db.execSQL(sql.trim());
+                }
+                Log.d(TAG, "DELETE");
+                pProgress.set(45);
+                InputData data = new Gson().fromJson(res, InputData.class);
+
+                Log.d(TAG, "Parse JSON");
+                pProgress.set(60);
+                SaveWares(data.Nomenclature);
+                Log.d(TAG, "Nomenclature");
+                pProgress.set(70);
+                SaveAdditionUnit(data.Units);
+                Log.d(TAG, "Units");
+                pProgress.set(80);
+                SaveBarCode(data.Barcodes);
+                Log.d(TAG, "Barcodes");
+                pProgress.set(90);
+                SaveUnitDimension(data.Dimentions);
+            } else
+                Log.d(TAG, Http.HttpState.name());
+
+            res = Http.HTTPRequest(config.ApiURLadd + "reasons", null, "application/json;charset=utf-8", config.Login, config.Password);
+            if (Http.HttpState == eStateHTTP.HTTP_OK) {
+                pProgress.set(95);
+                List<Reason> Reasons = new Gson().fromJson(res, new TypeToken<List<Reason>>() {
+                }.getType());
+                SaveReason(Reasons);
             }
-            Log.d(TAG, "DELETE");
-            pProgress.set(45);
-            InputData data = new Gson().fromJson(res, InputData.class);
-
-            Log.d(TAG, "Parse JSON");
-            pProgress.set(60);
-            SaveWares(data.Nomenclature);
-            Log.d(TAG, "Nomenclature");
-            pProgress.set(70);
-            SaveAdditionUnit(data.Units);
-            Log.d(TAG, "Units");
-            pProgress.set(80);
-            SaveBarCode(data.Barcodes);
-            Log.d(TAG, "Barcodes");
-            pProgress.set(90);
-            SaveUnitDimension(data.Dimentions);
-        } else
-            Log.d(TAG, Http.HttpState.name());
-
-        res = Http.HTTPRequest(config.ApiURLadd + "reasons", null, "application/json;charset=utf-8", config.Login, config.Password);
-        if (Http.HttpState == eStateHTTP.HTTP_OK) {
-            pProgress.set(95);
-            List<Reason> Reasons = new Gson().fromJson(res, new TypeToken<List<Reason>>() {
-            }.getType());
-            SaveReason(Reasons);
+            pProgress.set(100);
+            Log.d(TAG, "End");
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
+            Toast toast = Toast.makeText(GlobalConfig.instance().context, "Помилка завантаження довідників=>" + e.getMessage(), Toast.LENGTH_LONG);
+            toast.show();
         }
-        pProgress.set(100);
-        Log.d(TAG, "End");
+        return false;
     }
 
     boolean SaveReason(List<Reason> pReasons) {

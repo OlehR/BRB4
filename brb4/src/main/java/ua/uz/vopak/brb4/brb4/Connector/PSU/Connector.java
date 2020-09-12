@@ -55,7 +55,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     }
 
     //Завантаження довідників.
-    public void LoadGuidData(boolean IsFull, ObservableInt pProgress){};
+    public boolean LoadGuidData(boolean IsFull, ObservableInt pProgress){return true;};
 
     //Завантаження документів в ТЗД (HTTP)
     //PSU Треба перенести в окремий конектор

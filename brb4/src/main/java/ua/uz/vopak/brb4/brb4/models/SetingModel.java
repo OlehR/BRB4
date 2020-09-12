@@ -52,7 +52,7 @@ public class SetingModel {
         eCompany Company= eCompany.fromOrdinal(ListCompanyIdx.get());
         apiURL.set(Company==eCompany.SevenEleven?"http://93.183.216.37:80/dev1/hs/TSD/":config.IsDebug? "http://195.16.78.134:7654/api/api_v1_utf8.php":"http://znp.vopak.local/api/api_v1_utf8.php");
         config.ApiUrl=apiURL.get();
-        apiURLadd.set("http://93.183.216.37/copy_tk_2/hs/TSD/");
+        apiURLadd.set("http://93.183.216.37/TK/hs/TSD/");
         config.ApiURLadd=apiURLadd.get();
 
     }

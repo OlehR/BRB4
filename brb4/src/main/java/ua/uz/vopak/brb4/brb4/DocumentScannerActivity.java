@@ -123,9 +123,12 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
         WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
         WaresItem.NumberDoc = i.getStringExtra("number");
+        for (Reason el: config.Reasons)
+            WaresItem.ListReason.add(el.NameReason);
 
         DocSetting=config.GetDocSetting(WaresItem.TypeDoc);
         WaresItem.DocSetting=DocSetting;
+
         barCode = findViewById(R.id.RevisionBarCode);
         inputCount = findViewById(R.id.RevisionInputCount);
         loader = findViewById(R.id.RevisionLoader);
@@ -173,8 +176,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         //Для отримання штрихкодів
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
-        for (Reason el: config.Reasons)
-            WaresItem.ListReason.add(el.NameReason);
+
     }
 
     void GetDoc()    {
