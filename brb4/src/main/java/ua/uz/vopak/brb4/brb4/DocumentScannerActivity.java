@@ -123,6 +123,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
         WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
         WaresItem.NumberDoc = i.getStringExtra("number");
+        WaresItem.ListReason.clear();
         for (Reason el: config.Reasons)
             WaresItem.ListReason.add(el.NameReason);
 
