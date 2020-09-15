@@ -368,9 +368,9 @@ public class SQLiteAdapter
         List<WaresItemModel> model = new ArrayList<>();
         Cursor mCur;
         String sql="";
-        String OrderQuery="11,1";
+        String OrderQuery="11 desc,1";
         if(pTypeOrder==eTypeOrder.Name)
-            OrderQuery="11,3";
+            OrderQuery="11 desc,3";
 
         String Color=" ,0 as Ord";
         if(DS.TypeColor==1) {

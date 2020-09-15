@@ -55,13 +55,14 @@ import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
+import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 import ua.uz.vopak.brb4.brb4.databinding.PriceCheckerLayoutNewBinding;
 
 public class PriceCheckerActivity extends FragmentActivity implements ScanCallBack{
     Context context;
     private Scaner scaner;
-
+    ua.uz.vopak.brb4.lib.helpers.UtilsUI UtilsUI = new UtilsUI(this);
     int SizeDeque=2;
     ArrayDeque<String> BarCodeQueue = new ArrayDeque<>();
 
@@ -174,11 +175,18 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
                     else
                         if(LI.InputFocus.get()==2) {
                             LI.InputFocus.set(0);
+                           final double inReplenishment= Double.valueOf(LI.NumberOfReplenishment.get());
+                           if(inReplenishment>LI.Rest) {
+                               LI.NumberOfReplenishment.set("");
+                               UtilsUI.Dialog("Невірний ввід даних","На залишку=>"+ LI.Rest+" Ввели=>"+inReplenishment);
+                           }
+
+
                             new AsyncHelper<Void>(
                                     new IAsyncHelper<Boolean>() {
                                         @Override
                                         public Boolean Invoke() {
-                                            BL.SaveReplenishment(Double.valueOf(LI.NumberOfReplenishment.get()));
+                                            BL.SaveReplenishment(inReplenishment);
                                             return true;
                                         }
                                     },

@@ -41,7 +41,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 Log.d(TAG, "LoadData=>" + res.length());
                 pProgress.set(40);
                 if (IsFull) {
-                    String sql = "DELETE FROM Wares; DELETE FROM ADDITION_UNIT; DELETE FROM  BAR_CODE;DELETE FROM UNIT_DIMENSION;DELETE FROM Reason;";
+                    String sql = "DELETE FROM Wares; DELETE FROM ADDITION_UNIT; DELETE FROM BAR_CODE;DELETE FROM UNIT_DIMENSION;";
                     db.execSQL(sql.trim());
                 }
                 Log.d(TAG, "DELETE");
@@ -68,6 +68,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 pProgress.set(95);
                 List<Reason> Reasons = new Gson().fromJson(res, new TypeToken<List<Reason>>() {
                 }.getType());
+                db.execSQL("DELETE FROM Reason;");
                 SaveReason(Reasons);
             }
             pProgress.set(100);
