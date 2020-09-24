@@ -45,6 +45,7 @@
             android:layout_weight="1.1"
             android:layout_width="0dp"
             android:layout_height="40dp"
+            android:inputType ="text"
             android:background="@drawable/input_style"
             android:textSize="18dp"
             android:windowSoftInputMode="stateHidden"

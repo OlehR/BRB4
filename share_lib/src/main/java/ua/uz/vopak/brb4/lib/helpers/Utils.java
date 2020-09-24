@@ -9,10 +9,13 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.text.format.Formatter;
 import android.util.Log;
 
 import androidx.core.app.ActivityCompat;
@@ -48,6 +51,7 @@ import java.util.regex.Pattern;
 
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 
+import static android.content.Context.WIFI_SERVICE;
 import static android.os.Build.MANUFACTURER;
 import static android.os.Build.MODEL;
 import static android.os.Build.getSerial;
@@ -304,6 +308,14 @@ public class Utils {
             return null;
         }
         return fileContent.toString();
+    }
+
+   public String  GetIp(){
+        WifiManager wifiMgr = (WifiManager) vApplicationContext.getSystemService(WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiMgr.getConnectionInfo();
+        int ip = wifiInfo.getIpAddress();
+        String ipAddress = Formatter.formatIpAddress(ip);
+        return ipAddress;
     }
 /*
         void InstallAPK()

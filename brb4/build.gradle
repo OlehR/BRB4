@@ -5,10 +5,10 @@ android {
     compileSdkVersion 29
     defaultConfig {
         applicationId "ua.uz.vopak.brb4.brb4"
-        minSdkVersion 19
+        minSdkVersion 20
         targetSdkVersion 29
-        versionCode 317
-        versionName "4.3.17"
+        versionCode 318
+        versionName "4.3.20"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {

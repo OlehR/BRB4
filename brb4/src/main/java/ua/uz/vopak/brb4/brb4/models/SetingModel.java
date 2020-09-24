@@ -48,9 +48,30 @@ public class SetingModel {
     }
 
     public boolean IsSevenEleven() {return config.Company==eCompany.SevenEleven;}
+
+    public void OnClickIP() {
+       String Ip=config.cUtils.GetIp();
+        String[] IP=Ip.split(".");
+        if(IP.length!=4)
+            return;
+        for (int i = 0; i < Warehouse.length ; i++) {
+
+           String[] WhIp =Warehouse[i].InternalIP.split(".");
+           if(WhIp.length!=4)
+               continue;
+           if(IP[0]==WhIp[0] && IP[2]==WhIp[2] && IP[2]==WhIp[2])
+           {
+               ListWarehouseIdx.set(i);
+               apiURL.set(Warehouse[i].Url);
+           }
+       }
+    }
     public void OnClickGen(){
         eCompany Company= eCompany.fromOrdinal(ListCompanyIdx.get());
-        apiURL.set(Company==eCompany.SevenEleven?"http://93.183.216.37:80/dev1/hs/TSD/":config.IsDebug? "http://195.16.78.134:7654/api/api_v1_utf8.php":"http://znp.vopak.local/api/api_v1_utf8.php");
+        String url=Warehouse[ListWarehouseIdx.get()].Url;
+
+        apiURL.set(Company==eCompany.SevenEleven? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
+                (config.IsDebug? "http://195.16.78.134:7654/api/api_v1_utf8.php":"http://znp.vopak.local/api/api_v1_utf8.php"));
         config.ApiUrl=apiURL.get();
         apiURLadd.set("http://93.183.216.37/TK/hs/TSD/");
         config.ApiURLadd=apiURLadd.get();
