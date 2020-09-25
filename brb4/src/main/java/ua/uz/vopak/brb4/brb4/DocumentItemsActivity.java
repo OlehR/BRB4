@@ -522,23 +522,26 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
     public void AfterSave(final Result pResult) {
         final String vMessage;
-        if(pResult.State==0)
-            vMessage="Документ успішно збережено!!!\n"+(pResult.Info!=null?pResult.Info:"");
-         else
-            vMessage="Помилка збереження документа:\n"+pResult.TextError;
+        if(pResult.State==0) {
+            vMessage = "Документ успішно збережено!!!\n" + (pResult.Info != null ? pResult.Info : "");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Context context = getApplicationContext();
+                    Toast toast = Toast.makeText(context, vMessage, Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
+            Intent i = new Intent(this, DocumentActivity.class);
+            i.putExtra("document_type", TypeDoc);
+            this.finish();
+            startActivity(i);
+        }
+         else {
+            UtilsUI.Dialog("Помилка збереження документа:\n",pResult.TextError);
+        }
 
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Context context = getApplicationContext();
-                Toast toast = Toast.makeText(context, vMessage, Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
-        Intent i = new Intent(this, DocumentActivity.class);
-        i.putExtra("document_type", TypeDoc);
-        this.finish();
-        startActivity(i);
+
     }
 
     private void selectItem(){

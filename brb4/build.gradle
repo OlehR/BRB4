@@ -7,8 +7,8 @@ android {
         applicationId "ua.uz.vopak.brb4.brb4"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 320
-        versionName "4.3.20"
+        versionCode 321
+        versionName "4.3.21"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
