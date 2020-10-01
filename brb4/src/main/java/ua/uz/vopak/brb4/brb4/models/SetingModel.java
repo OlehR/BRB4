@@ -68,7 +68,9 @@ public class SetingModel {
     }
     public void OnClickGen(){
         eCompany Company= eCompany.fromOrdinal(ListCompanyIdx.get());
-        String url=Warehouse[ListWarehouseIdx.get()].Url;
+        String url=null;
+        if(Warehouse!=null )
+            url=Warehouse[ListWarehouseIdx.get()].Url;
 
         apiURL.set(Company==eCompany.SevenEleven? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
                 (config.IsDebug? "http://195.16.78.134:7654/api/api_v1_utf8.php":"http://znp.vopak.local/api/api_v1_utf8.php"));

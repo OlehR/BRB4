@@ -17,7 +17,7 @@ import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.text.format.Formatter;
 import android.util.Log;
-
+import android.media.MediaPlayer;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
@@ -49,6 +49,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 
+import ua.uz.vopak.brb4.R;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -61,12 +62,14 @@ public class Utils {
     private static Utils Instance = null;
     public Context vApplicationContext;
     Vibrator v;
+    MediaPlayer MediaPlayer;
     public Utils(){};
     public Utils(Context pApplicationContext)
     {
         this();
         vApplicationContext=pApplicationContext;
         v = (Vibrator) vApplicationContext.getSystemService(Context.VIBRATOR_SERVICE);
+        MediaPlayer = MediaPlayer.create(vApplicationContext, R.raw.sound );
     }
 
     public static Utils instance() { return Instance;}
@@ -165,6 +168,19 @@ public class Utils {
             v.vibrate(time);
         }
     }
+
+    public void  PlaySound() throws IOException {
+        //MediaPlayer.prepare();
+        MediaPlayer.start();
+        //MediaPlayer.pause();  //>>pause current sound
+       // MediaPlayer.seekTo(0);
+        /*onPause
+        myMediaPlayer.stop();  //>>> stop myMediaPlayer
+        myMediaPlayer.release(); */
+    }
+
+
+
 
     static public void SaveData(String pFileName,byte[] pData){
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);

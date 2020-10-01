@@ -258,6 +258,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
         i.setAction(ACTION);
         i.putExtra(SOFT_SCAN_TRIGGER, START_SCANNING);
         sendBroadcast(i);
+
     }
 
     @Override
@@ -268,6 +269,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
             barcodeView.pause();
         //Zebra
         scaner.StopScan();
+
     }
 
     public void LoadSpinner() {

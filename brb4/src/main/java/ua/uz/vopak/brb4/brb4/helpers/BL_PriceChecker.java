@@ -103,6 +103,8 @@ public class BL_PriceChecker extends BL {
                         LI.AllScan++;
                         if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
                             utils.Vibrate(500);
+                            if(config.Company==eCompany.SevenEleven)
+                                utils.PlaySound();
                             LI.BadScan++;
                             //Папір не відповідає ціннику
                             if ((LI.Action() && LI.printType != 1) || (!LI.Action() && LI.printType != 0)) {
