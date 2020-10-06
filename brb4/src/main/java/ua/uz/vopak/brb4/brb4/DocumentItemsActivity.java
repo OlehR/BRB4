@@ -490,7 +490,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
                         int index = model.indexOf(item);
 
-                        UtilsUI.SetColor(TableBlock,"#000000","#"+((index % 2)==0?"FF":"70")+item.GetBackgroundColor());
+                        UtilsUI.SetColor(TableBlock,"#000000","#"+((index % 2)==0?"FF":"60")+item.GetBackgroundColor());
 
                         /*if((index % 2)==0) {
                             ViewGroup rows = TableBlock;
@@ -550,13 +550,16 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         if(selectedItem != null){
             int index = menuItems.indexOf(selectedItem);
             String BackgroundColor=ListWares.get(index).GetBackgroundColor();
-            UtilsUI.SetColor(selectedItem,"#000000","#"+((index % 2)==0?"FF":"70")+BackgroundColor);
+            UtilsUI.SetColor(selectedItem,"#000000","#"+((index % 2)==0?"FF":"60")+BackgroundColor);
             selectedItem.setTag(null);
         }
         ViewGroup currentRows = (ViewGroup) menuItems.get(current);
         menuItems.get(current).setTag("selected");
+        String BackgroundColor=ListWares.get(current).GetBackgroundColor();
         //setBackgroundToTableRow(currentRows, R.drawable.table_cell_selected, "#ffffff");
-        UtilsUI.SetColor(currentRows,"#ffffff","#008577");
+         UtilsUI.SetColor(currentRows,"#4c0099","#"+"A0"+BackgroundColor);
+         //UtilsUI.SetColor(currentRows,"#ffffff","#008577");
+
     }
 
     private void selectNext(){
