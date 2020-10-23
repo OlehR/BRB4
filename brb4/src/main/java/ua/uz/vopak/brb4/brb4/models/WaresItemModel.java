@@ -35,7 +35,7 @@ public class WaresItemModel implements Cloneable{
     public double BeforeQuantity;
     public String GetBeforeQuantity() {
         return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",BeforeQuantity)+
-                (QuantityOrder>0 ?  "/"+String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityOrder):"")+
+                (QuantityOrder>0 && DocSetting.IsViewPlan?  "/"+String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityOrder):"")+
                 (QuantityMax==Double.MAX_VALUE || QuantityMax==1000000 ?"":"/"+String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityMax))
                 ;}
 
