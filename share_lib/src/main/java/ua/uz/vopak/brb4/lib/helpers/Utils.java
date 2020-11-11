@@ -20,6 +20,7 @@ import android.util.Log;
 import android.media.MediaPlayer;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import androidx.databinding.ObservableInt;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -281,6 +282,7 @@ public class Utils {
                                 "application/vnd.android.package-archive");
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         vApplicationContext.startActivity(intent);
+
                     } else {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
                         intent.setDataAndType(Uri.fromFile(file),
@@ -384,7 +386,40 @@ public class Utils {
 
 
         }*/
-
-
+    public boolean UpdateAPK(String pPath, String pNameAPK, ObservableInt pProgress, int pVersionCode,String pApplicationId)
+    {
+        try {
+            if(pProgress!=null)
+                pProgress.set(0);
+            String FileNameVer = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/"+"Ver.txt";
+            GetFile(pPath+"Ver.txt", FileNameVer );
+            String Ver= FileToString(FileNameVer);
+            if(pProgress!=null)
+                pProgress.set(10);
+            if(Ver!=null&&Ver.length()>0) {
+                int ver=0;
+                try {
+                    ver= Integer.parseInt(Ver);
+                } catch (NumberFormatException e) {
+                }
+                if(ver>pVersionCode) {
+                    String FileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + "brb4.apk";
+                    GetFile(pPath+pNameAPK, FileName);
+                    if(pProgress!=null)
+                        pProgress.set(60);
+                    File file = new File(FileName);
+                    InstallAPK(file, pApplicationId);
+                    return true;
+                }
+            }
+        }
+        catch (Exception e){}
+        catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        if(pProgress!=null)
+            pProgress.set(100);
+        return false;
+    }
 
 }

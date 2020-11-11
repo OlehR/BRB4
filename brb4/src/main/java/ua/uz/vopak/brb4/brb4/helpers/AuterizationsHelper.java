@@ -88,6 +88,7 @@ public class AuterizationsHelper {
         config. Password=pPassWord;
         config.isAutorized = true;
         config.Worker.AddConfigPair("Login",config.Login);
+        config.Worker.AddConfigPair("PassWord",config.Password);
         Intent i = new Intent(activity,MainActivity.class);
         activity.startActivity(i);
     }

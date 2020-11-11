@@ -78,6 +78,8 @@ public class Worker {
 
         config.DocsSetting=GenSettingDocs(config.Company);
 
+        config.IsTest = GetConfigPair("IsTest").equals("true");
+        config.IsAutoLogin = GetConfigPair("IsAutoLogin").equals("true");
 
 
         config.ApiUrl=GetConfigPair("ApiUrl");
@@ -86,6 +88,9 @@ public class Worker {
         config.ApiURLadd=GetConfigPair("ApiUrladd");
 
         config.Login = GetConfigPair("Login");
+        if(config.IsAutoLogin)
+            config.Password= GetConfigPair("PassWord");
+
         try {
             config.CodeWarehouse = Integer.parseInt(GetConfigPair("Warehouse"));
         }

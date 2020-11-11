@@ -17,7 +17,8 @@ import ua.uz.vopak.brb4.lib.helpers.Utils;
 public class GlobalConfig extends AbstractConfig {
     private static GlobalConfig Instance = null;
     public static boolean IsLoadStartData = false;
-
+    public static boolean IsTest = false;
+    public static boolean IsAutoLogin = false;
     public DocSetting[] DocsSetting;
 
     //public String ApiUrl ="http://195.16.78.134:7654/api/api_v1_utf8.php";//"http://znp.vopak.local/api/api_v1_utf8.php";

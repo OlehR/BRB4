@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <layout xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:keepScreenOn="true">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10dp">
+
+
+    <TextView
+        android:id="@+id/StartLog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12pt"
+        android:layout_marginTop="5dp"
+        android:text="Start " />
+    </LinearLayout>
+</layout>

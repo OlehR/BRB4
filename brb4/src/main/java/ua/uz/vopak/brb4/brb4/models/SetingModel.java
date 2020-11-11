@@ -3,6 +3,7 @@ package ua.uz.vopak.brb4.brb4.models;
 import android.os.Environment;
 
 import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
 
@@ -20,6 +21,9 @@ import ua.uz.vopak.brb4.lib.helpers.Utils;
 public class SetingModel {
     GlobalConfig config = GlobalConfig.instance();
     Worker worker = config.GetWorker();
+
+    public ObservableBoolean IsTest;
+    public ObservableBoolean IsAutoLogin = new ObservableBoolean(false);
     public ObservableField<String> apiURL    = new ObservableField<>(config.ApiUrl);
     public ObservableField<String> apiURLadd = new ObservableField<>(config.ApiURLadd);
     public ObservableArrayList<String> ListCompany= new ObservableArrayList<>();
@@ -45,6 +49,8 @@ public class SetingModel {
             ListPrinterType.add(el.GetText());
         }
         ListPrinterTypeIdx.set(config.TypeUsePrinter.getAction());
+        IsTest = new ObservableBoolean(config.IsTest);
+        IsAutoLogin = new ObservableBoolean(config.IsAutoLogin);
     }
 
     public boolean IsSevenEleven() {return config.Company==eCompany.SevenEleven;}
@@ -89,6 +95,11 @@ public class SetingModel {
             config.ApiURLadd = apiURLadd.get();
             worker.AddConfigPair("ApiUrl", apiURL.get().trim());
             worker.AddConfigPair("ApiUrladd", apiURLadd.get().trim());
+            config.IsTest=IsTest.get();
+            worker.AddConfigPair("IsTest",config.IsTest?"true":"false");
+            config.IsAutoLogin=IsAutoLogin.get();
+            worker.AddConfigPair("IsAutoLogin",config.IsAutoLogin?"true":"false");
+
         }
         else
         {
@@ -134,7 +145,8 @@ public class SetingModel {
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                try {
+                config.cUtils.UpdateAPK("https://github.com/OlehR/BRB4/raw/master/apk/"+(config.IsTest?"test":"work")+"/","brb4.apk",Progress,BuildConfig.VERSION_CODE,BuildConfig.APPLICATION_ID);
+               /* try {
                     Progress.set(0);
                     String FileNameVer = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/"+"Ver.txt";
                     config.cUtils.GetFile("https://github.com/OlehR/BRB4/raw/master/apk/test/Ver.txt", FileNameVer );
@@ -160,12 +172,10 @@ public class SetingModel {
                 catch (Throwable throwable) {
                     throwable.printStackTrace();
                 }
-                Progress.set(100);
+                Progress.set(100);*/
                 return null;
             }
         }).execute();
-
-
     }
 
 

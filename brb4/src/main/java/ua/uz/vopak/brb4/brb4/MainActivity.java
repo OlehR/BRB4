@@ -43,7 +43,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private LinearLayout linearLayout;
     Button[] menuItems;
     int current = 0;
-    static boolean isFirstRun = true;
+   // static boolean isFirstRun = true;
 
     private Scaner scaner;
     Context context;
@@ -70,26 +70,21 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
 
         //---!!!!!TMP Not Load
-        if((isFirstRun ) ){
+        if(config.isAutorized ){
           //  ShowLoader();
 
             new AsyncHelper<Boolean>(new IAsyncHelper() {
                 @Override
                 public Boolean Invoke() {
-                    config.Worker.LoadStartData();
-                    if(!config.isAutorized) return false;
                     if(!config.getCodeWarehouse().equals("000000000")) {
-
                         return config.Worker.LoadData(-1,null,MM.Progress,false);
                     }
-                    return false;
+                    return true;
                 }},
                         new IPostResult<Boolean>() {
                     @Override
                     public void Invoke(Boolean p) {
-                        isFirstRun = false;
-                        if(!config.isAutorized)
-                            RunAuth();
+
                     }
                 }
             ).execute();
@@ -134,9 +129,16 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
 
-    public void RunAuth()    {
-        runOnUiThread(new Runnable() {
+        if(!config.isAutorized)
+            RunAuth();
+
+    }
+    public void RunAuth()    {//boolean pUseAutologin
+       runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Intent i = new Intent(context, AuthActivity.class);
@@ -164,8 +166,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             i.putExtra("document_type", varDocType);
             startActivity(i);
         }
-    }
-    ;
+    }    ;
 
     @Override
     protected void onStart() {
@@ -186,28 +187,13 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 break;
+            case R.id.action_login:
+                RunAuth();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
         return true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if(!config.isAutorized){
-            RunAuth();
-        }
-        else {
-   /*         new AsyncHelper<Void>(new IAsyncHelper() {
-                @Override
-                public Void Invoke() {
-                    config.Worker.SendLogPrice();
-                    return null;
-                }
-            }).execute();*/
-        }
     }
 
 
@@ -317,25 +303,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             }
         }
     }
-/*
-    public void HideLoader(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                loader.setVisibility(View.INVISIBLE);
-            }
-        });
-    }
 
-    public void ShowLoader(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                loader.setVisibility(View.VISIBLE);
-            }
-        });
-    }
-*/
     @Override
     public void onBackPressed() {
         new AlertDialog.Builder(this)
