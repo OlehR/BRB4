@@ -9,10 +9,12 @@ import static android.os.Build.USER;
 
 public abstract class AbstractConfig {
 
+    protected static AbstractConfig Instance = null;
     public Boolean IsDebug = false;
     public Context context;
     public int CodeWarehouse = 0;
     public eCompany Company = eCompany.VopakPSU;
+    public boolean IsOnline=false;
 
     public String SN;
     public String NameDCT = USER;
@@ -58,6 +60,14 @@ public abstract class AbstractConfig {
 
     public String getApiUrl(){
         return this.ApiUrl;
+    }
+
+    public static AbstractConfig instance() //throws Exception
+    {
+        /*if (Instance == null ){
+            throw new Exception("Відсутній екземпляр AbstractConfig");
+        }*/
+        return  Instance;
     }
 
 }

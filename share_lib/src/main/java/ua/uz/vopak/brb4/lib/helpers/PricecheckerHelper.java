@@ -1,12 +1,14 @@
 package ua.uz.vopak.brb4.lib.helpers;
 
 import ua.uz.vopak.brb4.lib.enums.eCompany;
+import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 import ua.uz.vopak.brb4.lib.models.PriceBarCode;
 
 public class PricecheckerHelper {
-    private GetDataHTTP Http = new GetDataHTTP();
+    private GetDataHTTP Http = GetDataHTTP.instance();
     public LabelInfo getPriceCheckerData(LabelInfo LI, String BarCode, boolean isHandInput, AbstractConfig config) {
+        //Http = new GetDataHTTP(new String[]{config.ApiUrl, config.ApiURLadd});
         if(config.Company== eCompany.SparPSU||config.Company==eCompany.VopakPSU)
             return getPriceCheckerDataPSU(  LI,  BarCode,  isHandInput,  config);
         else if(config.Company== eCompany.SevenEleven)
@@ -62,15 +64,15 @@ public class PricecheckerHelper {
              _codeWares ="\"CodeWares\":\"" + CodeWares + "\"" ;
 
         String data = config.GetApiJson(154, _barCode + _codeWares + _article);
-        LI.resHttp = Http.HTTPRequest(config.getApiUrl(), data);
+        HttpResult res = Http.HTTPRequest(0,"", data,null,null,null);
+        LI.resHttp = res.Result;
         //resHttp = resHttp.replace("&amp;", "&");
         //Call Progres 50%;
         //LI.InfoHTTP = Http.HttpState.name();
-        LI.HttpState=Http.HttpState;
+        LI.HttpState=res.HttpState;
 
         return LI;
     }
-
 
     public LabelInfo getPriceCheckerDataSevenEleven(LabelInfo LI, String BarCode, boolean isHandInput, AbstractConfig config){
         String vCode = null;
@@ -83,11 +85,11 @@ public class PricecheckerHelper {
             else
              vCode="BarCode="+BarCode.trim();
 
-        LI.resHttp = Http.HTTPRequest(config.ApiUrl+"PriceTagInfo?"+vCode, null);
-        LI.HttpState=Http.HttpState;
+        HttpResult res = Http.HTTPRequest(0 , "PriceTagInfo?" + vCode, null,null,null,null);
+        LI.resHttp =res.Result;
+        LI.HttpState=res.HttpState;
         return LI;
     }
-    public String HttpState() {return Http.HttpState.name();}
-
+   // public String HttpState() {return Http.HttpState.name();}
 
 }

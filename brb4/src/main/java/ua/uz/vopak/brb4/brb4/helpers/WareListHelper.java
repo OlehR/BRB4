@@ -11,7 +11,7 @@ import java.util.Map;
 import ua.uz.vopak.brb4.brb4.SettingsActivity;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
-
+/*
 public class WareListHelper {
 
     public SettingsActivity activity;
@@ -58,3 +58,4 @@ public class WareListHelper {
         activity = context;
     }
 }
+*/

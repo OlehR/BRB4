@@ -15,18 +15,11 @@ import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class GlobalConfig extends AbstractConfig {
-    private static GlobalConfig Instance = null;
+
     public static boolean IsLoadStartData = false;
     public static boolean IsTest = false;
     public static boolean IsAutoLogin = false;
     public DocSetting[] DocsSetting;
-
-    //public String ApiUrl ="http://195.16.78.134:7654/api/api_v1_utf8.php";//"http://znp.vopak.local/api/api_v1_utf8.php";
-    //private String UrlLocal = "znp.vopak.local";
-    //private int PortLocal = 80;
-    //private String Url = "195.16.78.134";
-    //private int Port = 7654;
-    //private String PathApi = "/api/api_v1_utf8.php";
 
     public Worker Worker;
     public SQLiteAdapter SQLiteAdapter;
@@ -48,11 +41,12 @@ public class GlobalConfig extends AbstractConfig {
     }//
 
     public static GlobalConfig instance() {
-        if (Instance == null) {
+        if (Instance == null || !(Instance instanceof GlobalConfig)){
             Instance = new GlobalConfig();
         }
-        return Instance;
+        return (GlobalConfig) Instance;
     }
+
     public DocSetting GetDocSetting(int pDocumentType)
     {
     for( int ind = 0; ind<DocsSetting.length;ind++)
@@ -145,31 +139,5 @@ public class GlobalConfig extends AbstractConfig {
     }
 
 
-   /* public static String getSerialNumber() {
-        String serialNumber;
 
-        try {
-            Class<?> c = Class.forName("android.os.SystemProperties");
-            Method get = c.getMethod("get", String.class);
-
-            serialNumber = (String) get.invoke(c, "gsm.sn1");
-            if (serialNumber.equals(""))
-                serialNumber = (String) get.invoke(c, "ril.serialnumber");
-            if (serialNumber.equals(""))
-                serialNumber = (String) get.invoke(c, "ro.serialno");
-            if (serialNumber.equals(""))
-                serialNumber = (String) get.invoke(c, "sys.serialnumber");
-            if (serialNumber.equals(""))
-                serialNumber = Build.SERIAL;
-
-            // If none of the methods above worked
-            if (serialNumber.equals(""))
-                serialNumber = null;
-        } catch (Exception e) {
-            e.printStackTrace();
-            serialNumber = null;
-        }
-
-        return serialNumber;
-    }*/
 }

@@ -1,33 +1,28 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
 import android.util.Log;
-import android.view.View;
-import android.widget.ProgressBar;
 
-import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.Connector.Connector;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.ePrinterError;
-import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.BL;
 import ua.uz.vopak.brb4.lib.helpers.BluetoothPrinter;
-import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
-import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
+import ua.uz.vopak.brb4.lib.models.Result;
 
 public class BL_PriceChecker extends BL {
     protected static final String TAG = "BRB4/BL_PriceChecker";
@@ -35,7 +30,7 @@ public class BL_PriceChecker extends BL {
     public LabelInfo LI;
     public BluetoothPrinter Printer = new BluetoothPrinter(config);
     SQLiteAdapter mDbHelper;
-    public GetDataHTTP Http = new GetDataHTTP();
+
     public PriceCheckerActivity priceCheckerActivity;
 
     public BL_PriceChecker(LabelInfo pLI)
@@ -193,17 +188,6 @@ public class BL_PriceChecker extends BL {
         return;
     }
 
-    public void printHTTP(List<String> codeWares) {
-        //String listString = String.join(", ", codeWares);
-        StringBuilder sb = new StringBuilder();
-        for (String s : codeWares) {
-            sb.append(s);
-            sb.append(",");
-        }
-//znp.vopak.local
-        String json = "{\"CodeWares\":\"" + sb.toString() + "\",\"CodeWarehouse\":" + config.getCodeWarehouse() + "}";
-        String res = Http.HTTPRequest("http://znp.vopak.local:8088/Print", json, "application/json;charset=UTF-8");//"http://znp.vopak.local:8088/Print"
-    }
 
     public void printPackage(final Integer actionType, final Integer packageNumber) {
         new AsyncHelper<Void>(new IAsyncHelper<Void>() {
@@ -216,8 +200,10 @@ public class BL_PriceChecker extends BL {
                         SetProgress(5);//priceCheckerActivity.loader.setVisibility(View.VISIBLE);
                     }
                 });
-                if (config.TypeUsePrinter == eTypeUsePrinter.StationaryWithCut || config.TypeUsePrinter == eTypeUsePrinter.StationaryWithCutAuto)
-                    printHTTP(codeWares);
+                if (config.TypeUsePrinter == eTypeUsePrinter.StationaryWithCut || config.TypeUsePrinter == eTypeUsePrinter.StationaryWithCutAuto) {
+                    Connector con = Connector.instance();
+                    con.printHTTP(codeWares);
+                }
                 else
                     for (String CodeWares : codeWares) {
                         printPackage(CodeWares);
@@ -235,72 +221,25 @@ public class BL_PriceChecker extends BL {
     }
 
     public void SendLogPrice() {
-        if(config.Company==eCompany.SparPSU||config.Company==eCompany.VopakPSU)
-         SendLogPricePSU();
-        else
-            if(config.Company==eCompany.SevenEleven)
-                SendLogPriceSevenEleve();
-
-    }
-
-    public void SendLogPriceSevenEleve() {
         for (int i = 0; i < 20; i++) {
-            SetProgress(5+i*5);
+            SetProgress(5 + i * 5);
             List<LogPrice> list = mDbHelper.GetSendData(100);
             //List<String> ll = new ArrayList<>(list.size());
-            if(list==null&&list.size()==0)
+            if (list == null && list.size() == 0)
                 break;
-            StringBuilder sb = new StringBuilder();
-            for (LogPrice s : list) {
-                sb.append("," + s.GetJsonSE());
-            }
-            if (sb.length() <= 2)
-                return;
-            String a = "[" + sb.substring(1) + "]";
+            Connector con = Connector.instance();
+            Result res = con.SendLogPrice(list);
 
-            String data = a;
-
-            String res = Http.HTTPRequest(config.ApiUrl + "pricetag", data, "application/json;charset=utf-8", config.Login, config.Password);
-            if (Http.HttpState == eStateHTTP.HTTP_OK) {
+            if (res.State == 0) {
                 try {
                     mDbHelper.AfterSendData();
                     int[] varRes = mDbHelper.GetCountScanCode();
                     LI.AllScan = varRes[0];
                     LI.BadScan = varRes[1];
                 } catch (Exception e) {
-                    Log.e(TAG, "SendLogPriceSevenEleve  >>" + e.getMessage());
+                    Log.e(TAG, "SendLogPricePSU  >>" + e.getMessage());
                 }
-            }
-        }
-        SetProgress(100);
-    }
-    public void SendLogPricePSU() {
-        for (int i = 0; i < 20; i++) {
-            SetProgress(5+i*5);
-            List<LogPrice> list = mDbHelper.GetSendData(100);
-            //List<String> ll = new ArrayList<>(list.size());
-            if (list == null && list.size() == 0)
-                break;
-            List<String> ll = new ArrayList<>(list.size());
-            for (LogPrice el : list)
-                ll.add(el.GetJsonPSU());
 
-            String a = new Gson().toJson(ll);
-            String data = config.GetApiJson(141, "\"LogPrice\":" + a);
-
-            String result = Http.HTTPRequest(config.ApiUrl, data);
-
-            try {
-                JSONObject jObject = new JSONObject(result);
-
-                if (jObject.getInt("State") == 0) {
-                    mDbHelper.AfterSendData();
-                    int[] varRes = mDbHelper.GetCountScanCode();
-                    LI.AllScan = varRes[0];
-                    LI.BadScan = varRes[1];
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "SendLogPricePSU  >>" + e.getMessage());
             }
         }
         SetProgress(100);

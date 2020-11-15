@@ -318,7 +318,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
 
         if (BarcodeImageLayout != null) {
             Drawable dw = BarcodeImageLayout.getBackground();
-            if (BL.Printer.varPrinterError != ePrinterError.None || config.Worker.Http.HttpState != eStateHTTP.HTTP_OK) {
+            if (BL.Printer.varPrinterError != ePrinterError.None || LI.HttpState != eStateHTTP.HTTP_OK) {
                 dw.setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
             } else {
                 if (LI.Action())

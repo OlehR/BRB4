@@ -3,29 +3,25 @@ package ua.uz.vopak.brb4.brb4.helpers;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
-
 import org.json.JSONObject;
-
-import ua.uz.vopak.brb4.brb4.AuthActivity;
 import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.MessageActivity;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
-import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
-import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.lib.models.HttpResult;
 
 public class AuterizationsHelper {
     private static String TAG = "AuterizationsHelper";
     GlobalConfig config = GlobalConfig.instance();
-    GetDataHTTP Http=new GetDataHTTP();
+    GetDataHTTP Http= GetDataHTTP.instance();// new GetDataHTTP(new String[]{config.ApiUrl, config.ApiURLadd});
 
     public boolean Login(Activity pActivity,final String pLogin,final String pPassWord)
     {
         try{
-        if(pLogin.equals("Admin")&&pPassWord.equals("13579")) {
+        if((pLogin.equals("Admin")&&pPassWord.equals("13579")) || pLogin.equals("OffLine") ) {
             ExecuteMainActivity(pActivity, pLogin, pPassWord);
             return true;
         }
@@ -40,35 +36,34 @@ public class AuterizationsHelper {
     }
     public boolean LoginSevenEleven(Activity activity,final String pLogin,final String pPassWord) {
 
-        String res=Http.HTTPRequest(config.ApiUrl+"warehouse",null,"application/json;charset=utf-8",pLogin,pPassWord);
-        if(Http.HttpState== eStateHTTP.HTTP_UNAUTHORIZED || Http.HttpState== eStateHTTP.HTTP_Not_Define_Error)
+        HttpResult res=Http.HTTPRequest(0,"warehouse",null,"application/json;charset=utf-8",pLogin,pPassWord);
+        if(res.HttpState== eStateHTTP.HTTP_UNAUTHORIZED || res.HttpState== eStateHTTP.HTTP_Not_Define_Error)
         {
-            MessageError(activity, "Неправильний логін або пароль","");
+            Log.e(TAG, "Login >>"+ res.HttpState.toString());
+            MessageError(activity, "Неправильний логін або пароль",res.HttpState.toString());
             return false;
         }
         else
-        if(Http.HttpState!= eStateHTTP.HTTP_OK) {
-            MessageError(activity, "Ви не підключені до мережі " + config.Company.name(), "");
+        if(res.HttpState!= eStateHTTP.HTTP_OK) {
+            MessageError(activity, "Ви не підключені до мережі " + config.Company.name(), res.HttpState.toString());
             return false;
         }
-
+        config.IsOnline=true;
         ExecuteMainActivity(activity,pLogin,pPassWord);
         return true;
     }
 
-
     public boolean LoginPSU(Activity activity,final String pLogin,final String pPassWord) {
         final String data = "{\"CodeData\": \"1\"" + ", \"Login\": \"" + pLogin + "\"" + ", \"PassWord\": \"" + pPassWord + "\"}";
-        String result = Http.HTTPRequest(config.ApiUrl, data);
+        HttpResult result = Http.HTTPRequest(0, "",data,null,null,null);
 
-
-        if (result.equals(""))
-            MessageError(activity, "Ви не підключені до мережі " + config.Company.name(), "");
-        else
+        if (result.HttpState!= eStateHTTP.HTTP_OK || result.equals(""))
+            MessageError(activity, "Ви не підключені до мережі " + config.Company.name(), result.HttpState.toString());
 
         try {
-            JSONObject jObject = new JSONObject(result);
+            JSONObject jObject = new JSONObject(result.Result);
             if(jObject.getInt("State") == 0){
+                config.IsOnline=true;
                 ExecuteMainActivity(activity,pLogin,pPassWord);
             }else{
                 MessageError(activity, "Неправильний логін або пароль", jObject.getString("TextError"));

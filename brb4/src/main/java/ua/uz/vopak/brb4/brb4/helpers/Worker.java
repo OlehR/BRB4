@@ -27,7 +27,7 @@ public class Worker {
     protected static final String TAG = "BRB4/Worker";
     GlobalConfig config = GlobalConfig.instance();
 
-    public GetDataHTTP Http = new GetDataHTTP();
+    //public GetDataHTTP Http = new GetDataHTTP();
     SQLiteAdapter mDbHelper  = config.GetSQLiteAdapter();
     //public Connector c = Connector.instance();
 

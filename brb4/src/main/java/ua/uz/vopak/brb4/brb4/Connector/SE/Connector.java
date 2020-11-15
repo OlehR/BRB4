@@ -1,8 +1,6 @@
 package ua.uz.vopak.brb4.brb4.Connector.SE;
 
 import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
-import android.nfc.Tag;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -16,29 +14,28 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
+import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
-import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
+import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     protected static final String TAG = "BRB4/Connector";
 
-
     //Завантаження довідників.
     public boolean LoadGuidData(boolean IsFull, ObservableInt pProgress) {
         try {
             Log.d(TAG, "Start");
             pProgress.set(5);
-            String res = Http.HTTPRequest(config.ApiUrl + "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
-            if (Http.HttpState == eStateHTTP.HTTP_OK) {
-                Log.d(TAG, "LoadData=>" + res.length());
+            HttpResult res = Http.HTTPRequest(0, "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
+            if (res.HttpState == eStateHTTP.HTTP_OK) {
+                Log.d(TAG, "LoadData=>" + res.Result.length());
                 pProgress.set(40);
                 if (IsFull) {
                     String sql = "DELETE FROM Wares; DELETE FROM ADDITION_UNIT; DELETE FROM BAR_CODE;DELETE FROM UNIT_DIMENSION;";
@@ -46,7 +43,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 }
                 Log.d(TAG, "DELETE");
                 pProgress.set(45);
-                InputData data = new Gson().fromJson(res, InputData.class);
+                InputData data = new Gson().fromJson(res.Result, InputData.class);
 
                 Log.d(TAG, "Parse JSON");
                 pProgress.set(60);
@@ -61,12 +58,12 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 pProgress.set(90);
                 SaveUnitDimension(data.Dimentions);
             } else
-                Log.d(TAG, Http.HttpState.name());
+                Log.d(TAG, res.HttpState.name());
 
-            res = Http.HTTPRequest(config.ApiURLadd + "reasons", null, "application/json;charset=utf-8", config.Login, config.Password);
-            if (Http.HttpState == eStateHTTP.HTTP_OK) {
+            res = Http.HTTPRequest(1, "reasons", null, "application/json;charset=utf-8", config.Login, config.Password);
+            if (res.HttpState == eStateHTTP.HTTP_OK) {
                 pProgress.set(95);
-                List<Reason> Reasons = new Gson().fromJson(res, new TypeToken<List<Reason>>() {
+                List<Reason> Reasons = new Gson().fromJson(res.Result, new TypeToken<List<Reason>>() {
                 }.getType());
                 db.execSQL("DELETE FROM Reason;");
                 SaveReason(Reasons);
@@ -213,16 +210,16 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     public Boolean LoadDocsData(int pTypeDoc, String pNumberDoc, ObservableInt pProgress, boolean pIsClear) {
         if (pProgress != null)
             pProgress.set(5);
-        String res;
+        HttpResult res;
         try {
             if (pTypeDoc == 5|| pTypeDoc == 6 ) {
-                res = Http.HTTPRequest(config.ApiURLadd + "documents"+(pTypeDoc == 5?"\\" + pNumberDoc: "?StoreSetting="+config.CodeWarehouse ), null, "application/json;charset=utf-8", config.Login, config.Password);
+                res = Http.HTTPRequest(1, "documents"+(pTypeDoc == 5?"\\" + pNumberDoc: "?StoreSetting="+config.CodeWarehouse ), null, "application/json;charset=utf-8", config.Login, config.Password);
             } else
-                res = Http.HTTPRequest(config.ApiUrl + "documents" , null, "application/json;charset=utf-8", config.Login, config.Password);
-            if (Http.HttpState == eStateHTTP.HTTP_OK) {
+                res = Http.HTTPRequest(0, "documents" , null, "application/json;charset=utf-8", config.Login, config.Password);
+            if (res.HttpState == eStateHTTP.HTTP_OK) {
                 if (pProgress != null)
                     pProgress.set(40);
-                InputDocs data = new Gson().fromJson(res, InputDocs.class);
+                InputDocs data = new Gson().fromJson(res.Result, InputDocs.class);
                 if (pIsClear)
                     db.execSQL("Delete from DOC;Delete from DOC_WARES_sample;Delete from DOC_WARES;".trim());
                 else
@@ -264,11 +261,11 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         OD.add(el);
         String json = gson.toJson(OD);
 
-        String res = Http.HTTPRequest((pTypeDoc == 5 || pTypeDoc == 6  ? config.ApiURLadd : config.ApiUrl) + "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
-        if (Http.HttpState == eStateHTTP.HTTP_OK) {
+        HttpResult res = Http.HTTPRequest((pTypeDoc == 5 || pTypeDoc == 6  ? 1 : 0) , "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
+        if (res.HttpState == eStateHTTP.HTTP_OK) {
             return new Result();
         }
-        return new Result(-1, Http.HttpState.toString());
+        return new Result(-1, res.HttpState.toString());
     }
 
     boolean SaveDocWaresSample(DocWaresSample[] pDWS) {
@@ -288,7 +285,6 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 values.put("quantity_min", DWS.QuantityMin);
                 values.put("quantity_max", DWS.QuantityMax);
                 result = db.replace("DOC_WARES_sample", null, values);
-
 
                 if (i >= 1000) {
                     i = 0;
@@ -310,13 +306,13 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     //Завантаження Списку складів (HTTP)
     public Warehouse[] LoadWarehouse() {
 
-        String res;
+        HttpResult res;
         try {
 
-            res = Http.HTTPRequest(config.ApiURLadd + "StoreSettings", null, "application/json;charset=utf-8", config.Login, config.Password);
+            res = Http.HTTPRequest(1, "StoreSettings", null, "application/json;charset=utf-8", config.Login, config.Password);
 
-            if (Http.HttpState == eStateHTTP.HTTP_OK) {
-                InputWarehouse[] data = new Gson().fromJson(res, InputWarehouse[].class);
+            if (res.HttpState == eStateHTTP.HTTP_OK) {
+                InputWarehouse[] data = new Gson().fromJson(res.Result, InputWarehouse[].class);
                 Warehouse [] WH = new Warehouse[data.length];
                 for (int i = 0; i <WH.length ; i++) {
                     WH[i]=data[i].GetWarehouse();
@@ -329,6 +325,24 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         }
         return null;
     }
+
+    public  Result  SendLogPrice(List<LogPrice> pList){
+        StringBuilder sb = new StringBuilder();
+        for (LogPrice s : pList) {
+            sb.append("," + s.GetJsonSE());
+        }
+        if (sb.length() <= 2)
+            return new Result(-1,"Недостатньо даних");
+        String a = "[" + sb.substring(1) + "]";
+
+        String data = a;
+
+        HttpResult res = Http.HTTPRequest(0, "pricetag", data, "application/json;charset=utf-8", config.Login, config.Password);
+        return new Result(res);
+    }
+
+    // Друк на стаціонарному термопринтері
+    public void printHTTP(List<String> codeWares) {};
 
 }
 

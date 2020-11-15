@@ -7,6 +7,7 @@ import androidx.databinding.ObservableInt;
 import java.util.Date;
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
@@ -22,7 +23,7 @@ public abstract class Connector {
     protected static GlobalConfig config = GlobalConfig.instance();
     protected SQLiteAdapter mDbHelper = config.GetSQLiteAdapter();
     protected SQLiteDatabase db = mDbHelper.GetDB();
-    protected GetDataHTTP Http = new GetDataHTTP();
+    protected GetDataHTTP Http = GetDataHTTP.instance(); //new GetDataHTTP(new String[]{config.ApiUrl, config.ApiURLadd});
 
     public static ua.uz.vopak.brb4.brb4.Connector.Connector instance() {
        // if (Instance == null) {
@@ -40,5 +41,10 @@ public abstract class Connector {
     //Вивантаження документів з ТЗД (HTTP)
     public abstract Result SyncDocsData(int pTypeDoc, String pNumberDoc, List<WaresItemModel> pWares, Date pDateOutInvoice, String pNumberOutInvoice, int pIsClose) ;
 
+    //Збереження ПРосканованих товарів в 1С
+    public abstract Result  SendLogPrice(List<LogPrice> pList) ;
+
+    // Друк на стаціонарному термопринтері
+    public abstract void printHTTP(List<String> codeWares);
 
 }

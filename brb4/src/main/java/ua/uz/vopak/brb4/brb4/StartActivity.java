@@ -21,6 +21,7 @@ public class StartActivity extends AppCompatActivity {
     Context context;
     final Activity activity = this;
     static boolean isFirstRun = true;
+    static boolean isNewVersion = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +45,7 @@ public class StartActivity extends AppCompatActivity {
                         AddText("Оновлення Знайдено. Встановлюємо.");
                         return false;
                     }
+                    isNewVersion=false;
                     AddText("Оновлення Відсутні");
                     if(config.IsAutoLogin&&config.Password.length()>0)
                     {
@@ -61,8 +63,9 @@ public class StartActivity extends AppCompatActivity {
                         @Override
                         public void Invoke(Boolean p) {
                             isFirstRun = false;
-                            if( !config.isAutorized)
-                                RunAuth();
+                            onResume();
+                            // if( !config.isAutorized)
+                           //     RunAuth();
                         }
                     }
             ).execute();
@@ -72,6 +75,11 @@ public class StartActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if(!isFirstRun&& isNewVersion)
+        {
+            AddText("Для продовження роботи необхідно оновити BRB4");
+        }
+
         if(!isFirstRun && !config.isAutorized){
             RunAuth();
         }

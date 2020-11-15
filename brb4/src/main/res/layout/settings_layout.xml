@@ -54,6 +54,7 @@
             android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:enabled ="@{SM.IsAdmin}"
             android:checked="@={SM.IsTest}"
             android:gravity="left"
             android:text="Тестова" />
@@ -62,6 +63,7 @@
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:checked="@={SM.IsAutoLogin}"
+             android:enabled ="@{SM.IsAdmin}"
              android:gravity="left"
              android:text="Автологін" />
         </LinearLayout>
@@ -113,7 +115,6 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="@{SM.IsSevenEleven() ? View.VISIBLE:View.GONE }"
             android:textSize="9pt"
             android:layout_marginTop="1dp"
             android:enabled ="@{SM.IsAdmin}"

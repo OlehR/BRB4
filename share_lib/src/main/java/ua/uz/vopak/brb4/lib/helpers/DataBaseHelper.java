@@ -1,4 +1,4 @@
-package ua.uz.vopak.brb4.brb4.helpers;
+package ua.uz.vopak.brb4.lib.helpers;
 
 import java.io.File;
 import java.io.FileOutputStream;

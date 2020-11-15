@@ -1,22 +1,17 @@
 package ua.uz.vopak.brb4.brb4.models;
 
-import android.os.Environment;
-
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
 
-import java.io.File;
-
 import ua.uz.vopak.brb4.brb4.BuildConfig;
-import ua.uz.vopak.brb4.brb4.Connector.SE.Connector;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
-import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class SetingModel {
     GlobalConfig config = GlobalConfig.instance();
@@ -79,9 +74,9 @@ public class SetingModel {
             url=Warehouse[ListWarehouseIdx.get()].Url;
 
         apiURL.set(Company==eCompany.SevenEleven? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
-                (config.IsDebug? "http://195.16.78.134:7654/api/api_v1_utf8.php":"http://znp.vopak.local/api/api_v1_utf8.php"));
+                "http://195.16.78.134:7654/api/api_v1_utf8.php;http://znp.vopak.local/api/api_v1_utf8.php");
         config.ApiUrl=apiURL.get();
-        apiURLadd.set("http://93.183.216.37/TK/hs/TSD/");
+        apiURLadd.set(Company==eCompany.SevenEleven? "http://93.183.216.37/TK/hs/TSD/;http://91.214.125.130/TK/hs/TSD/":"http://znp.vopak.local:8088/Print/");
         config.ApiURLadd=apiURLadd.get();
 
     }
@@ -99,6 +94,8 @@ public class SetingModel {
             worker.AddConfigPair("IsTest",config.IsTest?"true":"false");
             config.IsAutoLogin=IsAutoLogin.get();
             worker.AddConfigPair("IsAutoLogin",config.IsAutoLogin?"true":"false");
+            GetDataHTTP.instance().Init(new String[]{config.ApiUrl,config.ApiURLadd});
+
 
         }
         else

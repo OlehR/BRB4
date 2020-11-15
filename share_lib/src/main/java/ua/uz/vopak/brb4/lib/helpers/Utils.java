@@ -396,7 +396,7 @@ public class Utils {
             String Ver= FileToString(FileNameVer);
             if(pProgress!=null)
                 pProgress.set(10);
-            if(Ver!=null&&Ver.length()>0) {
+            if(Ver!=null && Ver.length()>0) {
                 int ver=0;
                 try {
                     ver= Integer.parseInt(Ver);

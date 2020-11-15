@@ -1,20 +1,44 @@
 package ua.uz.vopak.brb4.lib.helpers;
 
 
-import android.util.Base64;
 import android.util.Log;
-
 import java.io.*;
-//import java.io.UnsupportedEncodingException;
 import java.net.*;
 import javax.net.ssl.HttpsURLConnection;
 
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
+import ua.uz.vopak.brb4.lib.models.HttpResult;
 
 public class GetDataHTTP
 {
+    protected static GetDataHTTP Instance = null;
+    String[][] Url;
+    int [] DefaultApi;
     protected static final String TAG = "BRB4/GetDataHTTP";
-    public eStateHTTP HttpState = eStateHTTP.HTTP_OK;
+    public GetDataHTTP(){};
+    public GetDataHTTP(String [] pUrl)
+    {
+       Init(pUrl);
+    };
+    public void Init(String [] pUrl)
+    {
+        DefaultApi = new int[pUrl.length];
+        Url = new String[2][];
+        for (int i = 0; i < pUrl.length; i++) {
+            DefaultApi[i]=0;
+            String [] Urls = pUrl[i].split(";");
+            Url[i]=Urls;
+        }
+        Instance=this;
+    }
+    public static GetDataHTTP instance() {
+        if (Instance == null) {
+            AbstractConfig config =  AbstractConfig.instance();
+            Instance = (config==null? new GetDataHTTP() : new GetDataHTTP(new String[]{config.ApiUrl,config.ApiURLadd}));
+         }
+        return Instance;
+    }
 
   /*  public String GetData(String parCodeShop,String parScanCode,String parCode) {
         if (parScanCode == null || parScanCode.isEmpty())
@@ -55,15 +79,18 @@ public String GetBaseAuth(String pLogin,String pPasWord){
     //"Authorization"
 }
 
-    public String HTTPRequest(String pURL,String pData )    {
+    public HttpResult HTTPRequest(String pURL,String pData )    {
         return HTTPRequest(pURL,pData, "text/xml;charset=utf-8");
     }
 
-    public String HTTPRequest(String pURL,String pData,String pContentType)    {
+    public HttpResult HTTPRequest(String pURL,String pData,String pContentType)    {
         return HTTPRequest( pURL, pData, pContentType,null,null);
     }
 
-    public String HTTPRequest(String pURL,String pData,String pContentType,final String pLogin,final String pPassWord){
+    public HttpResult HTTPRequest(String pURL,String pData,String pContentType,final String pLogin,final String pPassWord){
+     if(pContentType==null)
+         pContentType= "text/xml;charset=utf-8";
+     HttpResult res = new HttpResult();
         String log="\n"+pURL+"\nData=>"+pData;
      if(pLogin!=null)
         Authenticator.setDefault(new Authenticator(){
@@ -71,7 +98,7 @@ public String GetBaseAuth(String pLogin,String pPasWord){
                 return new PasswordAuthentication(pLogin,pPassWord.toCharArray());
             }});
         URL url;
-        String response = "";
+       // String response = "";
         HttpURLConnection conn = null;
         try {
             url = new URL(pURL);
@@ -101,7 +128,7 @@ public String GetBaseAuth(String pLogin,String pPasWord){
             Log.d(TAG,"Start");
             int responseCode=conn.getResponseCode();
             Log.d(TAG,"responseCode");
-            HttpState = eStateHTTP.fromId(responseCode);
+            res.HttpState = eStateHTTP.fromId(responseCode);
             if (responseCode == HttpsURLConnection.HTTP_OK ) {
                 StringBuilder everything = new StringBuilder();
                 String line;
@@ -111,38 +138,49 @@ public String GetBaseAuth(String pLogin,String pPasWord){
                     everything.append(line);
                     //response+=line;
                 }
-                response=everything.toString();
+                res.Result=everything.toString();
                 Log.d(TAG,"EndRead");
             }
-            else {
-                response="";
-            }
-            log+= "\nResponse=>"+ (response.length()>2000? response.substring(0,2000):response);
+
+            log+= "\nResponse=>"+ (res.Result.length()>2000? res.Result.substring(0,2000):res.Result);
 
         } catch (Exception e) {
             Log.e(TAG,e.getMessage());
             e.printStackTrace();
-            HttpState= eStateHTTP.HTTP_Not_Define_Error;
+            res.HttpState= eStateHTTP.HTTP_Not_Define_Error;
             if(e.getMessage().equals("Read timed out")) {
-                HttpState = eStateHTTP.HTTP_CLIENT_TIMEOUT;
-                return response;
+                res.HttpState = eStateHTTP.HTTP_CLIENT_TIMEOUT;
+                return res;
             }
             if(conn!=null)
                 try {
                     int a = conn.getResponseCode();
-                    HttpState = eStateHTTP.fromId(a);
+                    res.HttpState = eStateHTTP.fromId(a);
                     log+="\n Error=>"+e.getMessage();
                 }catch (Exception ex){};
-
         }
         Utils.WriteLog(log);
-        return response;
-
-
+        return res;
     }
 
-
-
-
-
+    public HttpResult HTTPRequest (int pUrlApi,String pApi,String pData,String pContentType,final String pLogin,final String pPassWord)
+    {
+        HttpResult res=new HttpResult() ;
+        if(Url!=null && Url.length>=pUrlApi &&  Url[pUrlApi]!=null)
+        {
+            res= HTTPRequest(Url[pUrlApi][DefaultApi[pUrlApi]]+pApi,pData,pContentType,pLogin,pPassWord);
+            if(res.HttpState!=eStateHTTP.HTTP_OK && res.HttpState != eStateHTTP.HTTP_UNAUTHORIZED)
+            {
+                for (int i = 0; i < Url[pUrlApi].length ; i++) {
+                    if(i!=DefaultApi[pUrlApi] && Url[pUrlApi][i]!=null && !Url[pUrlApi][i].isEmpty())
+                    {
+                        res= HTTPRequest(Url[pUrlApi][i]+pApi,pData,pContentType,pLogin,pPassWord);
+                        if(res.HttpState==eStateHTTP.HTTP_OK)
+                            DefaultApi[pUrlApi]=i;
+                    }
+                }
+            }
+        }
+        return res;
+    }
 }
