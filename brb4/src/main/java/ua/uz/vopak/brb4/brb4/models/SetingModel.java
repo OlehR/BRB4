@@ -74,9 +74,9 @@ public class SetingModel {
             url=Warehouse[ListWarehouseIdx.get()].Url;
 
         apiURL.set(Company==eCompany.SevenEleven? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
-                "http://195.16.78.134:7654/api/api_v1_utf8.php;http://znp.vopak.local/api/api_v1_utf8.php");
+                "http://znp.vopak.local/api/api_v1_utf8.php;http://195.16.78.134:7654/api/api_v1_utf8.php");
         config.ApiUrl=apiURL.get();
-        apiURLadd.set(Company==eCompany.SevenEleven? "http://93.183.216.37/TK/hs/TSD/;http://91.214.125.130/TK/hs/TSD/":"http://znp.vopak.local:8088/Print/");
+        apiURLadd.set(Company==eCompany.SevenEleven? "http://93.183.216.37/TK/hs/TSD/;http://91.214.125.130/TK/hs/TSD/":"http://znp.vopak.local:8088/Print");
         config.ApiURLadd=apiURLadd.get();
 
     }
