@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import android.view.KeyEvent;
@@ -20,6 +21,8 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import com.google.zxing.client.android.BuildConfig;
 
 import java.util.List;
 
@@ -53,7 +56,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this.getApplicationContext();
-        getSupportActionBar().setTitle("BRB "+BuildConfig.VERSION_NAME);
+        getSupportActionBar().setTitle("BRB "+ BuildConfig.VERSION_NAME);
 
         //ініціалізація класа при старті.
         Utils.instance(context);
@@ -105,6 +108,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 Button btn = new Button(this);
                 btn.setText("F" + String.valueOf(i + 2) + "-" + config.DocsSetting[i].NameDoc);
                 btn.setId(btn.generateViewId());//setId(some_random_id);
+                //btn.setTextColor(Color.parseColor("#FFFFFF"));
+                //btn.setBackgroundResource(R.drawable.main_button);////////////////////////////////
                 linearLayout.addView(btn, params);
                 menuItems[i + 1] = btn;
             }
