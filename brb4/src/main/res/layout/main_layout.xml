@@ -26,7 +26,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:background="@drawable/selected_button"
+                android:textColor="@color/white"
+                android:background="@drawable/main_button"
                 android:text="f1-Перевірка цінників" >
             </Button>
 

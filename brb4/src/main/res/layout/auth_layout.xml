@@ -16,8 +16,10 @@
         android:layout_height="40dp"
         android:ems="10"
         android:padding="5dp"
+        android:textColor="@color/loginButtonBlu"
         android:inputType="textPersonName"
         android:background="@drawable/input_style"
+        android:gravity="center"
         android:hint="Логін" />
 
     <EditText
@@ -28,15 +30,22 @@
         android:padding="5dp"
         android:ems="10"
         android:inputType="textPassword"
+        android:textColor="@color/loginButtonBlu"
         android:background="@drawable/input_style"
-        android:hint="Пароль"/>
+        android:hint="Пароль"
+        android:gravity="center"/>
 
     <Button
         android:id="@+id/LoginButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="60dp"
         android:layout_marginTop="10dp"
-        android:text="Ввійти" />
+        android:layout_gravity="center"
+        android:textColor="@color/white"
+        android:text="Ввійти"
+        android:textAllCaps="false"
+        android:background="@drawable/login_button"
+        android:textSize="20dp"/>
 
 </LinearLayout>
 </RelativeLayout>

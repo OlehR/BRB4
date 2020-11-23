@@ -9,4 +9,8 @@
     <color name="AlertBackground">#fff3cd</color>
     <color name="DungerBackground">#fff3cd</color>
     <color name="SuccessBackground">#d4edda</color>
+    <color name="loginButtonGreen">#2AF598</color>
+    <color name="loginButtonBlu">#009EDF</color>
+    <color name="touchColorButton">#FF0000</color>
+    <color name="white">#FFFFFF</color>
 </resources>

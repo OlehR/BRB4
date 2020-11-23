@@ -108,8 +108,8 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 Button btn = new Button(this);
                 btn.setText("F" + String.valueOf(i + 2) + "-" + config.DocsSetting[i].NameDoc);
                 btn.setId(btn.generateViewId());//setId(some_random_id);
-                //btn.setTextColor(Color.parseColor("#FFFFFF"));
-                //btn.setBackgroundResource(R.drawable.main_button);////////////////////////////////
+                btn.setTextColor(Color.parseColor("#FFFFFF"));
+                btn.setBackgroundResource(R.drawable.main_button);////////////////////////////////
                 linearLayout.addView(btn, params);
                 menuItems[i + 1] = btn;
             }
