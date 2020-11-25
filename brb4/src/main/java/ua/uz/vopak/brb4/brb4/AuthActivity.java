@@ -35,6 +35,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
     private Toast backToast;
     GlobalConfig config = GlobalConfig.instance();
     Button loginBtn;
+    TextView nameStore;
     EditText login, password;
     AuterizationsHelper aHelper=new AuterizationsHelper();
     final Activity activity = this;
@@ -48,7 +49,14 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
         loginBtn.setOnClickListener(this);
         login = findViewById(R.id.Login);
         password = findViewById(R.id.Password);
-
+        nameStore = findViewById(R.id.NameStore);
+        if (config.Company.getAction() == 1)
+            nameStore.setText("Вопак");
+        else if (config.Company.getAction() == 2)
+            nameStore.setText("Spar");
+        else if (config.Company.getAction() == 3)
+            nameStore.setText("SevenEleven");
+        else nameStore.setText("Зверніться до адміністратора");
         if(config.IsDebug)
             password.setText(config.Password);
         login.setText(config.Login);

@@ -105,6 +105,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
+            //відступи між кнопками
             params.setMargins(5,0,5,10);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             if(config.DocsSetting!=null)
@@ -128,7 +129,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                         if (hasFocus) {
                             ((Button) v).setTextColor(ContextCompat.getColor(context, android.R.color.white));
                         } else {
-                            ((Button) v).setTextColor(ContextCompat.getColor(context, android.R.color.black));
+                            ((Button) v).setTextColor(ContextCompat.getColor(context, android.R.color.white));
                         }
                     }
 
