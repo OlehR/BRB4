@@ -35,6 +35,7 @@
             android:required="false" />
         <activity
             android:name=".StartActivity"
+            android:noHistory="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -109,6 +110,9 @@ android:priority="0"
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
     </application>
 
 </manifest>

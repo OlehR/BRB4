@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -30,6 +31,8 @@ import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
 public class AuthActivity extends Activity  implements View.OnClickListener, ScanCallBack {
+    private long backPressedTime;
+    private Toast backToast;
     GlobalConfig config = GlobalConfig.instance();
     Button loginBtn;
     EditText login, password;
@@ -61,6 +64,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
             }
         });
     }
+
 
     @Override
     public void onResume() {
@@ -129,19 +133,31 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
         password.requestFocus();
     }
 
+//    @Override
+//    public void onBackPressed() {
+//        new AlertDialog.Builder(this)
+//                .setTitle("Вийти з програми?")
+//                .setMessage("Ви справді хочете вийти?")
+//                .setNegativeButton(android.R.string.no, null)
+//                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface arg0, int arg1) {
+//                        config.isAutorized = false;
+//                        finish();
+//                        moveTaskToBack(true);
+//                    }
+//                }).create().show();
+//    }
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setTitle("Вийти з програми?")
-                .setMessage("Ви справді хочете вийти?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        config.isAutorized = false;
-                        finish();
-                        moveTaskToBack(true);
-                    }
-                }).create().show();
-    }
 
+        if (backPressedTime+2000 > System.currentTimeMillis()){
+            backToast.cancel();
+            super.onBackPressed();
+            return;
+        }else {
+            backToast = Toast.makeText(getBaseContext(), "Натисніть ще раз, щоб вийти", Toast.LENGTH_SHORT);
+            backToast.show();
+        }
+        backPressedTime = System.currentTimeMillis();
+    }
 }
