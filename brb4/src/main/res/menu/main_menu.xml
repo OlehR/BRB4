@@ -5,12 +5,12 @@
     tools:context=".MainActivity" >
 
     <item android:id="@+id/action_settings"
-        android:title="Налаштування"
+        android:title="@string/settings"
         android:orderInCategory="100"
         app:showAsAction="never" >
     </item>
     <item android:id="@+id/action_login"
-        android:title="Авторизація"
+        android:title="@string/authorization"
         android:orderInCategory="100"
         app:showAsAction="never" >
     </item>

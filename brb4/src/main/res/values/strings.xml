@@ -1,4 +1,11 @@
 <resources>
-    <string name="app_name">brb4</string>
+    <string name="app_name">BRB4</string>
     <string name="scan">Scan</string>
+    <string name="enter">Ввійти</string>
+    <string name="login">Логін</string>
+    <string name="password">Пароль</string>
+    <string name="checking_price">f1-Перевірка цінників</string>
+    <string name="authorization">Авторизація</string>
+    <string name="settings">Налаштування</string>
+    <string name="vopak">Вопак</string>
 </resources>

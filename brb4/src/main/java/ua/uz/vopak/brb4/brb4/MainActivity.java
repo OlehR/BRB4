@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import android.view.KeyEvent;
@@ -20,6 +21,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
+
+import com.google.zxing.client.android.BuildConfig;
 
 import java.util.List;
 
@@ -38,6 +42,8 @@ import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class  MainActivity extends AppCompatActivity implements View.OnClickListener, ScanCallBack {
     MainLayoutBinding binding;
+    private long backPressedTime;
+    private Toast backToast;
     static GlobalConfig config = GlobalConfig.instance();
     public RelativeLayout loader;
     private LinearLayout linearLayout;
@@ -53,7 +59,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this.getApplicationContext();
-        getSupportActionBar().setTitle("BRB "+BuildConfig.VERSION_NAME);
+        getSupportActionBar().setTitle("BRB "+ BuildConfig.VERSION_NAME);
 
         //ініціалізація класа при старті.
         Utils.instance(context);
@@ -99,12 +105,18 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
-
+            //відступи між кнопками
+            params.setMargins(5,0,5,10);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             if(config.DocsSetting!=null)
             for (int i = 0; i < config.DocsSetting.length; i++) {
                 Button btn = new Button(this);
                 btn.setText("F" + String.valueOf(i + 2) + "-" + config.DocsSetting[i].NameDoc);
                 btn.setId(btn.generateViewId());//setId(some_random_id);
+                btn.setPadding(50,0,50,0);
+                btn.setTextSize(25);
+                btn.setTextColor(Color.parseColor("#FFFFFF"));
+                btn.setBackgroundResource(R.drawable.main_button);
                 linearLayout.addView(btn, params);
                 menuItems[i + 1] = btn;
             }
@@ -117,7 +129,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                         if (hasFocus) {
                             ((Button) v).setTextColor(ContextCompat.getColor(context, android.R.color.white));
                         } else {
-                            ((Button) v).setTextColor(ContextCompat.getColor(context, android.R.color.black));
+                            ((Button) v).setTextColor(ContextCompat.getColor(context, android.R.color.white));
                         }
                     }
 
@@ -304,19 +316,35 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
+//    @Override
+//    public void onBackPressed() {
+//        new AlertDialog.Builder(this)
+//                .setTitle("Вийти з програми?")
+//                .setMessage("Ви справді хочете вийти?")
+//                .setNegativeButton(android.R.string.no, null)
+//                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface arg0, int arg1) {
+//                        //SomeActivity - имя класса Activity для которой переопределяем onBackPressed();
+//                        config.isAutorized = false;
+//                        finish();
+//                        moveTaskToBack(true);
+//                    }
+//                }).create().show();
+//    }
+
+    //Кнопка НАЗАД
+
     @Override
     public void onBackPressed() {
-        new AlertDialog.Builder(this)
-                .setTitle("Вийти з програми?")
-                .setMessage("Ви справді хочете вийти?")
-                .setNegativeButton(android.R.string.no, null)
-                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        //SomeActivity - имя класса Activity для которой переопределяем onBackPressed();
-                        config.isAutorized = false;
-                        finish();
-                        moveTaskToBack(true);
-                    }
-                }).create().show();
+
+        if (backPressedTime+2000 > System.currentTimeMillis()){
+            backToast.cancel();
+            super.onBackPressed();
+            return;
+        }else {
+            backToast = Toast.makeText(getBaseContext(), "Натисніть ще раз, щоб вийти", Toast.LENGTH_SHORT);
+            backToast.show();
+        }
+        backPressedTime = System.currentTimeMillis();
     }
 }

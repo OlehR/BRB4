@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:targetApi="lollipop"
+    android:color="@color/touchColorButton">
+    <item>
+        <selector xmlns:android="http://schemas.android.com/apk/res/android">
+            <item android:state_pressed="false" android:drawable="@drawable/style_btn_stroke_white50"/>
+            <item android:state_pressed="true" android:drawable="@drawable/style_btn_stroke_white50_press"/>
+        </selector>
+    </item>
+
+
+</ripple>
