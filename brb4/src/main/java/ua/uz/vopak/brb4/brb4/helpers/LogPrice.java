@@ -28,6 +28,13 @@ public class LogPrice {
     {
         Init(pCur);
     }
+    String regex = "[0-9]+";
+    public boolean IsGoodBarCode()
+    {
+        if(BarCode!=null && BarCode.trim().length()>2 && BarCode.trim().replace("-","").matches(regex) )
+            return true;
+        return false;
+    }
     void Init( Cursor pCur)
     {
 

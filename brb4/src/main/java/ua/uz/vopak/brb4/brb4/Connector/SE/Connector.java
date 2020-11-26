@@ -329,7 +329,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     public  Result  SendLogPrice(List<LogPrice> pList){
         StringBuilder sb = new StringBuilder();
         for (LogPrice s : pList) {
-            sb.append("," + s.GetJsonSE());
+            if(s.IsGoodBarCode())
+                sb.append("," + s.GetJsonSE());
         }
         if (sb.length() <= 2)
             return new Result(-1,"Недостатньо даних");
