@@ -166,7 +166,7 @@ public String GetBaseAuth(String pLogin,String pPasWord){
 
     public HttpResult HTTPRequest (int pUrlApi,String pApi,String pData,String pContentType, String pLogin, String pPassWord)
     {
-        if(pLogin.equals("Admin")) {
+        if(pLogin!=null && pLogin.equals("Admin")) {
             pLogin= (config.Company== eCompany.SevenEleven?"brb":"c");
             pPassWord = (config.Company== eCompany.SevenEleven?"brb":"c");
         }
