@@ -15,6 +15,7 @@ public class GetDataHTTP
     protected static GetDataHTTP Instance = null;
     String[][] Url;
     int [] DefaultApi;
+    static AbstractConfig config;
     protected static final String TAG = "BRB4/GetDataHTTP";
     public GetDataHTTP(){};
     public GetDataHTTP(String [] pUrl)
@@ -34,7 +35,7 @@ public class GetDataHTTP
     }
     public static GetDataHTTP instance() {
         if (Instance == null) {
-            AbstractConfig config =  AbstractConfig.instance();
+            config =  AbstractConfig.instance();
             Instance = (config==null? new GetDataHTTP() : new GetDataHTTP(new String[]{config.ApiUrl,config.ApiURLadd}));
          }
         return Instance;
@@ -163,8 +164,12 @@ public String GetBaseAuth(String pLogin,String pPasWord){
         return res;
     }
 
-    public HttpResult HTTPRequest (int pUrlApi,String pApi,String pData,String pContentType,final String pLogin,final String pPassWord)
+    public HttpResult HTTPRequest (int pUrlApi,String pApi,String pData,String pContentType, String pLogin, String pPassWord)
     {
+        if(pLogin.equals("Admin")) {
+            pLogin= (config.Company== eCompany.SevenEleven?"brb":"c");
+            pPassWord = (config.Company== eCompany.SevenEleven?"brb":"c");
+        }
         HttpResult res=new HttpResult() ;
         if(Url!=null && Url.length>=pUrlApi &&  Url[pUrlApi]!=null)
         {

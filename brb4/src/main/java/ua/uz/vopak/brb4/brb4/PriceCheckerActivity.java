@@ -246,7 +246,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
              barcodeView.resume();
         //Zebra
         scaner.StartScan();
-        ManualScan();
+       // ManualScan();
     }
 
     public void ManualScan()

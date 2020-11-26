@@ -28,11 +28,11 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     //Завантаження Списку складів (HTTP)
     public Warehouse[] LoadWarehouse() {
-        Warehouse[] res=null;
-        String data = config.GetApiJson(210,"");
+        Warehouse[] res = null;
+        String data = config.GetApiJson(210, "");
         try {
-            HttpResult result = Http.HTTPRequest(0,"", data,null,null,null);
-            if(result.HttpState==eStateHTTP.HTTP_OK) {
+            HttpResult result = Http.HTTPRequest(0, "", data, null, null, null);
+            if (result.HttpState == eStateHTTP.HTTP_OK) {
                 JSONObject jObject = new JSONObject(result.Result);
 
                 if (jObject.getInt("State") == 0) {
@@ -55,27 +55,31 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     }
 
     //Завантаження довідників.
-    public boolean LoadGuidData(boolean IsFull, ObservableInt pProgress){return true;};
+    public boolean LoadGuidData(boolean IsFull, ObservableInt pProgress) {
+        return true;
+    }
+
+    ;
 
     //Завантаження документів в ТЗД (HTTP)
     //PSU Треба перенести в окремий конектор
     public Boolean LoadDocsData(int pTypeDoc, String pNumberDoc, ObservableInt pProgress, boolean pIsClear) {
-        if(pProgress!=null)
+        if (pProgress != null)
             pProgress.set(5);
 
         String data = config.GetApiJson(150, "\"TypeDoc\":" + pTypeDoc);
-        HttpResult result = Http.HTTPRequest(0,"", data,null,null,null);
-        if(result.HttpState!= eStateHTTP.HTTP_OK) {
-            Log.e(TAG, "Load=>"+result.HttpState.toString());
-            if(pProgress!=null)
+        HttpResult result = Http.HTTPRequest(0, "", data, null, null, null);
+        if (result.HttpState != eStateHTTP.HTTP_OK) {
+            Log.e(TAG, "Load=>" + result.HttpState.toString());
+            if (pProgress != null)
                 pProgress.set(0);
             return false;
         }
 
-        Log.d(TAG, "Load=>"+result.Result.length());
-        if(pProgress!=null)
+        Log.d(TAG, "Load=>" + result.Result.length());
+        if (pProgress != null)
             pProgress.set(45);
-        return mDbHelper.LoadDataDoc(result.Result,pProgress);
+        return mDbHelper.LoadDataDoc(result.Result, pProgress);
     }
 
     //Вивантаження документів з ТЗД (HTTP)
@@ -90,21 +94,19 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         }
         String data = config.GetApiJson(153, "\"TypeDoc\":" + parTypeDoc + ",\"NumberDoc\":\"" + NumberDoc + "\",\"Wares\":[" + TextUtils.join(",", wares) + "]");
         try {
-            HttpResult result = Http.HTTPRequest(0,"", data,null,null,null);
-            if(result.HttpState!= eStateHTTP.HTTP_OK) {
+            HttpResult result = Http.HTTPRequest(0, "", data, null, null, null);
+            if (result.HttpState != eStateHTTP.HTTP_OK) {
                 return new Result(result);
             }
 
-            Result res= gson.fromJson(result.Result, Result.class);
-            return  res;
-        }
-        catch(Exception e)
-        {
-            return new Result(-1,e.getMessage());
+            Result res = gson.fromJson(result.Result, Result.class);
+            return res;
+        } catch (Exception e) {
+            return new Result(-1, e.getMessage());
         }
     }
 
-    public  Result  SendLogPrice(List<LogPrice> pList){
+    public Result SendLogPrice(List<LogPrice> pList) {
         List<String> ll = new ArrayList<>(pList.size());
         for (LogPrice el : pList)
             ll.add(el.GetJsonPSU());
@@ -112,17 +114,16 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         String a = new Gson().toJson(ll);
         String data = config.GetApiJson(141, "\"LogPrice\":" + a);
 
-        HttpResult res = Http.HTTPRequest(0,"", data,null,null,null);
+        HttpResult res = Http.HTTPRequest(0, "", data, null, null, null);
         if (res.HttpState == eStateHTTP.HTTP_OK) {
             try {
                 return gson.fromJson(res.Result, Result.class);
 
             } catch (Exception e) {
                 Log.e(TAG, "SendLogPrice  >>" + e.getMessage());
-                return new Result(-1,e.getMessage());
+                return new Result(-1, e.getMessage());
             }
-        }
-        else {
+        } else {
             Log.e(TAG, "SendLogPrice  >>" + res.HttpState.toString());
             return new Result(res);
         }
@@ -131,7 +132,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     }
 
     // Друк на стаціонарному термопринтері
-    public void printHTTP(List<String> codeWares) {
+    public String printHTTP(List<String> codeWares) {
         //String listString = String.join(", ", codeWares);
         StringBuilder sb = new StringBuilder();
         for (String s : codeWares) {
@@ -139,7 +140,12 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             sb.append(",");
         }
         String json = "{\"CodeWares\":\"" + sb.toString() + "\",\"CodeWarehouse\":" + config.getCodeWarehouse() + "}";
-        HttpResult res = Http.HTTPRequest(1,"" ,json, "application/json;charset=UTF-8",null,null);//"http://znp.vopak.local:8088/Print"
-    }
+        HttpResult res = Http.HTTPRequest(1, "", json, "application/json;charset=UTF-8", null, null);//"http://znp.vopak.local:8088/Print"
+        if (res.HttpState == eStateHTTP.HTTP_OK) {
+            return res.Result;
+            //JSONObject jObject = new JSONObject(result.Result);
+        }
+        return res.HttpState.toString();
 
+    }
 }

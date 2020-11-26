@@ -1,6 +1,8 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
 import android.util.Log;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import org.json.JSONObject;
 
@@ -202,7 +204,15 @@ public class BL_PriceChecker extends BL {
                 });
                 if (config.TypeUsePrinter == eTypeUsePrinter.StationaryWithCut || config.TypeUsePrinter == eTypeUsePrinter.StationaryWithCutAuto) {
                     Connector con = Connector.instance();
-                    con.printHTTP(codeWares);
+                    final String res=con.printHTTP(codeWares);
+                    priceCheckerActivity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast toast = Toast.makeText(priceCheckerActivity, res, Toast.LENGTH_SHORT);
+                            toast.setGravity(Gravity.BOTTOM, 0, 0);
+                            toast.show();
+                        }
+                    });
                 }
                 else
                     for (String CodeWares : codeWares) {

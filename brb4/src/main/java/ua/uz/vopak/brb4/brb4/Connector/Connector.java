@@ -45,6 +45,6 @@ public abstract class Connector {
     public abstract Result  SendLogPrice(List<LogPrice> pList) ;
 
     // Друк на стаціонарному термопринтері
-    public abstract void printHTTP(List<String> codeWares);
+    public abstract String printHTTP(List<String> codeWares);
 
 }

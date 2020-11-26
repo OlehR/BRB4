@@ -50,13 +50,14 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
         login = findViewById(R.id.Login);
         password = findViewById(R.id.Password);
         nameStore = findViewById(R.id.NameStore);
-        if (config.Company.getAction() == 1)
+        nameStore.setText(config.Company.GetName());
+        /*if (config.Company.getAction() == 1)
             nameStore.setText("Вопак");
         else if (config.Company.getAction() == 2)
             nameStore.setText("Spar");
         else if (config.Company.getAction() == 3)
             nameStore.setText("SevenEleven");
-        else nameStore.setText("Зверніться до адміністратора");
+        else nameStore.setText("Зверніться до адміністратора");*/
         if(config.IsDebug)
             password.setText(config.Password);
         login.setText(config.Login);

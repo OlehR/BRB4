@@ -23,8 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.zxing.client.android.BuildConfig;
-
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
@@ -59,11 +57,11 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this.getApplicationContext();
-        getSupportActionBar().setTitle("BRB "+ BuildConfig.VERSION_NAME);
+        getSupportActionBar().setTitle("BRB "+ BuildConfig.VERSION_NAME+ " "+config.Login);
 
         //ініціалізація класа при старті.
         Utils.instance(context);
-        config.Init(context);
+        //config.Init(context);
 
         setContentView(R.layout.main_layout);
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

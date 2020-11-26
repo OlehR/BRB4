@@ -80,7 +80,7 @@ public class AuterizationsHelper {
     public void ExecuteMainActivity(Activity activity,final String pLogin,final String pPassWord)
     {
         config.Login=pLogin;
-        config. Password=pPassWord;
+        config.Password=pPassWord;
         config.isAutorized = true;
         config.Worker.AddConfigPair("Login",config.Login);
         config.Worker.AddConfigPair("PassWord",config.Password);

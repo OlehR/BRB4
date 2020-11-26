@@ -343,7 +343,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     }
 
     // Друк на стаціонарному термопринтері
-    public void printHTTP(List<String> codeWares) {};
+    public String printHTTP(List<String> codeWares) {return null;};
 
 }
 

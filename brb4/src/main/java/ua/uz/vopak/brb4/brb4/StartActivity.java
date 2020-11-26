@@ -70,7 +70,6 @@ public class StartActivity extends AppCompatActivity {
                     }
             ).execute();
 
-
     }
     @Override
     protected void onResume() {
@@ -80,9 +79,9 @@ public class StartActivity extends AppCompatActivity {
             AddText("Для продовження роботи необхідно оновити BRB4");
         }
 
-        if(!isFirstRun && !config.isAutorized){
-            RunAuth();
-        }
+        if(!isFirstRun)
+           RunForm(config.isAutorized?MainActivity.class: AuthActivity.class);
+
     }
 
     void AddText(final String pText)
@@ -90,18 +89,17 @@ public class StartActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-
                 String Text=TV.getText()+"\n"+pText;
                 TV.setText(Text);
             }
         });
     }
 
-    public void RunAuth()    {//boolean pUseAutologin
+    public void RunForm(final Class<?> par)    {//boolean pUseAutologin
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(context, AuthActivity.class);
+                Intent i = new Intent(context,par); //(context, AuthActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
                 finish();

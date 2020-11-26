@@ -30,4 +30,12 @@ public enum eCompany {
             default: return "NotDefined";
         }
     }
+    public String GetName() {
+        switch(action) {
+            case 1: return "Вопак";
+            case 2: return "Spar";
+            case 3: return "SevenEleven";
+            default: return "Невідомий";
+        }
+    }
 }
