@@ -112,7 +112,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 btn.setText("F" + String.valueOf(i + 2) + "-" + config.DocsSetting[i].NameDoc);
                 btn.setId(btn.generateViewId());//setId(some_random_id);
                 btn.setPadding(50,0,50,0);
-                btn.setTextSize(25);
+                btn.setTextSize(15);
                 btn.setTextColor(Color.parseColor("#FFFFFF"));
                 btn.setBackgroundResource(R.drawable.main_button);
                 linearLayout.addView(btn, params);
