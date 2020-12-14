@@ -36,6 +36,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -186,6 +187,7 @@ public class Utils {
     static public void SaveData(String pFileName,byte[] pData){
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File file = new File(path, pFileName);
+
         try {
             FileOutputStream stream = new FileOutputStream(file, true);
             stream.write(pData);
@@ -420,6 +422,36 @@ public class Utils {
         if(pProgress!=null)
             pProgress.set(100);
         return false;
+    }
+
+    public void CopyFile(String pFrom,String pTo) {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            //File data = Environment.getDataDirectory();
+
+            File fdelete = new File(pTo);
+            if (fdelete.exists()) {
+                if (!fdelete.delete()) {
+                    Log.e(TAG, "file not Deleted :" + pTo);
+                }
+            }
+            if (sd.canWrite()) {
+                //String currentDBPath = "//data//"+getPackageName()+"//databases//"+databaseName+"";
+                //String backupDBPath = "backupname.db";
+                File currentDB = new File(pFrom); //(data, currentDBPath);
+                File backupDB = new File(pTo);//(sd, backupDBPath);
+
+                if (currentDB.exists()) {
+                    FileChannel src = new FileInputStream(currentDB).getChannel();
+                    FileChannel dst = new FileOutputStream(backupDB).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "CopyFile" + pFrom+" " +pTo + " " + e.getMessage());
+        }
     }
 
 }

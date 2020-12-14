@@ -1,9 +1,13 @@
 package ua.uz.vopak.brb4.brb4.models;
 
+import android.os.Environment;
+
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
+
+import java.io.File;
 
 import ua.uz.vopak.brb4.brb4.BuildConfig;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
@@ -102,18 +106,11 @@ public class SetingModel {
         }
         else
         {
-            config.CodeWarehouse = Warehouse[ListWarehouseIdx.get()].Code ;
-            worker.AddConfigPair("Warehouse",Integer.toString(config.CodeWarehouse));
             config.TypeUsePrinter = eTypeUsePrinter.fromOrdinal(ListPrinterTypeIdx.get());
             config.Worker.AddConfigPair("connectionPrinterType", config.TypeUsePrinter.GetStrCode());
-/*
-            new AsyncHelper<Void>(new IAsyncHelper() {
-                @Override
-                public Void Invoke() {
-                    config.Worker.AddConfigPair("Warehouse",Integer.toString(config.CodeWarehouse));
-                    return null;
-                }};*/
         }
+        config.CodeWarehouse = Warehouse[ListWarehouseIdx.get()].Code ;
+        worker.AddConfigPair("Warehouse",Integer.toString(config.CodeWarehouse));
     }
 
     public void OnClickLoad() {
@@ -172,6 +169,19 @@ public class SetingModel {
                     throwable.printStackTrace();
                 }
                 Progress.set(100);*/
+                return null;
+            }
+        }).execute();
+    }
+
+    public void OnCopyDB() {
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+             String pathDb =config.context.getApplicationInfo().dataDir + "/databases/"+"brb4.db";
+             String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath()+"/brb_copy.db";
+                config.cUtils.CopyFile(pathDb,path);
                 return null;
             }
         }).execute();

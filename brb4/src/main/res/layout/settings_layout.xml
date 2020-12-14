@@ -127,7 +127,6 @@
         android:layout_width="match_parent"
         android:entries="@{SM.ListWarehouse}"
         android:selectedItemPosition="@={SM.ListWarehouseIdx}"
-
         android:layout_height="40dp"
         android:layout_marginTop="10dp"/>
 
@@ -174,9 +173,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="9pt"
+
                 android:onClick="@{(view) -> SM.OnClickSave()}"
-                android:text="Зберегти" />
+                android:text="Зберегти"
+                android:textSize="9pt"/>
 
             <!--  android:enabled ="@{SM.IsAdmin}"-->
 
@@ -188,6 +188,19 @@
                 android:text="Нова версія" />
 
 
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="bottom"
+            android:weightSum="1">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="@{(view) -> SM.OnCopyDB()}"
+                android:text="Копіювання бази" />
         </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

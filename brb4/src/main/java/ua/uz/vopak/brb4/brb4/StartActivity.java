@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.widget.TextView;
 
 import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
@@ -22,6 +23,7 @@ public class StartActivity extends AppCompatActivity {
     final Activity activity = this;
     static boolean isFirstRun = true;
     static boolean isNewVersion = true;
+    static boolean isWriteDOWNLOADS =false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +49,10 @@ public class StartActivity extends AppCompatActivity {
                     }
                     isNewVersion=false;
                     AddText("Оновлення Відсутні");
+                    isWriteDOWNLOADS=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canWrite();/*) {
+                        AddText("Відсутні права на запис DOWNLOADS");
+                        return false;
+                    }*/
                     if(config.IsAutoLogin&&config.Password.length()>0)
                     {
                         AddText("Автологін");
@@ -74,14 +80,16 @@ public class StartActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(!isFirstRun&& isNewVersion)
-        {
-            AddText("Для продовження роботи необхідно оновити BRB4");
+
+        if (!isFirstRun) {
+            if (isNewVersion) {
+                AddText("Для продовження роботи необхідно оновити BRB4");
+            }
+            if (!isWriteDOWNLOADS) {
+                AddText("Для продовження роботи необхідно надати права на Зберігання");
+            } else
+                RunForm(config.isAutorized ? MainActivity.class : AuthActivity.class);
         }
-
-        if(!isFirstRun)
-           RunForm(config.isAutorized?MainActivity.class: AuthActivity.class);
-
     }
 
     void AddText(final String pText)
