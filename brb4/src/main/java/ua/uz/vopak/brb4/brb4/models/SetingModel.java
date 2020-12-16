@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.brb4.models;
 
 import android.os.Environment;
+import android.util.Log;
 
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableBoolean;
@@ -18,6 +19,7 @@ import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
 public class SetingModel {
+    static final String TAG="SetingModel";
     GlobalConfig config = GlobalConfig.instance();
     Worker worker = config.GetWorker();
 
@@ -55,23 +57,29 @@ public class SetingModel {
     public boolean IsSevenEleven() {return config.Company==eCompany.SevenEleven;}
 
     public void OnClickIP() {
-       String Ip= config.cUtils.GetIp();
-        String[] IP=Ip.split("\\.");//192.168.1.235
-        if(IP.length!=4)
-            return;
-        for (int i = 0; i < Warehouse.length ; i++) {
+        try {
+            String Ip = config.cUtils.GetIp();
+            if (Ip == null)
+                return;
+            String[] IP = Ip.split("\\.");//192.168.1.235
+            if (IP.length != 4)
+                return;
+            for (int i = 0; i < Warehouse.length; i++) {
 
-           String[] WhIp =Warehouse[i].InternalIP.split("\\.");
-           if(WhIp.length!=4)
-               continue;
-           if(IP[0].equals(WhIp[0]) && IP[1].equals(WhIp[1]) && IP[2].equals(WhIp[2]))
-           {
-               ListWarehouseIdx.set(i);
-               apiURL.set(Warehouse[i].Url);
-               OnClickSave();
-               break;
-           }
-       }
+                String[] WhIp = Warehouse[i].InternalIP.split("\\.");
+                if (WhIp.length != 4)
+                    continue;
+                if (IP[0].equals(WhIp[0]) && IP[1].equals(WhIp[1]) && IP[2].equals(WhIp[2])) {
+                    ListWarehouseIdx.set(i);
+                    apiURL.set(Warehouse[i].Url);
+                    OnClickSave();
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "OnClickIP=>" + e.getMessage());
+        }
+
     }
     public void OnClickGen(){
         eCompany Company= eCompany.fromOrdinal(ListCompanyIdx.get());

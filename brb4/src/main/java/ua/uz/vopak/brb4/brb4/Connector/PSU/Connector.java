@@ -134,18 +134,24 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     // Друк на стаціонарному термопринтері
     public String printHTTP(List<String> codeWares) {
         //String listString = String.join(", ", codeWares);
-        StringBuilder sb = new StringBuilder();
-        for (String s : codeWares) {
-            sb.append(s);
-            sb.append(",");
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (String s : codeWares) {
+                sb.append(s);
+                sb.append(",");
+            }
+            String json = "{\"CodeWares\":\"" + sb.toString() + "\",\"CodeWarehouse\":" + config.getCodeWarehouse() + "}";
+            HttpResult res = Http.HTTPRequest(1, "", json, "application/json;charset=UTF-8", null, null);//"http://znp.vopak.local:8088/Print"
+            if (res.HttpState == eStateHTTP.HTTP_OK) {
+                return res.Result;
+                //JSONObject jObject = new JSONObject(result.Result);
+            }
+            return res.HttpState.toString();
         }
-        String json = "{\"CodeWares\":\"" + sb.toString() + "\",\"CodeWarehouse\":" + config.getCodeWarehouse() + "}";
-        HttpResult res = Http.HTTPRequest(1, "", json, "application/json;charset=UTF-8", null, null);//"http://znp.vopak.local:8088/Print"
-        if (res.HttpState == eStateHTTP.HTTP_OK) {
-            return res.Result;
-            //JSONObject jObject = new JSONObject(result.Result);
+        catch (Exception ex)
+        {
+            Log.e(TAG, "printHTTP  >>" + ex.getMessage() );
+            return  ex.getMessage();
         }
-        return res.HttpState.toString();
-
     }
 }
