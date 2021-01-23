@@ -10,7 +10,7 @@ import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 
 public class Config extends AbstractConfig {
     private static Context context;
-    private static Config Instance = null;
+    //private static Config Instance = null;
     public static String CodeWarehouse;
     public static String Login;
     public String SN = Build.SERIAL;
@@ -21,6 +21,7 @@ public class Config extends AbstractConfig {
     public static String SmbUser;
     public static String SmbPassword;
     public static String SmbPath;
+    public static String SmbServer;
     public static boolean IsSpar;
     XmlResourceParser xrp;
 
@@ -57,6 +58,13 @@ public class Config extends AbstractConfig {
                         case "SmbPath" :
                             SmbPath = xrp.getAttributeValue(null,"value");
                             break;
+                        case "SmbServer" :
+                            SmbServer = xrp.getAttributeValue(null,"value");
+                            break;
+                        case "ApiUrl" :
+                            ApiUrl = xrp.getAttributeValue(null,"value");
+                            break;
+
                     }
                 }
                 eventType = xrp.next();
@@ -82,6 +90,8 @@ public class Config extends AbstractConfig {
         if (Instance == null) {
             Instance = new Config(context);
         }
-        return Instance;
+        return (Config) Instance;
     }
+
+
 }

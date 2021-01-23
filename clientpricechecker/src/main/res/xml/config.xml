@@ -8,12 +8,16 @@
 
     <Password value="c" />
 
-    <SmbDomain value="dc1" />
+    <SmbDomain value="vopak.local" />
 
-    <SmbUser value="PriceChecker" />
+    <SmbServer value="freenas" />
+
+    <SmbUser value="vopak\\PriceChecker" />
 
     <SmbPassword value="Kd198475" />
 
     <SmbPath value="/Public/СПІЛЬНІ ДОКУМЕНТИ ЦО/ГАЗЕТА/Відео для Прайсчекера/promo.mp4" />
+
+    <ApiUrl value="http://znp.vopak.local/api/api_v1_utf8.php" />
 
 </Config>

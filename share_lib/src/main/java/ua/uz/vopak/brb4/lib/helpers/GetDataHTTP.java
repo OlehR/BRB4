@@ -28,8 +28,10 @@ public class GetDataHTTP
         Url = new String[2][];
         for (int i = 0; i < pUrl.length; i++) {
             DefaultApi[i]=0;
-            String [] Urls = pUrl[i].split(";");
-            Url[i]=Urls;
+            if(pUrl[i]!=null) {
+                String[] Urls = pUrl[i].split(";");
+                Url[i] = Urls;
+            }
         }
         Instance=this;
     }

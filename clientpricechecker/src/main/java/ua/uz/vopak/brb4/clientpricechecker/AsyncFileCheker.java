@@ -22,7 +22,7 @@ public class AsyncFileCheker extends AsyncTask<String , Void, Void>
     protected Void doInBackground(String... param)
     {
         try{
-            String url = "smb://"+config.SmbDomain+config.SmbPath;
+            String url = "smb://10.1.0.15"+config.SmbPath; //config.SmbDomain+
             final UniAddress domainController = UniAddress.getByName("vopak.local");
             NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication("vopak.local", config.SmbUser, config.SmbPassword);
             SmbSession.logon(domainController, auth);
@@ -31,6 +31,7 @@ public class AsyncFileCheker extends AsyncTask<String , Void, Void>
             final File curent = new File(Environment.getExternalStorageDirectory()+"/Movies/promo.mp4");
             sf.connect();
             String name = sf.getName();
+            long d=sf.getDate();
             if(sf.getDate() > curent.lastModified()){
 
                 if (destination.exists())

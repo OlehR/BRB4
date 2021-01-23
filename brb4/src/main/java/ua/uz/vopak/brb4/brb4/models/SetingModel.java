@@ -117,8 +117,10 @@ public class SetingModel {
             config.TypeUsePrinter = eTypeUsePrinter.fromOrdinal(ListPrinterTypeIdx.get());
             config.Worker.AddConfigPair("connectionPrinterType", config.TypeUsePrinter.GetStrCode());
         }
-        config.CodeWarehouse = Warehouse[ListWarehouseIdx.get()].Code ;
-        worker.AddConfigPair("Warehouse",Integer.toString(config.CodeWarehouse));
+        if(Warehouse!=null && ListWarehouseIdx.get()<Warehouse.length) {
+            config.CodeWarehouse = Warehouse[ListWarehouseIdx.get()].Code;
+            worker.AddConfigPair("Warehouse", Integer.toString(config.CodeWarehouse));
+        }
     }
 
     public void OnClickLoad() {

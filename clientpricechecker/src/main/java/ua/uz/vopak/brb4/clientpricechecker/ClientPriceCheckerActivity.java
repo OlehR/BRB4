@@ -150,7 +150,7 @@ public class ClientPriceCheckerActivity extends Activity {
             public void run() {
                 new AsyncFileCheker(context).execute();
             }
-        },90000, 60000 * 60);
+        },20000, 60000 * 60);
 
         pm = (PowerManager) getSystemService(context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "clientpriceckecker::client_priceckecker_sleep");

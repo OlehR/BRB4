@@ -15,7 +15,7 @@ public class DocSetting {
     public boolean IsViewReason =false;
     // Показувати планові(фактичні) показники.
     public boolean IsViewPlan =false;
-    // Показувати планові(фактичні) показники.
+    // Показувати користувача в списку.
     public boolean IsShowUser =true;
     // -1 - стандартна, 1 - 7-23 Ревізія? 2 -7-23 Лоти.
     public int TypeColor =-1;
