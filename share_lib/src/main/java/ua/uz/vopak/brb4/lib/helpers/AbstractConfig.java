@@ -1,6 +1,10 @@
 package ua.uz.vopak.brb4.lib.helpers;
 
 import android.content.Context;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
@@ -22,6 +26,10 @@ public abstract class AbstractConfig {
     public boolean isAutorized;
     public String Login = "";
     public String Password = "123";
+
+    public Date LastFullUpdate=null;
+    public SimpleDateFormat FormatterDate = new SimpleDateFormat("yyyy-MM-dd");
+
     public int GetCodeUnitWeight() { return Company == eCompany.VopakPSU?7:166;}
 
     public String ApiUrl,ApiURLadd;

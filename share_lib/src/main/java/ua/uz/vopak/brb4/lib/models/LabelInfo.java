@@ -92,7 +92,7 @@ public class LabelInfo
 
     public int printType = 0;//Колір чека 0-звичайнийб 1-жовтий, -1 не розділяти.
     public void SetPrintType(){if(printType==0) printType=1; else if(printType==1) printType=0;}
-    public int ColorPrintColorType(){return Color.parseColor(printType==0 ? "#ffffff" : "#3fffff00");}
+    public int ColorPrintColorType(){return Color.parseColor( HttpState != eStateHTTP.HTTP_OK ? "#ffb3b3":( printType==0 ? "#ffffff" : "#3fffff00"));}
     public String NamePrintColorType(){if(printType==0) return "Звичайний";if(printType==1)return "Жовтий";  return"";}
 
     public boolean IsShort=false;
@@ -115,17 +115,27 @@ public class LabelInfo
 
     public ObservableInt InputFocus = new  ObservableInt(1);//1- штрихкод,2-Поповнення
 
-    //public int ColorBarCode(){return Color.parseColor(Action ?  "#3fffff00" : "#ffffff");}
+    public int GetColorBackground(){return Color.parseColor(HttpState != eStateHTTP.HTTP_OK  || PrinterError!=ePrinterError.None ?  "#ffb3b3" : "#b3ffb3");}
     public ObservableInt  Progress = new ObservableInt(0);
 
     public ObservableBoolean IsOnLine = new ObservableBoolean((true));
     public ObservableField<String> OnLineText =new ObservableField<String>("OffLine");
 
 
+
     public void ChangeOnLineState()
     {
         IsOnLine.set(!IsOnLine.get());
         OnLineText.set(IsOnLine.get()?"OffLine":"OnLine");
+    }
+
+    public boolean IsEnableMultyLabel() {return  config.Company!=eCompany.SevenEleven;}
+    public boolean IsMultyLabel=false;
+    public ObservableField<String> MultyLabelText =new ObservableField<String>("Унікальні");
+    public void ChangeMultyLabel()
+    {
+        IsMultyLabel=!IsMultyLabel;
+        MultyLabelText.set(IsMultyLabel?"Дублювати":"Унікальні");
     }
     //public boolean isEdit=false;
 

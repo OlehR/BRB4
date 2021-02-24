@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.util.Date;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
@@ -43,7 +44,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     private long backPressedTime;
     private Toast backToast;
     static GlobalConfig config = GlobalConfig.instance();
-    public RelativeLayout loader;
+    //public RelativeLayout loader;
     private LinearLayout linearLayout;
     Button[] menuItems;
     int current = 0;
@@ -68,7 +69,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         binding = DataBindingUtil.setContentView(this, R.layout.main_layout);
         binding.setMM (MM);
 
-        loader = findViewById(R.id.RevisionLoader);
+        //loader = findViewById(R.id.RevisionLoader);
         linearLayout = findViewById(R.id.M_ButtonLayout);
         Intent in = getIntent();
 
@@ -81,7 +82,13 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 @Override
                 public Boolean Invoke() {
                     if(!config.getCodeWarehouse().equals("000000000")) {
-                        return config.Worker.LoadData(-1,null,MM.Progress,false);
+                        Date curDate=null;
+                        try {
+                             curDate = config.FormatterDate.parse(config.FormatterDate.format(new Date()));
+                        }catch(Exception ex){}
+
+                        if(config.LastFullUpdate==null || config.LastFullUpdate!=curDate)
+                            return config.Worker.LoadData(-2,null,MM.Progress,false);
                     }
                     return true;
                 }},

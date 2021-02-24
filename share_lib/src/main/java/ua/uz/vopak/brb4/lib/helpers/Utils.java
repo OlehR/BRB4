@@ -184,10 +184,11 @@ public class Utils {
 
 
 
-    static public void SaveData(String pFileName,byte[] pData){
+    static public void SaveData(String pFileName,byte[] pData,boolean pIsDelete){
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File file = new File(path, pFileName);
-
+        if(pIsDelete)
+            file.delete();
         try {
             FileOutputStream stream = new FileOutputStream(file, true);
             stream.write(pData);
@@ -207,8 +208,8 @@ public class Utils {
 
            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
            Date date = new Date(System.currentTimeMillis());
-           String Text = formatter.format(date) + "Log=>\n" + pText;
-           SaveData(FileName, Text.getBytes("UTF-8"));
+           String Text = "\n"+formatter.format(date) + "Log=>\n" + pText;
+           SaveData(FileName, Text.getBytes("UTF-8"),false);
        }
        catch(Exception e) {
            Log.e(TAG, "WriteLog=> " + e.getMessage());

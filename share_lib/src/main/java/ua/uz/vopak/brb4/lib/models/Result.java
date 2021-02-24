@@ -12,6 +12,12 @@ public class Result {
        State=pState;
        TextError=pTextError;
    }
+    public Result(int pState, String pTextError,String pInfo)
+    {
+        this(pState,  pTextError);
+        Info=pInfo;
+    }
+
     public Result(HttpResult httpResult)
     {
         if(httpResult.HttpState== eStateHTTP.HTTP_OK)
@@ -25,4 +31,11 @@ public class Result {
         }
 
     }
+    public Result(HttpResult httpResult,String pInfo)
+    {
+        this(httpResult);
+        Info=pInfo;
+
+    }
+
 }

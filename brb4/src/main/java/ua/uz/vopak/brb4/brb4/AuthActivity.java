@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
@@ -37,6 +39,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
     Button loginBtn;
     TextView nameStore;
     EditText login, password;
+    CheckBox IsLoginCO;
     AuterizationsHelper aHelper=new AuterizationsHelper();
     final Activity activity = this;
     private Scaner scaner=config.GetScaner();
@@ -49,6 +52,9 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
         loginBtn.setOnClickListener(this);
         login = findViewById(R.id.Login);
         password = findViewById(R.id.Password);
+        IsLoginCO = findViewById(R.id.L_IsCentral);
+        if(config.Company!= eCompany.SevenEleven)
+            IsLoginCO.setVisibility(View.GONE);
         nameStore = findViewById(R.id.NameStore);
         nameStore.setText(config.Company.GetName());
         /*if (config.Company.getAction() == 1)
@@ -61,6 +67,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
         if(config.IsDebug)
             password.setText(config.Password);
         login.setText(config.Login);
+        IsLoginCO.setChecked(config.IsLoginCO);
 
         scaner.Init(this,savedInstanceState);
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -106,11 +113,11 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
             case R.id.LoginButton:
                 final String Login = login.getText().toString();
                 final String PassWord = password.getText().toString();
-
+                final boolean LoginCO =IsLoginCO.isChecked();
                 new AsyncHelper<Void>(new IAsyncHelper() {
                     @Override
                     public Void Invoke() {
-                        aHelper.Login(activity,Login,PassWord);
+                        aHelper.Login(activity,Login,PassWord,LoginCO,true);
                         return null;
                     }
                 }).execute();
@@ -126,7 +133,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    aHelper.Login(activity, LP[0], LP[1]);
+                    aHelper.Login(activity, LP[0], LP[1],config.IsLoginCO,true);
                     return null;
                 }
             }).execute();
@@ -161,6 +168,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
 
         if (backPressedTime+2000 > System.currentTimeMillis()){
             backToast.cancel();
+            config.isAutorized = false;
             super.onBackPressed();
             return;
         }else {

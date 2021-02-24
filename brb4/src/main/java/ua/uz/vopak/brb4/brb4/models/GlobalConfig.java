@@ -8,6 +8,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500;
 //import ua.uz.vopak.brb4.brb4.Scaner.ScanerTC20;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerZebra;
 import ua.uz.vopak.brb4.brb4.helpers.*;
+import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
@@ -19,6 +20,8 @@ public class GlobalConfig extends AbstractConfig {
     public static boolean IsLoadStartData = false;
     public static boolean IsTest = false;
     public static boolean IsAutoLogin = false;
+    public static boolean IsLoginCO = false;
+    public static eRole  Role = eRole.NotDefined;
     public DocSetting[] DocsSetting;
 
     public Worker Worker;
@@ -47,12 +50,13 @@ public class GlobalConfig extends AbstractConfig {
         return (GlobalConfig) Instance;
     }
 
-    public DocSetting GetDocSetting(int pDocumentType)
-    {
-    for( int ind = 0; ind<DocsSetting.length;ind++)
-            if(DocsSetting[ind].TypeDoc==pDocumentType)
-                return  DocsSetting[ind];
+    public DocSetting GetDocSetting(int pDocumentType) {
+        if (DocsSetting == null)
             return null;
+        for (int ind = 0; ind < DocsSetting.length; ind++)
+            if (DocsSetting[ind].TypeDoc == pDocumentType)
+                return DocsSetting[ind];
+        return null;
     }
 
 

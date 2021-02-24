@@ -28,12 +28,13 @@ import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 
 public class DocumentWeightActivity extends Activity  {
     String NumberDoc;
     int documentType;
     DocSetting DocSetting;
-    List<Double> PrevValues = new ArrayList<>();
+    //List<Double> PrevValues = new ArrayList<>();
     LinearLayout tl;
     HashMap<Integer, DocWaresModelIncome> data = new HashMap<Integer, DocWaresModelIncome>();
     List<WaresItemModel> Model;
@@ -44,9 +45,8 @@ public class DocumentWeightActivity extends Activity  {
     GlobalConfig config = GlobalConfig.instance();
     Activity context;
     String strFilter="";
-
     boolean IsOnlyOrder =true;
-
+    ua.uz.vopak.brb4.lib.helpers.UtilsUI UtilsUI = new UtilsUI(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,7 +165,7 @@ public class DocumentWeightActivity extends Activity  {
                             QuantityOrdered.setLayoutParams(params1);
                         //}
 
-                        PrevValues.add(item.InputQuantity);
+                        //PrevValues.add(item.InputQuantity);
                         final EditText QuantityIncomed = new EditText(context);
                         QuantityIncomed.setText( item.GetInputQuantity());
                         QuantityIncomed.setTextColor(Color.parseColor("#000000"));
@@ -215,7 +215,7 @@ public class DocumentWeightActivity extends Activity  {
                                     position = tl.indexOfChild(tl0);
                                 } else {
                                     int index = tl.indexOfChild(tl0);
-                                    onBlur(index,QuantityIncomed);
+                                    //onBlur(index,QuantityIncomed);
                                 }
                             }
                         });
@@ -247,7 +247,7 @@ public class DocumentWeightActivity extends Activity  {
 
         });
     }
-
+/*
     private void onBlur(int index,EditText v ) {
         if (v.getText().toString().equals("") || PrevValues.get(index) == Float.parseFloat(v.getText().toString())) {
             v.setText(String.format("%.3f", PrevValues.get(index)));
@@ -255,20 +255,36 @@ public class DocumentWeightActivity extends Activity  {
             PrevValues.set(index,Double.parseDouble(v.getText().toString()));
             //data.put(index, Model.get(index));
         }
-    }
+    }*/
 
     private void savePosition(){
         ViewGroup row = (ViewGroup) tl.getChildAt(position);
         ViewGroup innerRow = (ViewGroup) row.getChildAt(1);
         EditText v = (EditText) innerRow.getChildAt(1);//DocSetting.IsViewPlan?1:0
         final String value = v.getText().toString();
-        if(!value.equals("") && Float.parseFloat(value) != 0){
+        if(!value.equals("")) {
+            Double Value=0d;
+            try {
+                Value = Double.valueOf(value);
+            }catch (Exception e)
+            {
+                v.setText("");
+            };
+            final WaresItemModel cur = Model.get(position);
+            if (cur.QuantityMax * (cur.CodeUnit == config.GetCodeUnitWeight() ? 1.5d : 1d) < Value) {
+                //loader.setVisibility(View.INVISIBLE);
+                UtilsUI.Dialog("Введено завелику кількість", "Ви перелімітили=>" + String.format(cur.CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f", Value - cur.QuantityMax * (cur.CodeUnit == config.GetCodeUnitWeight() ? 1.5d : 1d)));
+                //Value=0d;
+                v.setText("");
+                return;
+            }
+            final double Val=Value;
             scanNN++;
             //new AsyncDocWares(GlobalConfig.GetWorker(), this).execute(value, scanNN.toString(), Model.get(position).CodeWares, number, documentType, "true");
             new AsyncHelper<Void>(new IAsyncHelper() {
                 @Override
                 public Void Invoke() {
-                    config.Worker.SaveDocWares(documentType, NumberDoc, Model.get(position).CodeWares,scanNN,  Double.valueOf( value), 0,true);
+                    config.Worker.SaveDocWares(documentType, NumberDoc, cur.CodeWares, scanNN, Val, 0, true);
                     return null;
                 }
             }).execute();

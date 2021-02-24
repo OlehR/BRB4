@@ -32,6 +32,8 @@ public abstract class Connector {
         return Instance;
     }
 
+    //Логін
+    public abstract Result Login(final String pLogin, final String pPassWord,final boolean pIsLoginCO);
     //Завантаження довідників.
     public abstract boolean LoadGuidData(boolean IsFull, ObservableInt pProgress);
 

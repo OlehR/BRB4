@@ -9,6 +9,8 @@ import androidx.databinding.ObservableInt;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +22,7 @@ import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
+import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.Result;
@@ -28,12 +31,45 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     protected static final String TAG = "BRB4/Connector";
 
+    public Result Login(final String pLogin, final String pPassWord,final boolean pIsLoginCO)
+    {
+        HttpResult res=Http.HTTPRequest(pIsLoginCO?1:0,"login","{\"login\" : \""+ pLogin+"\"}","application/json;charset=utf-8",pLogin,pPassWord);
+        if(res.HttpState== eStateHTTP.HTTP_UNAUTHORIZED || res.HttpState== eStateHTTP.HTTP_Not_Define_Error)
+        {
+            Log.e(TAG, "Login >>"+ res.HttpState.toString());
+            return new Result(-1,res.HttpState.toString(),"Неправильний логін або пароль");
+        }
+        else
+            if(res.HttpState!= eStateHTTP.HTTP_OK)
+                return new Result(res, "Ви не підключені до мережі " + config.Company.name());
+            else
+            {
+                try {
+                    JSONObject jObject = new JSONObject(res.Result);
+                    if(jObject.getInt("State") == 0) {
+                        config.Role= eRole.fromOrdinal(jObject.getInt("Profile"));
+                        return new Result();
+                    }
+                    else
+                        return new Result(jObject.getInt("State"),jObject.getString("TextError"), "Неправильний логін або пароль");
+
+                }catch (Exception e){
+                    return new Result(-1,e.getMessage());
+                }
+
+            }
+
+
+    }
+
     //Завантаження довідників.
     public boolean LoadGuidData(boolean IsFull, ObservableInt pProgress) {
         try {
             Log.d(TAG, "Start");
+
+
             pProgress.set(5);
-            HttpResult res = Http.HTTPRequest(0, "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
+            HttpResult res = Http.HTTPRequest(config.IsLoginCO?1:0, "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
             if (res.HttpState == eStateHTTP.HTTP_OK) {
                 Log.d(TAG, "LoadData=>" + res.Result.length());
                 pProgress.set(40);
@@ -212,7 +248,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             pProgress.set(5);
         HttpResult res;
         try {
-            if (pTypeDoc == 5|| pTypeDoc == 6 ) {
+            if (pTypeDoc == 5|| pTypeDoc == 6 || (pTypeDoc <=0  && config.IsLoginCO)) {
                 res = Http.HTTPRequest(1, "documents"+(pTypeDoc == 5?"\\" + pNumberDoc: "?StoreSetting="+config.CodeWarehouse ), null, "application/json;charset=utf-8", config.Login, config.Password);
             } else
                 res = Http.HTTPRequest(0, "documents" , null, "application/json;charset=utf-8", config.Login, config.Password);
@@ -263,7 +299,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
         HttpResult res = Http.HTTPRequest((pTypeDoc == 5 || pTypeDoc == 6  ? 1 : 0) , "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
         if (res.HttpState == eStateHTTP.HTTP_OK) {
-            return new Result();
+            return new Result(res);
         }
         return new Result(-1, res.HttpState.toString());
     }

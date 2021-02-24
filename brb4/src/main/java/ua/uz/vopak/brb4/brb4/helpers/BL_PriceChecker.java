@@ -135,8 +135,10 @@ public class BL_PriceChecker extends BL {
                 }
             } else {
                 WaresItemModel el = config.Worker.GetWaresFromBarcode(0, null, BarCode);
-                if(el!=null)
+                if(el!=null) {
+                    LI.AllScan++;
                     el.SetLI(LI);
+                }
 
             }
         }
@@ -191,11 +193,11 @@ public class BL_PriceChecker extends BL {
     }
 
 
-    public void printPackage(final Integer actionType, final Integer packageNumber) {
+    public void printPackage(final Integer actionType, final Integer packageNumber,final boolean IsMultyLabel) {
         new AsyncHelper<Void>(new IAsyncHelper<Void>() {
             @Override
             public Void Invoke() {
-                List<String> codeWares = mDbHelper.getPrintPackageCodeWares(config.TypeUsePrinter == eTypeUsePrinter.StationaryWithCutAuto?-1:actionType, packageNumber);
+                List<String> codeWares = mDbHelper.getPrintPackageCodeWares(config.TypeUsePrinter == eTypeUsePrinter.StationaryWithCutAuto?-1:actionType, packageNumber,IsMultyLabel);
                 priceCheckerActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -251,6 +253,8 @@ public class BL_PriceChecker extends BL {
                 }
 
             }
+            else
+                break;
         }
         SetProgress(100);
     }

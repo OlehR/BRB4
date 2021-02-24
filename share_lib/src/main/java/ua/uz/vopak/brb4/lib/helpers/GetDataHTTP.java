@@ -143,9 +143,11 @@ public String GetBaseAuth(String pLogin,String pPasWord){
                 }
                 res.Result=everything.toString();
                 Log.d(TAG,"EndRead");
+
+                log+= "\nResponse=>"+ (res.Result==null?"":(res.Result.length()>2000? res.Result.substring(0,2000):res.Result));
             }
 
-            log+= "\nResponse=>"+ (res.Result.length()>2000? res.Result.substring(0,2000):res.Result);
+
 
         } catch (Exception e) {
             Log.e(TAG,e.getMessage());

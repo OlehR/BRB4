@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 
@@ -16,12 +17,15 @@ import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
+import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
-import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.models.Result;
+
+
 
 public class Worker {
     protected static final String TAG = "BRB4/Worker";
@@ -31,21 +35,40 @@ public class Worker {
     SQLiteAdapter mDbHelper  = config.GetSQLiteAdapter();
     //public Connector c = Connector.instance();
 
-    public Worker() {
-    }
+    public Worker() {}
 
-    public DocSetting[] GenSettingDocs(eCompany pCompany) {
+    public DocSetting[] GenSettingDocs(eCompany pCompany, eRole pProfile) {
         DocSetting[] Setting=null;
+        boolean[] Right;
         switch (pCompany)
         {
             case SevenEleven:
-                Setting =  new  DocSetting[4];
-                Setting[0] = new DocSetting(2,"Мініревізія", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0,false,true,false,true);
-                Setting[1] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false,true,true,false);
-                Setting[2] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false);
-                Setting[3] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false);
-
-                // Setting[3] = new DocSetting(9,"Прихід ntcn",eTypeControlDoc.Control,false,true,false,true,true,1,4,3);
+                switch (pProfile) {
+                    case Admin:
+                        Right = new boolean[]{true,true , true, true};
+                        Setting =  new  DocSetting[4];
+                        break;
+                    case User:
+                        Right = new boolean[]{true,true , true, false};
+                        Setting =  new  DocSetting[3];
+                        break;
+                    case  Auditor:
+                        Right = new boolean[]{false,true , false, true};
+                        Setting =  new  DocSetting[2];
+                        break;
+                    default:
+                        Right = new boolean[]{false,false , false, false};
+                        break;
+                }
+                int step=0;
+                if(Right[0])
+                    Setting[step++] = new DocSetting(2, "Мініревізія", eTypeControlDoc.Ask, false, false, false, false, false, 1, 1, 0, false, true, false, true);
+                if(Right[1])
+                    Setting[step++] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false,true,true,false);
+                if(Right[2])
+                    Setting[step++] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false);
+                if(Right[3])
+                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false);
 
                 break;
             case SparPSU:
@@ -76,11 +99,17 @@ public class Worker {
         else
             config.Company = eCompany.fromOrdinal(Integer.valueOf(strCompany));
 
-        config.DocsSetting=GenSettingDocs(config.Company);
 
         config.IsTest = GetConfigPair("IsTest").equals("true");
         config.IsAutoLogin = GetConfigPair("IsAutoLogin").equals("true");
+        config.IsLoginCO = GetConfigPair("IsLoginCO").equals("true");
 
+        String LFU= GetConfigPair("LastFullUpdate");
+        if(LFU!=null && !LFU.isEmpty())
+        {
+            try {config.LastFullUpdate  = config.FormatterDate.parse(LFU);}
+            catch (Exception ex){}
+        }
 
         config.ApiUrl=GetConfigPair("ApiUrl");
         if(config.ApiUrl==null || config.ApiUrl.isEmpty() )
@@ -112,21 +141,34 @@ public class Worker {
 
         config.Reasons= mDbHelper.GetReason();
     }
+
     //Робота з документами.
     // Завантаження документів в ТЗД (HTTP)
     public Boolean LoadData(int pTypeDoc,String  pNumberDoc,ObservableInt pProgress,boolean pIsClearDoc) {
+       // if(1==1)return true;
+        Boolean Res=false;
+        Date curDate = null;
+        try {
+            curDate = config.FormatterDate.parse(config.FormatterDate.format(new Date()));
+        } catch (Exception ex) { }
+        if(pTypeDoc==-2) {
+            pTypeDoc=(config.LastFullUpdate == null || !config.LastFullUpdate.equals(curDate) )?-1:0;
+        }
+
         Connector c = Connector.instance();
         if(config.Company==eCompany.SevenEleven) {
             if (pTypeDoc == -1)
                 c.LoadGuidData((pTypeDoc == -1), pProgress);
         }
-            return c.LoadDocsData(pTypeDoc, pNumberDoc, pProgress, pIsClearDoc);
+             Res=c.LoadDocsData(pTypeDoc, pNumberDoc, pProgress, pIsClearDoc);
+        if(Res && pTypeDoc==-1 && curDate != null ) {
+            config.LastFullUpdate=curDate;
+            AddConfigPair("LastFullUpdate", config.FormatterDate.format(curDate));
+        }
+        return Res;
     }
-
-
     // Отримати список документів з БД
     public List<DocumentModel> LoadListDoc( int parTypeDoc, String parBarCode,String pExtInfo ) {
-
         return   mDbHelper.GetDocumentList(parTypeDoc, parBarCode,pExtInfo);
     }
     // Отримати Товари документа з БД
@@ -174,6 +216,29 @@ public class Worker {
         DocModel result= GetDocOut(pTypeDoc, pNumberDoc);
          result.WaresItem= mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, pTypeResult,pTypeOrder);
         return result;
+    }
+
+    public int FindWhIP( Warehouse[] pWarehouses) {
+        int res=-1;
+        try {
+            String Ip = config.cUtils.GetIp();
+            if (Ip == null)
+                return res;
+            String[] IP = Ip.split("\\.");//192.168.1.235
+            if (IP.length != 4)
+                return res;
+            for (int i = 0; i < pWarehouses.length; i++) {
+                String[] WhIp = pWarehouses[i].InternalIP.split("\\.");
+                if (WhIp.length != 4)
+                    continue;
+                if (IP[0].equals(WhIp[0]) && IP[1].equals(WhIp[1]) && IP[2].equals(WhIp[2])) {
+                    return i;
+                }
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "FindWhIP=>" + e.getMessage());
+        }
+        return res;
     }
 
 }

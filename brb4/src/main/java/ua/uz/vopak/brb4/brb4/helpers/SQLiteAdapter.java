@@ -208,7 +208,7 @@ public class SQLiteAdapter
         return data;
     }
 
-    public List<String> getPrintPackageCodeWares(Integer actionType, Integer packageNumber){
+    public List<String> getPrintPackageCodeWares(Integer actionType, Integer packageNumber,boolean IsMultyLabel){
         Cursor mCur;
         List<String> data = new ArrayList<String>();
         String _actionType = "";
@@ -218,7 +218,7 @@ public class SQLiteAdapter
             if(actionType == 1)
                 _actionType = " AND action_type IN(1,2)";
 
-        String sql = "SELECT DISTINCT code_wares FROM LogPrice WHERE code_wares>0 and package_number ="+packageNumber+" AND Status < 0 AND date(DT_insert) > date('now','-1 day')"+_actionType;
+        String sql = "SELECT "+(IsMultyLabel?"":"DISTINCT")+ " code_wares FROM LogPrice WHERE code_wares>0 and package_number ="+packageNumber+" AND Status < 0 AND date(DT_insert) > date('now','-1 day')"+_actionType;
 
         mCur = mDb.rawQuery(sql, null);
         if (mCur!=null && mCur.getCount() > 0) {
