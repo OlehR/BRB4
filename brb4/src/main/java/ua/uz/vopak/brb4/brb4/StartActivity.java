@@ -1,11 +1,13 @@
 package ua.uz.vopak.brb4.brb4;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -51,6 +53,7 @@ public class StartActivity extends AppCompatActivity {
                     }
                     isNewVersion=false;
                     AddText("Оновлення Відсутні");
+
                     isWriteDOWNLOADS=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canWrite();/*) {
                         AddText("Відсутні права на запис DOWNLOADS");
                         return false;
@@ -62,8 +65,11 @@ public class StartActivity extends AppCompatActivity {
                     {
                         AddText("Автологін");
                         AuterizationsHelper aHelper=new AuterizationsHelper();
-                        if(aHelper.Login(activity,config.Login,config.Password,config.IsLoginCO,false))
+                        String res=aHelper.Login(activity,config.Login,config.Password,config.IsLoginCO,false);
+                        if(res!=null) {
                             AddText("Автологін Успішно");
+                            AddText(res);
+                        }
                         else
                             AddText("Автологін Помилка");
                     }
@@ -86,17 +92,22 @@ public class StartActivity extends AppCompatActivity {
         super.onResume();
         isWriteDOWNLOADS=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canWrite();
 
+
+
+        boolean isPhoneState=(ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
         if (!isFirstRun) {
             if (isNewVersion) {
                 AddText("Для продовження роботи необхідно оновити BRB4");
             }
-            else
-            if (!isWriteDOWNLOADS && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q) { //Непонятка з 10 андроїдом. Треба буде розібратись.
+            else {
 
-                AddText("Для продовження роботи необхідно надати права на Зберігання");
-                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE},0);
-            } else
-                RunForm(config.isAutorized ? MainActivity.class : AuthActivity.class);
+                if (!isPhoneState || (!isWriteDOWNLOADS && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q)) { //Непонятка з 10 андроїдом. Треба буде розібратись.
+
+                    AddText("Для продовження роботи необхідно надати права на Зберігання та Статус телефона");
+                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE}, 0);
+                } else
+                    RunForm(config.isAutorized ? MainActivity.class : AuthActivity.class);
+            }
         }
     }
 

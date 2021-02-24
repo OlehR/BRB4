@@ -14,6 +14,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
+import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.Result;
 
@@ -22,12 +23,13 @@ public class AuterizationsHelper {
     GlobalConfig config = GlobalConfig.instance();
     GetDataHTTP Http= GetDataHTTP.instance();// new GetDataHTTP(new String[]{config.ApiUrl, config.ApiURLadd});
 
-    public boolean Login(Activity pActivity,final String pLogin,final String pPassWord,boolean pIsLoginCO,boolean IsRunMainActivity)
+    public String Login(Activity pActivity,final String pLogin,final String pPassWord,boolean pIsLoginCO,boolean IsRunMainActivity)
     {
+        String Res=null;
         try {
             if ((pLogin.equals("Admin") && pPassWord.equals("13579")) || pLogin.equals("OffLine")) {
                 ExecuteMainActivity(pActivity, pLogin, pPassWord,pIsLoginCO,IsRunMainActivity);
-                return true;
+                return "Ok";
             }
 
             Connector c = Connector.instance();
@@ -41,21 +43,27 @@ public class AuterizationsHelper {
                     Worker worker=config.GetWorker();
                     int i = worker.FindWhIP(Wh);
                     if(i>=0){
-                        config.CodeWarehouse=Wh[i].Code;
-                        config.ApiUrl=Wh[i].Url;
-                        worker.AddConfigPair("Warehouse", Integer.toString(config.CodeWarehouse));
-                        worker.AddConfigPair("ApiUrl", config.ApiUrl);
-                        Http.Init(new String[]{config.ApiUrl,config.ApiURLadd});
+                        if(config.CodeWarehouse!=Wh[i].Code) {
+                            config.CodeWarehouse = Wh[i].Code;
+                            config.ApiUrl = Wh[i].Url;
+                            worker.AddConfigPair("Warehouse", Integer.toString(config.CodeWarehouse));
+                            worker.AddConfigPair("ApiUrl", config.ApiUrl);
+                            Http.Init(new String[]{config.ApiUrl, config.ApiURLadd});
+                            Res= "Знайдено новий магазин\n"+ Wh[i].Name+" " +config.ApiUrl;
+                            //UtilsUI.Dialog("Знайдено новий магазин", Wh[i].Name+" " +config.ApiUrl);
+                        }
                     }
+                    else
+                        Res="НЕ визначено  магазин \nIP=>" +config.cUtils.GetIp();
 
                 }
 
                 ExecuteMainActivity(pActivity,pLogin,pPassWord,pIsLoginCO,IsRunMainActivity);
-                return true;
+                return Res;
             }
             else {
                 MessageError(pActivity, r.Info, r.TextError);
-                return false;
+                return Res;
             }
         /*
         if(config.Company== eCompany.SparPSU||config.Company==eCompany.VopakPSU)
@@ -67,7 +75,7 @@ public class AuterizationsHelper {
         }catch (Exception e){
             Log.e(TAG, "Login >>"+  e.getMessage());
         }
-        return false;
+        return null;
     }
     /*
     public boolean LoginSevenEleven(Activity activity,final String pLogin,final String pPassWord) {
