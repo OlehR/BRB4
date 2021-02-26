@@ -113,6 +113,7 @@ public class StartActivity extends AppCompatActivity {
 
     void AddText(final String pText)
     {
+        Utils.WriteLog(pText+"\n");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

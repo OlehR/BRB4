@@ -191,6 +191,7 @@ public class DocumentWeightActivity extends Activity  {
                         QuantityIncomed.setBackground(ContextCompat.getDrawable(context, R.drawable.input_style));
                         QuantityIncomed.setFocusable(false);
                         QuantityIncomed.setFocusableInTouchMode(false);
+                        QuantityIncomed.setSelectAllOnFocus(true);
                         QuantityIncomed.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -211,7 +212,7 @@ public class DocumentWeightActivity extends Activity  {
                             @Override
                             public void onFocusChange(View view, boolean hasFocus) {
                                 if (hasFocus) {
-                                    QuantityIncomed.setText("");
+                                   // QuantityIncomed.setText("");
                                     position = tl.indexOfChild(tl0);
                                 } else {
                                     int index = tl.indexOfChild(tl0);
@@ -300,6 +301,7 @@ public class DocumentWeightActivity extends Activity  {
             v.setFocusableInTouchMode(true);
             v.requestFocusFromTouch();
             v.setFocusableInTouchMode(false);
+
         }
     }
 

@@ -283,13 +283,13 @@ public class Utils {
                         Uri downloaded_apk = FileProvider.getUriForFile(vApplicationContext, ApplicationId + ".provider", file);
                         Intent intent = new Intent(Intent.ACTION_VIEW).setDataAndType(downloaded_apk,
                                 "application/vnd.android.package-archive");
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         vApplicationContext.startActivity(intent);
 
                     } else {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.fromFile(file),
-                                "application/vnd.android.package-archive");
+                        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         vApplicationContext.startActivity(intent);
                     }
