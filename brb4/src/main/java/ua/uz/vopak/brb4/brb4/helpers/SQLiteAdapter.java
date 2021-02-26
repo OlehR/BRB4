@@ -460,7 +460,13 @@ public class SQLiteAdapter
          Integer intNum = 0;
         boolean isBarCode = true;
         if (number.length() <= 8 && !number.equals("")) {
-            intNum = Integer.parseInt(number);
+            try{
+                intNum = Integer.parseInt(number);
+            }catch(Exception e)
+            {
+                Log.e(TAG,"GetScanData=> "+e.getMessage());
+            }
+
             isBarCode = (intNum.toString().length() >= 8);
         }
    /*     else {

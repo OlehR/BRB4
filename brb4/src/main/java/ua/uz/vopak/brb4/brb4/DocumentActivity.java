@@ -24,6 +24,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentLayoutBinding;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocumentViewModel;
+import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
@@ -163,17 +164,20 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_UP) {
-            String keyCode = String.valueOf(event.getKeyCode());
+            int keyCode = event.getKeyCode();
             switch (keyCode) {
-                case "15":
+                case KeyEvent.KEYCODE_DPAD_UP:
+                case KeyEvent.KEYCODE_2:
                     if(!DM.IsEnterCodeZKPO.get())
-                        selectNext();
+                        if(keyCode==KeyEvent.KEYCODE_DPAD_UP || config.TypeScaner != eTypeScaner.Zebra)  selectPrev(); else selectNext();
                     break;
-                case "9":
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                case KeyEvent.KEYCODE_8:
                     if(!DM.IsEnterCodeZKPO.get())
-                        selectPrev();
+                        if(keyCode==KeyEvent.KEYCODE_DPAD_DOWN || config.TypeScaner!= eTypeScaner.Zebra)  selectNext(); else selectPrev();
                     break;
-                case "66":
+
+                case KeyEvent.KEYCODE_ENTER:
                     if(DM.IsEnterCodeZKPO.get()) {
                         String find = DocumentZKPO.getText().toString().replace("\n", "").replace(" ", "");
                         DM.ZKPO.set("");
@@ -185,11 +189,11 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                             r.callOnClick();
                     }
                     break;
-                case "131": //F2 Пошук по коду ЄДРПОУ для прихідних
+                case  131: //F2 Пошук по коду ЄДРПОУ для прихідних
                   DM.IsEnterCodeZKPO.set(true);
                   ViewFilter();
                     break;
-                case "132": //F2 Перерисовуємо без фільтра
+                case 132: //F2 Перерисовуємо без фільтра
                     RefreshTable(null, null);
                     break;
             }

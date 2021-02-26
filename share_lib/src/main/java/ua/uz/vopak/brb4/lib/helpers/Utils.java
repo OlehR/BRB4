@@ -171,14 +171,18 @@ public class Utils {
         }
     }
 
-    public void  PlaySound() throws IOException {
-        //MediaPlayer.prepare();
-        MediaPlayer.start();
-        //MediaPlayer.pause();  //>>pause current sound
-       // MediaPlayer.seekTo(0);
+    public void  PlaySound() {
+        try {
+            //MediaPlayer.prepare();
+            MediaPlayer.start();
+            //MediaPlayer.pause();  //>>pause current sound
+            // MediaPlayer.seekTo(0);
         /*onPause
         myMediaPlayer.stop();  //>>> stop myMediaPlayer
         myMediaPlayer.release(); */
+        }catch (Exception e) {
+            Log.e(TAG,"Error PlaySound() => "+e.getMessage());
+        }
     }
 
 
@@ -208,7 +212,7 @@ public class Utils {
 
            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
            Date date = new Date(System.currentTimeMillis());
-           String Text = "\n"+formatter.format(date) + "Log=>\n" + pText;
+           String Text = "\nLog=>"+formatter.format(date) + "  \n" + pText;
            SaveData(FileName, Text.getBytes("UTF-8"),false);
        }
        catch(Exception e) {

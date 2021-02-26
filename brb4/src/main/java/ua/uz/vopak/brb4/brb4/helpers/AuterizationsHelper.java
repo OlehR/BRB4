@@ -36,7 +36,7 @@ public class AuterizationsHelper {
             Result r=c.Login(pLogin,pPassWord,pIsLoginCO);
             if(r.State==0) {
                 config.DocsSetting=config.Worker.GenSettingDocs(config.Company,config.Role);
-                if(pIsLoginCO)
+                if(pIsLoginCO && config.Company==eCompany.SevenEleven)
                 {
                     ua.uz.vopak.brb4.brb4.Connector.Connector con = ua.uz.vopak.brb4.brb4.Connector.Connector.instance();
                     Warehouse[] Wh= con.LoadWarehouse();

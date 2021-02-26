@@ -57,6 +57,7 @@ import ua.uz.vopak.brb4.brb4.helpers.MyKeyboard;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
@@ -67,6 +68,7 @@ import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.Result;
 
@@ -81,6 +83,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
 
     Activity context;
     GlobalConfig config = GlobalConfig.instance();
+    Utils utils =  Utils.instance(this);
     ua.uz.vopak.brb4.lib.helpers.UtilsUI UtilsUI = new UtilsUI(this);
     DocumentScannerActivityBinding binding;
 
@@ -308,17 +311,24 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(model == null)
-                  WaresItem.ClearData("Товар не знайдено");
+                if(model == null) {
+                    if(config.Company== eCompany.SevenEleven)
+                        utils.PlaySound();
+                    WaresItem.ClearData("Товар не знайдено");
+                }
                 else {
                     WaresItem.ClearData();
 
                     if(  !model.IsRecord) {
                         if (WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Ask) {
+                            if(config.Company==eCompany.SevenEleven)
+                                utils.PlaySound();
                             AskAddAbsentWares(model);
                             return;
                         }
                         if(WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Control) {
+                            if(config.Company==eCompany.SevenEleven)
+                                utils.PlaySound();
                             UtilsUI.Dialog("Товар відсутній в документі", model.NameWares);
                             Refresh();
                             return;
@@ -620,6 +630,8 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if(config.Company==eCompany.SevenEleven)
+                                        utils.PlaySound();
                                     UtilsUI.Dialog("Товар не знайдено", "Даний штрихкод=> "+BarCode+" відсутній в базі");
                                 }});
                         return res;

@@ -205,34 +205,35 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     }
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        String keyCode = String.valueOf(event.getKeyCode());
+        int keyCode = event.getKeyCode();
         if(event.getAction() == KeyEvent.ACTION_UP) {
             switch (keyCode) {
-                case "9": //2
-                    selectPrev();
-                    selectItem();
+
+                case KeyEvent.KEYCODE_DPAD_UP:
+                case KeyEvent.KEYCODE_2:
+                    if(keyCode==KeyEvent.KEYCODE_DPAD_UP || config.TypeScaner != eTypeScaner.Zebra)  selectPrev(); else selectNext();
                     break;
-                case "15": //8
-                    selectNext();
-                    selectItem();
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                case KeyEvent.KEYCODE_8:
+                    if(keyCode==KeyEvent.KEYCODE_DPAD_DOWN || config.TypeScaner!= eTypeScaner.Zebra)  selectNext(); else selectPrev();
                     break;
-                case "132":
+                case 132:
                     SendDoc(); //F2 Зберегти (відправити документ в 1С
                     break;
-                case "133": //F3 Режим сканування.
+                case 133: //F3 Режим сканування.
                     ExecuteDocumentScannerActivity();
                     break;
-                case "134": //F4 Ваговий режим
+                case 134: //F4 Ваговий режим
                     ExecuteDocumentWeightActivity();
                     break;
-                case "135": //F5 Сортування Назва,Порядок сканування
+                case 135: //F5 Сортування Назва,Порядок сканування
                     TypeOrder= (TypeOrder == eTypeOrder.Scan)? eTypeOrder.Name :eTypeOrder.Scan;
                     GetDoc();
                     break;
-                case "136": //F6 Ввід даних розхідної накладної
+                case 136: //F6 Ввід даних розхідної накладної
                     SetViewOut();
                     break;
-                case "137": //F7 генерація csv файла документа
+                case 137: //F7 генерація csv файла документа
                     GenCSV();
                     break;
             }
@@ -519,20 +520,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
                         UtilsUI.SetColor(TableBlock,"#000000","#"+((index % 2)==0?"FF":"60")+item.GetBackgroundColor());
 
-                        /*if((index % 2)==0) {
-                            ViewGroup rows = TableBlock;
-                            for (int i = 0; i < rows.getChildCount(); i++) {
-                                LinearLayout trc = (LinearLayout) rows.getChildAt(i);
-
-                                for(int j = 0; j < trc.getChildCount(); j++){
-                                    trc.getChildAt(j).setBackground(ContextCompat.getDrawable(context, R.drawable.odd_row_bordered));
-                                }
-
-                            }
-                        }*/
-
-                        //TableRow TableRowBlock = new TableRow(context);
-                        //TableRowBlock.addView(TableBlock);
                         DataTable.addView(TableBlock);
                     }
 
@@ -594,6 +581,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             current++;
             focusOnView("next");
         }
+        selectItem();
     }
 
     private void selectPrev(){
@@ -601,6 +589,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             current--;
             focusOnView("prev");
         }
+        selectItem();
     }
 
     private final void focusOnView(final String prevent){
