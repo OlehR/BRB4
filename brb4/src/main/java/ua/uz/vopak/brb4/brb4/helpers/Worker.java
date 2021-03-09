@@ -241,4 +241,18 @@ public class Worker {
         return res;
     }
 
+
+
+    public  Warehouse[] GetWarehouse(){
+        Warehouse[] Wh;
+        Connector c = Connector.instance();
+        Wh=c.LoadWarehouse();
+        if(Wh !=null && Wh.length>0)
+            mDbHelper.SaveWarehouse(Wh);
+        else
+         Wh= (Warehouse[]) mDbHelper.GetWarehouse().toArray();
+
+        return Wh;
+    }
+
 }

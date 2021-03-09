@@ -17,6 +17,8 @@ import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class GlobalConfig extends AbstractConfig {
 
+    public static final int DB_VERSION = 2;
+
     public static boolean IsLoadStartData = false;
     public static boolean IsTest = false;
     public static boolean IsAutoLogin = false;

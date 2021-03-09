@@ -48,7 +48,10 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
@@ -109,7 +112,6 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         public void possibleResultPoints(List<ResultPoint> resultPoints) {
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,14 +198,27 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         scaner.Init(this,savedInstanceState);
 
 
-
-
-
-
-
-
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(config.TypeScaner==eTypeScaner.Camera)
+            barcodeView.resume();
+        //Zebra
+        scaner.StartScan();
+        //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
+        Date curDate = null;
+        try {
+            curDate = config.FormatterDate.parse(config.FormatterDate.format(new Date()));
+        } catch (Exception ex) {
+        }
+
+        if (config.LastFullUpdate == null || !config.LastFullUpdate.equals( curDate)){
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            UtilsUI.Dialog("Необхідно оновити довідники", "Останне оновлення=>" + dateFormat.format(config.LastFullUpdate));
+        }
+    }
 
     @Override
     public void onClick(View v) {
@@ -278,15 +293,6 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         return super.dispatchKeyEvent(event);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(config.TypeScaner==eTypeScaner.Camera)
-            barcodeView.resume();
-        //Zebra
-        scaner.StartScan();
-        //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
-    }
 
 
 

@@ -38,9 +38,11 @@ public class AuterizationsHelper {
                 config.DocsSetting=config.Worker.GenSettingDocs(config.Company,config.Role);
                 if(pIsLoginCO && config.Company==eCompany.SevenEleven)
                 {
-                    ua.uz.vopak.brb4.brb4.Connector.Connector con = ua.uz.vopak.brb4.brb4.Connector.Connector.instance();
-                    Warehouse[] Wh= con.LoadWarehouse();
+                   // ua.uz.vopak.brb4.brb4.Connector.Connector con = ua.uz.vopak.brb4.brb4.Connector.Connector.instance();
+
                     Worker worker=config.GetWorker();
+                    Warehouse[] Wh= worker.GetWarehouse(); //con.LoadWarehouse();
+
                     int i = worker.FindWhIP(Wh);
                     if(i>=0){
                         if(config.CodeWarehouse!=Wh[i].Code) {

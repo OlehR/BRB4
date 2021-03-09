@@ -13,7 +13,7 @@ public class AsyncHelper<T> extends AsyncTask<Void,Void,T> {
 
     @Override
     protected void onPostExecute(T t) {
-        if(t != null && !(t instanceof Void))
+        if(PostResultDelegate!=null && t != null && !(t instanceof Void))
         PostResultDelegate.Invoke(t);
     }
 

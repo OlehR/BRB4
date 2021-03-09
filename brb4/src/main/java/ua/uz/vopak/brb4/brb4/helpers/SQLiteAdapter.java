@@ -14,6 +14,10 @@ import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 
+import ua.uz.vopak.brb4.brb4.Connector.SE.Barcode;
+import ua.uz.vopak.brb4.brb4.Connector.SE.Nomenclature;
+import ua.uz.vopak.brb4.brb4.Connector.SE.UnitDimension;
+import ua.uz.vopak.brb4.brb4.Connector.SE.Units;
 import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.Reason;
@@ -21,6 +25,7 @@ import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
@@ -713,4 +718,182 @@ public class SQLiteAdapter
         }
         return result;
     }
+
+    public boolean SaveWarehouse(Warehouse pWh ) {
+        long result = -1;
+        ContentValues values = new ContentValues();
+        values.put("Code", pWh.Code);
+        values.put("Number", pWh.Number);
+        values.put("Name", pWh.Name);
+        values.put("Url", pWh.Url);
+        values.put("InternalIP", pWh.InternalIP);
+        values.put("ExternalIP", pWh.ExternalIP);
+
+        result = mDb.replace("Warehouse", null, values);
+        return result != -1;
+    }
+    public List<Warehouse> GetWarehouse()
+    {
+        List<Warehouse> res= new ArrayList<>();
+        Cursor mCur;
+        String sql="select Code,  Number,Name, Url, InternalIP TEXT, ExternalIP from Warehouse";
+        try {
+            mCur = mDb.rawQuery(sql, null);
+            if (mCur!=null && mCur.getCount() > 0) {
+                while (mCur.moveToNext()){
+                    Warehouse Warehouse = new Warehouse(mCur.getInt(0),mCur.getString(1),mCur.getString(2),mCur.getString(3),mCur.getString(4),mCur.getString(5));
+                    res.add(Warehouse);
+                }
+            }
+        }catch (Exception e){
+            Log.e(TAG, "GetWarehouse >>"+  e.getMessage());
+        }
+        return res;
+    }
+    
+    public boolean ClearWarehouse() {
+        try {
+             mDb.execSQL("delete from Warehouse");
+            return true;
+        } catch (Exception e) {
+            Log.e(TAG, "ClearWarehouse >>" + e.getMessage());
+        }
+        return false;
+    }
+    public boolean SaveReason(List<ua.uz.vopak.brb4.brb4.Connector.SE.Reason> pReasons) {
+        mDb.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            for (ua.uz.vopak.brb4.brb4.Connector.SE.Reason R : pReasons) {
+                values.put("CODE_REASON", R.code);
+                values.put("NAME_REASON", R.reason);
+                mDb.replace("Reason", null, values);
+            }
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveReason=>" + ex.toString());
+        } finally {
+            mDb.endTransaction();
+        }
+        return true;
+
+    }
+
+    public boolean SaveWares(Nomenclature[] pW) {
+        int i = 0;
+        mDb.beginTransaction();
+        try {
+            i++;
+            ContentValues values = new ContentValues();
+            for (Nomenclature wares : pW) {
+                values.put("CODE_WARES", wares.CODE_WARES);
+                values.put("NAME_WARES", wares.NAME_WARES);
+                values.put("ARTICL", wares.ARTICL);
+                values.put("CODE_UNIT", wares.CODE_UNIT);
+                values.put("VAT", wares.VAT);
+                values.put("DESCRIPTION", wares.DESCRIPTION);
+                values.put("CODE_GROUP", wares.CODE_GROUP);
+                values.put("VAT_OPERATION", wares.VAT_OPERATION);
+                mDb.replace("Wares", null, values);
+                if (i >= 1000) {
+                    i = 0;
+                    mDb.setTransactionSuccessful();
+                    mDb.endTransaction();
+                    mDb.beginTransaction();
+                }
+            }
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveWares=>" + ex.toString());
+        } finally {
+            mDb.endTransaction();
+        }
+        return true;
+    }
+
+    public boolean SaveAdditionUnit(Units[] pUnits) {
+        int i = 0;
+        mDb.beginTransaction();
+        try {
+            i++;
+            ContentValues values = new ContentValues();
+            for (Units Units : pUnits) {
+                values.put("CODE_WARES", Units.CODE_WARES);
+                values.put("CODE_UNIT", Units.CODE_UNIT);
+                values.put("COEFFICIENT", Units.COEF_WARES);
+                mDb.replace("ADDITION_UNIT", null, values);
+                if (i >= 1000) {
+                    i = 0;
+                    mDb.setTransactionSuccessful();
+                    mDb.endTransaction();
+                    mDb.beginTransaction();
+                }
+            }
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveAdditionUnit=>" + ex.toString());
+        } finally {
+            mDb.endTransaction();
+        }
+        return true;
+    }
+
+    public boolean SaveBarCode(Barcode[] pBarCode) {
+        int i = 0;
+        mDb.beginTransaction();
+        try {
+            i++;
+            ContentValues values = new ContentValues();
+            for (Barcode BarCode : pBarCode) {
+                values.put("CODE_WARES", BarCode.CODE_WARES);
+                values.put("CODE_UNIT", BarCode.CODE_UNIT);
+                values.put("BAR_CODE", BarCode.BAR_CODE);
+                mDb.replace("BAR_CODE", null, values);
+                if (i >= 1000) {
+                    i = 0;
+                    mDb.setTransactionSuccessful();
+                    mDb.endTransaction();
+                    mDb.beginTransaction();
+                }
+            }
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveBarCode=>" + ex.toString());
+        } finally {
+            mDb.endTransaction();
+        }
+        return true;
+    }
+
+    public boolean SaveUnitDimension(UnitDimension[] pUD) {
+        mDb.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            for (UnitDimension UD : pUD) {
+
+                values.put("CODE_UNIT", UD.CODE_UNIT);
+                values.put("NAME_UNIT", UD.NAME_UNIT);
+                values.put("ABR_UNIT", UD.ABR_UNIT);
+                values.put("DESCRIPTION", UD.DESCRIPTION_TEXT);
+                mDb.replace("UNIT_DIMENSION", null, values);
+            }
+            mDb.setTransactionSuccessful();
+        } catch (Exception ex) {
+            Log.e(TAG, "SaveUnitDimension=>" + ex.toString());
+        } finally {
+            mDb.endTransaction();
+        }
+        return true;
+    }
+
+    public  boolean SaveWarehouse(Warehouse[] pWh ) {
+        boolean res=true;
+        ClearWarehouse();
+        for (Warehouse el :pWh ) {
+            res&=
+            SaveWarehouse(el);
+        }
+        return res;
+    }
+    
 }

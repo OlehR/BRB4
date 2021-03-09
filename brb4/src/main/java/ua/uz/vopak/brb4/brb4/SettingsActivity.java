@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.databinding.DataBindingUtil;
 import ua.uz.vopak.brb4.brb4.databinding.SettingsLayoutBinding;
+import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.SetingModel;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
@@ -73,8 +74,8 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
                 new IAsyncHelper<Warehouse[]>() {
                     @Override
                     public Warehouse[] Invoke() {
-                        ua.uz.vopak.brb4.brb4.Connector.Connector con = ua.uz.vopak.brb4.brb4.Connector.Connector.instance();
-                        return con.LoadWarehouse();
+                        //ua.uz.vopak.brb4.brb4.Connector.Connector con = ua.uz.vopak.brb4.brb4.Connector.Connector.instance();
+                        return config.Worker.GetWarehouse();//con.LoadWarehouse();
                     }
                 },
                 new IPostResult<Warehouse[]>() {

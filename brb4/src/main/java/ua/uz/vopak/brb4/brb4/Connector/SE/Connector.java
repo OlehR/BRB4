@@ -29,7 +29,7 @@ import ua.uz.vopak.brb4.lib.models.Result;
 
 public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
-    protected static final String TAG = "BRB4/Connector";
+    protected static final String TAG = "BRB4/Connector.SE";
 
     public Result Login(final String pLogin, final String pPassWord,final boolean pIsLoginCO)
     {
@@ -83,16 +83,16 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
                 Log.d(TAG, "Parse JSON");
                 pProgress.set(60);
-                SaveWares(data.Nomenclature);
+                mDbHelper.SaveWares(data.Nomenclature);
                 Log.d(TAG, "Nomenclature");
                 pProgress.set(70);
-                SaveAdditionUnit(data.Units);
+                mDbHelper.SaveAdditionUnit(data.Units);
                 Log.d(TAG, "Units");
                 pProgress.set(80);
-                SaveBarCode(data.Barcodes);
+                mDbHelper.SaveBarCode(data.Barcodes);
                 Log.d(TAG, "Barcodes");
                 pProgress.set(90);
-                SaveUnitDimension(data.Dimentions);
+                mDbHelper.SaveUnitDimension(data.Dimentions);
             } else
                 Log.d(TAG, res.HttpState.name());
 
@@ -102,8 +102,9 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 List<Reason> Reasons = new Gson().fromJson(res.Result, new TypeToken<List<Reason>>() {
                 }.getType());
                 db.execSQL("DELETE FROM Reason;");
-                SaveReason(Reasons);
+                mDbHelper.SaveReason(Reasons);
             }
+            config.GetWorker().GetWarehouse();
             pProgress.set(100);
             Log.d(TAG, "End");
             return true;
@@ -115,131 +116,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         return false;
     }
 
-    boolean SaveReason(List<Reason> pReasons) {
-        db.beginTransaction();
-        try {
-            ContentValues values = new ContentValues();
-            for (Reason R : pReasons) {
-                values.put("CODE_REASON", R.code);
-                values.put("NAME_REASON", R.reason);
-                db.replace("Reason", null, values);
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveReason=>" + ex.toString());
-        } finally {
-            db.endTransaction();
-        }
-        return true;
 
-    }
-
-    boolean SaveWares(Nomenclature[] pW) {
-        int i = 0;
-        db.beginTransaction();
-        try {
-            i++;
-            ContentValues values = new ContentValues();
-            for (Nomenclature wares : pW) {
-                values.put("CODE_WARES", wares.CODE_WARES);
-                values.put("NAME_WARES", wares.NAME_WARES);
-                values.put("ARTICL", wares.ARTICL);
-                values.put("CODE_UNIT", wares.CODE_UNIT);
-                values.put("VAT", wares.VAT);
-                values.put("DESCRIPTION", wares.DESCRIPTION);
-                values.put("CODE_GROUP", wares.CODE_GROUP);
-                values.put("VAT_OPERATION", wares.VAT_OPERATION);
-                db.replace("Wares", null, values);
-                if (i >= 1000) {
-                    i = 0;
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-                    db.beginTransaction();
-                }
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveWares=>" + ex.toString());
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    boolean SaveAdditionUnit(Units[] pUnits) {
-        int i = 0;
-        db.beginTransaction();
-        try {
-            i++;
-            ContentValues values = new ContentValues();
-            for (Units Units : pUnits) {
-                values.put("CODE_WARES", Units.CODE_WARES);
-                values.put("CODE_UNIT", Units.CODE_UNIT);
-                values.put("COEFFICIENT", Units.COEF_WARES);
-                db.replace("ADDITION_UNIT", null, values);
-                if (i >= 1000) {
-                    i = 0;
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-                    db.beginTransaction();
-                }
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveAdditionUnit=>" + ex.toString());
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    boolean SaveBarCode(Barcode[] pBarCode) {
-        int i = 0;
-        db.beginTransaction();
-        try {
-            i++;
-            ContentValues values = new ContentValues();
-            for (Barcode BarCode : pBarCode) {
-                values.put("CODE_WARES", BarCode.CODE_WARES);
-                values.put("CODE_UNIT", BarCode.CODE_UNIT);
-                values.put("BAR_CODE", BarCode.BAR_CODE);
-                db.replace("BAR_CODE", null, values);
-                if (i >= 1000) {
-                    i = 0;
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-                    db.beginTransaction();
-                }
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveBarCode=>" + ex.toString());
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    boolean SaveUnitDimension(UnitDimension[] pUD) {
-        db.beginTransaction();
-        try {
-            ContentValues values = new ContentValues();
-            for (UnitDimension UD : pUD) {
-
-                values.put("CODE_UNIT", UD.CODE_UNIT);
-                values.put("NAME_UNIT", UD.NAME_UNIT);
-                values.put("ABR_UNIT", UD.ABR_UNIT);
-                values.put("DESCRIPTION", UD.DESCRIPTION_TEXT);
-                db.replace("UNIT_DIMENSION", null, values);
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveUnitDimension=>" + ex.toString());
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
 
     //Робота з документами.
     //Завантаження документів в ТЗД (HTTP)

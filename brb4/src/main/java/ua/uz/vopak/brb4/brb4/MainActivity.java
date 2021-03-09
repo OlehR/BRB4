@@ -76,29 +76,6 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
 
         //---!!!!!TMP Not Load
         if(config.isAutorized ){
-          //  ShowLoader();
-
-            new AsyncHelper<Boolean>(new IAsyncHelper() {
-                @Override
-                public Boolean Invoke() {
-                    if(!config.getCodeWarehouse().equals("000000000")) {
-                        Date curDate=null;
-                        try {
-                             curDate = config.FormatterDate.parse(config.FormatterDate.format(new Date()));
-                        }catch(Exception ex){}
-
-                        if(config.LastFullUpdate==null || config.LastFullUpdate!=curDate)
-                            return config.Worker.LoadData(-2,null,MM.Progress,false);
-                    }
-                    return true;
-                }},
-                        new IPostResult<Boolean>() {
-                    @Override
-                    public void Invoke(Boolean p) {
-
-                    }
-                }
-            ).execute();
             setAlarm(60 * 30, 60 * 30);
         }
         ////////////////////////////////
@@ -150,10 +127,31 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     protected void onResume() {
         super.onResume();
 
-        if(!config.isAutorized)
-            RunAuth();
+        if(config.isAutorized) {
 
+            if (!config.getCodeWarehouse().equals("000000000")) {
+                Date curDate = null;
+                try {
+                    curDate = config.FormatterDate.parse(config.FormatterDate.format(new Date()));
+                } catch (Exception ex) {
+                }
+
+                if (config.LastFullUpdate == null || config.LastFullUpdate.equals( curDate)) {
+                    new AsyncHelper<Boolean>(new IAsyncHelper() {
+                        @Override
+                        public Boolean Invoke() {
+                            return config.Worker.LoadData(-2, null, MM.Progress, false);
+                        }
+                    }
+                    ).execute();
+                }
+
+            }
+        }
+        else
+            RunAuth();
     }
+
     public void RunAuth()    {//boolean pUseAutologin
        runOnUiThread(new Runnable() {
             @Override
