@@ -1,12 +1,19 @@
 package ua.uz.vopak.brb4.brb4.Connector;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 
 import java.util.Date;
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.Connector.SE.Barcode;
+import ua.uz.vopak.brb4.brb4.Connector.SE.Nomenclature;
+import ua.uz.vopak.brb4.brb4.Connector.SE.Reason;
+import ua.uz.vopak.brb4.brb4.Connector.SE.UnitDimension;
+import ua.uz.vopak.brb4.brb4.Connector.SE.Units;
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
@@ -17,6 +24,7 @@ import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public abstract class Connector {
+    protected static final String TAG = "BRB4/Connector";
     public abstract Warehouse[] LoadWarehouse();
     private static Connector Instance = null;
 
@@ -32,6 +40,8 @@ public abstract class Connector {
         return Instance;
     }
 
+    //Логін
+    public abstract Result Login(final String pLogin, final String pPassWord,final boolean pIsLoginCO);
     //Завантаження довідників.
     public abstract boolean LoadGuidData(boolean IsFull, ObservableInt pProgress);
 
@@ -46,5 +56,6 @@ public abstract class Connector {
 
     // Друк на стаціонарному термопринтері
     public abstract String printHTTP(List<String> codeWares);
+
 
 }

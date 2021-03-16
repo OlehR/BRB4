@@ -24,6 +24,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -42,12 +43,13 @@ import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener, ScanCallBack {
     private Scaner scaner;
-    LinearLayout DataTable,button,DIOut;
+    LinearLayout DataTable,DIOut;
     FrameLayout documentItemsFrame;
     ScrollView documentList;
     EditText NumberOut;
@@ -55,7 +57,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     CheckBox IsClose;
     DocumentItemsLayoutBinding binding;
     final Context context=this;
-    Button btn, btnSave;
     String NumberDoc;
     int TypeWeight=0;
     int TypeDoc;
@@ -82,18 +83,10 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         TypeWeight =i.getIntExtra("TypeWeight",0);
         DocSetting=config.GetDocSetting(TypeDoc);
 
-        btnSave = findViewById(R.id.F3);
-        button = findViewById(R.id.DI_Button);
+
         DIOut = findViewById(R.id.DI_OutLL);
         NumberOut=findViewById(R.id.DI_NumberOut);
         IsClose = findViewById(R.id.DI_IsClose);
-
-
-        btn = findViewById(R.id.F4);
-
-        button.setVisibility(config.TypeScaner== eTypeScaner.Camera? View.VISIBLE:View.GONE );
-        btn.setOnClickListener(this);
-        btnSave.setOnClickListener(this);
 
        // binding=  DataBindingUtil.setContentView(this, R.layout.document_items_layout);
         //binding.setDWI (DocWaresItemModel);
@@ -137,6 +130,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         //Zebra
         scaner.StopScan();
     }
+
+
     @Override
     public void Run(final String pBarCode) {
 
@@ -210,32 +205,36 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     }
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
-        String keyCode = String.valueOf(event.getKeyCode());
+        int keyCode = event.getKeyCode();
         if(event.getAction() == KeyEvent.ACTION_UP) {
             switch (keyCode) {
-                case "9": //2
-                    selectPrev();
-                    selectItem();
+
+                case KeyEvent.KEYCODE_DPAD_UP:
+                case KeyEvent.KEYCODE_2:
+                    if(keyCode==KeyEvent.KEYCODE_DPAD_UP || config.TypeScaner != eTypeScaner.Zebra)  selectPrev(); else selectNext();
                     break;
-                case "15": //8
-                    selectNext();
-                    selectItem();
+                case KeyEvent.KEYCODE_DPAD_DOWN:
+                case KeyEvent.KEYCODE_8:
+                    if(keyCode==KeyEvent.KEYCODE_DPAD_DOWN || config.TypeScaner!= eTypeScaner.Zebra)  selectNext(); else selectPrev();
                     break;
-                case "132":
+                case 132:
                     SendDoc(); //F2 Зберегти (відправити документ в 1С
                     break;
-                case "133": //F3 Режим сканування.
+                case 133: //F3 Режим сканування.
                     ExecuteDocumentScannerActivity();
                     break;
-                case "134": //F4 Ваговий режим
+                case 134: //F4 Ваговий режим
                     ExecuteDocumentWeightActivity();
                     break;
-                case "135": //F5 Сортування Назва,Порядок сканування
+                case 135: //F5 Сортування Назва,Порядок сканування
                     TypeOrder= (TypeOrder == eTypeOrder.Scan)? eTypeOrder.Name :eTypeOrder.Scan;
                     GetDoc();
                     break;
-                case "136": //F6 Ввід даних розхідної накладної
+                case 136: //F6 Ввід даних розхідної накладної
                     SetViewOut();
+                    break;
+                case 137: //F7 генерація csv файла документа
+                    GenCSV();
                     break;
             }
         }
@@ -245,15 +244,44 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.F4:
-                ExecuteDocumentScannerActivity();
-                break;
-            case R.id.F3:
+            case R.id.DI_F2:
+            case R.id.DI_F2_Text:
                 SendDoc();
                 break;
+            case R.id.DI_F3:
+            case R.id.DI_F3_Text:
+                ExecuteDocumentScannerActivity();
+                break;
+            case R.id.DI_F4:
+            case R.id.DI_F4_Text:
+                ExecuteDocumentWeightActivity();
+                break;
+            case R.id.DI_F6:
+            case R.id.DI_F6_Text:
+                SetViewOut();
+                break;
+
         }
     }
 
+    private void GenCSV()
+    {
+        String FileName= NumberDoc+"_"+String.valueOf(TypeDoc)+".csv";
+        StringBuilder sb=new StringBuilder();
+
+        for (WaresItemModel item : ListWares) {
+            if(item.InputQuantity>0)
+                sb.append(String.format("%d;%.3f\n",item.CodeWares,item.InputQuantity));
+        }
+
+        String Text=sb.toString();
+
+        try {
+            Utils.SaveData(FileName, Text.getBytes("UTF-8"),true);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
     public void SendDoc()    {
         GetDIM();
         final Date DateOut = DocItemModel.GetDate();
@@ -492,20 +520,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
                         UtilsUI.SetColor(TableBlock,"#000000","#"+((index % 2)==0?"FF":"60")+item.GetBackgroundColor());
 
-                        /*if((index % 2)==0) {
-                            ViewGroup rows = TableBlock;
-                            for (int i = 0; i < rows.getChildCount(); i++) {
-                                LinearLayout trc = (LinearLayout) rows.getChildAt(i);
-
-                                for(int j = 0; j < trc.getChildCount(); j++){
-                                    trc.getChildAt(j).setBackground(ContextCompat.getDrawable(context, R.drawable.odd_row_bordered));
-                                }
-
-                            }
-                        }*/
-
-                        //TableRow TableRowBlock = new TableRow(context);
-                        //TableRowBlock.addView(TableBlock);
                         DataTable.addView(TableBlock);
                     }
 
@@ -567,6 +581,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             current++;
             focusOnView("next");
         }
+        selectItem();
     }
 
     private void selectPrev(){
@@ -574,6 +589,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             current--;
             focusOnView("prev");
         }
+        selectItem();
     }
 
     private final void focusOnView(final String prevent){

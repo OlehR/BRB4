@@ -4,36 +4,82 @@ import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 import org.json.JSONObject;
+
+import ua.uz.vopak.brb4.brb4.Connector.Connector;
 import ua.uz.vopak.brb4.brb4.MainActivity;
 import ua.uz.vopak.brb4.brb4.MessageActivity;
+import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
+import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
+import ua.uz.vopak.brb4.lib.models.Result;
 
 public class AuterizationsHelper {
     private static String TAG = "AuterizationsHelper";
     GlobalConfig config = GlobalConfig.instance();
     GetDataHTTP Http= GetDataHTTP.instance();// new GetDataHTTP(new String[]{config.ApiUrl, config.ApiURLadd});
 
-    public boolean Login(Activity pActivity,final String pLogin,final String pPassWord)
+    public String Login(Activity pActivity,final String pLogin,final String pPassWord,boolean pIsLoginCO,boolean IsRunMainActivity)
     {
-        try{
-        if((pLogin.equals("Admin")&&pPassWord.equals("13579")) || pLogin.equals("OffLine") ) {
-            ExecuteMainActivity(pActivity, pLogin, pPassWord);
-            return true;
-        }
+        String Res=null;
+        try {
+            if ((pLogin.equals("Admin") && pPassWord.equals("13579")) || pLogin.equals("OffLine")) {
+                ExecuteMainActivity(pActivity, pLogin, pPassWord,pIsLoginCO,IsRunMainActivity);
+                return "Ok";
+            }
+
+            Connector c = Connector.instance();
+            Result r=c.Login(pLogin,pPassWord,pIsLoginCO);
+            if(r.State==0) {
+                config.DocsSetting=config.Worker.GenSettingDocs(config.Company,config.Role);
+                if(pIsLoginCO && config.Company==eCompany.SevenEleven)
+                {
+                   // ua.uz.vopak.brb4.brb4.Connector.Connector con = ua.uz.vopak.brb4.brb4.Connector.Connector.instance();
+
+                    Worker worker=config.GetWorker();
+                    Warehouse[] Wh= worker.GetWarehouse(); //con.LoadWarehouse();
+
+                    int i = worker.FindWhIP(Wh);
+                    if(i>=0){
+                        if(config.CodeWarehouse!=Wh[i].Code) {
+                            config.CodeWarehouse = Wh[i].Code;
+                            config.ApiUrl = Wh[i].Url;
+                            worker.AddConfigPair("Warehouse", Integer.toString(config.CodeWarehouse));
+                            worker.AddConfigPair("ApiUrl", config.ApiUrl);
+                            Http.Init(new String[]{config.ApiUrl, config.ApiURLadd});
+                            Res= "Знайдено новий магазин\n"+ Wh[i].Name+" " +config.ApiUrl;
+                            //UtilsUI.Dialog("Знайдено новий магазин", Wh[i].Name+" " +config.ApiUrl);
+                        }
+                    }
+                    else
+                        Res="НЕ визначено  магазин \nIP=>" +config.cUtils.GetIp();
+
+                }
+
+                ExecuteMainActivity(pActivity,pLogin,pPassWord,pIsLoginCO,IsRunMainActivity);
+                return Res;
+            }
+            else {
+                MessageError(pActivity, r.Info, r.TextError);
+                return Res;
+            }
+        /*
         if(config.Company== eCompany.SparPSU||config.Company==eCompany.VopakPSU)
             return LoginPSU( pActivity,pLogin,pPassWord);
         else if(config.Company== eCompany.SevenEleven)
             return LoginSevenEleven(pActivity,pLogin,pPassWord);
+            */
+
         }catch (Exception e){
             Log.e(TAG, "Login >>"+  e.getMessage());
         }
-        return false;
+        return null;
     }
+    /*
     public boolean LoginSevenEleven(Activity activity,final String pLogin,final String pPassWord) {
 
         HttpResult res=Http.HTTPRequest(0,"warehouse",null,"application/json;charset=utf-8",pLogin,pPassWord);
@@ -64,6 +110,7 @@ public class AuterizationsHelper {
             JSONObject jObject = new JSONObject(result.Result);
             if(jObject.getInt("State") == 0){
                 config.IsOnline=true;
+                config.DocsSetting=config.Worker.GenSettingDocs(config.Company,config.Role);
                 ExecuteMainActivity(activity,pLogin,pPassWord);
             }else{
                 MessageError(activity, "Неправильний логін або пароль", jObject.getString("TextError"));
@@ -73,19 +120,23 @@ public class AuterizationsHelper {
         }
         return  true;
     }
-
+*/
     public AuterizationsHelper(){
     }
 
-    public void ExecuteMainActivity(Activity activity,final String pLogin,final String pPassWord)
+    public void ExecuteMainActivity(Activity activity,final String pLogin,final String pPassWord,boolean pIsLoginCO,boolean IsRunMainActivity)
     {
         config.Login=pLogin;
         config.Password=pPassWord;
         config.isAutorized = true;
+        config.IsLoginCO=pIsLoginCO;
         config.Worker.AddConfigPair("Login",config.Login);
         config.Worker.AddConfigPair("PassWord",config.Password);
-        Intent i = new Intent(activity,MainActivity.class);
-        activity.startActivity(i);
+        config.Worker.AddConfigPair("IsLoginCO",config.IsLoginCO?"true":"false");
+        if(IsRunMainActivity) {
+            Intent i = new Intent(activity, MainActivity.class);
+            activity.startActivity(i);
+        }
     }
     void MessageError(Activity activity,String Message,String exMessage)
     {

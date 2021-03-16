@@ -171,23 +171,28 @@ public class Utils {
         }
     }
 
-    public void  PlaySound() throws IOException {
-        //MediaPlayer.prepare();
-        MediaPlayer.start();
-        //MediaPlayer.pause();  //>>pause current sound
-       // MediaPlayer.seekTo(0);
+    public void  PlaySound() {
+        try {
+            //MediaPlayer.prepare();
+            MediaPlayer.start();
+            //MediaPlayer.pause();  //>>pause current sound
+            // MediaPlayer.seekTo(0);
         /*onPause
         myMediaPlayer.stop();  //>>> stop myMediaPlayer
         myMediaPlayer.release(); */
+        }catch (Exception e) {
+            Log.e(TAG,"Error PlaySound() => "+e.getMessage());
+        }
     }
 
 
 
 
-    static public void SaveData(String pFileName,byte[] pData){
+    static public void SaveData(String pFileName,byte[] pData,boolean pIsDelete){
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File file = new File(path, pFileName);
-
+        if(pIsDelete)
+            file.delete();
         try {
             FileOutputStream stream = new FileOutputStream(file, true);
             stream.write(pData);
@@ -207,8 +212,8 @@ public class Utils {
 
            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
            Date date = new Date(System.currentTimeMillis());
-           String Text = formatter.format(date) + "Log=>\n" + pText;
-           SaveData(FileName, Text.getBytes("UTF-8"));
+           String Text = "\nLog=>"+formatter.format(date) + "  \n" + pText;
+           SaveData(FileName, Text.getBytes("UTF-8"),false);
        }
        catch(Exception e) {
            Log.e(TAG, "WriteLog=> " + e.getMessage());
@@ -282,13 +287,13 @@ public class Utils {
                         Uri downloaded_apk = FileProvider.getUriForFile(vApplicationContext, ApplicationId + ".provider", file);
                         Intent intent = new Intent(Intent.ACTION_VIEW).setDataAndType(downloaded_apk,
                                 "application/vnd.android.package-archive");
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         vApplicationContext.startActivity(intent);
 
                     } else {
                         Intent intent = new Intent(Intent.ACTION_VIEW);
-                        intent.setDataAndType(Uri.fromFile(file),
-                                "application/vnd.android.package-archive");
+                        intent.setDataAndType(Uri.fromFile(file), "application/vnd.android.package-archive");
                         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         vApplicationContext.startActivity(intent);
                     }

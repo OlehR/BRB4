@@ -212,6 +212,9 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
                     if(config.Company== eCompany.SevenEleven)
                         LI.ChangeOnLineState();
                     break;
+                case "135"://F5
+                    LI.ChangeMultyLabel();
+                    break;
             }
         }
         return super.dispatchKeyEvent(event);

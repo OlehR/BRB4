@@ -58,23 +58,13 @@ public class SetingModel {
 
     public void OnClickIP() {
         try {
-            String Ip = config.cUtils.GetIp();
-            if (Ip == null)
-                return;
-            String[] IP = Ip.split("\\.");//192.168.1.235
-            if (IP.length != 4)
-                return;
-            for (int i = 0; i < Warehouse.length; i++) {
 
-                String[] WhIp = Warehouse[i].InternalIP.split("\\.");
-                if (WhIp.length != 4)
-                    continue;
-                if (IP[0].equals(WhIp[0]) && IP[1].equals(WhIp[1]) && IP[2].equals(WhIp[2])) {
+            int i=worker.FindWhIP(Warehouse);
+            if(i>=0)
+             {
                     ListWarehouseIdx.set(i);
                     apiURL.set(Warehouse[i].Url);
                     OnClickSave();
-                    break;
-                }
             }
         } catch (Exception e) {
             Log.e(TAG, "OnClickIP=>" + e.getMessage());
@@ -90,7 +80,7 @@ public class SetingModel {
         apiURL.set(Company==eCompany.SevenEleven? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
                 "http://znp.vopak.local/api/api_v1_utf8.php;http://195.16.78.134:7654/api/api_v1_utf8.php");
         config.ApiUrl=apiURL.get();
-        apiURLadd.set(Company==eCompany.SevenEleven? "http://93.183.216.37/TK/hs/TSD/;http://91.214.125.130/TK/hs/TSD/":"http://znp.vopak.local:8088/Print");
+        apiURLadd.set(Company==eCompany.SevenEleven? "http://93.183.216.37/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/":"http://znp.vopak.local:8088/Print");
         config.ApiURLadd=apiURLadd.get();
 
     }

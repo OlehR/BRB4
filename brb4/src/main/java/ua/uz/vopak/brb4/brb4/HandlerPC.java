@@ -49,7 +49,7 @@ public class HandlerPC {
     public void OnClickPrintBlock(LabelInfo pLI)
     {
         int varPackege= Integer.valueOf(pLI.ListPackege.get(pLI.ListPackegeIdx.get()).split("-")[0]);
-        priceCheckerActivity.BL.printPackage(pLI.printType,varPackege);
+        priceCheckerActivity.BL.printPackage(pLI.printType,varPackege, pLI.IsMultyLabel);
         priceCheckerActivity.binding.invalidateAll();
     }
 

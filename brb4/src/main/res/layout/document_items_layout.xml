@@ -105,7 +105,7 @@
         </ScrollView>
 
         </FrameLayout>
-        <LinearLayout
+   <!--     <LinearLayout
             android:id="@+id/DI_Button"
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -136,7 +136,7 @@
                 android:text="Спис Товарів"
                 android:layout_weight="1"/>
 
-        </LinearLayout>
+        </LinearLayout>-->
         <LinearLayout
             android:focusable="false"
             android:orientation="horizontal"
@@ -187,63 +187,80 @@
                     android:text="↓"/>
 
                 <TextView
+                    android:id="@+id/DI_F2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageError"
+                    android:clickable="true"
+                    android:onClick="onClick"
                     android:textSize="18dp"
                     android:text="F2-"/>
                 <TextView
+                    android:id="@+id/DI_F2_Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageAlert"
+                    android:clickable="true"
+                    android:onClick="onClick"
                     android:textSize="18dp"
                     android:text="Збер"/>
                 <TextView
+                    android:id="@+id/DI_F3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageError"
+                    android:clickable="true"
+                    android:onClick="onClick"
                     android:textSize="18dp"
                     android:text=" F3-"/>
                 <TextView
-
+                    android:id="@+id/DI_F3_Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageAlert"
+                    android:clickable="true"
+                    android:onClick="onClick"
                     android:textSize="18dp"
                     android:text="Скан"/>
 
                 <TextView
-                    android:id="@+id/FilterKey"
+                    android:id="@+id/DI_F4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageError"
+                    android:clickable="true"
+                    android:onClick="onClick"
                     android:textSize="18dp"
                     android:text=" F4-"/>
 
                 <TextView
-                    android:id="@+id/FilterText"
+                    android:id="@+id/DI_F4_Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageAlert"
+                    android:clickable="true"
+                    android:onClick="onClick"
                     android:textSize="18dp"
                     android:text="Спис"/>
                 <TextView
-
+                    android:id="@+id/DI_F6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageError"
+                    android:clickable="true"
+                    android:onClick="onClick"
                     android:textSize="18dp"
                     android:text=" F6-"/>
 
                 <TextView
-
+                    android:id="@+id/DI_F6_Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/messageAlert"
+                    android:clickable="true"
+                    android:onClick="onClick"
                     android:textSize="18dp"
                     android:text="Док"/>
-
-
             </LinearLayout>
 
         </LinearLayout>

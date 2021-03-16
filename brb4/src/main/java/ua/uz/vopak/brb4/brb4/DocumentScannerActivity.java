@@ -14,6 +14,8 @@ import androidx.databinding.DataBindingUtil;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.inputmethodservice.Keyboard;
+import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Build;
@@ -22,12 +24,15 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -43,14 +48,19 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
+import ua.uz.vopak.brb4.brb4.helpers.MyKeyboard;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
@@ -61,19 +71,22 @@ import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.Result;
 
-public class DocumentScannerActivity extends FragmentActivity implements ScanCallBack, IIncomeRender {
+public class DocumentScannerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack, IIncomeRender {
     EditText barCode,  inputCount;
     private Scaner scaner;
     ScrollView scrollView;
-    RelativeLayout loader;
+    //RelativeLayout loader;
     TableLayout WaresTableLayout;
     BarcodeView barcodeView;
+    MyKeyboard keyboard;
 
     Activity context;
     GlobalConfig config = GlobalConfig.instance();
+    Utils utils =  Utils.instance(this);
     ua.uz.vopak.brb4.lib.helpers.UtilsUI UtilsUI = new UtilsUI(this);
     DocumentScannerActivityBinding binding;
 
@@ -99,7 +112,6 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         public void possibleResultPoints(List<ResultPoint> resultPoints) {
         }
     };
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +144,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
         barCode = findViewById(R.id.RevisionBarCode);
         inputCount = findViewById(R.id.RevisionInputCount);
-        loader = findViewById(R.id.RevisionLoader);
+        //loader = findViewById(R.id.RevisionLoader);
         WaresTableLayout = findViewById(R.id.RevisionScanItemsTable);
         scrollView = findViewById(R.id.RevisionScrollView);
         barcodeView=findViewById(R.id.DS_scanner);
@@ -149,7 +161,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 barcodeView.resume();
             }
         }
-
+        keyboard = (MyKeyboard) findViewById(R.id.keyboard);
         Refresh();
 
         inputCount.addTextChangedListener(new TextWatcher() {
@@ -165,7 +177,14 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             public void onTextChanged(CharSequence s, int start,
                                       int before, int count) {
                 if (s.length() != 0) {
-                    WaresItem.InputQuantity= Float.parseFloat(inputCount.getText().toString().replace(",","."));
+                    try {
+                        WaresItem.InputQuantity = Float.parseFloat(inputCount.getText().toString().replace(",", "."));
+                    }
+                    catch (Exception e) {
+                        WaresItem.InputQuantity =0;
+                        Log.e("TAG", "InputQuantity=>" +inputCount.getText().toString()+ " "+ e.getMessage());
+                    }
+
                 }
             }
         });
@@ -178,6 +197,52 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
 
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(config.TypeScaner==eTypeScaner.Camera)
+            barcodeView.resume();
+        //Zebra
+        scaner.StartScan();
+        //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
+        Date curDate = null;
+        try {
+            curDate = config.FormatterDate.parse(config.FormatterDate.format(new Date()));
+        } catch (Exception ex) {
+        }
+
+        if (config.LastFullUpdate == null || !config.LastFullUpdate.equals( curDate)){
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            UtilsUI.Dialog("Необхідно оновити довідники", "Останне оновлення=>" + dateFormat.format(config.LastFullUpdate));
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+
+        switch (v.getId()){
+            case R.id.DS_F1:
+            case R.id.DS_F1_Text:
+                setNullToExistingPosition();
+                break;
+            case R.id.DS_F2:
+            case R.id.DS_F2_Text:
+                focusOnView("up");
+                break;
+            case R.id.DS_F3:
+            case R.id.DS_F3_Text:
+                focusOnView("down");
+                break;
+            case R.id.DS_F8:
+            case R.id.DS_F8_Text:
+                saveDocumentItem(false,false);
+                break;
+
+
+        }
     }
 
     void GetDoc()    {
@@ -228,15 +293,6 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         return super.dispatchKeyEvent(event);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if(config.TypeScaner==eTypeScaner.Camera)
-            barcodeView.resume();
-        //Zebra
-        scaner.StartScan();
-        //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
-    }
 
 
 
@@ -261,18 +317,26 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if(model == null)
-                  WaresItem.ClearData("Товар не знайдено");
+                if(model == null) {
+                    if(config.Company== eCompany.SevenEleven)
+                        utils.PlaySound();
+                    WaresItem.ClearData("Товар не знайдено");
+                }
                 else {
                     WaresItem.ClearData();
 
                     if(  !model.IsRecord) {
                         if (WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Ask) {
+                            if(config.Company==eCompany.SevenEleven)
+                                utils.PlaySound();
                             AskAddAbsentWares(model);
                             return;
                         }
                         if(WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Control) {
+                            if(config.Company==eCompany.SevenEleven)
+                                utils.PlaySound();
                             UtilsUI.Dialog("Товар відсутній в документі", model.NameWares);
+                            Refresh();
                             return;
                         }
                     }
@@ -283,8 +347,8 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
 
                 }
-                if(config.TypeScaner==eTypeScaner.Camera)
-                    barcodeView.resume();
+                /*if(config.TypeScaner==eTypeScaner.Camera)
+                    barcodeView.resume();*/
 
                 Refresh();
                 if(WaresItem.QuantityBarCode>0)
@@ -297,26 +361,38 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
 
     void Refresh( ){
         binding.invalidateAll();
-        barcodeView.resume();
+
+        if(config.TypeScaner==eTypeScaner.Camera)
+            barcodeView.resume();
+
+
+    /*    EditText editText = WaresItem.IsInputQuantity() ? inputCount:barCode;
+        // prevent system keyboard from appearing when EditText is tapped
+        //editText.setRawInputType(InputType.TYPE_CLASS_TEXT);
+        editText.setTextIsSelectable(true);
+
+        // pass the InputConnection from the EditText to the keyboard
+        InputConnection ic = editText.onCreateInputConnection(new EditorInfo());
+        keyboard.setInputConnection(ic);*/
 
 
        if(WaresItem.IsInputQuantity()) {
-            //inputCount.setFocusableInTouchMode(true);
-            //inputCount.requestFocusFromTouch();
             inputCount.requestFocus();
+            inputCount.setFocusable(true);
             inputCount.setFocusableInTouchMode(true);
             inputCount.requestFocusFromTouch();
             inputCount.setFocusableInTouchMode(false);
+
         }
         else
         {
             barCode.requestFocus();
             barCode.setFocusableInTouchMode(true);
-            barCode.requestFocusFromTouch();
-            barCode.setFocusableInTouchMode(false);
+           // barCode.requestFocusFromTouch();
+            //barCode.setFocusableInTouchMode(false);
+
         }
-        barCode.setFocusableInTouchMode(false);
-        inputCount.setFocusableInTouchMode(false);
+
     }
 
     public TableRow RenderTableItem (WaresItemModel parWM ) {
@@ -408,7 +484,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
     private void saveDocumentItem(final Boolean isNullable,final boolean IsAdd) {
         inputCount.setText("");
         if (WaresItem.InputQuantity > 0 || DocSetting.IsAddZero || isNullable) {
-            loader.setVisibility(View.VISIBLE);
+            //loader.setVisibility(View.VISIBLE);
             if (WaresItem.InputQuantity > 0 | DocSetting.IsAddZero )
                 WaresItem.OrderDoc++;
 
@@ -426,7 +502,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 if(WaresItem.BeforeQuantity>= WaresItem.InputQuantity)
                      WaresItem.InputQuantity=-WaresItem.InputQuantity;
                 else {
-                    loader.setVisibility(View.INVISIBLE);
+                    //loader.setVisibility(View.INVISIBLE);
                     Toast toast = Toast.makeText(getApplicationContext(),
                             "Не можна відняти більше існуючої кількості", Toast.LENGTH_SHORT);
                     toast.show();
@@ -435,7 +511,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                 //Контроль введеної кількості.
             double FullQuantity = isNullable? WaresItem.InputQuantity: WaresItem.InputQuantity+WaresItem.BeforeQuantity;
             if(WaresItem.QuantityMax<FullQuantity){
-                loader.setVisibility(View.INVISIBLE);
+                //loader.setVisibility(View.INVISIBLE);
                 UtilsUI.Dialog("Введено завелику кількість","Ви перелімітили=>"+String.format(WaresItem.CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",FullQuantity-WaresItem.QuantityMax)) ;
                 return;
             }
@@ -476,7 +552,7 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                     WaresTableLayout.addView(RenderTableItem(WaresItem),1);
                 }
 
-                loader.setVisibility(View.INVISIBLE);
+               // loader.setVisibility(View.INVISIBLE);
                 WaresItem.ClearData();
                 Refresh();
 
@@ -560,6 +636,8 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    if(config.Company==eCompany.SevenEleven)
+                                        utils.PlaySound();
                                     UtilsUI.Dialog("Товар не знайдено", "Даний штрихкод=> "+BarCode+" відсутній в базі");
                                 }});
                         return res;
@@ -597,7 +675,6 @@ public class DocumentScannerActivity extends FragmentActivity implements ScanCal
             }
         });
     }
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

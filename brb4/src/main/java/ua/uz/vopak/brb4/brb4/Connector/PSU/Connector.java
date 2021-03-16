@@ -1,5 +1,6 @@
 package ua.uz.vopak.brb4.brb4.Connector.PSU;
 
+import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
+import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.Result;
@@ -25,6 +27,29 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     protected static final String TAG = "BRB4/Connector.PSU";
     Gson gson = new Gson();
+
+    public Result Login(final String pLogin, final String pPassWord,final boolean pIsLoginCO) {
+        final String data = "{\"CodeData\": \"1\"" + ", \"Login\": \"" + pLogin + "\"" + ", \"PassWord\": \"" + pPassWord + "\"}";
+        HttpResult result = Http.HTTPRequest(0, "",data,null,null,null);
+
+        if (result.HttpState!= eStateHTTP.HTTP_OK )
+            return new Result(result,"Ви не підключені до мережі " + config.Company.name());
+         else
+        try {
+            JSONObject jObject = new JSONObject(result.Result);
+            if(jObject.getInt("State") == 0) {
+                config.Role= eRole.Admin;
+                return new Result();
+            }
+            else
+                return new Result(jObject.getInt("State"),jObject.getString("TextError"), "Неправильний логін або пароль");
+
+        }catch (Exception e){
+            return new Result(-1,e.getMessage());
+        }
+
+    }
+
 
     //Завантаження Списку складів (HTTP)
     public Warehouse[] LoadWarehouse() {

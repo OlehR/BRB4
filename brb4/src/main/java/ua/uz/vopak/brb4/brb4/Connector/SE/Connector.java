@@ -9,6 +9,8 @@ import androidx.databinding.ObservableInt;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import org.json.JSONObject;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,20 +22,54 @@ import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
+import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
-    protected static final String TAG = "BRB4/Connector";
+    protected static final String TAG = "BRB4/Connector.SE";
+
+    public Result Login(final String pLogin, final String pPassWord,final boolean pIsLoginCO)
+    {
+        HttpResult res=Http.HTTPRequest(pIsLoginCO?1:0,"login","{\"login\" : \""+ pLogin+"\"}","application/json;charset=utf-8",pLogin,pPassWord);
+        if(res.HttpState== eStateHTTP.HTTP_UNAUTHORIZED || res.HttpState== eStateHTTP.HTTP_Not_Define_Error)
+        {
+            Log.e(TAG, "Login >>"+ res.HttpState.toString());
+            return new Result(-1,res.HttpState.toString(),"Неправильний логін або пароль");
+        }
+        else
+            if(res.HttpState!= eStateHTTP.HTTP_OK)
+                return new Result(res, "Ви не підключені до мережі " + config.Company.name());
+            else
+            {
+                try {
+                    JSONObject jObject = new JSONObject(res.Result);
+                    if(jObject.getInt("State") == 0) {
+                        config.Role= eRole.fromOrdinal(jObject.getInt("Profile"));
+                        return new Result();
+                    }
+                    else
+                        return new Result(jObject.getInt("State"),jObject.getString("TextError"), "Неправильний логін або пароль");
+
+                }catch (Exception e){
+                    return new Result(-1,e.getMessage());
+                }
+
+            }
+
+
+    }
 
     //Завантаження довідників.
     public boolean LoadGuidData(boolean IsFull, ObservableInt pProgress) {
         try {
             Log.d(TAG, "Start");
+
+
             pProgress.set(5);
-            HttpResult res = Http.HTTPRequest(0, "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
+            HttpResult res = Http.HTTPRequest(config.IsLoginCO?1:0, "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
             if (res.HttpState == eStateHTTP.HTTP_OK) {
                 Log.d(TAG, "LoadData=>" + res.Result.length());
                 pProgress.set(40);
@@ -47,16 +83,16 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
                 Log.d(TAG, "Parse JSON");
                 pProgress.set(60);
-                SaveWares(data.Nomenclature);
+                mDbHelper.SaveWares(data.Nomenclature);
                 Log.d(TAG, "Nomenclature");
                 pProgress.set(70);
-                SaveAdditionUnit(data.Units);
+                mDbHelper.SaveAdditionUnit(data.Units);
                 Log.d(TAG, "Units");
                 pProgress.set(80);
-                SaveBarCode(data.Barcodes);
+                mDbHelper.SaveBarCode(data.Barcodes);
                 Log.d(TAG, "Barcodes");
                 pProgress.set(90);
-                SaveUnitDimension(data.Dimentions);
+                mDbHelper.SaveUnitDimension(data.Dimentions);
             } else
                 Log.d(TAG, res.HttpState.name());
 
@@ -66,8 +102,9 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 List<Reason> Reasons = new Gson().fromJson(res.Result, new TypeToken<List<Reason>>() {
                 }.getType());
                 db.execSQL("DELETE FROM Reason;");
-                SaveReason(Reasons);
+                mDbHelper.SaveReason(Reasons);
             }
+            config.GetWorker().GetWarehouse();
             pProgress.set(100);
             Log.d(TAG, "End");
             return true;
@@ -79,131 +116,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         return false;
     }
 
-    boolean SaveReason(List<Reason> pReasons) {
-        db.beginTransaction();
-        try {
-            ContentValues values = new ContentValues();
-            for (Reason R : pReasons) {
-                values.put("CODE_REASON", R.code);
-                values.put("NAME_REASON", R.reason);
-                db.replace("Reason", null, values);
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveReason=>" + ex.toString());
-        } finally {
-            db.endTransaction();
-        }
-        return true;
 
-    }
-
-    boolean SaveWares(Nomenclature[] pW) {
-        int i = 0;
-        db.beginTransaction();
-        try {
-            i++;
-            ContentValues values = new ContentValues();
-            for (Nomenclature wares : pW) {
-                values.put("CODE_WARES", wares.CODE_WARES);
-                values.put("NAME_WARES", wares.NAME_WARES);
-                values.put("ARTICL", wares.ARTICL);
-                values.put("CODE_UNIT", wares.CODE_UNIT);
-                values.put("VAT", wares.VAT);
-                values.put("DESCRIPTION", wares.DESCRIPTION);
-                values.put("CODE_GROUP", wares.CODE_GROUP);
-                values.put("VAT_OPERATION", wares.VAT_OPERATION);
-                db.replace("Wares", null, values);
-                if (i >= 1000) {
-                    i = 0;
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-                    db.beginTransaction();
-                }
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveWares=>" + ex.toString());
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    boolean SaveAdditionUnit(Units[] pUnits) {
-        int i = 0;
-        db.beginTransaction();
-        try {
-            i++;
-            ContentValues values = new ContentValues();
-            for (Units Units : pUnits) {
-                values.put("CODE_WARES", Units.CODE_WARES);
-                values.put("CODE_UNIT", Units.CODE_UNIT);
-                values.put("COEFFICIENT", Units.COEF_WARES);
-                db.replace("ADDITION_UNIT", null, values);
-                if (i >= 1000) {
-                    i = 0;
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-                    db.beginTransaction();
-                }
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveAdditionUnit=>" + ex.toString());
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    boolean SaveBarCode(Barcode[] pBarCode) {
-        int i = 0;
-        db.beginTransaction();
-        try {
-            i++;
-            ContentValues values = new ContentValues();
-            for (Barcode BarCode : pBarCode) {
-                values.put("CODE_WARES", BarCode.CODE_WARES);
-                values.put("CODE_UNIT", BarCode.CODE_UNIT);
-                values.put("BAR_CODE", BarCode.BAR_CODE);
-                db.replace("BAR_CODE", null, values);
-                if (i >= 1000) {
-                    i = 0;
-                    db.setTransactionSuccessful();
-                    db.endTransaction();
-                    db.beginTransaction();
-                }
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveBarCode=>" + ex.toString());
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
-
-    boolean SaveUnitDimension(UnitDimension[] pUD) {
-        db.beginTransaction();
-        try {
-            ContentValues values = new ContentValues();
-            for (UnitDimension UD : pUD) {
-
-                values.put("CODE_UNIT", UD.CODE_UNIT);
-                values.put("NAME_UNIT", UD.NAME_UNIT);
-                values.put("ABR_UNIT", UD.ABR_UNIT);
-                values.put("DESCRIPTION", UD.DESCRIPTION_TEXT);
-                db.replace("UNIT_DIMENSION", null, values);
-            }
-            db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveUnitDimension=>" + ex.toString());
-        } finally {
-            db.endTransaction();
-        }
-        return true;
-    }
 
     //Робота з документами.
     //Завантаження документів в ТЗД (HTTP)
@@ -212,7 +125,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             pProgress.set(5);
         HttpResult res;
         try {
-            if (pTypeDoc == 5|| pTypeDoc == 6 ) {
+            if (pTypeDoc == 5|| pTypeDoc == 6 || (pTypeDoc <=0  && config.IsLoginCO)) {
                 res = Http.HTTPRequest(1, "documents"+(pTypeDoc == 5?"\\" + pNumberDoc: "?StoreSetting="+config.CodeWarehouse ), null, "application/json;charset=utf-8", config.Login, config.Password);
             } else
                 res = Http.HTTPRequest(0, "documents" , null, "application/json;charset=utf-8", config.Login, config.Password);
@@ -263,7 +176,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
         HttpResult res = Http.HTTPRequest((pTypeDoc == 5 || pTypeDoc == 6  ? 1 : 0) , "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
         if (res.HttpState == eStateHTTP.HTTP_OK) {
-            return new Result();
+            return new Result(res);
         }
         return new Result(-1, res.HttpState.toString());
     }
