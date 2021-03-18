@@ -40,7 +40,8 @@ public class LabelInfo
     public AbstractConfig config;
 
     public int Code;
-    public String strCode(){return Integer.toString(Code); }
+    public String strCode(){return config.Company==eCompany.SevenEleven?Integer.toString(Code):Article.replaceFirst("^0+(?!$)", ""); }
+    public String strCodeArticle(){ return config.Company==eCompany.SevenEleven? "Код:":"Арт.:";}
     public String Name="";
 
     //зберігаємо в копійках із за відсутності Decimal

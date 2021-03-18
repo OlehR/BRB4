@@ -98,12 +98,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Код:"
+                android:text="@{LI.strCodeArticle()}"
                 android:textSize="7pt"></TextView>
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="@{LI.strCode()}"
                 android:textSize="7pt"></TextView>
