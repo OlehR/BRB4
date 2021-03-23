@@ -74,7 +74,7 @@ public class SetingModel {
     public void OnClickGen(){
         eCompany Company= eCompany.fromOrdinal(ListCompanyIdx.get());
         String url=null;
-        if(Warehouse!=null )
+        if(Warehouse!=null && Warehouse.length>ListWarehouseIdx.get())
             url=Warehouse[ListWarehouseIdx.get()].Url;
 
         apiURL.set(Company==eCompany.SevenEleven? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
@@ -82,7 +82,6 @@ public class SetingModel {
         config.ApiUrl=apiURL.get();
         apiURLadd.set(Company==eCompany.SevenEleven? "http://93.183.216.37/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/":"http://znp.vopak.local:8088/Print");
         config.ApiURLadd=apiURLadd.get();
-
     }
 
     public void OnClickSave() {
