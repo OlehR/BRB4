@@ -14,6 +14,7 @@ import ua.uz.vopak.brb4.lib.models.LabelInfo;
 public class HandlerPC {
     private PriceCheckerActivity priceCheckerActivity;
     public HandlerPC(PriceCheckerActivity pPriceCheckerActivity){priceCheckerActivity=pPriceCheckerActivity;}
+    public boolean IsFlash=false;
     public void OnClickAddPrintBlock(final LabelInfo pLI)
     {
         pLI.config.NumberPackege++;
@@ -61,6 +62,12 @@ public class HandlerPC {
         v.requestFocusFromTouch();
         v.setFocusableInTouchMode(false);*/
         pLI.BarCode.set("");
+    }
+
+    public void OnClickFlashLite()
+    {
+        priceCheckerActivity.barcodeView.setTorch(IsFlash);
+        IsFlash=!IsFlash;
     }
 
     public void OnClickNumberOfReplenishment(View v,LabelInfo pLI) {

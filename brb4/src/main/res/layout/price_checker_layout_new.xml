@@ -40,7 +40,9 @@
                 android:layout_height="match_parent"
                 android:visibility="@{LI.IsUseCamera() ? View.VISIBLE:View.INVISIBLE }"
                 app:zxing_preview_scaling_strategy="fitCenter"
-                app:zxing_use_texture_view="true" />
+                app:zxing_use_texture_view="true"
+                android:onClick="@{(view) -> handler.OnClickFlashLite()}"
+                />
 
         </LinearLayout>
 

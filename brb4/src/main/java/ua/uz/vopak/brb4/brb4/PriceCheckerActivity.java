@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.hardware.camera2.CameraManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Build;
@@ -58,8 +59,10 @@ import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 import ua.uz.vopak.brb4.brb4.databinding.PriceCheckerLayoutNewBinding;
+//import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class PriceCheckerActivity extends FragmentActivity implements ScanCallBack{
+    //private ZXingScannerView mScannerView;
     Context context;
     private Scaner scaner;
     ua.uz.vopak.brb4.lib.helpers.UtilsUI UtilsUI = new UtilsUI(this);
@@ -110,6 +113,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
 
         textBarcodeView = findViewById(R.id.PCh_bar_code);
         NumberOfReplenishment = findViewById(R.id.PCh_NumberOfReplenishment);
+        //mScannerView= new ZXingScannerView(this);
 
         //PriceCheckerInfoLayout = findViewById(R.id.PricecheckerInfoLayout);
         //ChangePrintBlockNumber = findViewById(R.id.ChangePrintBlockNumber);
@@ -148,6 +152,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
         //Для отримання штрихкодів
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
+        HandlerPC.OnClickFlashLite();
     }
 
     @SuppressLint("RestrictedApi")
@@ -244,7 +249,22 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
     @Override
     public void onResume() {
         super.onResume();
+
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            CameraManager camManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
+            String cameraId = null; // Usually back camera is at 0 position.
+            try {
+                cameraId = camManager.getCameraIdList()[0];
+                camManager.setTorchMode(cameraId, false);
+
+                // TODO  Turn ON  Flash Light On
+                mScannerView.setFlash(true);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }*/
         //Camera
+        //barcodeView.setTorch(true);
         if(config.TypeScaner==eTypeScaner.Camera)
              barcodeView.resume();
         //Zebra

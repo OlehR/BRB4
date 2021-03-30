@@ -1,12 +1,16 @@
 package ua.uz.vopak.brb4.brb4.models;
 
+import android.app.Activity;
 import android.graphics.Color;
 
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableInt;
 
+import com.journeyapps.barcodescanner.BarcodeView;
+
 import java.util.Locale;
 
+import ua.uz.vopak.brb4.brb4.R;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
@@ -88,6 +92,13 @@ public class WaresItemModel implements Cloneable{
     public String GetQuantityReason() { return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityReason);}
 
     public  WaresItemModel(){ClearData();}
+    Activity Context;
+    BarcodeView barcodeView;
+    public WaresItemModel(BarcodeView pBarcodeView)
+    {
+        ClearData();
+        barcodeView=pBarcodeView;
+    }
    // public  WaresItemModel(WaresItemModel p){return (WaresItemModel)clone(p);}
 
     public String GetQuantityOld(){return  QuantityOld==0.0d ? "": String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityOld);}
@@ -149,6 +160,14 @@ public class WaresItemModel implements Cloneable{
         pLI.Name=NameWares;
         pLI.Unit =NameUnit;
         pLI.BarCode.set(BarCode);
+    }
+    public boolean IsFlash=false;
+    public void OnClickFlashLite()
+    {
+        //
+        if(barcodeView!=null)
+            barcodeView.setTorch(IsFlash);
+        IsFlash=!IsFlash;
     }
 
 }

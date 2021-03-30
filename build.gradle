@@ -28,6 +28,22 @@ allprojects {
 
 
 }
+/*
+allprojects {
+    group = 'me.dm7.barcodescanner'
+    version = '1.9.7'
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://oss.sonatype.org/content/groups/public'
+        }
+    }
+
+    ext {
+        isLibrary = false
+    }
+}*/
 
 
 task clean(type: Delete) {

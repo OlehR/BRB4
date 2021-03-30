@@ -43,7 +43,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 app:zxing_use_texture_view="true"
-                app:zxing_preview_scaling_strategy="centerCrop"/>
+                app:zxing_preview_scaling_strategy="centerCrop"
+                android:onClick="@{(view) -> WaresItem.OnClickFlashLite()}"
+                />
 
             <!--   android:visibility="@{LI.IsUseCamera() ? View.VISIBLE:View.INVISIBLE }"
 -->
@@ -109,6 +111,7 @@
                     android:ems="10"
                     android:enabled="false"
                     android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:inputType="none"
                     android:padding="5dp"
                     android:text="@{ WaresItem.GetBeforeQuantity()}"
@@ -171,6 +174,7 @@
                         android:background="@drawable/input_style_disabled"
                         android:ems="10"
                         android:focusable="false"
+                        android:focusableInTouchMode="false"
                         android:inputType="none"
                         android:padding="5dp"
                         android:text="@{WaresItem.GetCoefficient()}"
@@ -186,6 +190,7 @@
                     android:background="@drawable/input_style_disabled"
                     android:ems="10"
                     android:focusable="false"
+                    android:focusableInTouchMode="false"
                     android:inputType="none"
                     android:padding="5dp"
                     android:text="@{ WaresItem.GetQuantityBase()}"

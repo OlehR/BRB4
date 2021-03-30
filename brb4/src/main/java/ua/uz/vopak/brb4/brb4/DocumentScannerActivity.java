@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
@@ -14,6 +15,7 @@ import androidx.databinding.DataBindingUtil;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
+import android.hardware.camera2.CameraManager;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
@@ -91,7 +93,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     DocumentScannerActivityBinding binding;
 
     List<WaresItemModel> ListWares;
-    WaresItemModel WaresItem = new WaresItemModel();
+    WaresItemModel WaresItem ;//= new WaresItemModel(this);
     DocSetting DocSetting;
 
     int padding;
@@ -117,9 +119,12 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+
         setContentView(R.layout.document_scanner_activity);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
+        barcodeView=findViewById(R.id.DS_scanner);
+        WaresItem = new WaresItemModel(barcodeView);
         binding.setWaresItem(WaresItem);
 
         Intent i = getIntent();
@@ -147,7 +152,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         //loader = findViewById(R.id.RevisionLoader);
         WaresTableLayout = findViewById(R.id.RevisionScanItemsTable);
         scrollView = findViewById(R.id.RevisionScrollView);
-        barcodeView=findViewById(R.id.DS_scanner);
+
 
         if(config.TypeScaner== eTypeScaner.Camera) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
@@ -203,6 +208,8 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     @Override
     public void onResume() {
         super.onResume();
+
+
         if(config.TypeScaner==eTypeScaner.Camera)
             barcodeView.resume();
         //Zebra
@@ -330,6 +337,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                             if(config.Company==eCompany.SevenEleven)
                                 utils.PlaySound();
                             AskAddAbsentWares(model);
+                            //Refresh();
                             return;
                         }
                         if(WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Control) {
@@ -378,17 +386,18 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
 
        if(WaresItem.IsInputQuantity()) {
             inputCount.requestFocus();
-            inputCount.setFocusable(true);
-            inputCount.setFocusableInTouchMode(true);
-            inputCount.requestFocusFromTouch();
-            inputCount.setFocusableInTouchMode(false);
+           // inputCount.setFocusable(true);
+            //inputCount.setFocusableInTouchMode(true);
+            //inputCount.requestFocusFromTouch();
+           // inputCount.setFocusableInTouchMode(false);
 
         }
         else
         {
             barCode.requestFocus();
-            barCode.setFocusableInTouchMode(true);
-           // barCode.requestFocusFromTouch();
+            //barCode.setFocusable(true);
+           // barCode.setFocusableInTouchMode(true);
+            //barCode.requestFocusFromTouch();
             //barCode.setFocusableInTouchMode(false);
 
         }
@@ -639,6 +648,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                                     if(config.Company==eCompany.SevenEleven)
                                         utils.PlaySound();
                                     UtilsUI.Dialog("Товар не знайдено", "Даний штрихкод=> "+BarCode+" відсутній в базі");
+                                    Refresh();
                                 }});
                         return res;
                     }
@@ -697,7 +707,11 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         new AlertDialog.Builder(this)
                 .setTitle("Добавити відсутній товар?")
                 .setMessage(model.NameWares)
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        Refresh();
+                    }
+                })
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         model.IsRecord=true;

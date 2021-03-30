@@ -74,8 +74,10 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 Log.d(TAG, "LoadData=>" + res.Result.length());
                 pProgress.set(40);
                 if (IsFull) {
-                    String sql = "DELETE FROM Wares; DELETE FROM ADDITION_UNIT; DELETE FROM BAR_CODE;DELETE FROM UNIT_DIMENSION;";
-                    db.execSQL(sql.trim());
+                    db.execSQL("DELETE FROM Wares");
+                    db.execSQL("DELETE FROM ADDITION_UNIT");
+                    db.execSQL("DELETE FROM BAR_CODE");
+                    db.execSQL("DELETE FROM UNIT_DIMENSION");
                 }
                 Log.d(TAG, "DELETE");
                 pProgress.set(45);
@@ -133,8 +135,13 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 if (pProgress != null)
                     pProgress.set(40);
                 InputDocs data = new Gson().fromJson(res.Result, InputDocs.class);
-                if (pIsClear)
-                    db.execSQL("Delete from DOC;Delete from DOC_WARES_sample;Delete from DOC_WARES;".trim());
+                if (pIsClear) {
+                   // String sql = "DELETE FROM DOC; DELETE FROM DOC_WARES_sample; DELETE FROM DOC_WARES;";
+                    db.execSQL("DELETE FROM DOC");
+                    db.execSQL("DELETE FROM DOC_WARES_sample");
+                    db.execSQL("DELETE FROM DOC_WARES");
+                   // db.execSQL(sql.trim());
+                }
                 else
                     db.execSQL("update doc set state=-1 where type_doc not in (5,6)" + (pTypeDoc > 0 ? " and type_doc=" + pTypeDoc : ""));
 
