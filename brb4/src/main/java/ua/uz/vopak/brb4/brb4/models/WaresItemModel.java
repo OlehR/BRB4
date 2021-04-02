@@ -45,7 +45,7 @@ public class WaresItemModel implements Cloneable{
 
 
     public int ColorBackground(){return Color.parseColor(QuantityMax>0d ? "#ffffff" : "#3fffff00");}
-    public boolean IsUseCamera()  {return config.TypeScaner== eTypeScaner.Camera;}
+    public boolean IsUseCamera()  {return config.IsUseCamera();}
 
     //public boolean IsInput(){return QuantityMax>0d;}
 

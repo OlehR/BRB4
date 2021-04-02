@@ -9,6 +9,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerZebra;
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.lib.enums.eRole;
+import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
@@ -143,6 +144,8 @@ public class GlobalConfig extends AbstractConfig {
     public SQLiteAdapter GetSQLiteAdapter() {
         return SQLiteAdapter;
     }
+    public boolean IsUseCamera()  {return TypeScaner== eTypeScaner.Camera;}
+
 
 
 

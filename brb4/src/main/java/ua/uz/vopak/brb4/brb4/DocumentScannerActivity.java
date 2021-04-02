@@ -35,6 +35,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -78,7 +79,7 @@ import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class DocumentScannerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack, IIncomeRender {
-    EditText barCode,  inputCount;
+    EditText barCode,  inputCount,AllCount;
     private Scaner scaner;
     ScrollView scrollView;
     //RelativeLayout loader;
@@ -95,7 +96,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     List<WaresItemModel> ListWares;
     WaresItemModel WaresItem ;//= new WaresItemModel(this);
     DocSetting DocSetting;
-
+    InputMethodManager imm;
     int padding;
 
     final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
@@ -124,6 +125,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
         barcodeView=findViewById(R.id.DS_scanner);
+        AllCount=findViewById(R.id.DS_Count);
         WaresItem = new WaresItemModel(barcodeView);
         binding.setWaresItem(WaresItem);
 
@@ -147,14 +149,14 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         DocSetting=config.GetDocSetting(WaresItem.TypeDoc);
         WaresItem.DocSetting=DocSetting;
 
-        barCode = findViewById(R.id.RevisionBarCode);
-        inputCount = findViewById(R.id.RevisionInputCount);
-        //loader = findViewById(R.id.RevisionLoader);
-        WaresTableLayout = findViewById(R.id.RevisionScanItemsTable);
-        scrollView = findViewById(R.id.RevisionScrollView);
+        barCode = findViewById(R.id.DS_BarCode);
+        inputCount = findViewById(R.id.DS_InputCount);
+
+        WaresTableLayout = findViewById(R.id.DS_ScanItemsTable);
+        scrollView = findViewById(R.id.DS_ScrollView);
 
 
-        if(config.TypeScaner== eTypeScaner.Camera) {
+        if(config.IsUseCamera()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                     checkSelfPermission(android.Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
@@ -172,7 +174,8 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         inputCount.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-                Refresh();
+                //Refresh();
+                AllCount.setText(WaresItem.GetQuantityBase());
             }
             @Override
             public void beforeTextChanged(CharSequence s, int start,
@@ -202,7 +205,8 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
 
-
+        imm = (InputMethodManager)   getSystemService(Context.INPUT_METHOD_SERVICE);
+        //imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
     }
 
     @Override
@@ -210,7 +214,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         super.onResume();
 
 
-        if(config.TypeScaner==eTypeScaner.Camera)
+        if(config.IsUseCamera())
             barcodeView.resume();
         //Zebra
         scaner.StartScan();
@@ -307,7 +311,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     public void onPause() {
         super.onPause();
         //Camera
-        if(config.TypeScaner==eTypeScaner.Camera)
+        if(config.IsUseCamera())
             barcodeView.pause();
         //Zebra
         scaner.StopScan();
@@ -315,7 +319,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
 
     @Override
     public void Run(final String parBarCode) {
-        if(config.TypeScaner==eTypeScaner.Camera)
+        if(config.IsUseCamera())
             barcodeView.pause();
         findWareByArticleOrCode(parBarCode);
     }
@@ -369,8 +373,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
 
     void Refresh( ){
         binding.invalidateAll();
-
-        if(config.TypeScaner==eTypeScaner.Camera)
+        if(config.IsUseCamera())
             barcodeView.resume();
 
 
@@ -385,7 +388,13 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
 
 
        if(WaresItem.IsInputQuantity()) {
+
+            inputCount.setFocusable(true);
             inputCount.requestFocus();
+           if(config.IsUseCamera()) {
+               imm.showSoftInput(inputCount, InputMethodManager.SHOW_IMPLICIT);
+           }
+
            // inputCount.setFocusable(true);
             //inputCount.setFocusableInTouchMode(true);
             //inputCount.requestFocusFromTouch();
@@ -394,13 +403,18 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         }
         else
         {
+            barCode.setFocusable(true);
             barCode.requestFocus();
+       //     if(config.IsUseCamera()) {
+        //        imm.showSoftInput(barCode, InputMethodManager.SHOW_IMPLICIT);
+         //   }
             //barCode.setFocusable(true);
            // barCode.setFocusableInTouchMode(true);
             //barCode.requestFocusFromTouch();
             //barCode.setFocusableInTouchMode(false);
 
         }
+
 
     }
 
@@ -690,7 +704,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if(config.TypeScaner==eTypeScaner.Camera) {
+        if(config.IsUseCamera()) {
             if (requestCode == PERMISSIONS_REQUEST_ACCESS_CAMERA) {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     barcodeView.setVisibility(View.VISIBLE);

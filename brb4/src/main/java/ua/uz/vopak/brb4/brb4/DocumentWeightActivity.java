@@ -3,6 +3,7 @@ package ua.uz.vopak.brb4.brb4;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import android.text.Editable;
@@ -14,9 +15,9 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -41,6 +42,7 @@ public class DocumentWeightActivity extends Activity  {
     int position = 0;
     EditText searchField;
     TextView IsOnlyOrderTB;
+    ScrollView WaresScroll;
     Integer scanNN = 0;
     GlobalConfig config = GlobalConfig.instance();
     Activity context;
@@ -58,9 +60,10 @@ public class DocumentWeightActivity extends Activity  {
         DocSetting=config.GetDocSetting(documentType);
         GetDoc();
 
-        tl = findViewById(R.id.ItemsTable);
+        tl = findViewById(R.id.DW_ItemsTable);
         searchField = findViewById(R.id.searchFild);
         IsOnlyOrderTB= findViewById(R.id.f3NameText);
+        WaresScroll= findViewById(R.id.DW_WaresScroll);
         searchField.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {}
@@ -115,7 +118,6 @@ public class DocumentWeightActivity extends Activity  {
             @Override
             public void run() {
                 try {
-
                     int dpValue = 3;
                     float d = context.getResources().getDisplayMetrics().density;
                     int padding = (int) (dpValue * d);
@@ -127,6 +129,7 @@ public class DocumentWeightActivity extends Activity  {
                         final LinearLayout tl0 = new LinearLayout(context);
                         tl0.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                         tl0.setOrientation(LinearLayout.VERTICAL);
+                        //tl0.setPadding(padding, padding, padding, padding);
 
                         LinearLayout Line1 = new LinearLayout(context);
                         Line1.setOrientation(LinearLayout.HORIZONTAL);
@@ -145,6 +148,7 @@ public class DocumentWeightActivity extends Activity  {
                         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) Title.getLayoutParams();
                         params.width = 0;
                         params.weight = 2;
+
                         Title.setLayoutParams(params);
                         Title.setPadding(padding, padding, padding, padding);
                         Title.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
@@ -190,17 +194,19 @@ public class DocumentWeightActivity extends Activity  {
                         QuantityIncomed.setPadding(padding, padding, padding, padding);
                         QuantityIncomed.setBackground(ContextCompat.getDrawable(context, R.drawable.input_style));
                         QuantityIncomed.setFocusable(false);
-                        QuantityIncomed.setFocusableInTouchMode(false);
+                        QuantityIncomed.setFocusableInTouchMode(config.IsUseCamera());
                         QuantityIncomed.setSelectAllOnFocus(true);
                         QuantityIncomed.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                InputMethodManager img = (InputMethodManager)
-                                        getSystemService(INPUT_METHOD_SERVICE);
-                                img.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                                v.setFocusableInTouchMode(true);
-                                v.requestFocusFromTouch();
-                                v.setFocusableInTouchMode(false);
+                                if(!config.IsUseCamera()) {
+                                    InputMethodManager img = (InputMethodManager)
+                                            getSystemService(INPUT_METHOD_SERVICE);
+                                    img.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                                    v.setFocusableInTouchMode(true);
+                                    v.requestFocusFromTouch();
+                                    v.setFocusableInTouchMode(false);
+                                }
                             }
                         });
 
@@ -212,16 +218,10 @@ public class DocumentWeightActivity extends Activity  {
                             @Override
                             public void onFocusChange(View view, boolean hasFocus) {
                                 if (hasFocus) {
-                                   // QuantityIncomed.setText("");
                                     position = tl.indexOfChild(tl0);
-                                } else {
-                                    int index = tl.indexOfChild(tl0);
-                                    //onBlur(index,QuantityIncomed);
                                 }
                             }
                         });
-
-
 
                         int index = model.indexOf(item);
                         if ((index % 2) == 0) {
@@ -233,11 +233,8 @@ public class DocumentWeightActivity extends Activity  {
                                     if (!(trc.getChildAt(j) instanceof EditText))
                                         trc.getChildAt(j).setBackground(ContextCompat.getDrawable(context, R.drawable.odd_row_bordered));
                                 }
-
                             }
                         }
-
-
                     }
 
                 filter();
@@ -301,8 +298,41 @@ public class DocumentWeightActivity extends Activity  {
             v.setFocusableInTouchMode(true);
             v.requestFocusFromTouch();
             v.setFocusableInTouchMode(false);
+            focusOnView("next");
 
         }
+    }
+
+    private final void focusOnView(final String prevent){
+        WaresScroll.post(new Runnable() {
+            @Override
+            public void run() {
+                float d = context.getResources().getDisplayMetrics().density;
+                Rect scrollBounds = new Rect();
+                WaresScroll.getDrawingRect(scrollBounds);
+
+                ViewGroup row = (ViewGroup) tl.getChildAt(position+1);
+                float top = row.getY();
+                float bottom = top + row.getHeight();
+
+
+                if (scrollBounds.top < top && scrollBounds.bottom > bottom) {
+                } else {
+                    switch (prevent) {
+                        case "next":
+                            int dpValue = 30;
+                            int padding = (int) (dpValue * d);
+                            float invisiblePart = bottom - scrollBounds.bottom;
+                            WaresScroll.scrollTo(0, (WaresScroll.getScrollY() + (int) invisiblePart + padding));
+                            break;
+                        case "prev":
+                            WaresScroll.scrollTo(0, row.getTop());
+                            break;
+                    }
+                }
+
+            }
+        });
     }
 
     private void filter(){

@@ -423,6 +423,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
 
                 documentList.setPadding((int)(d * 5  ), (int)(d * 54  ),(int)(d * 5  ),(int)(d * 25  ));
                 LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) tlTitle.getLayoutParams();
+
                 layoutParams.setMargins((int)(d * 5  ),(int)(d * 5  ),(int)(d * 5  ),0 );
                 tlTitle.setLayoutParams(layoutParams);
 
