@@ -524,7 +524,7 @@ public class SQLiteAdapter
                     }
                 }
             }else {
-                    String Find = config.Company == eCompany.SevenEleven ? "w.code_wares=" + number : "w.ARTICL='" + number + "'";
+                    String Find = config.Company == eCompany.Sim23 ? "w.code_wares=" + number : "w.ARTICL='" + number + "'";
                     sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                             "from WARES w " +
                             "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +

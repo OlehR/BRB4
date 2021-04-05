@@ -2,22 +2,18 @@ package ua.uz.vopak.brb4.brb4;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import androidx.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.hardware.camera2.CameraManager;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentActivity;
-import androidx.core.content.ContextCompat;
 
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,22 +24,12 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
 import android.content.Intent;
-import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Queue;
 
 import ua.uz.vopak.brb4.brb4.helpers.BL_PriceChecker;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
@@ -214,7 +200,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
                     LI.InputFocus.set(1);
                     break;
                 case "134"://F4
-                    if(config.Company== eCompany.SevenEleven)
+                    if(config.Company== eCompany.Sim23)
                         LI.ChangeOnLineState();
                     break;
                 case "135"://F5

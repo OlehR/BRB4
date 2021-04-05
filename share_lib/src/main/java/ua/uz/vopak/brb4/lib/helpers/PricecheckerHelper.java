@@ -3,7 +3,6 @@ package ua.uz.vopak.brb4.lib.helpers;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
-import ua.uz.vopak.brb4.lib.models.PriceBarCode;
 
 public class PricecheckerHelper {
     private GetDataHTTP Http = GetDataHTTP.instance();
@@ -11,7 +10,7 @@ public class PricecheckerHelper {
         //Http = new GetDataHTTP(new String[]{config.ApiUrl, config.ApiURLadd});
         if(config.Company== eCompany.SparPSU||config.Company==eCompany.VopakPSU)
             return getPriceCheckerDataPSU(  LI,  BarCode,  isHandInput,  config);
-        else if(config.Company== eCompany.SevenEleven)
+        else if(config.Company== eCompany.Sim23)
             return getPriceCheckerDataSevenEleven(LI,  BarCode,  isHandInput,  config);
         return LI;
     }

@@ -8,8 +8,6 @@ import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
 
-import java.io.File;
-
 import ua.uz.vopak.brb4.brb4.BuildConfig;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
@@ -54,7 +52,7 @@ public class SetingModel {
         IsAutoLogin = new ObservableBoolean(config.IsAutoLogin);
     }
 
-    public boolean IsSevenEleven() {return config.Company==eCompany.SevenEleven;}
+    public boolean IsSevenEleven() {return config.Company==eCompany.Sim23;}
 
     public void OnClickIP() {
         try {
@@ -77,10 +75,10 @@ public class SetingModel {
         if(Warehouse!=null && Warehouse.length>ListWarehouseIdx.get())
             url=Warehouse[ListWarehouseIdx.get()].Url;
 
-        apiURL.set(Company==eCompany.SevenEleven? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
+        apiURL.set(Company==eCompany.Sim23 ? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
                 "http://znp.vopak.local/api/api_v1_utf8.php;http://195.16.78.134:7654/api/api_v1_utf8.php");
         config.ApiUrl=apiURL.get();
-        apiURLadd.set(Company==eCompany.SevenEleven? "http://93.183.216.37/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/":"http://znp.vopak.local:8088/Print");
+        apiURLadd.set(Company==eCompany.Sim23 ? "http://93.183.216.37/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/":"http://znp.vopak.local:8088/Print");
         config.ApiURLadd=apiURLadd.get();
     }
 

@@ -3,7 +3,6 @@ package ua.uz.vopak.brb4.lib.models;
 import android.util.Log;
 
 import ua.uz.vopak.brb4.lib.enums.eCompany;
-import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 
 public class PriceBarCode {
     public String BarCode;
@@ -15,7 +14,7 @@ public class PriceBarCode {
     public PriceBarCode(String pBarCode, eCompany pCompany)
     {
         BarCode=pBarCode;
-        if(pCompany== eCompany.SevenEleven)
+        if(pCompany== eCompany.Sim23)
         {
             if(pBarCode.substring(0,2).equals("29") && pBarCode.length()==13)
             {

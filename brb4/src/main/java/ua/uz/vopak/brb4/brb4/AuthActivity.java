@@ -1,15 +1,8 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -18,17 +11,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
-import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
@@ -53,7 +40,7 @@ public class AuthActivity extends Activity  implements View.OnClickListener, Sca
         login = findViewById(R.id.Login);
         password = findViewById(R.id.Password);
         IsLoginCO = findViewById(R.id.L_IsCentral);
-        if(config.Company!= eCompany.SevenEleven)
+        if(config.Company!= eCompany.Sim23)
             IsLoginCO.setVisibility(View.GONE);
         nameStore = findViewById(R.id.NameStore);
         nameStore.setText(config.Company.GetName());

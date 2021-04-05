@@ -15,9 +15,6 @@ import androidx.databinding.DataBindingUtil;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.hardware.camera2.CameraManager;
-import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.KeyboardView;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
 import android.os.Build;
@@ -26,19 +23,15 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -66,7 +59,6 @@ import ua.uz.vopak.brb4.lib.enums.MessageType;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
-import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
@@ -329,7 +321,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
             @Override
             public void run() {
                 if(model == null) {
-                    if(config.Company== eCompany.SevenEleven)
+                    if(config.Company== eCompany.Sim23)
                         utils.PlaySound();
                     WaresItem.ClearData("Товар не знайдено");
                 }
@@ -338,14 +330,14 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
 
                     if(  !model.IsRecord) {
                         if (WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Ask) {
-                            if(config.Company==eCompany.SevenEleven)
+                            if(config.Company==eCompany.Sim23)
                                 utils.PlaySound();
                             AskAddAbsentWares(model);
                             //Refresh();
                             return;
                         }
                         if(WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Control) {
-                            if(config.Company==eCompany.SevenEleven)
+                            if(config.Company==eCompany.Sim23)
                                 utils.PlaySound();
                             UtilsUI.Dialog("Товар відсутній в документі", model.NameWares);
                             Refresh();
@@ -659,7 +651,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if(config.Company==eCompany.SevenEleven)
+                                    if(config.Company==eCompany.Sim23)
                                         utils.PlaySound();
                                     UtilsUI.Dialog("Товар не знайдено", "Даний штрихкод=> "+BarCode+" відсутній в базі");
                                     Refresh();

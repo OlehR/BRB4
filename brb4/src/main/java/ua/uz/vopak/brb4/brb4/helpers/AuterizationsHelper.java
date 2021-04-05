@@ -3,7 +3,6 @@ package ua.uz.vopak.brb4.brb4.helpers;
 import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
-import org.json.JSONObject;
 
 import ua.uz.vopak.brb4.brb4.Connector.Connector;
 import ua.uz.vopak.brb4.brb4.MainActivity;
@@ -12,10 +11,7 @@ import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
-import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
-import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
-import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class AuterizationsHelper {
@@ -36,7 +32,7 @@ public class AuterizationsHelper {
             Result r=c.Login(pLogin,pPassWord,pIsLoginCO);
             if(r.State==0) {
                 config.DocsSetting=config.Worker.GenSettingDocs(config.Company,config.Role);
-                if(pIsLoginCO && config.Company==eCompany.SevenEleven)
+                if(pIsLoginCO && config.Company==eCompany.Sim23)
                 {
                    // ua.uz.vopak.brb4.brb4.Connector.Connector con = ua.uz.vopak.brb4.brb4.Connector.Connector.instance();
 

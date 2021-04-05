@@ -100,7 +100,7 @@ public class BL_PriceChecker extends BL {
                         LI.AllScan++;
                         if (LI.OldPrice != LI.Price || LI.OldPriceOpt != LI.PriceOpt) {
                             utils.Vibrate(500);
-                            if(config.Company==eCompany.SevenEleven)
+                            if(config.Company==eCompany.Sim23)
                                 utils.PlaySound();
                             LI.BadScan++;
                             //Папір не відповідає ціннику
@@ -144,7 +144,7 @@ public class BL_PriceChecker extends BL {
         }
         try {
 
-            int vStatus = config.Company== eCompany.SevenEleven?
+            int vStatus = config.Company== eCompany.Sim23 ?
                     (!LI.IsOnLine.get()?-999 : (LI.Code==0?1:(parBarCode.substring(0,2).equals("29")?(LI.OldPrice == LI.Price && LI.PriceOpt==LI.OldPriceOpt?-1:0):(isHandInput?3:2)))):
                     (isError ? -9 : (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError != ePrinterError.None ? -1 : 0)))
             ;

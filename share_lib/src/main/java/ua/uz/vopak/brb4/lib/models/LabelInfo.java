@@ -1,16 +1,12 @@
 package ua.uz.vopak.brb4.lib.models;
 
-import android.content.Context;
 import android.content.res.AssetManager;
 import android.graphics.Color;
 import android.os.Environment;
 
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
@@ -30,7 +26,6 @@ import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 
-import androidx.core.content.ContextCompat;
 import androidx.databinding.*;
 
 public class LabelInfo
@@ -40,8 +35,8 @@ public class LabelInfo
     public AbstractConfig config;
 
     public int Code;
-    public String strCode(){return config.Company==eCompany.SevenEleven?Integer.toString(Code):Article.replaceFirst("^0+(?!$)", ""); }
-    public String strCodeArticle(){ return config.Company==eCompany.SevenEleven? "Код:":"Арт.:";}
+    public String strCode(){return config.Company==eCompany.Sim23 ?Integer.toString(Code):Article.replaceFirst("^0+(?!$)", ""); }
+    public String strCodeArticle(){ return config.Company==eCompany.Sim23 ? "Код:":"Арт.:";}
     public String Name="";
 
     //зберігаємо в копійках із за відсутності Decimal
@@ -101,7 +96,7 @@ public class LabelInfo
 
 
     public boolean IsUseCamera(){return config.TypeScaner== eTypeScaner.Camera;}
-    public boolean IsLookPackege() {return config.Company!=eCompany.SevenEleven;}
+    public boolean IsLookPackege() {return config.Company!=eCompany.Sim23;}
 
     public boolean IsEnableYellowButtom() {return !(config.TypeUsePrinter== eTypeUsePrinter.NotDefined || config.TypeUsePrinter== eTypeUsePrinter.StationaryWithCutAuto );}
 
@@ -112,7 +107,7 @@ public class LabelInfo
     public void SetListPackege(){};
     public boolean IsSoftKeyboard(){return config.TypeScaner==eTypeScaner.Camera;}
     public ObservableField<String> NumberOfReplenishment= new ObservableField<>("");
-    public boolean IsViewReplenishment(){ return config.Company==eCompany.SevenEleven;}
+    public boolean IsViewReplenishment(){ return config.Company==eCompany.Sim23;}
 
     public ObservableInt InputFocus = new  ObservableInt(1);//1- штрихкод,2-Поповнення
 
@@ -130,7 +125,7 @@ public class LabelInfo
         OnLineText.set(IsOnLine.get()?"OffLine":"OnLine");
     }
 
-    public boolean IsEnableMultyLabel() {return  config.Company!=eCompany.SevenEleven;}
+    public boolean IsEnableMultyLabel() {return  config.Company!=eCompany.Sim23;}
     public boolean IsMultyLabel=false;
     public ObservableField<String> MultyLabelText =new ObservableField<String>("Унікальні");
     public void ChangeMultyLabel()
@@ -181,7 +176,7 @@ public class LabelInfo
                 case VopakPSU:
                     vNameLogo = "vopak";
                     break;
-                case SevenEleven:
+                case Sim23:
                     vNameLogo = "seveneleven";
                     break;
             }

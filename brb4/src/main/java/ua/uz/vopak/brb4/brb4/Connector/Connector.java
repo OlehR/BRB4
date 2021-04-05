@@ -1,19 +1,12 @@
 package ua.uz.vopak.brb4.brb4.Connector;
 
-import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 
 import java.util.Date;
 import java.util.List;
 
-import ua.uz.vopak.brb4.brb4.Connector.SE.Barcode;
-import ua.uz.vopak.brb4.brb4.Connector.SE.Nomenclature;
-import ua.uz.vopak.brb4.brb4.Connector.SE.Reason;
-import ua.uz.vopak.brb4.brb4.Connector.SE.UnitDimension;
-import ua.uz.vopak.brb4.brb4.Connector.SE.Units;
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
@@ -35,7 +28,7 @@ public abstract class Connector {
 
     public static ua.uz.vopak.brb4.brb4.Connector.Connector instance() {
        // if (Instance == null) {
-            Instance = (config.Company== eCompany.SevenEleven ? new ua.uz.vopak.brb4.brb4.Connector.SE.Connector(): new ua.uz.vopak.brb4.brb4.Connector.PSU.Connector());
+            Instance = (config.Company== eCompany.Sim23 ? new ua.uz.vopak.brb4.brb4.Connector.SE.Connector(): new ua.uz.vopak.brb4.brb4.Connector.PSU.Connector());
       //  }
         return Instance;
     }

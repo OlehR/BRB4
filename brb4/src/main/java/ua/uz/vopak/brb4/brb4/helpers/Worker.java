@@ -42,7 +42,7 @@ public class Worker {
         boolean[] Right;
         switch (pCompany)
         {
-            case SevenEleven:
+            case Sim23:
                 switch (pProfile) {
                     case Admin:
                         Right = new boolean[]{true,true , true, true};
@@ -113,7 +113,7 @@ public class Worker {
 
         config.ApiUrl=GetConfigPair("ApiUrl");
         if(config.ApiUrl==null || config.ApiUrl.isEmpty() )
-                config.ApiUrl=(config.Company==eCompany.SevenEleven? "http://176.241.128.13/RetailShop/hs/TSD/":"http://znp.vopak.local/api/api_v1_utf8.php");
+                config.ApiUrl=(config.Company==eCompany.Sim23 ? "http://176.241.128.13/RetailShop/hs/TSD/":"http://znp.vopak.local/api/api_v1_utf8.php");
         config.ApiURLadd=GetConfigPair("ApiUrladd");
 
         config.Login = GetConfigPair("Login");
@@ -156,7 +156,7 @@ public class Worker {
         }
 
         Connector c = Connector.instance();
-        if(config.Company==eCompany.SevenEleven) {
+        if(config.Company==eCompany.Sim23) {
             if (pTypeDoc == -1)
                 c.LoadGuidData((pTypeDoc == -1), pProgress);
         }

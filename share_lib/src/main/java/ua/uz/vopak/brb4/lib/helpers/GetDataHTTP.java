@@ -171,8 +171,8 @@ public String GetBaseAuth(String pLogin,String pPasWord){
     public HttpResult HTTPRequest (int pUrlApi,String pApi,String pData,String pContentType, String pLogin, String pPassWord)
     {
         if(pLogin!=null && pLogin.equals("Admin")) {
-            pLogin= (config.Company== eCompany.SevenEleven?"brb":"c");
-            pPassWord = (config.Company== eCompany.SevenEleven?"brb":"c");
+            pLogin= (config.Company== eCompany.Sim23 ?"brb":"c");
+            pPassWord = (config.Company== eCompany.Sim23 ?"brb":"c");
         }
         HttpResult res=new HttpResult() ;
         if(Url!=null && Url.length>=pUrlApi &&  Url[pUrlApi]!=null)
