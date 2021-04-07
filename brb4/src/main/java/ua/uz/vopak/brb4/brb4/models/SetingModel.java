@@ -15,6 +15,7 @@ import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class SetingModel {
     static final String TAG="SetingModel";
@@ -25,6 +26,8 @@ public class SetingModel {
     public ObservableBoolean IsAutoLogin = new ObservableBoolean(false);
     public ObservableField<String> apiURL    = new ObservableField<>(config.ApiUrl);
     public ObservableField<String> apiURLadd = new ObservableField<>(config.ApiURLadd);
+    public ObservableField<String> IdCamera = new ObservableField<>(String.valueOf( config.IdCamera));
+
     public ObservableArrayList<String> ListCompany= new ObservableArrayList<>();
     public ObservableInt ListCompanyIdx = new ObservableInt(0);
 
@@ -38,6 +41,7 @@ public class SetingModel {
     public ObservableInt  ListWarehouseIdx = new ObservableInt(0);
     public Warehouse[] Warehouse;
 
+    public boolean IsUseCamera() {return config.IsUseCamera();}
     public SetingModel(){
         for(eCompany el : eCompany.values()) {
             ListCompany.add(el.GetText());
@@ -65,7 +69,7 @@ public class SetingModel {
                     OnClickSave();
             }
         } catch (Exception e) {
-            Log.e(TAG, "OnClickIP=>" + e.getMessage());
+            Utils.WriteLog("e",TAG, "OnClickIP=>" + e.getMessage());
         }
 
     }
@@ -98,6 +102,7 @@ public class SetingModel {
             GetDataHTTP.instance().Init(new String[]{config.ApiUrl,config.ApiURLadd});
 
 
+
         }
         else
         {
@@ -108,6 +113,8 @@ public class SetingModel {
             config.CodeWarehouse = Warehouse[ListWarehouseIdx.get()].Code;
             worker.AddConfigPair("Warehouse", Integer.toString(config.CodeWarehouse));
         }
+        config.IdCamera= Integer.valueOf( IdCamera.get());
+
     }
 
     public void OnClickLoad() {

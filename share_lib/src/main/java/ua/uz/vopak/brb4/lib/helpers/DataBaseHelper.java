@@ -68,7 +68,7 @@ public class DataBaseHelper extends SQLiteOpenHelper
             {
                 //Copy the database from assests
                 copyDataBase();
-                Log.e(TAG, "createDatabase database created");
+                Utils.WriteLog("e",TAG, "createDatabase database created");
             }
             catch (IOException mIOException)
             {

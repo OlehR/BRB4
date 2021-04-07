@@ -12,6 +12,7 @@ import ua.uz.vopak.brb4.lib.enums.MessageType;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class AuterizationsHelper {
@@ -71,7 +72,7 @@ public class AuterizationsHelper {
             */
 
         }catch (Exception e){
-            Log.e(TAG, "Login >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "Login >>"+  e.getMessage());
         }
         return null;
     }
@@ -81,7 +82,7 @@ public class AuterizationsHelper {
         HttpResult res=Http.HTTPRequest(0,"warehouse",null,"application/json;charset=utf-8",pLogin,pPassWord);
         if(res.HttpState== eStateHTTP.HTTP_UNAUTHORIZED || res.HttpState== eStateHTTP.HTTP_Not_Define_Error)
         {
-            Log.e(TAG, "Login >>"+ res.HttpState.toString());
+            Utils.WriteLog("e",TAG, "Login >>"+ res.HttpState.toString());
             MessageError(activity, "Неправильний логін або пароль",res.HttpState.toString());
             return false;
         }

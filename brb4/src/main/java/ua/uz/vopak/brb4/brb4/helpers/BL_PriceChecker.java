@@ -23,6 +23,7 @@ import ua.uz.vopak.brb4.lib.helpers.BL;
 import ua.uz.vopak.brb4.lib.helpers.BluetoothPrinter;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 import ua.uz.vopak.brb4.lib.models.Result;
 
@@ -150,10 +151,10 @@ public class BL_PriceChecker extends BL {
             ;
 
             mDbHelper.InsLogPrice(parBarCode,vStatus , LI.ActionType, config.NumberPackege, LI.Code,LI.Article,config.LineNumber);
-            Log.e(TAG, "vStatus  >>"+ vStatus );
+            Utils.WriteLog("e",TAG, "vStatus  >>"+ vStatus );
             SetProgress(100);
         } catch (Exception e) {
-            Log.e(TAG, "InsLogPrice  >>"+ e.getMessage() );
+            Utils.WriteLog("e",TAG, "InsLogPrice  >>"+ e.getMessage() );
         }
         return LI;
     }
@@ -249,7 +250,7 @@ public class BL_PriceChecker extends BL {
                     LI.AllScan = varRes[0];
                     LI.BadScan = varRes[1];
                 } catch (Exception e) {
-                    Log.e(TAG, "SendLogPricePSU  >>" + e.getMessage());
+                    Utils.WriteLog("e",TAG, "SendLogPricePSU  >>" + e.getMessage());
                 }
 
             }

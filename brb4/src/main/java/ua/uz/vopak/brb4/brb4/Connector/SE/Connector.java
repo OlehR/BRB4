@@ -24,6 +24,7 @@ import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.Result;
 
@@ -36,7 +37,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         HttpResult res=Http.HTTPRequest(pIsLoginCO?1:0,"login","{\"login\" : \""+ pLogin+"\"}","application/json;charset=utf-8",pLogin,pPassWord);
         if(res.HttpState== eStateHTTP.HTTP_UNAUTHORIZED || res.HttpState== eStateHTTP.HTTP_Not_Define_Error)
         {
-            Log.e(TAG, "Login >>"+ res.HttpState.toString());
+            Utils.WriteLog("e",TAG, "Login >>"+ res.HttpState.toString());
             return new Result(-1,res.HttpState.toString(),"Неправильний логін або пароль");
         }
         else
@@ -54,6 +55,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                         return new Result(jObject.getInt("State"),jObject.getString("TextError"), "Неправильний логін або пароль");
 
                 }catch (Exception e){
+                    Utils.WriteLog("Exception=>"+TAG+"\\"+"Login=>"+e.getMessage());
                     return new Result(-1,e.getMessage());
                 }
 
@@ -111,7 +113,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             Log.d(TAG, "End");
             return true;
         } catch (Exception e) {
-            Log.e(TAG, e.getMessage());
+            Utils.WriteLog("e",TAG, "LoadGuidData=>"+e.getMessage());
             Toast toast = Toast.makeText(GlobalConfig.instance().context, "Помилка завантаження довідників=>" + e.getMessage(), Toast.LENGTH_LONG);
             toast.show();
         }
@@ -158,8 +160,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 return true;
             }
 
-        } catch (Exception ex) {
-            Log.e(TAG, "LoadDocsData=>" + ex.getMessage());
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG, "LoadDocsData=>" + e.getMessage());
         }
         return false;
     }
@@ -214,8 +216,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 }
             }
             db.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveDOC_WARES_sample=>" + ex.toString());
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG, "SaveDOC_WARES_sample=>" + e.toString());
         } finally {
             db.endTransaction();
         }
@@ -240,8 +242,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 return WH;
             }
 
-        } catch (Exception ex) {
-            Log.e(TAG, "LoadWarehouse=>" + ex.getMessage());
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG, "LoadWarehouse=>" + e.getMessage());
         }
         return null;
     }

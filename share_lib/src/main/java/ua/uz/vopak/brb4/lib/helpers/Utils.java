@@ -181,7 +181,7 @@ public class Utils {
         myMediaPlayer.stop();  //>>> stop myMediaPlayer
         myMediaPlayer.release(); */
         }catch (Exception e) {
-            Log.e(TAG,"Error PlaySound() => "+e.getMessage());
+            Utils.WriteLog("e",TAG,"Error PlaySound() => "+e.getMessage());
         }
     }
 
@@ -199,7 +199,7 @@ public class Utils {
             stream.close();
             Log.i(TAG, "Data Saved");
         } catch (IOException e) {
-            Log.e(TAG, "Could not write file " + e.getMessage());
+            Utils.WriteLog("e",TAG, "Could not write file " + e.getMessage());
         }
     }
 
@@ -220,6 +220,15 @@ public class Utils {
        }
 
    }
+    static public void  WriteLog(String pType, String pTAG,String pText)
+    {
+        String Type="";
+        if(pType.equals("e")) {
+            Type = "Error=>";
+            Log.e(pTAG, pText);
+        }
+        WriteLog(Type+pTAG+"\\"+pText);
+    }
 
         private  boolean isRedirected( Map<String, List<String>> header ) {
             for( String hv : header.get( null )) {
@@ -437,7 +446,7 @@ public class Utils {
             File fdelete = new File(pTo);
             if (fdelete.exists()) {
                 if (!fdelete.delete()) {
-                    Log.e(TAG, "file not Deleted :" + pTo);
+                    Utils.WriteLog("e",TAG, "file not Deleted :" + pTo);
                 }
             }
             if (sd.canWrite()) {
@@ -455,7 +464,7 @@ public class Utils {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, "CopyFile" + pFrom+" " +pTo + " " + e.getMessage());
+            Utils.WriteLog("e",TAG, "CopyFile" + pFrom+" " +pTo + " " + e.getMessage());
         }
     }
 

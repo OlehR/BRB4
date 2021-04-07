@@ -25,6 +25,7 @@ public class GlobalConfig extends AbstractConfig {
     public static boolean IsAutoLogin = false;
     public static boolean IsLoginCO = false;
     public static eRole  Role = eRole.NotDefined;
+    public static int IdCamera=0;
     public DocSetting[] DocsSetting;
 
     public Worker Worker;

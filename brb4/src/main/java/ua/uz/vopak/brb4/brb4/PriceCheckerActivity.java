@@ -23,6 +23,8 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
+import com.journeyapps.barcodescanner.camera.CameraSettings;
+
 import android.content.Intent;
 import android.view.WindowManager;
 import android.widget.EditText;
@@ -115,6 +117,10 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
 
         BarcodeImageLayout = findViewById(R.id.PCh_BarcodeImageLayout);
         barcodeView = findViewById(R.id.PCh_barcode_scanner);
+
+        CameraSettings settings = new CameraSettings();
+        settings.setRequestedCameraId(config.IdCamera);
+        barcodeView.setCameraSettings(settings);
 
         if(config.TypeScaner==eTypeScaner.Camera) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&

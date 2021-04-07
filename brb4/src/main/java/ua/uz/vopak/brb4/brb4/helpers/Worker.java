@@ -23,6 +23,7 @@ import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 
@@ -236,7 +237,7 @@ public class Worker {
                 }
             }
         } catch (Exception e) {
-            Log.e(TAG, "FindWhIP=>" + e.getMessage());
+            Utils.WriteLog("e",TAG, "FindWhIP=>" + e.getMessage());
         }
         return res;
     }

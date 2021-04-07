@@ -43,6 +43,7 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
+import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -69,8 +70,9 @@ import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.Result;
-
+import android.hardware.Camera;
 public class DocumentScannerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack, IIncomeRender {
+   String  TAG="DocumentScannerActivity";
     EditText barCode,  inputCount,AllCount;
     private Scaner scaner;
     ScrollView scrollView;
@@ -120,6 +122,11 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         AllCount=findViewById(R.id.DS_Count);
         WaresItem = new WaresItemModel(barcodeView);
         binding.setWaresItem(WaresItem);
+
+        //int camNum=Camera.getNumberOfCameras();
+        CameraSettings settings = new CameraSettings();
+        settings.setRequestedCameraId(config.IdCamera);
+        barcodeView.setCameraSettings(settings);
 
         Intent i = getIntent();
 
@@ -182,7 +189,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                     }
                     catch (Exception e) {
                         WaresItem.InputQuantity =0;
-                        Log.e("TAG", "InputQuantity=>" +inputCount.getText().toString()+ " "+ e.getMessage());
+                        Utils.WriteLog("e",TAG, "InputQuantity=>" +inputCount.getText().toString()+ " "+ e.getMessage());
                     }
 
                 }
@@ -561,7 +568,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                         WaresItemModel el = (WaresItemModel) WaresItem.clone();
                         ListWares.add(el);
                     } catch (Exception e) {
-                        Log.e("TAG", "AfterSave=>" + e.getMessage());
+                        Utils.WriteLog("e",TAG, "AfterSave=>" + e.getMessage());
                     }
 
                     WaresTableLayout.addView(RenderTableItem(WaresItem),1);

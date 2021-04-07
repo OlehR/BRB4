@@ -30,6 +30,7 @@ import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.helpers.DataBaseHelper;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.PriceBarCode;
 import ua.uz.vopak.brb4.lib.models.Result;
 
@@ -54,9 +55,9 @@ public class SQLiteAdapter
         {
             mDbHelper.createDataBase();
         }
-        catch (IOException mIOException)
+        catch (IOException e)
         {
-            Log.e(TAG, mIOException.toString() + "  UnableToCreateDatabase");
+            Utils.WriteLog("e",TAG, e.toString() + "  UnableToCreateDatabase");
             throw new Error("UnableToCreateDatabase");
         }
         return this;
@@ -69,10 +70,10 @@ public class SQLiteAdapter
             mDbHelper.close();
             mDb = mDbHelper.getReadableDatabase();
         }
-        catch (SQLException mSQLException)
+        catch (SQLException e)
         {
-            Log.e(TAG, "open >>"+ mSQLException.toString());
-            throw mSQLException;
+            Utils.WriteLog("e",TAG, "open >>"+ e.toString());
+            throw e;
         }
         return this;
     }
@@ -92,7 +93,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            String s=e.getMessage();
+            Utils.WriteLog("e",TAG, "AddConfigPair >>"+ e.toString());
         }
     }
 
@@ -126,7 +127,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            String s=e.getMessage();
+            Utils.WriteLog("e",TAG, "InsLogPrice >>"+ e.toString());
         }
      }
 
@@ -145,9 +146,9 @@ public class SQLiteAdapter
         }
 
     }
-    catch (SQLException mSQLException)
+    catch (SQLException e)
     {
-        Log.e(TAG, "GetCountScanCode >>"+ mSQLException.toString());
+        Utils.WriteLog("e",TAG, "GetCountScanCode >>"+ e.toString());
         //throw mSQLException;
     }
         return varRes;
@@ -184,12 +185,11 @@ public class SQLiteAdapter
             if(pProgress!=null)
                 pProgress.set(100);
         }
-        catch (SQLException mSQLException)
+        catch (SQLException e)
         {
-            Log.e(TAG, "LoadDataDoc=>"+mSQLException.getMessage());
+            Utils.WriteLog("e",TAG, "LoadDataDoc=>"+e.getMessage());
             if(pProgress!=null)
                 pProgress.set(0);
-            String m=mSQLException.getMessage();
             return false;
          }
 
@@ -266,9 +266,9 @@ public class SQLiteAdapter
                 }
             }
         }
-        catch (SQLException mSQLException)
+        catch (SQLException e)
         {
-            Log.e(TAG, "GetSendData >>"+ mSQLException.toString());
+            Utils.WriteLog("e",TAG, "GetSendData >>"+ e.toString());
             //throw mSQLException;
         }
         return list;
@@ -288,8 +288,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            String s=e.getMessage();
-            Log.e(TAG, "UpdateReplenishment >>"+ e.toString());
+            Utils.WriteLog("e",TAG, "UpdateReplenishment >>"+ e.toString());
         }
 
     }
@@ -345,7 +344,7 @@ public class SQLiteAdapter
                 }
             }
         }catch (Exception e){
-            Log.e(TAG, "GetDocumentList >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetDocumentList >>"+  e.getMessage());
         }
         return model;
     }
@@ -362,7 +361,7 @@ public class SQLiteAdapter
             res=mCur.getInt(0);
             }
         }catch (Exception e){
-            Log.e(TAG, "GetStateDoc >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetStateDoc >>"+  e.getMessage());
         }
         return res;
 
@@ -451,7 +450,7 @@ public class SQLiteAdapter
                 }
             }
         }catch (Exception e){
-            Log.e(TAG, "GetDocWares >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetDocWares >>"+  e.getMessage());
         }
         return model;
     }
@@ -469,7 +468,7 @@ public class SQLiteAdapter
                 intNum = Integer.parseInt(number);
             }catch(Exception e)
             {
-                Log.e(TAG,"GetScanData=> "+e.getMessage());
+                Utils.WriteLog("e",TAG,"GetScanData=> "+e.getMessage());
             }
 
             isBarCode = (intNum.toString().length() >= 8);
@@ -547,7 +546,7 @@ public class SQLiteAdapter
                 model.BaseCodeUnit = mCur.getInt(6);
             }
         } catch (Exception e) {
-            Log.e(TAG, "GetScanData >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetScanData >>"+  e.getMessage());
 
         }
         if (model != null && DocNumber!=null) {
@@ -564,7 +563,7 @@ public class SQLiteAdapter
 
                 }
             } catch (Exception e) {
-                Log.e(TAG, "GetScanData >>"+  e.getMessage());
+                Utils.WriteLog("e",TAG, "GetScanData >>"+  e.getMessage());
             }
 
         }
@@ -584,7 +583,8 @@ public class SQLiteAdapter
                 }
             }
         }catch (Exception e){
-            Log.e(TAG, "GetReason>>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetReason>>"+  e.getMessage());
+
         }
         return model.toArray(new Reason[model.size()]);
     }
@@ -597,8 +597,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            Log.e(TAG, "UpdateDocState >>"+  e.getMessage());
-
+            Utils.WriteLog("e",TAG, "UpdateDocState >>"+  e.getMessage());
         }
     }
 
@@ -613,7 +612,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            Log.e(TAG, "SetNullableWares >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "SetNullableWares >>"+  e.getMessage());
         }
     }
 
@@ -634,8 +633,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            s=e.getMessage();
-            Log.e(TAG, "SaveDocWares >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "SaveDocWares >>"+  e.getMessage());
         }
        return new Result((int)result,s);
     }
@@ -690,7 +688,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            Log.e(TAG, "SaveDocOut >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "SaveDocOut >>"+  e.getMessage());
         }
     }
 
@@ -714,7 +712,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            Log.e(TAG, "GetDocOut >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetDocOut >>"+  e.getMessage());
         }
         return result;
     }
@@ -746,7 +744,8 @@ public class SQLiteAdapter
                 }
             }
         }catch (Exception e){
-            Log.e(TAG, "GetWarehouse >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetWarehouse >>"+  e.getMessage());
+
         }
         return res;
     }
@@ -756,7 +755,7 @@ public class SQLiteAdapter
              mDb.execSQL("delete from Warehouse");
             return true;
         } catch (Exception e) {
-            Log.e(TAG, "ClearWarehouse >>" + e.getMessage());
+            Utils.WriteLog("e",TAG, "ClearWarehouse >>" + e.getMessage());
         }
         return false;
     }
@@ -770,8 +769,8 @@ public class SQLiteAdapter
                 mDb.replace("Reason", null, values);
             }
             mDb.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveReason=>" + ex.toString());
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG, "SaveReason=>" + e.toString());
         } finally {
             mDb.endTransaction();
         }
@@ -803,8 +802,8 @@ public class SQLiteAdapter
                 }
             }
             mDb.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveWares=>" + ex.toString());
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG, "SaveWares=>" + e.toString());
         } finally {
             mDb.endTransaction();
         }
@@ -830,8 +829,9 @@ public class SQLiteAdapter
                 }
             }
             mDb.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveAdditionUnit=>" + ex.toString());
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG, "SaveAdditionUnit=>" + e.toString());
+
         } finally {
             mDb.endTransaction();
         }
@@ -857,8 +857,8 @@ public class SQLiteAdapter
                 }
             }
             mDb.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveBarCode=>" + ex.toString());
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG, "SaveBarCode=>" + e.toString());
         } finally {
             mDb.endTransaction();
         }
@@ -878,8 +878,8 @@ public class SQLiteAdapter
                 mDb.replace("UNIT_DIMENSION", null, values);
             }
             mDb.setTransactionSuccessful();
-        } catch (Exception ex) {
-            Log.e(TAG, "SaveUnitDimension=>" + ex.toString());
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG, "SaveUnitDimension=>" + e.toString());
         } finally {
             mDb.endTransaction();
         }

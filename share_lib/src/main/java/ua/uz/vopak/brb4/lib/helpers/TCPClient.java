@@ -46,7 +46,7 @@ import java.net.Socket;
                 //here you must put your computer's IP address.
                 InetAddress serverAddr = InetAddress.getByName(SERVERIP);
 
-                Log.e("TCP Client", "C: Connecting...");
+                Utils.WriteLog("e","TCP Client", "C: Connecting...");
 
                 //create a socket to make the connection with the server
                 Socket socket = new Socket(serverAddr, SERVERPORT);
@@ -56,9 +56,9 @@ import java.net.Socket;
                     //send the message to the server
                     out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(socket.getOutputStream())), true);
 
-                    Log.e("TCP Client", "C: Sent.");
+                    Utils.WriteLog("e","TCP Client", "C: Sent.");
 
-                    Log.e("TCP Client", "C: Done.");
+                    Utils.WriteLog("e","TCP Client", "C: Done.");
 
                     //receive the message which the server sends back
                     in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -75,7 +75,7 @@ import java.net.Socket;
 
                     }
 
-                    Log.e("RESPONSE FROM SERVER", "S: Received Message: '" + serverMessage + "'");
+                    Utils.WriteLog("e","RESPONSE FROM SERVER", "S: Received Message: '" + serverMessage + "'");
 
                 } catch (Exception e) {
 

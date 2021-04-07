@@ -20,6 +20,7 @@ import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.Result;
 
@@ -73,8 +74,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 }
             }
 
-        } catch (Exception ex) {
-            Log.e(TAG, "LoadWarehouse=>" + ex.getMessage());
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG, "LoadWarehouse=>" + e.getMessage());
         }
         return res;
     }
@@ -95,7 +96,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         String data = config.GetApiJson(150, "\"TypeDoc\":" + pTypeDoc);
         HttpResult result = Http.HTTPRequest(0, "", data, null, null, null);
         if (result.HttpState != eStateHTTP.HTTP_OK) {
-            Log.e(TAG, "Load=>" + result.HttpState.toString());
+            Utils.WriteLog("e",TAG, "Load=>" + result.HttpState.toString());
             if (pProgress != null)
                 pProgress.set(0);
             return false;
@@ -145,11 +146,11 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 return gson.fromJson(res.Result, Result.class);
 
             } catch (Exception e) {
-                Log.e(TAG, "SendLogPrice  >>" + e.getMessage());
+                Utils.WriteLog("e",TAG, "SendLogPrice  >>" + e.getMessage());
                 return new Result(-1, e.getMessage());
             }
         } else {
-            Log.e(TAG, "SendLogPrice  >>" + res.HttpState.toString());
+            Utils.WriteLog("e",TAG, "SendLogPrice  >>" + res.HttpState.toString());
             return new Result(res);
         }
 
@@ -175,7 +176,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         }
         catch (Exception ex)
         {
-            Log.e(TAG, "printHTTP  >>" + ex.getMessage() );
+            Utils.WriteLog("e",TAG, "printHTTP  >>" + ex.getMessage() );
             return  ex.getMessage();
         }
     }
