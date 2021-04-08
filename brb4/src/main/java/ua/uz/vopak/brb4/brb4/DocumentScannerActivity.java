@@ -119,14 +119,13 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
         barcodeView=findViewById(R.id.DS_scanner);
+        barcodeView.setCameraSettings(config.GetCameraSettings());
+
         AllCount=findViewById(R.id.DS_Count);
         WaresItem = new WaresItemModel(barcodeView);
         binding.setWaresItem(WaresItem);
 
         //int camNum=Camera.getNumberOfCameras();
-        CameraSettings settings = new CameraSettings();
-        settings.setRequestedCameraId(config.IdCamera);
-        barcodeView.setCameraSettings(settings);
 
         Intent i = getIntent();
 

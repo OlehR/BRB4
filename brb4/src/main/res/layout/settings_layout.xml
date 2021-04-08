@@ -66,15 +66,15 @@
              android:enabled ="@{SM.IsAdmin}"
              android:gravity="left"
              android:text="Автологін" />
+
          <EditText
-             android:layout_weight="1"
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
-             android:enabled ="@{SM.IsUseCamera}"
-             android:text="@={SM.IdCamera}"
-              />
+             android:layout_weight="1"
+             android:visibility="@{SM.IsUseCamera() ? View.VISIBLE:View.GONE }"
+             android:text="@={SM.IdCamera}" />
 
-        </LinearLayout>
+     </LinearLayout>
 
 
     <LinearLayout

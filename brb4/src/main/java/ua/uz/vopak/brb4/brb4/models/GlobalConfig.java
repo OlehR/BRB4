@@ -1,6 +1,9 @@
 package ua.uz.vopak.brb4.brb4.models;
 
 import android.content.Context;
+
+import com.journeyapps.barcodescanner.camera.CameraSettings;
+
 import ua.uz.vopak.brb4.brb4.BuildConfig;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
@@ -147,7 +150,13 @@ public class GlobalConfig extends AbstractConfig {
     }
     public boolean IsUseCamera()  {return TypeScaner== eTypeScaner.Camera;}
 
+    public CameraSettings GetCameraSettings() {
+        CameraSettings settings = new CameraSettings();
+        settings.setRequestedCameraId(IdCamera);
+        settings.setFocusMode(CameraSettings.FocusMode.MACRO);
 
+        return settings;
+    }
 
 
 }
