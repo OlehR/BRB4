@@ -151,7 +151,7 @@ public class BL_PriceChecker extends BL {
             ;
 
             mDbHelper.InsLogPrice(parBarCode,vStatus , LI.ActionType, config.NumberPackege, LI.Code,LI.Article,config.LineNumber);
-            Utils.WriteLog("e",TAG, "vStatus  >>"+ vStatus );
+            Utils.WriteLog("d",TAG, "vStatus  >>"+ vStatus );
             SetProgress(100);
         } catch (Exception e) {
             Utils.WriteLog("e",TAG, "InsLogPrice  >>"+ e.getMessage() );

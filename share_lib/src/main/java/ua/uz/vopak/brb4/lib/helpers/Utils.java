@@ -52,6 +52,7 @@ import java.util.regex.Pattern;
 
 
 import ua.uz.vopak.brb4.R;
+import ua.uz.vopak.brb4.lib.enums.eTypeLog;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 
 import static android.content.Context.WIFI_SERVICE;
@@ -203,8 +204,12 @@ public class Utils {
         }
     }
 
+   static public eTypeLog TypeLog = eTypeLog.Short;
    static public void  WriteLog(String pText)
    {
+       if( TypeLog == eTypeLog.NoLog || pText==null)
+           return;
+       pText = (pText.length()>2000 && TypeLog==eTypeLog.Short? pText.substring(0,2000):pText);
        try {
            DateFormat df = new SimpleDateFormat("yyyyMMdd");
            Date today = Calendar.getInstance().getTime();
@@ -218,8 +223,8 @@ public class Utils {
        catch(Exception e) {
            Log.e(TAG, "WriteLog=> " + e.getMessage());
        }
-
    }
+
     static public void  WriteLog(String pType, String pTAG,String pText)
     {
         String Type="";

@@ -11,6 +11,7 @@ import androidx.databinding.ObservableInt;
 import ua.uz.vopak.brb4.brb4.BuildConfig;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
+import ua.uz.vopak.brb4.lib.enums.eTypeLog;
 import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
@@ -41,6 +42,9 @@ public class SetingModel {
     public ObservableInt  ListWarehouseIdx = new ObservableInt(0);
     public Warehouse[] Warehouse;
 
+    public ObservableArrayList<String> ListLog = new ObservableArrayList<>( );
+    public ObservableInt  ListLogIdx = new ObservableInt(0);
+
     public boolean IsUseCamera() {return config.IsUseCamera();}
     public SetingModel(){
         for(eCompany el : eCompany.values()) {
@@ -51,9 +55,14 @@ public class SetingModel {
         for (eTypeUsePrinter el : eTypeUsePrinter.values()) {
             ListPrinterType.add(el.GetText());
         }
+
+        for(eTypeLog el : eTypeLog.values()) {
+            ListLog.add(el.GetText());
+        }
         ListPrinterTypeIdx.set(config.TypeUsePrinter.getAction());
         IsTest = new ObservableBoolean(config.IsTest);
         IsAutoLogin = new ObservableBoolean(config.IsAutoLogin);
+        ListLogIdx.set(config.cUtils.TypeLog.getTypeLog());
     }
 
     public boolean IsSevenEleven() {return config.Company==eCompany.Sim23;}
@@ -114,6 +123,7 @@ public class SetingModel {
             worker.AddConfigPair("Warehouse", Integer.toString(config.CodeWarehouse));
         }
         config.IdCamera= Integer.valueOf( IdCamera.get());
+        config.cUtils.TypeLog = eTypeLog.fromOrdinal(ListLogIdx.get());
 
     }
 

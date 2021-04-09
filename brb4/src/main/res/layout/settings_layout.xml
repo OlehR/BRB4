@@ -202,14 +202,21 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="bottom"
-            android:weightSum="1">
+            android:weightSum="2">
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="@{(view) -> SM.OnCopyDB()}"
-                android:text="Копіювання бази" />
+                android:text="Коп. бази" />
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:entries="@{SM.ListLog}"
+                android:selectedItemPosition="@={SM.ListLogIdx}"
+                android:layout_weight="1" />
         </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

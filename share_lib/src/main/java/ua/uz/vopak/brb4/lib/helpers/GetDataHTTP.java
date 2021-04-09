@@ -9,6 +9,8 @@ import javax.net.ssl.HttpsURLConnection;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
+import java.time.Duration;
+import java.time.Instant;
 
 public class GetDataHTTP
 {
@@ -117,7 +119,7 @@ public String GetBaseAuth(String pLogin,String pPasWord){
             conn.setDoInput(true);
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
-
+            Utils.WriteLog("d",TAG, "HTTPRequest\\Output");
             if(pData!=null) {
                 OutputStream os = conn.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
@@ -128,29 +130,28 @@ public String GetBaseAuth(String pLogin,String pPasWord){
                 writer.close();
                 os.close();
             }
-            Log.d(TAG,"Start");
+            Utils.WriteLog("d",TAG, "HTTPRequest\\response");
             int responseCode=conn.getResponseCode();
-            Log.d(TAG,"responseCode");
+
             res.HttpState = eStateHTTP.fromId(responseCode);
+            Utils.WriteLog("d",TAG, "HTTPRequest\\responseCode=>"+res.HttpState.toString());
             if (responseCode == HttpsURLConnection.HTTP_OK ) {
                 StringBuilder everything = new StringBuilder();
                 String line;
                 BufferedReader br=new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                Log.d(TAG,"StartRead");
+                Utils.WriteLog("d",TAG, "HTTPRequest\\StartRead");
                 while ((line=br. readLine()) != null) {
                     everything.append(line);
                     //response+=line;
                 }
                 res.Result=everything.toString();
-                Log.d(TAG,"EndRead");
+                Utils.WriteLog("d",TAG, "HTTPRequest\\EndRead");
 
-                log+= "\nResponse=>"+ (res.Result==null?"":(res.Result.length()>2000? res.Result.substring(0,2000):res.Result));
+                log+= "\nResponse=>"+ (res.Result==null?"":res.Result);
             }
 
-
-
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG,e.getMessage());
+            Utils.WriteLog("e",TAG, "HTTPRequest\\"+e.getMessage());
             e.printStackTrace();
             res.HttpState= eStateHTTP.HTTP_Not_Define_Error;
             if(e.getMessage().equals("Read timed out")) {

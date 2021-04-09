@@ -136,7 +136,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
                 } catch (Exception ex) {
                 }
 
-                if (config.LastFullUpdate == null || config.LastFullUpdate.equals( curDate)) {
+                if (config.LastFullUpdate == null || !config.LastFullUpdate.equals( curDate)) {
                     new AsyncHelper<Boolean>(new IAsyncHelper() {
                         @Override
                         public Boolean Invoke() {
