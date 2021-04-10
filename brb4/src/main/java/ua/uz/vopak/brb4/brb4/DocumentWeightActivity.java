@@ -29,9 +29,11 @@ import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 
 public class DocumentWeightActivity extends Activity  {
+    final String TAG="DocumentWeightActivity";
     String NumberDoc;
     int documentType;
     DocSetting DocSetting;
@@ -307,31 +309,40 @@ public class DocumentWeightActivity extends Activity  {
         WaresScroll.post(new Runnable() {
             @Override
             public void run() {
-                float d = context.getResources().getDisplayMetrics().density;
-                Rect scrollBounds = new Rect();
-                WaresScroll.getDrawingRect(scrollBounds);
+                try {
+                    float d = context.getResources().getDisplayMetrics().density;
+                    Rect scrollBounds = new Rect();
+                    WaresScroll.getDrawingRect(scrollBounds);
+                    int pos = position+2>tl.getChildCount()? tl.getChildCount()-1:position+1;
 
-                ViewGroup row = (ViewGroup) tl.getChildAt(position+1);
-                float top = row.getY();
-                float bottom = top + row.getHeight();
+                    ViewGroup row = (ViewGroup) tl.getChildAt(pos);
+                    if(row==null)
+                        return;
 
+                    float top = row.getY();
+                    float bottom = top + row.getHeight();
 
-                if (scrollBounds.top < top && scrollBounds.bottom > bottom) {
-                } else {
-                    switch (prevent) {
-                        case "next":
-                            int dpValue = 30;
-                            int padding = (int) (dpValue * d);
-                            float invisiblePart = bottom - scrollBounds.bottom;
-                            WaresScroll.scrollTo(0, (WaresScroll.getScrollY() + (int) invisiblePart + padding));
-                            break;
-                        case "prev":
-                            WaresScroll.scrollTo(0, row.getTop());
-                            break;
+                    if (scrollBounds.top < top && scrollBounds.bottom > bottom) {
+                    } else {
+                        switch (prevent) {
+                            case "next":
+                                int dpValue = 30;
+                                int padding = (int) (dpValue * d);
+                                float invisiblePart = bottom - scrollBounds.bottom;
+                                WaresScroll.scrollTo(0, (WaresScroll.getScrollY() + (int) invisiblePart + padding));
+                                break;
+                            case "prev":
+                                WaresScroll.scrollTo(0, row.getTop());
+                                break;
+                        }
                     }
-                }
 
+                } catch(Exception e)
+                {
+                    Utils.WriteLog("e",TAG,"focusOnView\\ position=>" + String.valueOf(position)+" "+e.getMessage());
+                }
             }
+
         });
     }
 
