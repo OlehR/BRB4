@@ -277,7 +277,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         String Text=sb.toString();
 
         try {
-            Utils.SaveData(FileName, Text.getBytes("UTF-8"),true);
+            Utils.SaveData(FileName, Text.getBytes("UTF-8"),true,true);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }

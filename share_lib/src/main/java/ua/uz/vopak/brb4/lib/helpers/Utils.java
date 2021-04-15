@@ -189,7 +189,7 @@ public class Utils {
 
 
 
-    static public void SaveData(String pFileName,byte[] pData,boolean pIsDelete){
+    static public void SaveData(String pFileName,byte[] pData,boolean pIsDelete,boolean IsWriteLog){
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File file = new File(path, pFileName);
         if(pIsDelete)
@@ -200,7 +200,10 @@ public class Utils {
             stream.close();
             Log.i(TAG, "Data Saved");
         } catch (IOException e) {
-            Utils.WriteLog("e",TAG, "Could not write file " + e.getMessage());
+            if(IsWriteLog)
+                Utils.WriteLog("e",TAG, "Could not write file " + e.getMessage());
+            else
+                Log.e(TAG,"Could not write file " + e.getMessage());
         }
     }
 
@@ -218,7 +221,7 @@ public class Utils {
            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
            Date date = new Date(System.currentTimeMillis());
            String Text = "\nLog=>"+formatter.format(date) + "  \n" + pText;
-           SaveData(FileName, Text.getBytes("UTF-8"),false);
+           SaveData(FileName, Text.getBytes("UTF-8"),false,false);
        }
        catch(Exception e) {
            Log.e(TAG, "WriteLog=> " + e.getMessage());
