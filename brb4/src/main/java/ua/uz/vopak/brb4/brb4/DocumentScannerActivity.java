@@ -54,14 +54,17 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.brb4.helpers.MyKeyboard;
+import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
+import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
+import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
@@ -100,9 +103,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         public void barcodeResult(BarcodeResult result) {
             if (result.getText() != null) {
                 //barcodeView.pause();
-                ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 1000);
-                toneGen1.startTone(ToneGenerator.TONE_PROP_BEEP,250);
-                Run(result.getText());//config.Scaner.CallBack.
+                Run(result.getText());
             }
         }
         @Override
@@ -250,7 +251,6 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                 saveDocumentItem(false,false);
                 break;
 
-
         }
     }
 
@@ -302,9 +302,6 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         return super.dispatchKeyEvent(event);
     }
 
-
-
-
     @Override
     public void onPause() {
         super.onPause();
@@ -316,10 +313,11 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     }
 
     @Override
-    public void Run(final String parBarCode) {
+    public void Run(final String pBarCode) {
+
         if(config.IsUseCamera())
             barcodeView.pause();
-        findWareByArticleOrCode(parBarCode);
+        findWareByArticleOrCode(pBarCode);
     }
 
     public void RenderData(final WaresItemModel model){

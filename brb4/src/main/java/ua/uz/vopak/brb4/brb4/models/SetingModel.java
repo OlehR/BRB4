@@ -109,9 +109,6 @@ public class SetingModel {
             config.IsAutoLogin=IsAutoLogin.get();
             worker.AddConfigPair("IsAutoLogin",config.IsAutoLogin?"true":"false");
             GetDataHTTP.instance().Init(new String[]{config.ApiUrl,config.ApiURLadd});
-
-
-
         }
         else
         {

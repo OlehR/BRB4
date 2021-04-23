@@ -14,23 +14,51 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="400dp"
+        android:layout_height="560dp"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="10dp">
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/A_BarcodeImageLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/code_128"
+                android:orientation="vertical">
+                <!-- android:visibility="@{WaresItem.IsUseCamera() ? View.VISIBLE:View.GONE }" -->
+                <com.journeyapps.barcodescanner.BarcodeView xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/A_scanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:onClick="@{(view) -> WaresItem.OnClickFlashLite()}"
+                    app:zxing_preview_scaling_strategy="centerCrop"
+                    app:zxing_use_texture_view="true" />
+
+                <!--   android:visibility="@{LI.IsUseCamera() ? View.VISIBLE:View.INVISIBLE }"
+    -->
+            </LinearLayout>
+        </LinearLayout>
+
 
         <TextView
             android:id="@+id/NameStore"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="10dp"
             android:fontFamily="@font/main_font"
             android:gravity="center"
             android:includeFontPadding="true"
             android:padding="5dp"
             android:text="@string/vopak"
             android:textColor="@color/white_50"
-            android:textSize="48sp" />
+            android:textSize="36sp" />
 
         <CheckBox
             android:id="@+id/L_IsCentral"
