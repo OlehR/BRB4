@@ -89,24 +89,26 @@ public class StartActivity extends AppCompatActivity {
     }
     @Override
     protected void onResume() {
-        super.onResume();
-        isWriteDOWNLOADS=Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canWrite();
+        if (!isFinishing() && !isDestroyed()) {
+            super.onResume();
+            isWriteDOWNLOADS = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canWrite();
+            boolean isAskPermissionCamera = config.IsUseCamera()  && (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED);
 
+            boolean isPhoneState = (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
+            if (!isFirstRun) {
+                if (isNewVersion) {
+                    AddText("Для продовження роботи необхідно оновити BRB4");
+                } else {
 
-
-        boolean isPhoneState=(ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
-        if (!isFirstRun) {
-            if (isNewVersion) {
-                AddText("Для продовження роботи необхідно оновити BRB4");
-            }
-            else {
-
-                if (!isPhoneState || (!isWriteDOWNLOADS && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q)) { //Непонятка з 10 андроїдом. Треба буде розібратись.
-
-                    AddText("Для продовження роботи необхідно надати права на Зберігання та Статус телефона");
-                    requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE}, 0);
-                } else
-                    RunForm(config.isAutorized ? MainActivity.class : AuthActivity.class);
+                    if (isAskPermissionCamera || !isPhoneState || (!isWriteDOWNLOADS && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q)) { //Непонятка з 10 андроїдом. Треба буде розібратись.
+                        String[] Permissions = config.IsUseCamera() ?
+                                                new String[]{Manifest.permission.CAMERA,Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE} :
+                                                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE};
+                        AddText("Для продовження роботи необхідно надати права на Зберігання та Статус телефона");
+                        requestPermissions(Permissions, 0);
+                    } else
+                        RunForm(config.isAutorized ? MainActivity.class : AuthActivity.class);
+                }
             }
         }
     }
