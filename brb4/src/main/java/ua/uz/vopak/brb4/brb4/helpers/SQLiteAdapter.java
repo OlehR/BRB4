@@ -456,6 +456,7 @@ public class SQLiteAdapter
     }
 
     public WaresItemModel GetScanData(int TypeDoc, String DocNumber,String number) {
+        double QuantityBarCode=0;
         number=number.trim();
         WaresItemModel model = null;
         Cursor mCur=null;
@@ -472,6 +473,32 @@ public class SQLiteAdapter
             }
 
             isBarCode = (intNum.toString().length() >= 8);
+        }
+        if(number.length()==13 && config.Company!=eCompany.Sim23)
+        {
+            String Article=null;
+            String Quantity=null;
+            Log.e("XXX",number+' ' +number.substring(0,1));
+            if(number.substring(0,2).equals("22"))
+            {
+                isBarCode=false;
+                Article=number.substring(2,8);
+                Quantity=number.substring(8,12);
+                QuantityBarCode=Double.parseDouble(Quantity)/1000d;
+                Log.e("XXX",Article+" "+ Quantity );
+            }
+
+            if(number.substring(0,3).equals("111"))
+            {
+                isBarCode=false;
+                Article=number.substring(3,9);
+                Quantity=number.substring(9,12);
+                QuantityBarCode=Double.parseDouble(Quantity);
+                Log.e("XXX",Article+" "+ Quantity );
+            }
+
+            if(Article!=null)
+                number="00"+Article;
         }
    /*     else {
             PriceBarCode v = new PriceBarCode(number,config.Company);
@@ -512,7 +539,7 @@ public class SQLiteAdapter
                                 try {
                                     String Weight;
                                     Weight = number.substring(8, 12);
-                                    res.QuantityBarCode = Double.parseDouble(Weight) / 1000;
+                                    res.QuantityBarCode = Double.parseDouble(Weight) / 1000d;
                                 } catch (NumberFormatException e) {
                                     res.QuantityBarCode = 0d;
                                 }
@@ -544,6 +571,7 @@ public class SQLiteAdapter
                 model.NameUnit = mCur.getString(4);
                 model.BarCode = mCur.getString(5);
                 model.BaseCodeUnit = mCur.getInt(6);
+                model.QuantityBarCode=QuantityBarCode;
             }
         } catch (Exception e) {
             Utils.WriteLog("e",TAG, "GetScanData >>"+  e.getMessage());

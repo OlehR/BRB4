@@ -16,7 +16,7 @@ public class AuthModel {
 
     public boolean IsLoginCO = config.IsLoginCO;
     public String Login = config.Login;
-    public String Password = config.Password;
+    public String Password = (config.IsDebug ?config.Password:"");
     AuterizationsHelper aHelper=new AuterizationsHelper();
     AuthActivity authActivity;
     public AuthModel(AuthActivity pAuthActivity ) {authActivity=pAuthActivity;}

@@ -275,7 +275,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         if (event.getAction() == KeyEvent.ACTION_UP) {
             String keyCode = String.valueOf(event.getKeyCode());
             switch (keyCode){
-                case "66":
+                case "66": //Enter
                     if(WaresItem.IsInputQuantity())
                        saveDocumentItem(false,true);
                     else
