@@ -91,7 +91,7 @@ public class SetingModel {
         apiURL.set(Company==eCompany.Sim23 ? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
                 "http://znp.vopak.local/api/api_v1_utf8.php;http://195.16.78.134:7654/api/api_v1_utf8.php");
         config.ApiUrl=apiURL.get();
-        apiURLadd.set(Company==eCompany.Sim23 ? "http://93.183.216.37/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/":"http://znp.vopak.local:8088/Print");
+        apiURLadd.set(Company==eCompany.Sim23 ? "http://93.183.216.37/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/":"http://znp.vopak.local:8088/Print;http://viberbot.spar.uz.ua/Print/print");
         config.ApiURLadd=apiURLadd.get();
     }
 
