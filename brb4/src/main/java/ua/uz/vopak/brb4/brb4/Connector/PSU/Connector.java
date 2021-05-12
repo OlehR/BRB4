@@ -112,11 +112,13 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     public Result SyncDocsData(int parTypeDoc, String NumberDoc, List<WaresItemModel> Wares, Date pDateOutInvoice, String pNumberOutInvoice, int pIsClose) {
         List<String> wares = new ArrayList<String>();
         for (WaresItemModel ware : Wares) {
-            String war = "";
-            war += "[" + ware.GetOrderDoc() + ",";
-            war += ware.GetCodeWares() + ",";
-            war += ware.GetInputQuantityZero() + "]";
-            wares.add(war);
+            if(ware.InputQuantity>0) {
+                String war = "";
+                war += "[" + ware.GetOrderDoc() + ",";
+                war += ware.GetCodeWares() + ",";
+                war += ware.GetInputQuantityZero() + "]";
+                wares.add(war);
+            }
         }
         String data = config.GetApiJson(153, "\"TypeDoc\":" + parTypeDoc + ",\"NumberDoc\":\"" + NumberDoc + "\",\"Wares\":[" + TextUtils.join(",", wares) + "]");
         try {
@@ -128,7 +130,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             Result res = gson.fromJson(result.Result, Result.class);
             return res;
         } catch (Exception e) {
-            return new Result(-1, e.getMessage());
+            Utils.WriteLog("e",TAG, "SyncDocsData=>" +e.getMessage()+" " +data);
+            return new Result(-1, e.getMessage()+data);
         }
     }
 

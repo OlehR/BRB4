@@ -455,7 +455,7 @@ public class SQLiteAdapter
         return model;
     }
 
-    public WaresItemModel GetScanData(int TypeDoc, String DocNumber,String number) {
+    public WaresItemModel GetScanData(int TypeDoc, String DocNumber,String number,boolean pIsOnlyBarCode) {
         double QuantityBarCode=0;
         number=number.trim();
         WaresItemModel model = null;
@@ -472,7 +472,7 @@ public class SQLiteAdapter
                 Utils.WriteLog("e",TAG,"GetScanData=> "+e.getMessage());
             }
 
-            isBarCode = (intNum.toString().length() >= 8);
+            isBarCode = (intNum.toString().length() >= 8)||pIsOnlyBarCode;
         }
         if(number.length()==13 && config.Company!=eCompany.Sim23)
         {
@@ -526,7 +526,7 @@ public class SQLiteAdapter
                         PriceBarCode v = new PriceBarCode(number, config.Company);
                         if (v.Code > 0) {
                             number = Integer.toString(v.Code);
-                            return GetScanData(TypeDoc, DocNumber, number);
+                            return GetScanData(TypeDoc, DocNumber, number, pIsOnlyBarCode);
                         }
 
                     } else {
@@ -535,7 +535,7 @@ public class SQLiteAdapter
                             String BarCode = mCur.getString(1);
                             if (number.substring(0, BarCode.length()).equals(BarCode)) {
 
-                                WaresItemModel res = GetScanData(TypeDoc, DocNumber, CodeWares);
+                                WaresItemModel res = GetScanData(TypeDoc, DocNumber, CodeWares, pIsOnlyBarCode);
                                 try {
                                     String Weight;
                                     Weight = number.substring(8, 12);
@@ -922,6 +922,12 @@ public class SQLiteAdapter
             SaveWarehouse(el);
         }
         return res;
+    }
+
+    public void CloseDB()
+    {
+        mDb.close();
+        mDbHelper.close();
     }
     
 }

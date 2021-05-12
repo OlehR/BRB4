@@ -324,7 +324,6 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
     }
 
     public void  setScanResult(LabelInfo LI) {
-
         LI.InputFocus.set(LI.IsViewReplenishment()?2:1);
         if(LI.Code==0&&LI.InputFocus.get()==2)
             LI.InputFocus.set(1);
@@ -343,7 +342,6 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
                 dw.clearColorFilter();
             }
         }
-
          if (config.TypeScaner == eTypeScaner.Camera) {
             if(barcodeView!=null)
                 barcodeView.resume();
@@ -352,7 +350,6 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
         BarCodeQueue.poll();
         if(BarCodeQueue.size()>0)
             FindWares(BarCodeQueue.peek(),false);
-
     }
 
     public void FindWares(final String parBarCode, final boolean isHandInput){

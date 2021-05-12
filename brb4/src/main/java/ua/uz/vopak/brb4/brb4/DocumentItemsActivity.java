@@ -140,7 +140,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     @Override
                     public WaresItemModel Invoke() {
 
-                        WaresItemModel res= config.Worker.GetWaresFromBarcode(TypeDoc,NumberDoc,pBarCode);
+                        WaresItemModel res= config.Worker.GetWaresFromBarcode(TypeDoc,NumberDoc,pBarCode,true);
                         if(res==null)
                             runOnUiThread(new Runnable() {
                                 @Override

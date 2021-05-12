@@ -135,7 +135,7 @@ public class BL_PriceChecker extends BL {
                     isError = true;
                 }
             } else {
-                WaresItemModel el = config.Worker.GetWaresFromBarcode(0, null, BarCode);
+                WaresItemModel el = config.Worker.GetWaresFromBarcode(0, null, BarCode,!isHandInput);
                 if(el!=null) {
                     LI.AllScan++;
                     el.SetLI(LI);

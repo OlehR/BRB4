@@ -177,8 +177,8 @@ public class Worker {
           return mDbHelper.GetDocWares(pTypeDoc, pNumberDoc, pTypeResult,pTypeOrder);
     }
     // Отримати Товар по штрихкоду
-    public WaresItemModel GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode) {
-        return mDbHelper.GetScanData(pTypeDoc, pNumberDoc, pBarCode);
+    public WaresItemModel GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode,boolean pIsOnlyBarCode) {
+        return mDbHelper.GetScanData(pTypeDoc, pNumberDoc, pBarCode, pIsOnlyBarCode);
     }
     // Збереження товару в БД
     public Result SaveDocWares(int pTypeDoc, String pNumberDoc, int pCodeWares, int pOrderDoc, Double pQuantity, int pCodeReason , Boolean pIsNullable) {

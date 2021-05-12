@@ -96,7 +96,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     InputMethodManager imm;
     int padding;
 
-    final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
+    //final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
     // Калбек штрихкода з камери.
     private BarcodeCallback callback = new BarcodeCallback() {
         @Override
@@ -155,7 +155,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         scrollView = findViewById(R.id.DS_ScrollView);
 
 
-        if(config.IsUseCamera()) {
+        /*if(config.IsUseCamera()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
                     checkSelfPermission(android.Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
@@ -166,7 +166,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                 barcodeView.decodeContinuous(callback);
                 barcodeView.resume();
             }
-        }
+        }*/
         keyboard = (MyKeyboard) findViewById(R.id.keyboard);
         Refresh();
 
@@ -279,7 +279,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                     if(WaresItem.IsInputQuantity())
                        saveDocumentItem(false,true);
                     else
-                        findWareByArticleOrCode(null);
+                        findWareByArticleOrCode(null,false);
                     break;
                 case "62"://key SP
                     WaresItem.ClearData();
@@ -317,7 +317,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
 
         if(config.IsUseCamera())
             barcodeView.pause();
-        findWareByArticleOrCode(pBarCode);
+        findWareByArticleOrCode(pBarCode,true);
     }
 
     public void RenderData(final WaresItemModel model){
@@ -644,13 +644,13 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     }
 
 
-    private void  findWareByArticleOrCode(String  pBarCode){
+    private void  findWareByArticleOrCode(String  pBarCode,final boolean pIsOnlyBarCode){
         final String BarCode = pBarCode==null? barCode.getText().toString(): pBarCode;
         new AsyncHelper<WaresItemModel>(
                 new IAsyncHelper<WaresItemModel>() {
                     @Override
                     public WaresItemModel Invoke() {
-                        WaresItemModel res= config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,BarCode);
+                        WaresItemModel res= config.Worker.GetWaresFromBarcode(WaresItem.TypeDoc,WaresItem.NumberDoc,BarCode, pIsOnlyBarCode);
                         if(res==null)
                             runOnUiThread(new Runnable() {
                                 @Override
@@ -695,7 +695,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
             }
         });
     }
-
+/*
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -710,7 +710,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         }else{
             barcodeView.setVisibility(View.INVISIBLE);
         }
-    }
+    }*/
 
 
     public void AskAddAbsentWares(final WaresItemModel model) {

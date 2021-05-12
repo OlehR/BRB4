@@ -198,5 +198,25 @@ public class SetingModel {
         }).execute();
     }
 
+    public void OnRestoreDB() {
+
+        new AsyncHelper<Void>(new IAsyncHelper() {
+            @Override
+            public Void Invoke() {
+                String path=null;
+                try {
+                    config.SQLiteAdapter.close();
+                    String pathDb = config.context.getApplicationInfo().dataDir + "/databases/" + "brb4.db";
+                    path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/brb4.db";
+                    config.cUtils.CopyFile(path, pathDb);
+
+                }
+                catch (Exception e) {
+                    Utils.WriteLog("e",TAG, "OnRestoreDB >>"+ e.toString() + " "+path);
+                }
+                return null;
+            }
+        }).execute();
+    }
 
 }

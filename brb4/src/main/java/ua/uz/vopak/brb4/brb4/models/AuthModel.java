@@ -21,6 +21,7 @@ public class AuthModel {
     AuthActivity authActivity;
     public AuthModel(AuthActivity pAuthActivity ) {authActivity=pAuthActivity;}
 
+    public String GetNameCompany() {return config.Company.GetName();}
     public boolean IsUseCamera() {
         return IsCamera && config.IsUseCamera();
     }
