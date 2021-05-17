@@ -102,6 +102,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         @Override
         public void barcodeResult(BarcodeResult result) {
             if (result.getText() != null) {
+                Log.e(TAG,result.getText());
                 //barcodeView.pause();
                 Run(result.getText());
             }
@@ -154,6 +155,11 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         WaresTableLayout = findViewById(R.id.DS_ScanItemsTable);
         scrollView = findViewById(R.id.DS_ScrollView);
 
+
+        if(config.IsUseCamera()) {
+            barcodeView.decodeContinuous(callback);
+            barcodeView.resume();
+        }
 
         /*if(config.IsUseCamera()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
