@@ -27,5 +27,21 @@ public class PriceBarCode {
                 };
             }
         }
+        else if((pCompany== eCompany.SparPSU || pCompany== eCompany.VopakPSU) && pBarCode!=null && pBarCode.contains("-") )
+        {
+            try {
+                String[] str = BarCode.split("-");
+                switch (str.length) {
+                    case 3:
+                        PriceOpt = Integer.parseInt(str[2])/ 100d;
+                    case 2:
+                        Price = Integer.parseInt(str[1])/100d;
+                        break;
+                }
+            } catch (Exception e) {
+                Log.e("PriceBarCode",e.getMessage());
+            }
+
+        }
     }
 }

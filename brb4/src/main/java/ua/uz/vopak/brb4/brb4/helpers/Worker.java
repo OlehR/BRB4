@@ -178,7 +178,7 @@ public class Worker {
     }
     // Отримати Товар по штрихкоду
     public WaresItemModel GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode,boolean pIsOnlyBarCode) {
-        return mDbHelper.GetScanData(pTypeDoc, pNumberDoc, pBarCode, pIsOnlyBarCode);
+        return mDbHelper.GetScanData(pTypeDoc, pNumberDoc, pBarCode, pIsOnlyBarCode,false);
     }
     // Збереження товару в БД
     public Result SaveDocWares(int pTypeDoc, String pNumberDoc, int pCodeWares, int pOrderDoc, Double pQuantity, int pCodeReason , Boolean pIsNullable) {

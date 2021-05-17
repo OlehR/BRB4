@@ -455,7 +455,7 @@ public class SQLiteAdapter
         return model;
     }
 
-    public WaresItemModel GetScanData(int TypeDoc, String DocNumber,String number,boolean pIsOnlyBarCode) {
+    public WaresItemModel GetScanData(int TypeDoc, String DocNumber,String number,boolean pIsOnlyBarCode,boolean isCode) {
         double QuantityBarCode=0;
         number=number.trim();
         WaresItemModel model = null;
@@ -526,7 +526,7 @@ public class SQLiteAdapter
                         PriceBarCode v = new PriceBarCode(number, config.Company);
                         if (v.Code > 0) {
                             number = Integer.toString(v.Code);
-                            return GetScanData(TypeDoc, DocNumber, number, pIsOnlyBarCode);
+                            return GetScanData(TypeDoc, DocNumber, number, false,true);
                         }
 
                     } else {
@@ -535,7 +535,7 @@ public class SQLiteAdapter
                             String BarCode = mCur.getString(1);
                             if (number.substring(0, BarCode.length()).equals(BarCode)) {
 
-                                WaresItemModel res = GetScanData(TypeDoc, DocNumber, CodeWares, pIsOnlyBarCode);
+                                WaresItemModel res = GetScanData(TypeDoc, DocNumber, CodeWares, pIsOnlyBarCode,false);
                                 try {
                                     String Weight;
                                     Weight = number.substring(8, 12);
@@ -550,7 +550,7 @@ public class SQLiteAdapter
                     }
                 }
             }else {
-                    String Find = config.Company == eCompany.Sim23 ? "w.code_wares=" + number : "w.ARTICL='" + number + "'";
+                    String Find = config.Company == eCompany.Sim23 || isCode ? "w.code_wares=" + number : "w.ARTICL='" + number + "'";
                     sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                             "from WARES w " +
                             "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +
