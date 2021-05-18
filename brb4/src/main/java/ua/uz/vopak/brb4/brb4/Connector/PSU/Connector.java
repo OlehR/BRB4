@@ -186,12 +186,28 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         }
     }
 
-    public ParseBarCode ParsedBarCode(String pBarCode) {
-        ParseBarCode res = null;
+    public ParseBarCode ParsedBarCode(String pBarCode,boolean pIsOnlyBarCode) {
+        ParseBarCode res =  new ParseBarCode();
+        pBarCode=pBarCode.trim();
+        res.BarCode=pBarCode;
+        res.IsOnlyBarCode=pIsOnlyBarCode;
+        /*if(pIsOnlyBarCode)
+            return res;*/
+
+        if (!pIsOnlyBarCode && pBarCode.length() <= 8 && !pBarCode.equals("")) {
+            try{
+                res.Article = "0000000000".substring(0,8-pBarCode.length())+pBarCode;
+                res.BarCode = null;
+                return res;
+            }catch(Exception e)
+            {
+                Utils.WriteLog("e",TAG,"ParsedBarCode=> "+ pBarCode+" "+e.getMessage());
+            }
+        }
+
         if((config.Company== eCompany.SparPSU || config.Company== eCompany.VopakPSU) && pBarCode!=null  )
         {
             if( pBarCode.contains("-")) {
-                res= new ParseBarCode();
                 try {
                     String[] str = pBarCode.split("-");
                     switch (str.length) {
@@ -200,11 +216,11 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                         case 2:
                             res.Price = Integer.parseInt(str[1]) / 100d;
                             res.Code = Integer.parseInt(str[0]);
+                            res.BarCode=null;
                             break;
                     }
                 } catch (Exception e) {
                     Log.e("PriceBarCode", e.getMessage());
-                    return null;
                 }
             }
             if(pBarCode.length()==13)
@@ -212,7 +228,6 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
               //  Log.e("XXX",number+' ' +number.substring(0,1));
                 if(pBarCode.substring(0,2).equals("22"))
                 {
-                    res= new ParseBarCode();   //isBarCode=false;
                     res.Article=pBarCode.substring(2,8);
                     String Quantity=pBarCode.substring(8,12);
                     res.Quantity=Double.parseDouble(Quantity)/1000d;
@@ -221,7 +236,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
                 if(pBarCode.substring(0,3).equals("111"))
                 {
-                    res= new ParseBarCode();
+
                     //isBarCode=false;
                     res.Article=pBarCode.substring(3,9);
                     String Quantity=pBarCode.substring(9,12);
@@ -229,11 +244,13 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                     //Log.e("XXX",Article+" "+ Quantity );
                 }
 
-                if(res.Article!=null)
-                    res.Article="00"+res.Article;
+                if(res.Article!=null) {
+                    res.Article = "00" + res.Article;
+                    res.BarCode=null;
+                }
             }
 
         }
-        return null;
+        return res;
     }
 }

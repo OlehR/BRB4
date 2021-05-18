@@ -17,6 +17,7 @@ import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
@@ -178,7 +179,10 @@ public class Worker {
     }
     // Отримати Товар по штрихкоду
     public WaresItemModel GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode,boolean pIsOnlyBarCode) {
-        return mDbHelper.GetScanData(pTypeDoc, pNumberDoc, pBarCode, pIsOnlyBarCode,false);
+
+        Connector c = Connector.instance();
+        ParseBarCode PBarcode= c.ParsedBarCode(pBarCode,pIsOnlyBarCode);
+        return mDbHelper.GetScanData(pTypeDoc, pNumberDoc,PBarcode);// pBarCode, pIsOnlyBarCode,false);
     }
     // Збереження товару в БД
     public Result SaveDocWares(int pTypeDoc, String pNumberDoc, int pCodeWares, int pOrderDoc, Double pQuantity, int pCodeReason , Boolean pIsNullable) {

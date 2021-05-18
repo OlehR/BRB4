@@ -52,5 +52,5 @@ public abstract class Connector {
     public abstract String printHTTP(List<String> codeWares);
 
     // Розбір штрихкоду.
-    public abstract ParseBarCode ParsedBarCode(String pBarCode);
+    public abstract ParseBarCode ParsedBarCode(String pBarCode,boolean pIsOnlyBarCode);
 }

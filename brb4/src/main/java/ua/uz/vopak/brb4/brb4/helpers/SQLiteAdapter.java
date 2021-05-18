@@ -20,6 +20,7 @@ import ua.uz.vopak.brb4.brb4.Connector.SE.UnitDimension;
 import ua.uz.vopak.brb4.brb4.Connector.SE.Units;
 import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
+import ua.uz.vopak.brb4.brb4.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
@@ -366,6 +367,7 @@ public class SQLiteAdapter
         return res;
 
     }
+
     public List<WaresItemModel> GetDocWares(int pTypeDoc, String pNumberDoc, int pTypeResult, eTypeOrder pTypeOrder) {
         DocSetting DS=config.GetDocSetting(pTypeDoc);
         List<WaresItemModel> model = new ArrayList<>();
@@ -455,13 +457,13 @@ public class SQLiteAdapter
         return model;
     }
 
-    public WaresItemModel GetScanData(int TypeDoc, String DocNumber,String number,boolean pIsOnlyBarCode,boolean isCode) {
-        double QuantityBarCode=0;
-        number=number.trim();
+    public WaresItemModel GetScanData(int TypeDoc, String DocNumber, ParseBarCode pParseBarCode) {  // String number, boolean pIsOnlyBarCode, boolean isCode) {
         WaresItemModel model = null;
-        Cursor mCur=null;
+        Cursor mCur = null;
         String sql;
-        Log.d(TAG, "Find in DB  >>"+ number );
+
+
+/*        Log.d(TAG, "Find in DB  >>"+ number );
          Integer intNum = 0;
         boolean isBarCode = true;
         if (number.length() <= 8 && !number.equals("")) {
@@ -500,7 +502,7 @@ public class SQLiteAdapter
             if(Article!=null)
                 number="00"+Article;
         }
-   /*     else {
+        else {
             PriceBarCode v = new PriceBarCode(number,config.Company);
             if(v.Code>0) {
                 number=Integer.toString( v.Code);
@@ -508,37 +510,41 @@ public class SQLiteAdapter
             }
         }*/
         try {
-            if (isBarCode) {
+            if (pParseBarCode.BarCode != null) {
                 sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.ABR_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                         "from BAR_CODE bc " +
                         "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
                         "join wares w on w.CODE_WARES=bc.CODE_WARES " +
                         "join UNIT_DIMENSION ud on bc.CODE_UNIT=ud.CODE_UNIT " +
-                        "where bc.BAR_CODE='" + number + "'";
+                        "where bc.BAR_CODE='" + pParseBarCode.BarCode + "'";
                 mCur = mDb.rawQuery(sql, null);
+
+                // Пошук по штрихкоду виробника
                 if (mCur == null || mCur.getCount() == 0) {
                     sql = "select bc.code_wares,bc.BAR_CODE from BAR_CODE bc \n" +
                             " join wares w on bc.code_wares=w.code_wares and w.code_unit=" + config.GetCodeUnitWeight() + "\n" +
-                            " where substr(bc.BAR_CODE,1,6)='" + number.substring(0, 6) + "'";
+                            " where substr(bc.BAR_CODE,1,6)='" + pParseBarCode.BarCode.substring(0, 6) + "'";
                     mCur = mDb.rawQuery(sql, null);
-                    if (mCur == null || mCur.getCount() == 0) {
 
+                    if (mCur == null || mCur.getCount() == 0) {
+                        /*
                         PriceBarCode v = new PriceBarCode(number, config.Company);
                         if (v.Code > 0) {
                             number = Integer.toString(v.Code);
                             return GetScanData(TypeDoc, DocNumber, number, false,true);
-                        }
+                        }*/
 
                     } else {
                         while (mCur.moveToNext()) {
-                            String CodeWares = mCur.getString(0);
+                            int CodeWares = mCur.getInt(0);
                             String BarCode = mCur.getString(1);
-                            if (number.substring(0, BarCode.length()).equals(BarCode)) {
-
-                                WaresItemModel res = GetScanData(TypeDoc, DocNumber, CodeWares, pIsOnlyBarCode,false);
+                            if (pParseBarCode.BarCode.substring(0, BarCode.length()).equals(BarCode)) {
+                                ParseBarCode p = new ParseBarCode();
+                                p.Code = CodeWares;
+                                WaresItemModel res = GetScanData(TypeDoc, DocNumber, p);//CodeWares, pIsOnlyBarCode,false);
                                 try {
                                     String Weight;
-                                    Weight = number.substring(8, 12);
+                                    Weight = pParseBarCode.BarCode.substring(8, 12);
                                     res.QuantityBarCode = Double.parseDouble(Weight) / 1000d;
                                 } catch (NumberFormatException e) {
                                     res.QuantityBarCode = 0d;
@@ -546,17 +552,19 @@ public class SQLiteAdapter
                                 return res;
                             }
                         }
-                        mCur=null;
+                        mCur = null;
                     }
                 }
-            }else {
-                    String Find = config.Company == eCompany.Sim23 || isCode ? "w.code_wares=" + number : "w.ARTICL='" + number + "'";
-                    sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
-                            "from WARES w " +
-                            "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +
-                            "join UNIT_DIMENSION ud on w.CODE_UNIT=ud.CODE_UNIT " +
-                            "where " + Find;
-                    mCur = mDb.rawQuery(sql, null);
+            }
+            //else // Пошук по коду
+            if ((mCur == null || mCur.getCount() == 0 ) && (pParseBarCode.Code > 0 || pParseBarCode.Article != null)) {
+                String Find = pParseBarCode.Code > 0 ? "w.code_wares=" + pParseBarCode.Code : "w.ARTICL='" + pParseBarCode.Article + "'";
+                sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
+                        "from WARES w " +
+                        "join ADDITION_UNIT au on w.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=w.CODE_UNIT " +
+                        "join UNIT_DIMENSION ud on w.CODE_UNIT=ud.CODE_UNIT " +
+                        "where " + Find;
+                mCur = mDb.rawQuery(sql, null);
 
             }
 
@@ -571,13 +579,13 @@ public class SQLiteAdapter
                 model.NameUnit = mCur.getString(4);
                 model.BarCode = mCur.getString(5);
                 model.BaseCodeUnit = mCur.getInt(6);
-                model.QuantityBarCode=QuantityBarCode;
+                model.QuantityBarCode = pParseBarCode.Quantity;
             }
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "GetScanData >>"+  e.getMessage());
+            Utils.WriteLog("e", TAG, "GetScanData >>" + e.getMessage());
 
         }
-        if (model != null && DocNumber!=null) {
+        if (model != null && DocNumber != null) {
             sql = "select coalesce(d.Is_Control,0) as Is_Control, coalesce(quantity_max,0) as quantity_max, coalesce(quantity,0) as quantity, case when dws.Type_doc is null then 0 else 1 end as Find from DOC d\n" +
                     " left join DOC_WARES_sample dws on d.Type_doc=dws.Type_doc and d.number_doc=dws.number_doc and dws.code_wares=" + model.CodeWares +
                     " \nwhere  d.Type_doc=" + TypeDoc + " and d.number_doc=\"" + DocNumber + "\"";
@@ -585,17 +593,17 @@ public class SQLiteAdapter
                 mCur = mDb.rawQuery(sql, null);
                 if (mCur != null && mCur.getCount() > 0) {
                     mCur.moveToFirst();
-                    model.QuantityMax=(mCur.getInt(0)==1?mCur.getDouble(1):Double.MAX_VALUE);
-                    model.QuantityOrder=mCur.getInt(2);
-                    model.IsRecord= mCur.getInt(3)==1;
+                    model.QuantityMax = (mCur.getInt(0) == 1 ? mCur.getDouble(1) : Double.MAX_VALUE);
+                    model.QuantityOrder = mCur.getInt(2);
+                    model.IsRecord = mCur.getInt(3) == 1;
 
                 }
             } catch (Exception e) {
-                Utils.WriteLog("e",TAG, "GetScanData >>"+  e.getMessage());
+                Utils.WriteLog("e", TAG, "GetScanData >>" + e.getMessage());
             }
 
         }
-        Log.d(TAG, "Found in DB  >>"+ (model==null ? "Not Found": model.NameWares) );
+        Log.d(TAG, "Found in DB  >>" + (model == null ? "Not Found" : model.NameWares));
         return model;
     }
 

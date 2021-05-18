@@ -1,11 +1,14 @@
 package ua.uz.vopak.brb4.brb4.models;
 
 public class ParseBarCode {
-        public String BarCode;
+        //Здійснювати пошук тільки серед штрихкодів (недивлячись на те що штрихкод короткий)
+        public boolean IsOnlyBarCode=false;
+        public String BarCode=null;
         public int Code=0;
         public double Price=0d;
         public double PriceOpt=0d;
         public String Article =null;
-        public double Quantity ;//= Double.parseDouble(Weight) / 1000d;
+        public double Quantity =0d;;//= Double.parseDouble(Weight) / 1000d;
         public ParseBarCode(){};
+
 }

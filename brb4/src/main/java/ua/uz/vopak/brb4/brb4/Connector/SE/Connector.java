@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.brb4.Connector.SE;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -264,19 +265,32 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     }
 
     // Розбір штрихкоду.
-    public ParseBarCode ParsedBarCode(String pBarCode) {
-        ParseBarCode res = null;
+    public ParseBarCode ParsedBarCode(String pBarCode,boolean pIsOnlyBarCode) {
+        ParseBarCode res = new ParseBarCode();
+        pBarCode=pBarCode.trim();
+        res.BarCode=pBarCode;
+        res.IsOnlyBarCode=pIsOnlyBarCode;
+
+        if (!pIsOnlyBarCode && pBarCode.length() <= 8 && !pBarCode.equals("")) {
+            try{
+                res.Code=Integer.parseInt(pBarCode);
+                res.BarCode=null;
+            }catch(Exception e)
+            {
+                Utils.WriteLog("e",TAG,"ParsedBarCode=> "+ pBarCode+" "+e.getMessage());
+            }
+        }
 
         if (config.Company == eCompany.Sim23 && pBarCode!=null) {
             if (pBarCode.substring(0, 2).equals("29") && pBarCode.length() == 13) {
-                res = new ParseBarCode();
-                res.BarCode = pBarCode;
                 try {
                     res.Code = Integer.parseInt(pBarCode.substring(2, 8));
                     res.Price = Double.valueOf(pBarCode.substring(8, 13)) / 100d;
+                    res.IsOnlyBarCode=false; // Для варіанту коли у виробника штрихкод починається з 29 так як і у цінника.
+                    //res.BarCode=null;
                 } catch (Exception e) {
-                    Log.e("PriceBarCode", e.getMessage());
-                    return null;
+                    Log.e("ParsedBarCode", e.getMessage());
+
                 }
             }
         }
