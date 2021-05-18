@@ -16,8 +16,10 @@ import java.util.Date;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
+import ua.uz.vopak.brb4.brb4.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
@@ -182,5 +184,56 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             Utils.WriteLog("e",TAG, "printHTTP  >>" + ex.getMessage() );
             return  ex.getMessage();
         }
+    }
+
+    public ParseBarCode ParsedBarCode(String pBarCode) {
+        ParseBarCode res = null;
+        if((config.Company== eCompany.SparPSU || config.Company== eCompany.VopakPSU) && pBarCode!=null  )
+        {
+            if( pBarCode.contains("-")) {
+                res= new ParseBarCode();
+                try {
+                    String[] str = pBarCode.split("-");
+                    switch (str.length) {
+                        case 3:
+                            res.PriceOpt = Integer.parseInt(str[2]) / 100d;
+                        case 2:
+                            res.Price = Integer.parseInt(str[1]) / 100d;
+                            res.Code = Integer.parseInt(str[0]);
+                            break;
+                    }
+                } catch (Exception e) {
+                    Log.e("PriceBarCode", e.getMessage());
+                    return null;
+                }
+            }
+            if(pBarCode.length()==13)
+            {
+              //  Log.e("XXX",number+' ' +number.substring(0,1));
+                if(pBarCode.substring(0,2).equals("22"))
+                {
+                    res= new ParseBarCode();   //isBarCode=false;
+                    res.Article=pBarCode.substring(2,8);
+                    String Quantity=pBarCode.substring(8,12);
+                    res.Quantity=Double.parseDouble(Quantity)/1000d;
+                   // Log.e("XXX",Article+" "+ Quantity );
+                }
+
+                if(pBarCode.substring(0,3).equals("111"))
+                {
+                    res= new ParseBarCode();
+                    //isBarCode=false;
+                    res.Article=pBarCode.substring(3,9);
+                    String Quantity=pBarCode.substring(9,12);
+                    res.Quantity=Double.parseDouble(Quantity);
+                    //Log.e("XXX",Article+" "+ Quantity );
+                }
+
+                if(res.Article!=null)
+                    res.Article="00"+res.Article;
+            }
+
+        }
+        return null;
     }
 }

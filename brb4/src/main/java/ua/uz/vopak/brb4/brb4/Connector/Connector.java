@@ -10,6 +10,7 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
@@ -50,5 +51,6 @@ public abstract class Connector {
     // Друк на стаціонарному термопринтері
     public abstract String printHTTP(List<String> codeWares);
 
-
+    // Розбір штрихкоду.
+    public abstract ParseBarCode ParsedBarCode(String pBarCode);
 }

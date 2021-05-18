@@ -9,6 +9,8 @@ public class PriceBarCode {
     public int Code=0;
     public double Price=0d;
     public double PriceOpt=0d;
+    public String Article =null;
+    public double QuantityBarCode ;//= Double.parseDouble(Weight) / 1000d;
     public PriceBarCode(){};
 
     public PriceBarCode(String pBarCode, eCompany pCompany)
@@ -36,6 +38,8 @@ public class PriceBarCode {
                         PriceOpt = Integer.parseInt(str[2])/ 100d;
                     case 2:
                         Price = Integer.parseInt(str[1])/100d;
+                        Code = Integer.parseInt(str[0]);
+                        BarCode="";
                         break;
                 }
             } catch (Exception e) {
@@ -43,5 +47,8 @@ public class PriceBarCode {
             }
 
         }
+
+
+
     }
 }

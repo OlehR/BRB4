@@ -20,8 +20,10 @@ import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
@@ -32,34 +34,28 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     protected static final String TAG = "BRB4/Connector.SE";
 
-    public Result Login(final String pLogin, final String pPassWord,final boolean pIsLoginCO)
-    {
-        HttpResult res=Http.HTTPRequest(pIsLoginCO?1:0,"login","{\"login\" : \""+ pLogin+"\"}","application/json;charset=utf-8",pLogin,pPassWord);
-        if(res.HttpState== eStateHTTP.HTTP_UNAUTHORIZED || res.HttpState== eStateHTTP.HTTP_Not_Define_Error)
-        {
-            Utils.WriteLog("e",TAG, "Login >>"+ res.HttpState.toString());
-            return new Result(-1,res.HttpState.toString(),"Неправильний логін або пароль");
-        }
-        else
-            if(res.HttpState!= eStateHTTP.HTTP_OK)
-                return new Result(res, "Ви не підключені до мережі " + config.Company.name());
-            else
-            {
-                try {
-                    JSONObject jObject = new JSONObject(res.Result);
-                    if(jObject.getInt("State") == 0) {
-                        config.Role= eRole.fromOrdinal(jObject.getInt("Profile"));
-                        return new Result();
-                    }
-                    else
-                        return new Result(jObject.getInt("State"),jObject.getString("TextError"), "Неправильний логін або пароль");
+    public Result Login(final String pLogin, final String pPassWord, final boolean pIsLoginCO) {
+        HttpResult res = Http.HTTPRequest(pIsLoginCO ? 1 : 0, "login", "{\"login\" : \"" + pLogin + "\"}", "application/json;charset=utf-8", pLogin, pPassWord);
+        if (res.HttpState == eStateHTTP.HTTP_UNAUTHORIZED || res.HttpState == eStateHTTP.HTTP_Not_Define_Error) {
+            Utils.WriteLog("e", TAG, "Login >>" + res.HttpState.toString());
+            return new Result(-1, res.HttpState.toString(), "Неправильний логін або пароль");
+        } else if (res.HttpState != eStateHTTP.HTTP_OK)
+            return new Result(res, "Ви не підключені до мережі " + config.Company.name());
+        else {
+            try {
+                JSONObject jObject = new JSONObject(res.Result);
+                if (jObject.getInt("State") == 0) {
+                    config.Role = eRole.fromOrdinal(jObject.getInt("Profile"));
+                    return new Result();
+                } else
+                    return new Result(jObject.getInt("State"), jObject.getString("TextError"), "Неправильний логін або пароль");
 
-                }catch (Exception e){
-                    Utils.WriteLog("Exception=>"+TAG+"\\"+"Login=>"+e.getMessage());
-                    return new Result(-1,e.getMessage());
-                }
-
+            } catch (Exception e) {
+                Utils.WriteLog("Exception=>" + TAG + "\\" + "Login=>" + e.getMessage());
+                return new Result(-1, e.getMessage());
             }
+
+        }
 
 
     }
@@ -71,7 +67,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
 
             pProgress.set(5);
-            HttpResult res = Http.HTTPRequest(config.IsLoginCO?1:0, "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
+            HttpResult res = Http.HTTPRequest(config.IsLoginCO ? 1 : 0, "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
             if (res.HttpState == eStateHTTP.HTTP_OK) {
                 Log.d(TAG, "LoadData=>" + res.Result.length());
                 pProgress.set(40);
@@ -113,13 +109,12 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             Log.d(TAG, "End");
             return true;
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "LoadGuidData=>"+e.getMessage());
+            Utils.WriteLog("e", TAG, "LoadGuidData=>" + e.getMessage());
             Toast toast = Toast.makeText(GlobalConfig.instance().context, "Помилка завантаження довідників=>" + e.getMessage(), Toast.LENGTH_LONG);
             toast.show();
         }
         return false;
     }
-
 
 
     //Робота з документами.
@@ -129,22 +124,21 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             pProgress.set(5);
         HttpResult res;
         try {
-            if (pTypeDoc == 5|| pTypeDoc == 6 || (pTypeDoc <=0  && config.IsLoginCO)) {
-                res = Http.HTTPRequest(1, "documents"+(pTypeDoc == 5?"\\" + pNumberDoc: "?StoreSetting="+config.CodeWarehouse ), null, "application/json;charset=utf-8", config.Login, config.Password);
+            if (pTypeDoc == 5 || pTypeDoc == 6 || (pTypeDoc <= 0 && config.IsLoginCO)) {
+                res = Http.HTTPRequest(1, "documents" + (pTypeDoc == 5 ? "\\" + pNumberDoc : "?StoreSetting=" + config.CodeWarehouse), null, "application/json;charset=utf-8", config.Login, config.Password);
             } else
-                res = Http.HTTPRequest(0, "documents" , null, "application/json;charset=utf-8", config.Login, config.Password);
+                res = Http.HTTPRequest(0, "documents", null, "application/json;charset=utf-8", config.Login, config.Password);
             if (res.HttpState == eStateHTTP.HTTP_OK) {
                 if (pProgress != null)
                     pProgress.set(40);
                 InputDocs data = new Gson().fromJson(res.Result, InputDocs.class);
                 if (pIsClear) {
-                   // String sql = "DELETE FROM DOC; DELETE FROM DOC_WARES_sample; DELETE FROM DOC_WARES;";
+                    // String sql = "DELETE FROM DOC; DELETE FROM DOC_WARES_sample; DELETE FROM DOC_WARES;";
                     db.execSQL("DELETE FROM DOC");
                     db.execSQL("DELETE FROM DOC_WARES_sample");
                     db.execSQL("DELETE FROM DOC_WARES");
-                   // db.execSQL(sql.trim());
-                }
-                else
+                    // db.execSQL(sql.trim());
+                } else
                     db.execSQL("update doc set state=-1 where type_doc not in (5,6)" + (pTypeDoc > 0 ? " and type_doc=" + pTypeDoc : ""));
 
                 for (Doc v : data.Doc) {
@@ -161,7 +155,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             }
 
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "LoadDocsData=>" + e.getMessage());
+            Utils.WriteLog("e", TAG, "LoadDocsData=>" + e.getMessage());
         }
         return false;
     }
@@ -183,7 +177,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         OD.add(el);
         String json = gson.toJson(OD);
 
-        HttpResult res = Http.HTTPRequest((pTypeDoc == 5 || pTypeDoc == 6  ? 1 : 0) , "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
+        HttpResult res = Http.HTTPRequest((pTypeDoc == 5 || pTypeDoc == 6 ? 1 : 0), "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
         if (res.HttpState == eStateHTTP.HTTP_OK) {
             return new Result(res);
         }
@@ -217,7 +211,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             }
             db.setTransactionSuccessful();
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "SaveDOC_WARES_sample=>" + e.toString());
+            Utils.WriteLog("e", TAG, "SaveDOC_WARES_sample=>" + e.toString());
         } finally {
             db.endTransaction();
         }
@@ -235,27 +229,27 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
             if (res.HttpState == eStateHTTP.HTTP_OK) {
                 InputWarehouse[] data = new Gson().fromJson(res.Result, InputWarehouse[].class);
-                Warehouse [] WH = new Warehouse[data.length];
-                for (int i = 0; i <WH.length ; i++) {
-                    WH[i]=data[i].GetWarehouse();
+                Warehouse[] WH = new Warehouse[data.length];
+                for (int i = 0; i < WH.length; i++) {
+                    WH[i] = data[i].GetWarehouse();
                 }
                 return WH;
             }
 
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "LoadWarehouse=>" + e.getMessage());
+            Utils.WriteLog("e", TAG, "LoadWarehouse=>" + e.getMessage());
         }
         return null;
     }
 
-    public  Result  SendLogPrice(List<LogPrice> pList){
+    public Result SendLogPrice(List<LogPrice> pList) {
         StringBuilder sb = new StringBuilder();
         for (LogPrice s : pList) {
-            if(s.IsGoodBarCode())
+            if (s.IsGoodBarCode())
                 sb.append("," + s.GetJsonSE());
         }
         if (sb.length() <= 2)
-            return new Result(-1,"Недостатньо даних");
+            return new Result(-1, "Недостатньо даних");
         String a = "[" + sb.substring(1) + "]";
 
         String data = a;
@@ -265,8 +259,29 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     }
 
     // Друк на стаціонарному термопринтері
-    public String printHTTP(List<String> codeWares) {return null;};
+    public String printHTTP(List<String> codeWares) {
+        return null;
+    }
 
+    // Розбір штрихкоду.
+    public ParseBarCode ParsedBarCode(String pBarCode) {
+        ParseBarCode res = null;
+
+        if (config.Company == eCompany.Sim23 && pBarCode!=null) {
+            if (pBarCode.substring(0, 2).equals("29") && pBarCode.length() == 13) {
+                res = new ParseBarCode();
+                res.BarCode = pBarCode;
+                try {
+                    res.Code = Integer.parseInt(pBarCode.substring(2, 8));
+                    res.Price = Double.valueOf(pBarCode.substring(8, 13)) / 100d;
+                } catch (Exception e) {
+                    Log.e("PriceBarCode", e.getMessage());
+                    return null;
+                }
+            }
+        }
+        return res;
+    }
 }
 
 class OutputDocWares
