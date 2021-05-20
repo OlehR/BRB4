@@ -462,6 +462,8 @@ public class SQLiteAdapter
         Cursor mCur = null;
         String sql;
 
+        if(pParseBarCode==null)
+            return null;
 
 /*        Log.d(TAG, "Find in DB  >>"+ number );
          Integer intNum = 0;

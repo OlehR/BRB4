@@ -54,6 +54,7 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.brb4.helpers.MyKeyboard;
+import ua.uz.vopak.brb4.brb4.helpers.TopExceptionHandler;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.Reason;
@@ -116,6 +117,8 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = this;
+
+        Thread.setDefaultUncaughtExceptionHandler(new TopExceptionHandler(context));
 
         setContentView(R.layout.document_scanner_activity);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

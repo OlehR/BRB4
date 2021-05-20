@@ -267,6 +267,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     // Розбір штрихкоду.
     public ParseBarCode ParsedBarCode(String pBarCode,boolean pIsOnlyBarCode) {
         ParseBarCode res = new ParseBarCode();
+        if(pBarCode==null)
+            return res;
         pBarCode=pBarCode.trim();
         res.BarCode=pBarCode;
         res.IsOnlyBarCode=pIsOnlyBarCode;
