@@ -17,7 +17,7 @@ public abstract class AbstractConfig {
     public Boolean IsDebug = false;
     public Context context;
     public int CodeWarehouse = 0;
-    public eCompany Company = eCompany.VopakPSU;
+    public eCompany Company = eCompany.NotDefined;
     public boolean IsOnline=false;
 
     public String SN;
