@@ -4,21 +4,20 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentActivity;
 
@@ -32,7 +31,6 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.AuthLayoutBinding;
-import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.brb4.models.AuthModel;
 import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
@@ -40,22 +38,32 @@ import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class AuthActivity extends FragmentActivity implements ScanCallBack {
     private long backPressedTime;
     private Toast backToast;
     GlobalConfig config = GlobalConfig.instance();
+    Context context;
 
     TextView nameStore;
+    TextView TV;
+
     EditText login, password;
     public BarcodeView barcodeView;
 
-    AuterizationsHelper aHelper=new AuterizationsHelper();
+    public AuterizationsHelper aHelper;
     final Activity activity = this;
     private Scaner scaner=config.GetScaner();
 
     AuthModel authModel= new AuthModel(this);
     public AuthLayoutBinding binding;
+
+    static boolean isFirstRun = true;
+    static boolean isNewVersion = true;
+    static boolean isWriteDOWNLOADS =false;
+    boolean IsAutoLogin=true;
     // Калбек штрихкода з камери.
     private BarcodeCallback callback = new BarcodeCallback() {
         @Override
@@ -74,9 +82,17 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.auth_layout);
-
+        context=this.getApplicationContext();
         login = findViewById(R.id.Login);
         password = findViewById(R.id.Password);
+        TV = findViewById(R.id.StartLog);
+
+        Intent i = getIntent();
+        IsAutoLogin =  i.getBooleanExtra("IsAutoLogin",true);
+
+        //ініціалізація класа при старті.
+        Utils.instance(context);
+        config.Init(context);
 
         nameStore = findViewById(R.id.L_NameStore);
         nameStore.setText(config.Company.GetName());
@@ -87,6 +103,7 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
 
         binding.setAM (authModel);
         binding.invalidateAll();
+
 
         if(config.IsUseCamera()) {
                 barcodeView.decodeContinuous(callback);
@@ -103,18 +120,96 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
                 return false;
             }
         });
+
+
+        new AsyncHelper<Boolean>(new IAsyncHelper() {
+            @Override
+            public Boolean Invoke() {
+                AddText("Завантаження початкових даних");
+                config.GetWorker().LoadStartData();
+                AddText("Пошук Оновлення");
+                if(config.cUtils.UpdateAPK("https://github.com/OlehR/BRB4/raw/master/apk/"+(config.IsTest?"test":"work")+"/","brb4.apk",null,BuildConfig.VERSION_CODE,BuildConfig.APPLICATION_ID))
+                {
+                    AddText("Оновлення Знайдено. Встановлюємо.");
+                    return false;
+                }
+                isNewVersion=false;
+                AddText("Оновлення Відсутні");
+                aHelper=new AuterizationsHelper();
+                isFirstRun = false;
+                isWriteDOWNLOADS= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canWrite();/*) {
+                        AddText("Відсутні права на запис DOWNLOADS");
+                        return false;
+                    }*/
+    /*                if(!isWriteDOWNLOADS)
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE},0);
+*/
+                if(IsAutoLogin&& config.IsAutoLogin&&config.Password.length()>0)
+                {
+                    AddText("Автологін");
+                    String res=aHelper.Login(activity,config.Login,config.Password,config.IsLoginCO,true);
+                    if(res!=null) {
+                        AddText("Автологін Успішно");
+                        AddText(res);
+                    }
+                    else
+                        AddText("Автологін Помилка");
+                }
+                return true;
+            }},
+                new IPostResult<Boolean>() {
+                    @Override
+                    public void Invoke(Boolean p) {
+
+
+                        if(p) {
+                            authModel.IsStarting=false;
+                            binding.invalidateAll();
+                        }
+                        onResume();
+                        // if( !config.isAutorized)
+                        //     RunAuth();
+                    }
+                }
+        ).execute();
+
     }
 
     @Override
     public void onResume() {
-        super.onResume();
-        //Zebra
-        scaner.StartScan();
 
-        if(config.IsUseCamera())
-            barcodeView.resume();
+        if (!isFinishing() && !isDestroyed()) {
+            super.onResume();
+            //Zebra
+            if (!authModel.IsStarting) {
+                scaner.StartScan();
 
-        //IntentIntegrator.forSupportFragment(this).setBeepEnabled(true);
+                if (config.IsUseCamera())
+                    barcodeView.resume();
+            } else {
+                isWriteDOWNLOADS = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canWrite();
+                boolean isAskPermissionCamera = config.IsUseCamera() && (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED);
+
+                boolean isPhoneState = (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED);
+                if (!isFirstRun) {
+                    if (isNewVersion) {
+                        AddText("Для продовження роботи необхідно оновити BRB4");
+                    } else {
+
+                        if (isAskPermissionCamera || !isPhoneState || (!isWriteDOWNLOADS && Build.VERSION.SDK_INT <= Build.VERSION_CODES.Q)) { //Непонятка з 10 андроїдом. Треба буде розібратись.
+                            String[] Permissions = config.IsUseCamera() ?
+                                    new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE} :
+                                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.READ_PHONE_STATE};
+                            AddText("Для продовження роботи необхідно надати права на Зберігання та Статус телефона");
+                            requestPermissions(Permissions, 0);
+                        } else
+                            if(config.isAutorized)
+                            RunForm(MainActivity.class );
+                    }
+                }
+            }
+        }
+
     }
 
     @Override
@@ -228,5 +323,29 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
  //       finish();
         moveTaskToBack(true);
         finishAndRemoveTask();
+    }
+
+    void AddText(final String pText)
+    {
+        Utils.WriteLog(pText+"\n");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                authModel.Log=pText+"\n"+authModel.Log;
+                binding.invalidateAll();
+            }
+        });
+    }
+
+    public void RunForm(final Class<?> par)    {//boolean pUseAutologin
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Intent i = new Intent(context,par); //(context, AuthActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(i);
+                finish();
+            }
+        });
     }
 }

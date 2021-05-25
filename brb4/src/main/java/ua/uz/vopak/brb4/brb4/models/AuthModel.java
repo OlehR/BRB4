@@ -13,11 +13,12 @@ import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
 public class AuthModel {
     GlobalConfig config = GlobalConfig.instance();
-
+    public boolean IsStarting = true;
     public boolean IsLoginCO = config.IsLoginCO;
+    public String Log="Start";
     public String Login = config.Login;
     public String Password = (config.IsDebug ?config.Password:"");
-    AuterizationsHelper aHelper=new AuterizationsHelper();
+
     AuthActivity authActivity;
     public AuthModel(AuthActivity pAuthActivity ) {authActivity=pAuthActivity;}
 
@@ -49,7 +50,7 @@ public class AuthModel {
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                aHelper.Login(authActivity,Login,Password,IsLoginCO,true);
+                authActivity.aHelper.Login(authActivity,Login,Password,IsLoginCO,true);
                 return null;
             }
         }).execute();

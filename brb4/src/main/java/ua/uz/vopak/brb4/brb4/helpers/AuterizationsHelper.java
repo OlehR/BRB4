@@ -34,6 +34,7 @@ public class AuterizationsHelper {
             Connector c = Connector.instance();
             Result r=c.Login(pLogin,pPassWord,pIsLoginCO);
             if(r.State==0) {
+                Res="Ok";
                 config.DocsSetting=config.Worker.GenSettingDocs(config.Company,config.Role);
                 if(pIsLoginCO && config.Company==eCompany.Sim23)
                 {

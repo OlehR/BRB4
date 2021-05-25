@@ -156,7 +156,9 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
        runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                config.isAutorized=false;
                 Intent i = new Intent(context, AuthActivity.class);
+                i.putExtra("IsAutoLogin",false);
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(i);
                 finish();

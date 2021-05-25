@@ -26,15 +26,8 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
-
-        <uses-library
-            android:name="com.symbol.emdk"
-            android:required="false" />
-        <uses-library
-            android:name="device.sdk"
-            android:required="false" />
         <activity
-            android:name=".StartActivity"
+            android:name=".AuthActivity"
             android:noHistory="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
@@ -43,13 +36,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+<!--
         <activity
             android:name=".AuthActivity"
             android:launchMode="singleTop"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            />
+            />-->
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

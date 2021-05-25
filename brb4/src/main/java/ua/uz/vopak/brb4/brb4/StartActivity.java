@@ -23,7 +23,7 @@ import ua.uz.vopak.brb4.lib.helpers.Utils;
 public class StartActivity extends AppCompatActivity {
     TextView TV;
     static GlobalConfig config = GlobalConfig.instance();
-    Context context;
+    Context context=this.getApplicationContext();
     final Activity activity = this;
     static boolean isFirstRun = true;
     static boolean isNewVersion = true;
@@ -33,7 +33,7 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
         TV = findViewById(R.id.StartLog);
-        context = this.getApplicationContext();
+        //context = this.getApplicationContext();
         //ініціалізація класа при старті.
         Utils.instance(context);
         config.Init(context);
