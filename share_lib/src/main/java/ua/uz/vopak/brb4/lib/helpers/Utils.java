@@ -235,6 +235,14 @@ public class Utils {
             Type = "Error=>";
             Log.e(pTAG, pText);
         }
+        if(pType.equals("i")) {
+            Type = "Info=>";
+            Log.i(pTAG, pText);
+        }
+        if(pType.equals("d")) {
+            Type = "Debug=>";
+            Log.d(pTAG, pText);
+        }
         WriteLog(Type+pTAG+"\\"+pText);
     }
 

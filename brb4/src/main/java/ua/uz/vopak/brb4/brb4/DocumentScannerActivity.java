@@ -323,7 +323,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
 
     @Override
     public void Run(final String pBarCode) {
-
+        Utils.WriteLog("i",TAG, "Run=> BarCode=\"" +pBarCode+"\"");
         if(config.IsUseCamera())
             barcodeView.pause();
         findWareByArticleOrCode(pBarCode,true);

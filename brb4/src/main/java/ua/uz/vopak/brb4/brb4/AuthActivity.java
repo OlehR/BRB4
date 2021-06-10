@@ -137,13 +137,7 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
                 AddText("Оновлення Відсутні");
                 aHelper=new AuterizationsHelper();
                 isFirstRun = false;
-                isWriteDOWNLOADS= Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).canWrite();/*) {
-                        AddText("Відсутні права на запис DOWNLOADS");
-                        return false;
-                    }*/
-    /*                if(!isWriteDOWNLOADS)
-                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_EXTERNAL_STORAGE},0);
-*/
+
                 if(IsAutoLogin&& config.IsAutoLogin&&config.Password.length()>0)
                 {
                     AddText("Автологін");
@@ -157,19 +151,14 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
                 }
                 return true;
             }},
-                new IPostResult<Boolean>() {
-                    @Override
-                    public void Invoke(Boolean p) {
-
-
-                        if(p) {
-                            authModel.IsStarting=false;
-                            binding.invalidateAll();
-                        }
-                        onResume();
-                        // if( !config.isAutorized)
-                        //     RunAuth();
+                (IPostResult<Boolean>) p -> {
+                    if(p) {
+                        authModel.IsStarting=false;
+                        authModel.Login=config.Login;
+                        authModel.IsLoginCO=config.IsLoginCO;
+                        binding.invalidateAll();
                     }
+                    onResume();
                 }
         ).execute();
 

@@ -248,8 +248,6 @@ public class SQLiteAdapter
                 mCur.moveToFirst();
                 varN = mCur.getInt(0);
                 if (varN < pLimit) {
-//                    sql = "UPDATE LogPrice SET is_send=-1 WHERE `rowid` IN (SELECT `rowid` FROM LogPrice WHERE is_send=0 LIMIT 100)";
-//                    mDb.execSQL(sql);
                     ContentValues cv = new ContentValues();
                     cv.put("is_send",-1);
                     mDb.update("LogPrice",cv,"rowid  IN (SELECT rowid FROM LogPrice WHERE is_send=0 LIMIT " +pLimit+")",null);
@@ -464,55 +462,8 @@ public class SQLiteAdapter
 
         if(pParseBarCode==null)
             return null;
-
-/*        Log.d(TAG, "Find in DB  >>"+ number );
-         Integer intNum = 0;
-        boolean isBarCode = true;
-        if (number.length() <= 8 && !number.equals("")) {
-            try{
-                intNum = Integer.parseInt(number);
-            }catch(Exception e)
-            {
-                Utils.WriteLog("e",TAG,"GetScanData=> "+e.getMessage());
-            }
-
-            isBarCode = (intNum.toString().length() >= 8)||pIsOnlyBarCode;
-        }
-        if(number.length()==13 && config.Company!=eCompany.Sim23)
-        {
-            String Article=null;
-            String Quantity=null;
-            Log.e("XXX",number+' ' +number.substring(0,1));
-            if(number.substring(0,2).equals("22"))
-            {
-                isBarCode=false;
-                Article=number.substring(2,8);
-                Quantity=number.substring(8,12);
-                QuantityBarCode=Double.parseDouble(Quantity)/1000d;
-                Log.e("XXX",Article+" "+ Quantity );
-            }
-
-            if(number.substring(0,3).equals("111"))
-            {
-                isBarCode=false;
-                Article=number.substring(3,9);
-                Quantity=number.substring(9,12);
-                QuantityBarCode=Double.parseDouble(Quantity);
-                Log.e("XXX",Article+" "+ Quantity );
-            }
-
-            if(Article!=null)
-                number="00"+Article;
-        }
-        else {
-            PriceBarCode v = new PriceBarCode(number,config.Company);
-            if(v.Code>0) {
-                number=Integer.toString( v.Code);
-                isBarCode=false;
-            }
-        }*/
         try {
-            if (pParseBarCode.BarCode != null) {
+            if (pParseBarCode.BarCode != null ) {
                 sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.ABR_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                         "from BAR_CODE bc " +
                         "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
@@ -522,21 +473,13 @@ public class SQLiteAdapter
                 mCur = mDb.rawQuery(sql, null);
 
                 // Пошук по штрихкоду виробника
-                if (mCur == null || mCur.getCount() == 0) {
+                if (pParseBarCode.BarCode.length()==13 && (mCur == null || mCur.getCount() == 0)) {
                     sql = "select bc.code_wares,bc.BAR_CODE from BAR_CODE bc \n" +
                             " join wares w on bc.code_wares=w.code_wares and w.code_unit=" + config.GetCodeUnitWeight() + "\n" +
                             " where substr(bc.BAR_CODE,1,6)='" + pParseBarCode.BarCode.substring(0, 6) + "'";
                     mCur = mDb.rawQuery(sql, null);
 
-                    if (mCur == null || mCur.getCount() == 0) {
-                        /*
-                        PriceBarCode v = new PriceBarCode(number, config.Company);
-                        if (v.Code > 0) {
-                            number = Integer.toString(v.Code);
-                            return GetScanData(TypeDoc, DocNumber, number, false,true);
-                        }*/
-
-                    } else {
+                    if (mCur != null && mCur.getCount() > 0) {
                         while (mCur.moveToNext()) {
                             int CodeWares = mCur.getInt(0);
                             String BarCode = mCur.getString(1);
@@ -558,7 +501,7 @@ public class SQLiteAdapter
                     }
                 }
             }
-            //else // Пошук по коду
+            // Пошук по коду
             if ((mCur == null || mCur.getCount() == 0 ) && (pParseBarCode.Code > 0 || pParseBarCode.Article != null)) {
                 String Find = pParseBarCode.Code > 0 ? "w.code_wares=" + pParseBarCode.Code : "w.ARTICL='" + pParseBarCode.Article + "'";
                 sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
@@ -567,7 +510,6 @@ public class SQLiteAdapter
                         "join UNIT_DIMENSION ud on w.CODE_UNIT=ud.CODE_UNIT " +
                         "where " + Find;
                 mCur = mDb.rawQuery(sql, null);
-
             }
 
             if (mCur != null && mCur.getCount() > 0) {
