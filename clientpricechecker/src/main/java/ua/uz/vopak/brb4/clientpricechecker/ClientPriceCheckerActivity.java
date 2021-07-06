@@ -28,6 +28,7 @@ import android.widget.VideoView;
 
 import org.json.JSONObject;
 
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
@@ -72,6 +73,8 @@ public class ClientPriceCheckerActivity extends Activity {
         BarCode = findViewById(R.id.BarCode);
         HideInfoBTN = findViewById(R.id.HiddenInfoBtn);
         HideInfoLayout = findViewById(R.id.HideInfoLayout);
+        config = ua.uz.vopak.brb4.clientpricechecker.Config.instance(this.getApplicationContext());
+        config.Company= eCompany.VopakPSU;
         BarCode.addTextChangedListener(new TextWatcher() {
 
             // the user's changes are saved here
@@ -102,7 +105,8 @@ public class ClientPriceCheckerActivity extends Activity {
             }
         });
 
-        config = ua.uz.vopak.brb4.clientpricechecker.Config.instance(this.getApplicationContext());
+
+
         res = getResources();
         InfoLayout = findViewById(R.id.InfoLayout);
         Title = findViewById(R.id.Title);
@@ -124,11 +128,11 @@ public class ClientPriceCheckerActivity extends Activity {
         Sum = findViewById(R.id.Sum);
         Resources res = getResources();
 
-        Drawable background = res.getDrawable(config.IsSpar ? R.drawable.background2spar : R.drawable.background1vopak);
+        Drawable background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.background2spar : R.drawable.background1vopak);
         Background.setBackground(background);
-        background = res.getDrawable(config.IsSpar ? R.drawable.logo1spar : R.drawable.logo1vopak);
+        background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.logo1spar : R.drawable.logo1vopak);
         Logo.setBackground(background);
-        background = res.getDrawable(config.IsSpar ? R.drawable.logo2spar : R.drawable.logo2vopak);
+        background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.logo2spar : R.drawable.logo2vopak);
         Logo2.setBackground(background);
         if (videoTimer != null) {
             videoTimer.cancel();
@@ -250,7 +254,7 @@ public class ClientPriceCheckerActivity extends Activity {
         Sum.setVisibility(Li.Sum > 0 ? View.VISIBLE : View.INVISIBLE);
 
 
-        Drawable background = res.getDrawable(config.IsSpar ? R.drawable.background1spar : R.drawable.background1vopak);
+        Drawable background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.background1spar : R.drawable.background1vopak);
         Background.setBackground(background);
 
         LogoLayout.setVisibility(View.INVISIBLE);
@@ -301,7 +305,7 @@ public class ClientPriceCheckerActivity extends Activity {
         HideInfoLayout.setVisibility(View.INVISIBLE);
         LogoLayout.setVisibility(View.VISIBLE);
 
-        Drawable background = res.getDrawable(config.IsSpar ? R.drawable.background2spar : R.drawable.background2vopak);
+        Drawable background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.background2spar : R.drawable.background2vopak);
         Background.setBackground(background);
 
         if (videoTimer != null) {

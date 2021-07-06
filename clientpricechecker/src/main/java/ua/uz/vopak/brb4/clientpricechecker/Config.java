@@ -6,6 +6,7 @@ import android.os.Build;
 
 import org.xmlpull.v1.XmlPullParser;
 
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 
 public class Config extends AbstractConfig {
@@ -22,7 +23,7 @@ public class Config extends AbstractConfig {
     public static String SmbPassword;
     public static String SmbPath;
     public static String SmbServer;
-    public static boolean IsSpar;
+    //public static boolean IsSpar;
     XmlResourceParser xrp;
 
     protected Config(Context parContext){
@@ -38,7 +39,8 @@ public class Config extends AbstractConfig {
                     switch (xrp.getName()){
                         case "CodeWarehouse" :
                             CodeWarehouse = xrp.getAttributeValue(null,"value");
-                            IsSpar= (Integer.valueOf(CodeWarehouse)>30);
+
+                            Company= (Integer.valueOf(CodeWarehouse)>30)?eCompany.SparPSU :eCompany.VopakPSU;
                             break;
                         case "Login" :
                             Login = xrp.getAttributeValue(null,"value");
