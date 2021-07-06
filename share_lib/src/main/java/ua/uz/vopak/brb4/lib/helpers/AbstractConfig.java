@@ -32,6 +32,8 @@ public abstract class AbstractConfig {
 
     public int GetCodeUnitWeight() { return Company == eCompany.VopakPSU?7:166;}
 
+    public int GetCodeUnitPiece() { return Company == eCompany.VopakPSU?19:796;}
+
     public String ApiUrl,ApiURLadd;
 
     public eTypeScaner TypeScaner = eTypeScaner.NotDefine;

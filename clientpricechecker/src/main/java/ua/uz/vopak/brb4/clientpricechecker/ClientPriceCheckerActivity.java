@@ -28,6 +28,10 @@ import android.widget.VideoView;
 
 import org.json.JSONObject;
 
+import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
+import ua.uz.vopak.brb4.lib.helpers.IPostResult;
+import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 import java.util.HashMap;
@@ -37,10 +41,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class ClientPriceCheckerActivity extends Activity {
-    TextView Title, BarCodeView, Article, ActionView, PriceBill, PriceCoin, PriceBillOpt, PriceCoinOpt, OptTitle,Sum;
+    TextView Title, BarCodeView, Article, ActionView, PriceBill, PriceCoin, PriceBillOpt, PriceCoinOpt, OptTitle, Sum;
     RelativeLayout InfoLayout;
     LinearLayout LogoLayout, OptPriceBlock, VideoWatermark, HideInfoLayout;
-    ImageView Background,Logo,Logo2;
+    ImageView Background, Logo, Logo2;
     VideoView PromoVideo;
     ClientPriceCheckerActivity context;
     LinearLayout ClientPriceChecker;
@@ -53,6 +57,7 @@ public class ClientPriceCheckerActivity extends Activity {
     Button HideInfoBTN;
     ua.uz.vopak.brb4.clientpricechecker.Config config;
     Resources res;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
@@ -71,20 +76,22 @@ public class ClientPriceCheckerActivity extends Activity {
 
             // the user's changes are saved here
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                    if(s.toString().indexOf("\n") > 0){
-                        String barCode = BarCode.getText().toString();
-                        BarCode.setText("");
-                        if(videoTimer != null){
-                            videoTimer.cancel();
-                        }
-
-                        if(PromoVideo.isPlaying()){
-                            PromoVideo.stopPlayback();
-                            PromoVideo.setVisibility(View.INVISIBLE);
-                            VideoWatermark.setVisibility(View.INVISIBLE);
-                        }
-                        new AsyncPriceDataHelper(context).execute(barCode);
+                if (s.toString().indexOf("\n") > 0) {
+                    String barCode = BarCode.getText().toString();
+                    BarCode.setText("");
+                    if (videoTimer != null) {
+                        videoTimer.cancel();
                     }
+
+                    if (PromoVideo.isPlaying()) {
+                        PromoVideo.stopPlayback();
+                        PromoVideo.setVisibility(View.INVISIBLE);
+                        VideoWatermark.setVisibility(View.INVISIBLE);
+                    }
+
+                    FindBarCode(barCode);
+                    // new AsyncPriceDataHelper(context).execute(barCode);
+                }
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -94,6 +101,7 @@ public class ClientPriceCheckerActivity extends Activity {
             public void afterTextChanged(Editable s) {
             }
         });
+
         config = ua.uz.vopak.brb4.clientpricechecker.Config.instance(this.getApplicationContext());
         res = getResources();
         InfoLayout = findViewById(R.id.InfoLayout);
@@ -111,18 +119,18 @@ public class ClientPriceCheckerActivity extends Activity {
         VideoWatermark = findViewById(R.id.VideoWatermark);
         OptTitle = findViewById(R.id.OptTitle);
         OptPriceBlock = findViewById(R.id.OptPriceBlock);
-        Logo=findViewById(R.id.Logo);
-        Logo2=findViewById(R.id.Logo2);
+        Logo = findViewById(R.id.Logo);
+        Logo2 = findViewById(R.id.Logo2);
         Sum = findViewById(R.id.Sum);
         Resources res = getResources();
 
-        Drawable background = res.getDrawable(config.IsSpar?R.drawable.background2spar:R.drawable.background1vopak);
+        Drawable background = res.getDrawable(config.IsSpar ? R.drawable.background2spar : R.drawable.background1vopak);
         Background.setBackground(background);
-        background = res.getDrawable(config.IsSpar?R.drawable.logo1spar:R.drawable.logo1vopak);
+        background = res.getDrawable(config.IsSpar ? R.drawable.logo1spar : R.drawable.logo1vopak);
         Logo.setBackground(background);
-        background = res.getDrawable(config.IsSpar?R.drawable.logo2spar:R.drawable.logo2vopak);
+        background = res.getDrawable(config.IsSpar ? R.drawable.logo2spar : R.drawable.logo2vopak);
         Logo2.setBackground(background);
-        if(videoTimer != null){
+        if (videoTimer != null) {
             videoTimer.cancel();
         }
 
@@ -137,7 +145,7 @@ public class ClientPriceCheckerActivity extends Activity {
                     @Override
                     public void run() {
                         //replace this line to scroll up or down
-                        if(!hasFocus) {
+                        if (!hasFocus) {
                             BarCode.requestFocus();
                         }
                     }
@@ -145,12 +153,12 @@ public class ClientPriceCheckerActivity extends Activity {
             }
         });
 
-        new Timer().schedule(new TimerTask(){
+        new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
                 new AsyncFileCheker(context).execute();
             }
-        },20000, 60000 * 60);
+        }, 20000, 60000 * 60);
 
         pm = (PowerManager) getSystemService(context.POWER_SERVICE);
         wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "clientpriceckecker::client_priceckecker_sleep");
@@ -190,8 +198,8 @@ public class ClientPriceCheckerActivity extends Activity {
                         lastTapTimeMs = System.currentTimeMillis();
 
                         if (numberOfTaps == 3) {
-                            if(InfoLayout.getVisibility() == View.VISIBLE)
-                            HideInfoLayout.setVisibility(View.VISIBLE);
+                            if (InfoLayout.getVisibility() == View.VISIBLE)
+                                HideInfoLayout.setVisibility(View.VISIBLE);
                         }
                 }
 
@@ -201,34 +209,58 @@ public class ClientPriceCheckerActivity extends Activity {
 
     }
 
-    public void setScanResult(LabelInfo Li){
+    public void FindBarCode(String pBarCode) {
+        new AsyncHelper<LabelInfo>(new IAsyncHelper() {
+            @Override
+            public LabelInfo Invoke() {
+                LabelInfo LI = new LabelInfo(null);
+                String BarCode = pBarCode.replace("\n", "");
+
+                LI = new PricecheckerHelper().getPriceCheckerData(LI, BarCode, false, config);
+                if (LI.resHttp != null && !LI.resHttp.isEmpty()) {
+                    try {
+                        LI.Init(new JSONObject(LI.resHttp));
+                    } catch (Exception e) {
+                        e.getMessage();
+                    }
+                }
+                return LI;
+            }
+        },
+                (IPostResult<LabelInfo>) p -> {
+                    setScanResult(p);
+                }
+        ).execute();
+    }
+
+    public void setScanResult(LabelInfo Li) {
         Title.setText(Li.Name);
         BarCodeView.setText(Li.BarCode.get());
         Article.setText(Li.Article);
-        PriceBill.setText(((Integer)Li.PriceBill).toString());
+        PriceBill.setText(((Integer) Li.PriceBill).toString());
         PriceCoin.setText(Li.strPriceCoin() + " " + Li.Unit);
-        PriceBillOpt.setText(((Integer)Li.PriceBillOpt).toString());
+        PriceBillOpt.setText(((Integer) Li.PriceBillOpt).toString());
         PriceCoinOpt.setText(Li.strPriceCoinOpt());
-        OptTitle.setText("від "+ (Math.round(Li.QuantityOpt)==(long) Li.QuantityOpt ? Long.toString((long)  Li.QuantityOpt) : Double.toString(Li.QuantityOpt)) + " " + Li.Unit);
+        OptTitle.setText("від " + (Math.round(Li.QuantityOpt) == (long) Li.QuantityOpt ? Long.toString((long) Li.QuantityOpt) : Double.toString(Li.QuantityOpt)) + " " + Li.Unit);
 
-        OptPriceBlock.setVisibility(Li.PriceBillOpt > 0 || Li.PriceCoinOpt > 0?View.VISIBLE:View.INVISIBLE);
+        OptPriceBlock.setVisibility(Li.PriceBillOpt > 0 || Li.PriceCoinOpt > 0 ? View.VISIBLE : View.INVISIBLE);
 
-        ActionView.setVisibility(Li.Action()?View.VISIBLE:View.INVISIBLE);
-        Sum.setText(Double.toString(Li.Sum)+" грн");
-        Sum.setVisibility(Li.Sum>0?View.VISIBLE:View.INVISIBLE);
+        ActionView.setVisibility(Li.Action() ? View.VISIBLE : View.INVISIBLE);
+        Sum.setText(Double.toString(Li.Sum) + " грн");
+        Sum.setVisibility(Li.Sum > 0 ? View.VISIBLE : View.INVISIBLE);
 
 
-        Drawable background = res.getDrawable(config.IsSpar?R.drawable.background1spar:R.drawable.background1vopak);
+        Drawable background = res.getDrawable(config.IsSpar ? R.drawable.background1spar : R.drawable.background1vopak);
         Background.setBackground(background);
 
         LogoLayout.setVisibility(View.INVISIBLE);
         InfoLayout.setVisibility(View.VISIBLE);
 
-        if(videoTimer != null){
+        if (videoTimer != null) {
             videoTimer.cancel();
         }
 
-        if(PromoVideo.isPlaying()){
+        if (PromoVideo.isPlaying()) {
             PromoVideo.stopPlayback();
             PromoVideo.setVisibility(View.INVISIBLE);
             VideoWatermark.setVisibility(View.INVISIBLE);
@@ -249,31 +281,30 @@ public class ClientPriceCheckerActivity extends Activity {
             Iterator keys = fields.keys();
             int dpValue = 18;
             float d = context.getResources().getDisplayMetrics().density;
-            int textSize = (int)(dpValue * d);
+            int textSize = (int) (dpValue * d);
             while (keys.hasNext()) {
                 String key = (String) keys.next();
 
                 TextView label = new TextView(this);
-                label.setText(key+" : "+fields.get(key));
+                label.setText(key + " : " + fields.get(key));
                 label.setTextSize(textSize);
                 HideInfoLayout.addView(label);
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
-
     }
 
-    public void hideInfo(){
+    public void hideInfo() {
         InfoLayout.setVisibility(View.INVISIBLE);
         HideInfoLayout.removeAllViews();
         HideInfoLayout.setVisibility(View.INVISIBLE);
         LogoLayout.setVisibility(View.VISIBLE);
 
-        Drawable background = res.getDrawable(config.IsSpar?R.drawable.background2spar:R.drawable.background2vopak);
+        Drawable background = res.getDrawable(config.IsSpar ? R.drawable.background2spar : R.drawable.background2vopak);
         Background.setBackground(background);
 
-        if(videoTimer != null){
+        if (videoTimer != null) {
             videoTimer.cancel();
         }
 
@@ -281,15 +312,15 @@ public class ClientPriceCheckerActivity extends Activity {
         videoTimer.schedule(new VideoPlaybackTimerTask(), 60000, 60000);
     }
 
-    public void videoPlayback(){
-        Uri uri = Uri.parse(Environment.getExternalStorageDirectory()+"/Movies/promo.mp4");
+    public void videoPlayback() {
+        Uri uri = Uri.parse(Environment.getExternalStorageDirectory() + "/Movies/promo.mp4");
         PromoVideo.setVideoURI(uri);
         PromoVideo.setVisibility(View.VISIBLE);
         VideoWatermark.setVisibility(View.VISIBLE);
         PromoVideo.start();
         BarCode.requestFocus();
 
-        if(videoTimer != null){
+        if (videoTimer != null) {
             videoTimer.cancel();
         }
 
@@ -321,7 +352,6 @@ public class ClientPriceCheckerActivity extends Activity {
 
         @Override
         public void run() {
-
             runOnUiThread(new Runnable() {
 
                 @Override
@@ -333,12 +363,9 @@ public class ClientPriceCheckerActivity extends Activity {
     }
 
     class VideoPlaybackTimerTask extends TimerTask {
-
         @Override
         public void run() {
-
             runOnUiThread(new Runnable() {
-
                 @Override
                 public void run() {
                     videoPlayback();
@@ -351,12 +378,15 @@ public class ClientPriceCheckerActivity extends Activity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
-    };
-    class SleepOrWakeUp extends  TimerTask{
+    }
+
+    ;
+
+    class SleepOrWakeUp extends TimerTask {
 
         @Override
         public void run() {
-            if(!wl.isHeld()) {
+            if (!wl.isHeld()) {
                 if (videoTimer != null) {
                     videoTimer.cancel();
                 }
@@ -368,7 +398,7 @@ public class ClientPriceCheckerActivity extends Activity {
                 }
 
                 wl.acquire();
-            }else{
+            } else {
                 wl.release();
                 videoPlayback();
             }

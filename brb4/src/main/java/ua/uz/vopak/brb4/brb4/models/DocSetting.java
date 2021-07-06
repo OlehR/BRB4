@@ -30,13 +30,15 @@ public class DocSetting {
     public boolean IsSaveOnlyScan=true;
     //Дозволяти в документ добавляти позиції з 0 кількістю (для мініревізій)
     public boolean IsAddZero = false;
+    // Документ з назвою і штрихкодом в табличній частині
+    public boolean IsSimpleDoc = false;
 
     public DocSetting(int pTypeDoc,String pNameDoc)
     {
         TypeDoc=pTypeDoc;
         NameDoc=pNameDoc;
     }
-    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut,boolean pIsmultipleSave,boolean pIsSaveOnlyScan,boolean pIsAddZero )
+    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut,boolean pIsmultipleSave,boolean pIsSaveOnlyScan,boolean pIsAddZero,boolean pIsSimpleDoc )
     {
         this(pTypeDoc, pNameDoc);
         TypeControlQuantity =pTypeControlQuantity;
@@ -52,6 +54,7 @@ public class DocSetting {
         IsMultipleSave =pIsmultipleSave;
         IsSaveOnlyScan=pIsSaveOnlyScan;
         IsAddZero=pIsAddZero;
+        IsSimpleDoc =pIsSimpleDoc;
 
     }
 

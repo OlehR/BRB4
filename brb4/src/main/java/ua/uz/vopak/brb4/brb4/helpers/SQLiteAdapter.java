@@ -387,50 +387,48 @@ public class SQLiteAdapter
         }
 
         if(pTypeResult==1)
-          sql = " select dw1.order_doc, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
+          sql = " select dw1.order_doc, w.CODE_WARES,coalesce(w.NAME_WARES,dws.name) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
                 ",dw1.quantity_reason as quantity_reason \n" +
                   Color+
                   ",w.code_unit\n"+
                   "    from Doc d  \n" +
                 "    join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,max(dw.order_doc) as order_doc,sum(quantity_old) as quantity_old,  sum(case when dw.CODE_Reason>0 then  dw.quantity else 0 end) as quantity_reason  from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
-                "    join wares w on dw1.code_wares = w.code_wares \n" +
+                "    Left join wares w on dw1.code_wares = w.code_wares \n" +
                 "    left join (\n" +
-                  "    select  dws.type_doc ,dws.number_doc, dws.code_wares, sum(dws.quantity) as quantity,  min(dws.quantity_min) as quantity_min, max(dws.quantity_max) as quantity_max  from   DOC_WARES_sample dws   group by dws.type_doc ,dws.number_doc,dws.code_wares\n" +
+                  "    select  dws.type_doc ,dws.number_doc, dws.code_wares,dws.name, sum(dws.quantity) as quantity,  min(dws.quantity_min) as quantity_min, max(dws.quantity_max) as quantity_max  from   DOC_WARES_sample dws   group by dws.type_doc ,dws.number_doc,dws.code_wares,dws.name\n" +
                   "    ) as dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = w.code_wares\n" +
                 "    where d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                 " union all\n" + 
-                " select dws.order_doc+100000, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
+                " select dws.order_doc+100000, w.CODE_WARES,coalesce(w.NAME_WARES,dws.name) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
                 "     ,0 as  quantity_reason "+
                 ", 3 as Ord\n"+
                 ",w.code_unit\n"+
                 "    from Doc d  \n" +
                 "    join DOC_WARES_sample dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc --and dws.code_wares = w.code_wares\n" +
-                "    join wares w on dws.code_wares = w.code_wares \n" +
+                "    left join wares w on dws.code_wares = w.code_wares \n" +
                 "    left join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,sum(dw.quantity_old) as quantity_old from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc and dw1.code_wares = w.code_wares)\n" +
                 "    where dw1.type_doc is null and d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                 " order by "+OrderQuery;
 
         if(pTypeResult==2)
-            sql="select dw1.order_doc, w.CODE_WARES,w.NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old,dw1.CODE_Reason \n" +
+            sql="select dw1.order_doc, w.CODE_WARES,coalesce(w.NAME_WARES,dws.name) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old,dw1.CODE_Reason \n" +
                     ",0 as Ord,w.code_unit\n"+
                     "    from Doc d  \n" +
                     "    join doc_wares dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
-                    "    join wares w on dw1.code_wares = w.code_wares \n" +
+                    "    left join wares w on dw1.code_wares = w.code_wares \n" +
                     "    left join (\n" +
-                    "    select  dws.type_doc ,dws.number_doc, dws.code_wares, sum(dws.quantity) as quantity,  min(dws.quantity_min) as quantity_min, max(dws.quantity_max) as quantity_max  from   DOC_WARES_sample dws   group by dws.type_doc ,dws.number_doc,dws.code_wares\n" +
+                    "    select  dws.type_doc ,dws.number_doc, dws.code_wares,dws.name, sum(dws.quantity) as quantity,  min(dws.quantity_min) as quantity_min, max(dws.quantity_max) as quantity_max  from   DOC_WARES_sample dws   group by dws.type_doc ,dws.number_doc,dws.code_wares,dws.name\n" +
                     "    ) as dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = w.code_wares\n"+
                     "    where d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                     " order by 1,2";
 
-
-        DocSetting DocSetting=config.GetDocSetting(pTypeDoc);
         try {
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null && mCur.getCount() > 0) {
                 while (mCur.moveToNext()){
                     WaresItemModel WaresModel = new WaresItemModel();
                     WaresModel.TypeDoc=pTypeDoc;
-                    WaresModel.DocSetting=DocSetting;
+                    WaresModel.DocSetting=DS;
                     WaresModel.OrderDoc = mCur.getInt(0);
                     WaresModel.CodeWares = mCur.getInt(1);
                     WaresModel.NameWares = mCur.getString(2);
@@ -455,15 +453,25 @@ public class SQLiteAdapter
         return model;
     }
 
-    public WaresItemModel GetScanData(int TypeDoc, String DocNumber, ParseBarCode pParseBarCode) {  // String number, boolean pIsOnlyBarCode, boolean isCode) {
+    public WaresItemModel GetScanData(int pTypeDoc, String pDocNumber, ParseBarCode pParseBarCode) {
         WaresItemModel model = null;
         Cursor mCur = null;
         String sql;
-
+        String CodeUnit = String.valueOf(config.GetCodeUnitPiece());
         if(pParseBarCode==null)
             return null;
         try {
-            if (pParseBarCode.BarCode != null ) {
+            DocSetting DS = config.GetDocSetting(pTypeDoc);
+            if (DS.IsSimpleDoc) {
+                sql = "select dws.CODE_WARES,dws.NAME as NAME_WARES,1 as COEFFICIENT,"+CodeUnit+" as CODE_UNIT, \"шт\" as ABR_UNIT , dws.BarCode as BAR_CODE  ,"+CodeUnit+" as BASE_CODE_UNIT  "+
+                        "\nfrom DOC_WARES_sample dws"+
+                " \nwhere  dws.Type_doc=" + pTypeDoc + " and dws.number_doc=\"" + pDocNumber + "\" and dws.BarCode= "+pParseBarCode.BarCode;
+                mCur = mDb.rawQuery(sql, null);
+
+            }else
+            {
+
+            if (pParseBarCode.BarCode != null) {
                 sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,bc.CODE_UNIT, ud.ABR_UNIT , bc.BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                         "from BAR_CODE bc " +
                         "join ADDITION_UNIT au on bc.CODE_WARES=au.CODE_WARES and au.CODE_UNIT=bc.CODE_UNIT " +
@@ -473,7 +481,7 @@ public class SQLiteAdapter
                 mCur = mDb.rawQuery(sql, null);
 
                 // Пошук по штрихкоду виробника
-                if (pParseBarCode.BarCode.length()==13 && (mCur == null || mCur.getCount() == 0)) {
+                if (pParseBarCode.BarCode.length() == 13 && (mCur == null || mCur.getCount() == 0)) {
                     sql = "select bc.code_wares,bc.BAR_CODE from BAR_CODE bc \n" +
                             " join wares w on bc.code_wares=w.code_wares and w.code_unit=" + config.GetCodeUnitWeight() + "\n" +
                             " where substr(bc.BAR_CODE,1,6)='" + pParseBarCode.BarCode.substring(0, 6) + "'";
@@ -486,7 +494,7 @@ public class SQLiteAdapter
                             if (pParseBarCode.BarCode.substring(0, BarCode.length()).equals(BarCode)) {
                                 ParseBarCode p = new ParseBarCode();
                                 p.Code = CodeWares;
-                                WaresItemModel res = GetScanData(TypeDoc, DocNumber, p);//CodeWares, pIsOnlyBarCode,false);
+                                WaresItemModel res = GetScanData(pTypeDoc, pDocNumber, p);//CodeWares, pIsOnlyBarCode,false);
                                 try {
                                     String Weight;
                                     Weight = pParseBarCode.BarCode.substring(8, 12);
@@ -502,7 +510,7 @@ public class SQLiteAdapter
                 }
             }
             // Пошук по коду
-            if ((mCur == null || mCur.getCount() == 0 ) && (pParseBarCode.Code > 0 || pParseBarCode.Article != null)) {
+            if ((mCur == null || mCur.getCount() == 0) && (pParseBarCode.Code > 0 || pParseBarCode.Article != null)) {
                 String Find = pParseBarCode.Code > 0 ? "w.code_wares=" + pParseBarCode.Code : "w.ARTICL='" + pParseBarCode.Article + "'";
                 sql = "select w.CODE_WARES,w.NAME_WARES,au.COEFFICIENT,w.CODE_UNIT, ud.ABR_UNIT , '' as BAR_CODE  ,w.CODE_UNIT as BASE_CODE_UNIT " +
                         "from WARES w " +
@@ -511,7 +519,7 @@ public class SQLiteAdapter
                         "where " + Find;
                 mCur = mDb.rawQuery(sql, null);
             }
-
+        }
             if (mCur != null && mCur.getCount() > 0) {
                 mCur.moveToFirst();
                 model = new WaresItemModel();
@@ -529,10 +537,10 @@ public class SQLiteAdapter
             Utils.WriteLog("e", TAG, "GetScanData >>" + e.getMessage());
 
         }
-        if (model != null && DocNumber != null) {
+        if (model != null && pDocNumber != null) {
             sql = "select coalesce(d.Is_Control,0) as Is_Control, coalesce(quantity_max,0) as quantity_max, coalesce(quantity,0) as quantity, case when dws.Type_doc is null then 0 else 1 end as Find from DOC d\n" +
                     " left join DOC_WARES_sample dws on d.Type_doc=dws.Type_doc and d.number_doc=dws.number_doc and dws.code_wares=" + model.CodeWares +
-                    " \nwhere  d.Type_doc=" + TypeDoc + " and d.number_doc=\"" + DocNumber + "\"";
+                    " \nwhere  d.Type_doc=" + pTypeDoc + " and d.number_doc=\"" + pDocNumber + "\"";
             try {
                 mCur = mDb.rawQuery(sql, null);
                 if (mCur != null && mCur.getCount() > 0) {
@@ -564,7 +572,6 @@ public class SQLiteAdapter
             }
         }catch (Exception e){
             Utils.WriteLog("e",TAG, "GetReason>>"+  e.getMessage());
-
         }
         return model.toArray(new Reason[model.size()]);
     }
@@ -698,6 +705,9 @@ public class SQLiteAdapter
     }
 
     public boolean SaveWarehouse(Warehouse pWh ) {
+        if(pWh==null)
+            return false;
+
         long result = -1;
         ContentValues values = new ContentValues();
         values.put("Code", pWh.Code);
@@ -710,8 +720,8 @@ public class SQLiteAdapter
         result = mDb.replace("Warehouse", null, values);
         return result != -1;
     }
-    public List<Warehouse> GetWarehouse()
-    {
+
+    public List<Warehouse> GetWarehouse(){
         List<Warehouse> res= new ArrayList<>();
         Cursor mCur;
         String sql="select Code,  Number,Name, Url, InternalIP TEXT, ExternalIP from Warehouse";
@@ -725,7 +735,6 @@ public class SQLiteAdapter
             }
         }catch (Exception e){
             Utils.WriteLog("e",TAG, "GetWarehouse >>"+  e.getMessage());
-
         }
         return res;
     }
@@ -739,6 +748,7 @@ public class SQLiteAdapter
         }
         return false;
     }
+    
     public boolean SaveReason(List<ua.uz.vopak.brb4.brb4.Connector.SE.Reason> pReasons) {
         mDb.beginTransaction();
         try {
@@ -867,17 +877,17 @@ public class SQLiteAdapter
     }
 
     public  boolean SaveWarehouse(Warehouse[] pWh ) {
+        if(pWh==null)
+            return false;
         boolean res=true;
         ClearWarehouse();
         for (Warehouse el :pWh ) {
-            res&=
-            SaveWarehouse(el);
+            res&=SaveWarehouse(el);
         }
         return res;
     }
 
-    public void CloseDB()
-    {
+    public void CloseDB(){
         mDb.close();
         mDbHelper.close();
     }

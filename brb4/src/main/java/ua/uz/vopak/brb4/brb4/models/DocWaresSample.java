@@ -8,4 +8,6 @@ public class DocWaresSample {
     public Double  Quantity; // планова кількість для приходу(замовлення)
     public Double  QuantityMin; //не використовується
     public Double  QuantityMax; // Максимальна кількість товару в документі, контролюється якщо IsControl=1
+    public String Name; // Назва ОЗ(Основного Засобу)
+    public String BarCode; //Штрихкод ОЗ
 }

@@ -28,9 +28,10 @@ public class DataBaseHelper extends SQLiteOpenHelper
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //db.execSQL("DROP TABLE IF EXISTS " + TABLE_CONTACTS);
         onCreate(db);
+        String sql3;
         if (oldVersion<3 && newVersion >= 3) {
 
-            String sql3 = "CREATE TABLE Warehouse (\n" +
+            sql3 = "CREATE TABLE Warehouse (\n" +
                     "    Code       INT  PRIMARY KEY NOT NULL,\n" +
                     "    Number     TEXT,\n" +
                     "    Name       TEXT,\n" +
@@ -40,11 +41,20 @@ public class DataBaseHelper extends SQLiteOpenHelper
                     "WITHOUT ROWID;";
             db.execSQL(sql3);
         }
+
+        if (oldVersion<4 && newVersion >= 4) {
+            sql3="alter table DOC_WARES_sample add COLUMN Name TEXT;";
+            db.execSQL(sql3);
+            sql3="alter table DOC_WARES_sample add COLUMN BarCode TEXT;";
+            db.execSQL(sql3);
+            sql3="create index DOC_WARES_sample_BC on DOC_WARES_sample (BarCode);";
+            db.execSQL(sql3);
+        }
     }
 
     public DataBaseHelper(Context context)
     {
-        super(context, DB_NAME, null, 3);// 1? Its database Version
+        super(context, DB_NAME, null, 4);// 1? Its database Version
         if(android.os.Build.VERSION.SDK_INT >= 17){
             DB_PATH = context.getApplicationInfo().dataDir + "/databases/";
         }
