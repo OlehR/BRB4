@@ -171,7 +171,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 sb.append(s);
                 sb.append(",");
             }
-            String json = "{\"CodeWares\":\"" + sb.toString() + "\",\"CodeWarehouse\":" + config.CodeWarehouse + "}";
+            String json = config.GetApiJson(999, "\"CodeWares\":\"" + sb.toString() + "\"");
             HttpResult res = Http.HTTPRequest(1, "", json, "application/json;charset=UTF-8", null, null);//"http://znp.vopak.local:8088/Print"
             if (res.HttpState == eStateHTTP.HTTP_OK) {
                 return res.Result;
