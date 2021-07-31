@@ -165,7 +165,7 @@ public String GetBaseAuth(String pLogin,String pPasWord){
                     log+="\n Error=>"+e.getMessage();
                 }catch (Exception ex){};
         }
-        Utils.WriteLog(log);
+        Utils.WriteLog("i",TAG,log);
         return res;
     }
 

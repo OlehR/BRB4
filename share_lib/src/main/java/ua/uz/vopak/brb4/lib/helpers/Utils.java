@@ -212,7 +212,7 @@ public class Utils {
    {
        if( TypeLog == eTypeLog.NoLog || pText==null)
            return;
-       pText = (pText.length()>2000 && TypeLog==eTypeLog.Short? pText.substring(0,2000):pText);
+       pText = (pText.length()>32000 && TypeLog==eTypeLog.Short? pText.substring(0,32000):pText);
        try {
            DateFormat df = new SimpleDateFormat("yyyyMMdd");
            Date today = Calendar.getInstance().getTime();
@@ -246,7 +246,33 @@ public class Utils {
         WriteLog(Type+pTAG+"\\"+pText);
     }
 
-        private  boolean isRedirected( Map<String, List<String>> header ) {
+    static public void DellOldLog() {
+        WriteLog("i",TAG,"DellOldLog");
+        File dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+
+        DateFormat df = new SimpleDateFormat("yyyyMMdd");
+        Date today = Calendar.getInstance().getTime();
+        Date cD = addDays(today, -5);
+        for(int i=0;i<25;i++)
+        {
+            String FileName = "Log_" + df.format(cD) + ".txt";
+            File file = new File(dir, FileName);
+            if(file.exists()) {
+                Boolean r=file.delete();
+                WriteLog("i",TAG,"Delete=>"+FileName+" "+r.toString());
+            }
+            cD = addDays(cD, -1);
+        }
+    }
+
+    public static Date addDays(Date date, int days)
+    {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DATE, days); //minus number would decrement the days
+        return cal.getTime();
+    }
+    private  boolean isRedirected( Map<String, List<String>> header ) {
             for( String hv : header.get( null )) {
                 if(   hv.contains( " 301 " )
                         || hv.contains( " 302 " )) return true;

@@ -5,6 +5,8 @@ import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 
+import com.google.gson.Gson;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -36,6 +38,7 @@ public class Worker {
     //public GetDataHTTP Http = new GetDataHTTP();
     SQLiteAdapter mDbHelper  = config.GetSQLiteAdapter();
     //public Connector c = Connector.instance();
+    Gson gson = new Gson();
 
     public Worker() {}
 
@@ -56,7 +59,7 @@ public class Worker {
                         break;
                     case  Auditor:
                         Right = new boolean[]{false,true , false, true};
-                        Setting =  new  DocSetting[2];
+                        Setting =  new  DocSetting[3];
                         break;
                     default:
                         Right = new boolean[]{false,false , false, false};
@@ -184,7 +187,10 @@ public class Worker {
 
         Connector c = Connector.instance();
         ParseBarCode PBarcode= c.ParsedBarCode(pBarCode,pIsOnlyBarCode);
-        return mDbHelper.GetScanData(pTypeDoc, pNumberDoc,PBarcode);// pBarCode, pIsOnlyBarCode,false);
+        WaresItemModel res=mDbHelper.GetScanData(pTypeDoc, pNumberDoc,PBarcode);// pBarCode, pIsOnlyBarCode,false);
+        Utils.WriteLog("i",TAG,"SaveDocWares=>"+String.valueOf(pTypeDoc)+","+pNumberDoc+","+gson.toJson(PBarcode)+
+                ",\nres=>"+res.CodeWares+","+res.QuantityBarCode+","+res.NameWares);
+        return res;
     }
     // Збереження товару в БД
     public Result SaveDocWares(int pTypeDoc, String pNumberDoc, int pCodeWares, int pOrderDoc, Double pQuantity, int pCodeReason , Boolean pIsNullable) {
@@ -194,6 +200,8 @@ public class Worker {
         Result r = mDbHelper.SaveDocWares(pTypeDoc, pNumberDoc, pCodeWares, pOrderDoc, pQuantity, pCodeReason);
         // міняємо стан документа на готується при зміні кількості.
         mDbHelper.UpdateDocState(0, pTypeDoc, pNumberDoc);
+        Utils.WriteLog("i",TAG,"SaveDocWares=>"+String.valueOf(pTypeDoc)+","+pNumberDoc+","+pCodeWares+","+pOrderDoc+","+pQuantity+","+pCodeReason+","+pIsNullable+
+            ",res=>"+gson.toJson(r));
         return r;
     }
     // Зміна стану документа і відправляємо в 1С
@@ -217,7 +225,10 @@ public class Worker {
         return mDbHelper.GetDocOut(pTypeDoc,pNumberDoc);
     }
 
-    public void SaveDocOut(Doc pDoc ){mDbHelper.SaveDocOut(pDoc);}
+    public void SaveDocOut(Doc pDoc ){
+        mDbHelper.SaveDocOut(pDoc);
+        Utils.WriteLog("i",TAG,"SaveDocOut"+gson.toJson(pDoc));
+    }
 
     public DocModel GetDoc(int pTypeDoc, String pNumberDoc, int pTypeResult, eTypeOrder pTypeOrder) {
         DocModel result= GetDocOut(pTypeDoc, pNumberDoc);

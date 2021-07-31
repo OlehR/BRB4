@@ -33,7 +33,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     public Result Login(final String pLogin, final String pPassWord,final boolean pIsLoginCO) {
         final String data = "{\"CodeData\": \"1\"" + ", \"Login\": \"" + pLogin + "\"" + ", \"PassWord\": \"" + pPassWord + "\"}";
-        HttpResult result = Http.HTTPRequest(0, "",data,null,null,null);
+        HttpResult result = Http.HTTPRequest(0, "",data,"application/json; charset=utf-8",null,null);
 
         if (result.HttpState!= eStateHTTP.HTTP_OK )
             return new Result(result,"Ви не підключені до мережі " + config.Company.name());
@@ -59,7 +59,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         Warehouse[] res = null;
         String data = config.GetApiJson(210, "");
         try {
-            HttpResult result = Http.HTTPRequest(0, "", data, null, null, null);
+            HttpResult result = Http.HTTPRequest(0, "", data, "application/json; charset=utf-8", null, null);
             if (result.HttpState == eStateHTTP.HTTP_OK) {
                 JSONObject jObject = new JSONObject(result.Result);
 
@@ -96,7 +96,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             pProgress.set(5);
 
         String data = config.GetApiJson(150, "\"TypeDoc\":" + pTypeDoc);
-        HttpResult result = Http.HTTPRequest(0, "", data, null, null, null);
+        HttpResult result = Http.HTTPRequest(0, "", data, "application/json; charset=utf-8", null, null);
         if (result.HttpState != eStateHTTP.HTTP_OK) {
             Utils.WriteLog("e",TAG, "Load=>" + result.HttpState.toString());
             if (pProgress != null)
@@ -124,7 +124,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         }
         String data = config.GetApiJson(153, "\"TypeDoc\":" + parTypeDoc + ",\"NumberDoc\":\"" + NumberDoc + "\",\"Wares\":[" + TextUtils.join(",", wares) + "]");
         try {
-            HttpResult result = Http.HTTPRequest(0, "", data, null, null, null);
+            HttpResult result = Http.HTTPRequest(0, "", data, "application/json; charset=utf-8", null, null);
             if (result.HttpState != eStateHTTP.HTTP_OK) {
                 return new Result(result);
             }
@@ -145,7 +145,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         String a = new Gson().toJson(ll);
         String data = config.GetApiJson(141, "\"LogPrice\":" + a);
 
-        HttpResult res = Http.HTTPRequest(0, "", data, null, null, null);
+        HttpResult res = Http.HTTPRequest(0, "", data, "application/json; charset=utf-8", null, null);
         if (res.HttpState == eStateHTTP.HTTP_OK) {
             try {
                 return gson.fromJson(res.Result, Result.class);

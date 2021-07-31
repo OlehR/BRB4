@@ -63,7 +63,7 @@ public class PricecheckerHelper {
              _codeWares ="\"CodeWares\":\"" + CodeWares + "\"" ;
 
         String data = config.GetApiJson(154, _barCode + _codeWares + _article);
-        HttpResult res = Http.HTTPRequest(0,"", data,null,null,null);
+        HttpResult res = Http.HTTPRequest(0,"", data,"application/json; charset=utf-8",null,null);
         LI.resHttp = res.Result;
         //resHttp = resHttp.replace("&amp;", "&");
         //Call Progres 50%;

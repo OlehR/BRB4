@@ -121,10 +121,13 @@ public class GlobalConfig extends AbstractConfig {
             case Zebra:
                 Scaner = new ScanerZebra(context);
                 break;
-            case Camera:
+            case NotDefine:
+                break;
             default:
+            case Camera:
                 Scaner = new Scaner(context);
                 break;
+
         }
         return Scaner;
     }

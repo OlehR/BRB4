@@ -52,7 +52,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                     return new Result(jObject.getInt("State"), jObject.getString("TextError"), "Неправильний логін або пароль");
 
             } catch (Exception e) {
-                Utils.WriteLog("Exception=>" + TAG + "\\" + "Login=>" + e.getMessage());
+                Utils.WriteLog("e",  TAG , "Login=>" + e.getMessage());
                 return new Result(-1, e.getMessage());
             }
 

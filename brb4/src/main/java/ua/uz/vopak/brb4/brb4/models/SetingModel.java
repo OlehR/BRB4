@@ -89,9 +89,9 @@ public class SetingModel {
             url=Warehouse[ListWarehouseIdx.get()].Url;
 
         apiURL.set(Company==eCompany.Sim23 ? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
-                "http://znp.vopak.local/api/api_v1_utf8.php;http://914f088a32a7.sn.mynetname.net:7654/api/api_v1_utf8.php");
+                "http://api.spar.uz.ua/znp/");
         config.ApiUrl=apiURL.get();
-        apiURLadd.set(Company==eCompany.Sim23 ? "http://93.183.216.37/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/":"http://znp.vopak.local:8088/Print;http://viberbot.spar.uz.ua/Print/print");
+        apiURLadd.set(Company==eCompany.Sim23 ? "http://93.183.216.37/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/":"http://znp.vopak.local:8088/Print;http://api.spar.uz.ua/print/");
         config.ApiURLadd=apiURLadd.get();
     }
 

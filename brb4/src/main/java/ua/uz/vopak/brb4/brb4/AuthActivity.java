@@ -42,6 +42,7 @@ import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class AuthActivity extends FragmentActivity implements ScanCallBack {
+    static final String TAG="AuthActivity";
     private long backPressedTime;
     private Toast backToast;
     GlobalConfig config = GlobalConfig.instance();
@@ -55,7 +56,7 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
 
     public AuterizationsHelper aHelper;
     final Activity activity = this;
-    private Scaner scaner=config.GetScaner();
+    private Scaner scaner;
 
     AuthModel authModel= new AuthModel(this);
     public AuthLayoutBinding binding;
@@ -109,7 +110,7 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
                 barcodeView.decodeContinuous(callback);
                 barcodeView.resume();
         }
-
+        scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -127,6 +128,8 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
             public Boolean Invoke() {
                 AddText("Завантаження початкових даних");
                 config.GetWorker().LoadStartData();
+                AddText("Видаленння старих логів");
+                Utils.DellOldLog();
                 AddText("Пошук Оновлення");
                 if(config.cUtils.UpdateAPK("https://github.com/OlehR/BRB4/raw/master/apk/"+(config.IsTest?"test":"work")+"/","brb4.apk",null,BuildConfig.VERSION_CODE,BuildConfig.APPLICATION_ID))
                 {
@@ -316,7 +319,7 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
 
     void AddText(final String pText)
     {
-        Utils.WriteLog(pText+"\n");
+        Utils.WriteLog("i",TAG,pText+"\n");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

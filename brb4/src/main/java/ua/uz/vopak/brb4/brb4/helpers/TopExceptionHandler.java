@@ -5,6 +5,7 @@ import android.app.Activity;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class TopExceptionHandler implements Thread.UncaughtExceptionHandler {
+    protected static final String TAG = "TopExceptionHandler";
     private Thread.UncaughtExceptionHandler defaultUEH;
     private Activity app = null;
 
@@ -34,7 +35,7 @@ public class TopExceptionHandler implements Thread.UncaughtExceptionHandler {
         }
         report += "-------------------------------\n\n";
 
-        Utils.WriteLog(report);
+        Utils.WriteLog("e",TAG,report);
         /*try {
 
             FileOutputStream trace = app.openFileOutput("stack.trace",
