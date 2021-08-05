@@ -445,6 +445,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         Title.setPadding(padding, padding, padding, padding);
         Title.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
 
+        if(parWM.NameWares!=null)
         Title.setText(parWM.NameWares.length()>25?parWM.NameWares.substring(0,25):parWM.NameWares);
         Title.setTextColor(Color.parseColor("#000000"));
         tr.addView(Title);
