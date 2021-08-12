@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.clientpricechecker;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.XmlResourceParser;
 import android.os.Build;
 
@@ -12,7 +13,7 @@ import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 public class Config extends AbstractConfig {
     private static Context context;
     //private static Config Instance = null;
-    public static String CodeWarehouse;
+    //public static String CodeWarehouse;
     public static String Login;
     public String SN = Build.SERIAL;
     public String NameDCT = Build.USER;
@@ -26,9 +27,19 @@ public class Config extends AbstractConfig {
     //public static boolean IsSpar;
     XmlResourceParser xrp;
 
+    SharedPreferences pref ;//= getApplicationContext().getSharedPreferences("Pref", 0); // 0 - for private mode
+    SharedPreferences.Editor editor;// = pref.edit();
+
+
     protected Config(Context parContext){
         super("http://znp.vopak.local/api/api_v1_utf8.php");//
         context = parContext;
+
+        pref = context.getApplicationContext().getSharedPreferences("ClientPriceChecker", 0); // 0 - for private mode
+        editor = pref.edit();
+
+        int Wh=pref.getInt("CodeWarehouse",0);
+
         xrp = context.getResources().getXml(R.xml.config);
 
         try {
@@ -38,9 +49,8 @@ public class Config extends AbstractConfig {
                 if (eventType == XmlPullParser.START_TAG) {
                     switch (xrp.getName()){
                         case "CodeWarehouse" :
-                            CodeWarehouse = xrp.getAttributeValue(null,"value");
-
-                            Company= (Integer.valueOf(CodeWarehouse)>30)?eCompany.SparPSU :eCompany.VopakPSU;
+                            CodeWarehouse = Integer.valueOf(xrp.getAttributeValue(null,"value"));
+                            Company= (CodeWarehouse>30)?eCompany.SparPSU :eCompany.VopakPSU;
                             break;
                         case "Login" :
                             Login = xrp.getAttributeValue(null,"value");
@@ -71,6 +81,7 @@ public class Config extends AbstractConfig {
                 }
                 eventType = xrp.next();
             }
+            xrp.setProperty("CodeWarehouse","9999");
         }catch (Exception e){
             e.toString();
         }
@@ -94,6 +105,5 @@ public class Config extends AbstractConfig {
         }
         return (Config) Instance;
     }
-
 
 }

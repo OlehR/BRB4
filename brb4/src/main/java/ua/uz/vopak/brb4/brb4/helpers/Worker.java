@@ -50,19 +50,19 @@ public class Worker {
             case Sim23:
                 switch (pProfile) {
                     case Admin:
-                        Right = new boolean[]{true,true , true, true};
-                        Setting =  new  DocSetting[4];
+                        Right = new boolean[]{true,true , true, true,true,true};
+                        Setting =  new  DocSetting[5];
                         break;
                     case User:
-                        Right = new boolean[]{true,true , true, false};
+                        Right = new boolean[]{true,true , true, false,false,true};
                         Setting =  new  DocSetting[3];
                         break;
                     case  Auditor:
-                        Right = new boolean[]{false,true , false, true};
+                        Right = new boolean[]{false,true , false, true,true,true};
                         Setting =  new  DocSetting[3];
                         break;
                     default:
-                        Right = new boolean[]{false,false , false, false};
+                        Right = new boolean[]{false,false , false, false, false, false};
                         break;
                 }
                 int step=0;
@@ -74,8 +74,10 @@ public class Worker {
                     Setting[step++] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false,false);
                 if(Right[3])
                     Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,false);
-                if(Right[3])
+                if(Right[4])
                     Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,true);
+ //               if(Right[5])
+ //                   Setting[step++] = new DocSetting(0,"Прайсчекер", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0,false,false,true,false,false);
 
                 break;
             case SparPSU:
@@ -188,8 +190,11 @@ public class Worker {
         Connector c = Connector.instance();
         ParseBarCode PBarcode= c.ParsedBarCode(pBarCode,pIsOnlyBarCode);
         WaresItemModel res=mDbHelper.GetScanData(pTypeDoc, pNumberDoc,PBarcode);// pBarCode, pIsOnlyBarCode,false);
+        String outLog="Null";
+        if(res!=null)
+            outLog=res.CodeWares+","+res.QuantityBarCode+","+res.NameWares;
         Utils.WriteLog("i",TAG,"SaveDocWares=>"+String.valueOf(pTypeDoc)+","+pNumberDoc+","+gson.toJson(PBarcode)+
-                ",\nres=>"+res.CodeWares+","+res.QuantityBarCode+","+res.NameWares);
+                ",\nres=>"+outLog);
         return res;
     }
     // Збереження товару в БД

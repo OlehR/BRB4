@@ -9,13 +9,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
-import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,9 +33,7 @@ import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -58,6 +54,7 @@ public class ClientPriceCheckerActivity extends Activity {
     Button HideInfoBTN;
     ua.uz.vopak.brb4.clientpricechecker.Config config;
     Resources res;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

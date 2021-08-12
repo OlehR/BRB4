@@ -461,8 +461,10 @@ public class SQLiteAdapter
         if(pParseBarCode==null)
             return null;
         try {
-            DocSetting DS = config.GetDocSetting(pTypeDoc);
-            if (DS.IsSimpleDoc) {
+            boolean IsSimpleDoc=false;
+            if(pTypeDoc>0)
+                IsSimpleDoc = config.GetDocSetting(pTypeDoc).IsSimpleDoc;
+            if (IsSimpleDoc) {
                 sql = "select dws.CODE_WARES,dws.NAME as NAME_WARES,1 as COEFFICIENT,"+CodeUnit+" as CODE_UNIT, \"шт\" as ABR_UNIT , dws.BarCode as BAR_CODE  ,"+CodeUnit+" as BASE_CODE_UNIT  "+
                         "\nfrom DOC_WARES_sample dws"+
                 " \nwhere  dws.Type_doc=" + pTypeDoc + " and dws.number_doc=\"" + pDocNumber + "\" and dws.BarCode= "+pParseBarCode.BarCode;
