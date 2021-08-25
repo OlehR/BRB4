@@ -12,11 +12,6 @@ import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 
 public class Config extends AbstractConfig {
     private static Context context;
-    //private static Config Instance = null;
-    //public static String CodeWarehouse;
-    public static String Login;
-    public String SN = Build.SERIAL;
-    public String NameDCT = Build.USER;
 
     public static String Password;
     public static String SmbDomain;
@@ -24,12 +19,11 @@ public class Config extends AbstractConfig {
     public static String SmbPassword;
     public static String SmbPath;
     public static String SmbServer;
-    //public static boolean IsSpar;
+
     XmlResourceParser xrp;
 
     SharedPreferences pref ;//= getApplicationContext().getSharedPreferences("Pref", 0); // 0 - for private mode
     SharedPreferences.Editor editor;// = pref.edit();
-
 
     protected Config(Context parContext){
         super("http://znp.vopak.local/api/api_v1_utf8.php");//
@@ -85,18 +79,6 @@ public class Config extends AbstractConfig {
         }catch (Exception e){
             e.toString();
         }
-    }
-
-    @Override
-    public String GetApiJson(int parCodeData, String parData) {
-        return "{\"CodeData\":"+ Integer.toString(parCodeData) + ",\"SerialNumber\":\""+SN+"\",\"NameDCT\":\""+NameDCT+"\", \"Warehouse\":\""+this.getCodeWarehouse()+"\", \"CodeWarehouse\":\""+this.getCodeWarehouse()+"\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
-                (parData==null?"":","+parData )+"}";
-    }
-
-    @Override
-    public String getCodeWarehouse() {
-        String code = "000000000" + CodeWarehouse;
-        return code.substring(code.length() - 9);
     }
 
     public static Config instance(Context context) {

@@ -8,17 +8,16 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.databinding.DataBindingUtil;
 import ua.uz.vopak.brb4.brb4.databinding.SettingsLayoutBinding;
-import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.SetingModel;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 
 public class SettingsActivity extends Activity implements View.OnClickListener {
 
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
     Context context;
     SettingsLayoutBinding binding;
     SetingModel SM = new SetingModel();

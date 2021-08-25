@@ -23,7 +23,7 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.R;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 
 /**
  * Created by Rishabh Bhatia on 12/5/17.
@@ -32,7 +32,7 @@ import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
 public class ScanFragment extends Fragment {
     Context mcontext;
     BarcodeView barcodeView;
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
 
     final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
     View view;

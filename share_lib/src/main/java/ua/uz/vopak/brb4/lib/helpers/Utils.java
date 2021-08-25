@@ -18,6 +18,8 @@ import android.os.Vibrator;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.media.MediaPlayer;
+import android.view.View;
+
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 import androidx.databinding.ObservableInt;
@@ -51,6 +53,10 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 
+import jcifs.UniAddress;
+import jcifs.smb.NtlmPasswordAuthentication;
+import jcifs.smb.SmbFile;
+import jcifs.smb.SmbSession;
 import ua.uz.vopak.brb4.R;
 import ua.uz.vopak.brb4.lib.enums.eTypeLog;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
@@ -508,6 +514,51 @@ public class Utils {
         } catch (Exception e) {
             Utils.WriteLog("e",TAG, "CopyFile" + pFrom+" " +pTo + " " + e.getMessage());
         }
+    }
+
+    public boolean GetFileFTP(String pSmbPath,String pDomain ,String pSmbUser,String pSmbPassword,String pFileName)
+    {
+        boolean Res=false;
+        try{
+            String url = pSmbPath;//"smb://10.1.0.15"+config.SmbPath; //config.SmbDomain+
+            final UniAddress domainController = UniAddress.getByName(pDomain);//"vopak.local"
+            NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(pDomain, pSmbUser, pSmbPassword);
+            SmbSession.logon(domainController, auth);
+            SmbFile sf = new SmbFile(url, auth);
+            final File destination = new File(pFileName+".tmp");//Environment.getExternalStorageDirectory()+"/Movies/promo.mp4"
+            final File curent = new File(pFileName);
+            sf.connect();
+            String name = sf.getName();
+            long d=sf.getDate();
+            if(sf.getDate() > curent.lastModified()){
+                if (destination.exists())
+                    destination.delete();
+
+                InputStream in = sf.getInputStream();
+                OutputStream out = new FileOutputStream(destination);
+
+                try {
+                    // 16 kb
+                    final byte[] b  = new byte[16*1024];
+                    int read = 0;
+                    while ((read=in.read(b, 0, b.length)) > 0) {
+                        out.write(b, 0, read);
+                    }
+                    Res=true;
+                }
+                catch (Exception e){
+                    Utils.WriteLog("e",TAG,"GetFileFTP() => "+e.getMessage());
+                }
+                finally {
+                    in.close();
+                    out.close();
+                }
+            }
+
+        }catch(Exception e){
+            e.toString();
+        }
+        return  true;
     }
 
 }

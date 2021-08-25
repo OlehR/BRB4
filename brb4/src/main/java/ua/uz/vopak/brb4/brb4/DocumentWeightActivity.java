@@ -27,7 +27,7 @@ import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.DocWaresModelIncome;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
@@ -46,7 +46,7 @@ public class DocumentWeightActivity extends Activity  {
     TextView IsOnlyOrderTB;
     ScrollView WaresScroll;
     Integer scanNN = 0;
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
     Activity context;
     String strFilter="";
     boolean IsOnlyOrder =true;

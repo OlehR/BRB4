@@ -1,7 +1,6 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
 import android.text.TextUtils;
-import android.util.Log;
 
 import androidx.databinding.ObservableInt;
 
@@ -18,7 +17,7 @@ import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.brb4.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
@@ -33,7 +32,7 @@ import ua.uz.vopak.brb4.lib.models.Result;
 
 public class Worker {
     protected static final String TAG = "BRB4/Worker";
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
 
     //public GetDataHTTP Http = new GetDataHTTP();
     SQLiteAdapter mDbHelper  = config.GetSQLiteAdapter();

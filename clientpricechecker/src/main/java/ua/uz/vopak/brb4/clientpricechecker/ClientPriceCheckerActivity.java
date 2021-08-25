@@ -31,8 +31,10 @@ import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.PricecheckerHelper;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -157,7 +159,47 @@ public class ClientPriceCheckerActivity extends Activity {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                new AsyncFileCheker(context).execute();
+               // new AsyncFileCheker(context).execute();
+
+                new AsyncHelper<Boolean>(
+                        new IAsyncHelper<Boolean>() {
+                            @Override
+                            public Boolean Invoke() {
+                                Boolean Res= config.cUtils.GetFileFTP("smb://10.1.0.15"+config.SmbPath,"vopak.local",config.SmbUser, config.SmbPassword,Environment.getExternalStorageDirectory()+"/Movies/promo.mp4");
+                                return Res;
+                            }
+                        },
+                        new IPostResult<Boolean>() {
+                            @Override
+                            public void Invoke(Boolean pIsNewFile) {
+                                if(!pIsNewFile)
+                                    return;
+                                context.runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        if(videoTimer != null){
+                                            videoTimer.cancel();
+                                        }
+
+                                        if(PromoVideo.isPlaying()){
+                                            PromoVideo.stopPlayback();
+                                            PromoVideo.setVisibility(View.INVISIBLE);
+                                            VideoWatermark.setVisibility(View.INVISIBLE);
+                                        }
+
+                                        final File newDestination = new File(Environment.getExternalStorageDirectory()+"/Movies/promo.mp4");
+                                        final File tmpDestination = new File(Environment.getExternalStorageDirectory()+"/Movies/promo.mp4.tmp");
+
+                                        newDestination.delete();
+                                        tmpDestination.renameTo(newDestination);
+
+                                        videoPlayback();
+                                    }
+                                });
+
+                            }
+                        }).execute();
             }
         }, 20000, 60000 * 60);
 

@@ -10,12 +10,10 @@ import com.journeyapps.barcodescanner.BarcodeView;
 
 import java.util.Locale;
 
-import ua.uz.vopak.brb4.brb4.R;
-import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
 
 public class WaresItemModel implements Cloneable{
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
     public String NumberDoc;
     public int TypeDoc;
     public DocSetting DocSetting;

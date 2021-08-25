@@ -1,6 +1,5 @@
 package ua.uz.vopak.brb4.brb4.helpers;
 
-import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
 
@@ -13,7 +12,7 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Connector.Connector;
 import ua.uz.vopak.brb4.brb4.PriceCheckerActivity;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.ePrinterError;
@@ -29,7 +28,7 @@ import ua.uz.vopak.brb4.lib.models.Result;
 
 public class BL_PriceChecker extends BL {
     protected static final String TAG = "BRB4/BL_PriceChecker";
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
     public LabelInfo LI;
     public BluetoothPrinter Printer = new BluetoothPrinter(config);
     SQLiteAdapter mDbHelper;

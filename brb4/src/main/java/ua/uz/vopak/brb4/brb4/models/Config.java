@@ -17,9 +17,8 @@ import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
-import ua.uz.vopak.brb4.lib.helpers.Utils;
 
-public class GlobalConfig extends AbstractConfig {
+public class Config extends AbstractConfig {
 
     public static final int DB_VERSION = 2;
 
@@ -40,21 +39,15 @@ public class GlobalConfig extends AbstractConfig {
 
     public Reason Reasons[];
 
-    @Override
-    public String GetApiJson(int parCodeData, String parData) {
-        return "{\"CodeData\":" + parCodeData + ",\"SerialNumber\":\"" + SN + "\",\"NameDCT\":\"" + NameDCT + "\", \"Ver\":\"" + BuildConfig.VERSION_CODE + "\", \"CodeWarehouse\":\"" + this.getCodeWarehouse() + "\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
-                (parData == null || parData =="" ? "" : "," + parData) + "}";
-    }
-
-    protected GlobalConfig() {
+    protected Config() {
         super();//
     }//
 
-    public static GlobalConfig instance() {
-        if (Instance == null || !(Instance instanceof GlobalConfig)){
-            Instance = new GlobalConfig();
+    public static Config instance() {
+        if (Instance == null || !(Instance instanceof Config)){
+            Instance = new Config();
         }
-        return (GlobalConfig) Instance;
+        return (Config) Instance;
     }
 
     public DocSetting GetDocSetting(int pDocumentType) {
@@ -127,7 +120,6 @@ public class GlobalConfig extends AbstractConfig {
             case Camera:
                 Scaner = new Scaner(context);
                 break;
-
         }
         return Scaner;
     }

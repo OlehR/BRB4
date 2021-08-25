@@ -6,7 +6,7 @@ package ua.uz.vopak.brb4.brb4.Scaner;
        // import device.common.DecodeStateCallback;
        // import device.common.ScanConst;
 //        import device.sdk.ScanManager;
-        import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+        import ua.uz.vopak.brb4.brb4.models.Config;
 
 
 public class ScanerPM500 extends Scaner {
@@ -15,7 +15,7 @@ public class ScanerPM500 extends Scaner {
     private final Handler mHandler = new Handler();
   //  public static ScanManager mScanner;
     //public static DecodeResult mDecodeResult;
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
 
 
     public ScanerPM500(Context parApplicationContext)

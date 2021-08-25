@@ -1,7 +1,6 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -40,7 +38,7 @@ import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
@@ -67,7 +65,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
     List<WaresItemModel> ListWares;
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
     UtilsUI UtilsUI = new UtilsUI(this);
    
     @Override

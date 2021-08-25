@@ -1,7 +1,6 @@
 package ua.uz.vopak.brb4.brb4.models;
 
 import android.os.Environment;
-import android.util.Log;
 
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableBoolean;
@@ -20,7 +19,7 @@ import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class SetingModel {
     static final String TAG="SetingModel";
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
     Worker worker = config.GetWorker();
 
     public ObservableBoolean IsTest;

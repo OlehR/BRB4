@@ -9,7 +9,7 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.brb4.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
@@ -22,7 +22,7 @@ public abstract class Connector {
     public abstract Warehouse[] LoadWarehouse();
     private static Connector Instance = null;
 
-    protected static GlobalConfig config = GlobalConfig.instance();
+    protected static Config config = Config.instance();
     protected SQLiteAdapter mDbHelper = config.GetSQLiteAdapter();
     protected SQLiteDatabase db = mDbHelper.GetDB();
     protected GetDataHTTP Http = GetDataHTTP.instance(); //new GetDataHTTP(new String[]{config.ApiUrl, config.ApiURLadd});

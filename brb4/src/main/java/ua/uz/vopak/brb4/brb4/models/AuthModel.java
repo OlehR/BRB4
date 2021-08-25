@@ -2,17 +2,13 @@ package ua.uz.vopak.brb4.brb4.models;
 
 import android.view.View;
 
-import com.journeyapps.barcodescanner.BarcodeView;
-
 import ua.uz.vopak.brb4.brb4.AuthActivity;
-import ua.uz.vopak.brb4.brb4.databinding.AuthLayoutBinding;
-import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 
 public class AuthModel {
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
     public boolean IsStarting = true;
     public boolean IsLoginCO = config.IsLoginCO;
     public String Log="Start";

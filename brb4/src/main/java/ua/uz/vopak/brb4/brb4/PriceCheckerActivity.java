@@ -18,14 +18,11 @@ import androidx.fragment.app.FragmentActivity;
 import android.view.KeyEvent;
 import android.view.View;
 
-import com.google.zxing.BarcodeFormat;
 import com.google.zxing.ResultPoint;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
-import com.journeyapps.barcodescanner.DecoderFactory;
-import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import android.content.Intent;
 import android.view.WindowManager;
@@ -44,7 +41,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.LabelInfo;
@@ -59,7 +56,7 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
     int SizeDeque=2;
     ArrayDeque<String> BarCodeQueue = new ArrayDeque<>();
 
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
 
     private LabelInfo LI= new LabelInfo(config);
     public BL_PriceChecker BL= new BL_PriceChecker(LI);

@@ -1,7 +1,6 @@
 package ua.uz.vopak.brb4.brb4.Connector.SE;
 
 import android.content.ContentValues;
-import android.database.Cursor;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,7 +19,7 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.brb4.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
@@ -111,7 +110,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             return true;
         } catch (Exception e) {
             Utils.WriteLog("e", TAG, "LoadGuidData=>" + e.getMessage());
-            Toast toast = Toast.makeText(GlobalConfig.instance().context, "Помилка завантаження довідників=>" + e.getMessage(), Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(Config.instance().context, "Помилка завантаження довідників=>" + e.getMessage(), Toast.LENGTH_LONG);
             toast.show();
         }
         return false;

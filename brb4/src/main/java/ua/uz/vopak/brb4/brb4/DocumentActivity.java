@@ -28,7 +28,7 @@ import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 
@@ -41,7 +41,7 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     List<DocumentModel> modelDoc;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
     UtilsUI UtilsUI = new UtilsUI( this);
     private Scaner scaner;
     TextView  FilterKey,FilterText,FilterEDRPOText,FilterEDRPO;

@@ -1,11 +1,9 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,25 +15,19 @@ import androidx.databinding.DataBindingUtil;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.Date;
-import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
-import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.brb4.databinding.MainLayoutBinding;
-import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.MainModel;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
-import ua.uz.vopak.brb4.brb4.helpers.AuterizationsHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 
@@ -43,7 +35,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     MainLayoutBinding binding;
     private long backPressedTime;
     private Toast backToast;
-    static GlobalConfig config = GlobalConfig.instance();
+    static Config config = Config.instance();
     //public RelativeLayout loader;
     private LinearLayout linearLayout;
     Button[] menuItems;

@@ -33,7 +33,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.AuthLayoutBinding;
 import ua.uz.vopak.brb4.brb4.helpers.*;
 import ua.uz.vopak.brb4.brb4.models.AuthModel;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
@@ -45,7 +45,7 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
     static final String TAG="AuthActivity";
     private long backPressedTime;
     private Toast backToast;
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
     Context context;
 
     TextView nameStore;

@@ -1,6 +1,5 @@
 package ua.uz.vopak.brb4.brb4;
 
-import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -9,15 +8,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 
-import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.media.AudioManager;
-import android.media.ToneGenerator;
-import android.os.Build;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -43,7 +37,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.BarcodeView;
-import com.journeyapps.barcodescanner.camera.CameraSettings;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -55,26 +48,23 @@ import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentScannerActivityBinding;
 import ua.uz.vopak.brb4.brb4.helpers.MyKeyboard;
 import ua.uz.vopak.brb4.brb4.helpers.TopExceptionHandler;
-import ua.uz.vopak.brb4.brb4.helpers.Worker;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
 import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
-import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
-import ua.uz.vopak.brb4.lib.helpers.GetDataHTTP;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.brb4.helpers.IIncomeRender;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.Result;
-import android.hardware.Camera;
+
 public class DocumentScannerActivity extends FragmentActivity implements View.OnClickListener,ScanCallBack, IIncomeRender {
    String  TAG="DocumentScannerActivity";
     EditText barCode,  inputCount,AllCount;
@@ -86,7 +76,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     MyKeyboard keyboard;
 
     Activity context;
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
     Utils utils =  Utils.instance(this);
     ua.uz.vopak.brb4.lib.helpers.UtilsUI UtilsUI = new UtilsUI(this);
     DocumentScannerActivityBinding binding;

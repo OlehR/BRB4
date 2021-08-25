@@ -25,14 +25,12 @@ import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
-import ua.uz.vopak.brb4.brb4.models.GlobalConfig;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
-import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.helpers.DataBaseHelper;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
-import ua.uz.vopak.brb4.lib.models.PriceBarCode;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class SQLiteAdapter
@@ -42,7 +40,7 @@ public class SQLiteAdapter
     private final Context mContext;
     private SQLiteDatabase mDb;
     private DataBaseHelper mDbHelper;
-    GlobalConfig config = GlobalConfig.instance();
+    Config config = Config.instance();
 
     public SQLiteAdapter(Context context)    {
         this.mContext = context;

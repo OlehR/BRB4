@@ -23,6 +23,8 @@ public abstract class AbstractConfig {
     public String SN;
     public String NameDCT = USER;
 
+    public String VERSION_CODE ="0.0.0";
+
     public boolean isAutorized;
     public String Login = "";
     public String Password = "123";
@@ -59,8 +61,9 @@ public abstract class AbstractConfig {
         TypeScaner =cUtils.GetTypeScaner();
     }
 
-    public String GetApiJson(int codeData, String data){
-        return new String();
+    public String GetApiJson(int parCodeData, String parData) {
+        return "{\"CodeData\":" + parCodeData + ",\"SerialNumber\":\"" + SN + "\",\"NameDCT\":\"" + NameDCT + "\", \"Ver\":\"" + VERSION_CODE + "\", \"CodeWarehouse\":\"" + this.getCodeWarehouse() + "\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
+                (parData == null || parData =="" ? "" : "," + parData) + "}";
     }
 
     public String getCodeWarehouse() {
