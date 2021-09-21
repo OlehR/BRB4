@@ -1,6 +1,5 @@
 package ua.uz.vopak.brb4.brb4.Connector.PSU;
 
-import android.app.Activity;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -16,10 +15,9 @@ import java.util.Date;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
-import ua.uz.vopak.brb4.brb4.models.ParseBarCode;
+import ua.uz.vopak.brb4.lib.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
-import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
@@ -207,7 +205,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             }
         }
 
-        if((config.Company== eCompany.SparPSU || config.Company== eCompany.VopakPSU) && pBarCode!=null  )
+        if(pBarCode!=null  )
         {
             if( pBarCode.contains("-")) {
                 try {

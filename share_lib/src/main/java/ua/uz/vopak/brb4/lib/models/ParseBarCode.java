@@ -1,4 +1,4 @@
-package ua.uz.vopak.brb4.brb4.models;
+package ua.uz.vopak.brb4.lib.models;
 
 public class ParseBarCode {
         //Здійснювати пошук тільки серед штрихкодів (недивлячись на те що штрихкод короткий)

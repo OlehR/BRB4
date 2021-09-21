@@ -20,7 +20,7 @@ import ua.uz.vopak.brb4.brb4.Connector.SE.UnitDimension;
 import ua.uz.vopak.brb4.brb4.Connector.SE.Units;
 import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
-import ua.uz.vopak.brb4.brb4.models.ParseBarCode;
+import ua.uz.vopak.brb4.lib.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Reason;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
