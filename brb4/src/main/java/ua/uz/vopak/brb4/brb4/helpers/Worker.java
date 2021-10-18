@@ -49,32 +49,37 @@ public class Worker {
             case Sim23:
                 switch (pProfile) {
                     case Admin:
-                        Right = new boolean[]{true,true , true, true,true,true};
+                        Right = new boolean[]{true,true , true, true,true,true,true};
                         Setting =  new  DocSetting[5];
                         break;
                     case User:
-                        Right = new boolean[]{true,true , true, false,false,true};
+                        Right = new boolean[]{true,true , true, false,false,true, false};
                         Setting =  new  DocSetting[3];
                         break;
                     case  Auditor:
-                        Right = new boolean[]{false,true , false, true,true,true};
-                        Setting =  new  DocSetting[3];
+                        Right = new boolean[]{false,true , false, true,true,true,true};
+                        Setting =  new  DocSetting[5];
                         break;
                     default:
-                        Right = new boolean[]{false,false , false, false, false, false};
+                        Right = new boolean[]{false,false , false, false, false, false, false};
                         break;
                 }
                 int step=0;
                 if(Right[0])
-                    Setting[step++] = new DocSetting(2, "Мініревізія", eTypeControlDoc.Ask, false, false, false, false, false, 1, 1, 0, false, true, false, true,false);
+                    Setting[step++] = new DocSetting(2, "Мініревізія", eTypeControlDoc.Ask, false, false, false, false, false, 1, 1, 0, false, true, false, true,false,0);
                 if(Right[1])
-                    Setting[step++] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false,true,true,false,false);
+                    Setting[step++] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false,true,true,false,false,1);
                 if(Right[2])
-                    Setting[step++] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false,false);
+                    Setting[step++] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false,false,0);
                 if(Right[3])
-                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,false);
+                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,false,1);
                 if(Right[4])
-                    Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,true);
+                    Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,true,2);
+                if(Right[5])
+                    Setting[step++] = new DocSetting(8,"Переміщення ОЗ Вих", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,true,2);
+                if(Right[6])
+                    Setting[step++] = new DocSetting(9,"Переміщення ОЗ Вх", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,true,2);
+
  //               if(Right[5])
  //                   Setting[step++] = new DocSetting(0,"Прайсчекер", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0,false,false,true,false,false);
 
@@ -82,8 +87,8 @@ public class Worker {
             case SparPSU:
             case VopakPSU:
                 Setting =  new  DocSetting[5];
-                Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false);
-                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,3,3,true,true,true,false,false);
+                Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false,0);
+                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,3,3,true,true,true,false,false,0);
                 Setting[2] = new DocSetting(3,"Переміщення");
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");
@@ -164,11 +169,8 @@ public class Worker {
         }
 
         Connector c = Connector.instance();
-        if(config.Company==eCompany.Sim23) {
-            if (pTypeDoc == -1)
-                c.LoadGuidData((pTypeDoc == -1), pProgress);
-        }
-             Res=c.LoadDocsData(pTypeDoc, pNumberDoc, pProgress, pIsClearDoc);
+        Res=c.LoadDocsData(pTypeDoc, pNumberDoc, pProgress, pIsClearDoc);
+
         if(Res && pTypeDoc==-1 && curDate != null ) {
             config.LastFullUpdate=curDate;
             AddConfigPair("LastFullUpdate", config.FormatterDate.format(curDate));

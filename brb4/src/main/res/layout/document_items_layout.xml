@@ -12,7 +12,55 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="0dp">
+        <LinearLayout
+            android:id="@+id/DI_SavePW"
+            android:visibility = "@{DWI.IsPW ? View.VISIBLE:View.GONE}"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:orientation="vertical"
+            android:weightSum="1">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content"
 
+                android:layout_weight="2">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp"
+                    android:text="Пароль:"/>
+                <EditText
+                    android:id="@+id/DI_SavePassWord"
+                    android:layout_weight="4"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:inputType ="text"
+                    android:background="@drawable/input_style"
+                    android:textSize="18dp"
+                    android:windowSoftInputMode="stateHidden"
+                    android:text="@={DWI.PW}"/>
+
+                <Button
+                    android:onClick="@{(view) -> DWI.OnClickSave()}"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Ok" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:onClick="@{(view) -> DWI.OnClickCancel()}"
+                    android:text="Cкас" />
+
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/DI_OutLL"

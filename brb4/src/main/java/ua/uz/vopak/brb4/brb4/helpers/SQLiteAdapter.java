@@ -385,7 +385,7 @@ public class SQLiteAdapter
         }
 
         if(pTypeResult==1)
-          sql = " select dw1.order_doc, w.CODE_WARES,coalesce(w.NAME_WARES,dws.name) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
+          sql = " select dw1.order_doc, w.CODE_WARES,coalesce(dws.name,w.NAME_WARES) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
                 ",dw1.quantity_reason as quantity_reason \n" +
                   Color+
                   ",w.code_unit\n"+
@@ -397,7 +397,7 @@ public class SQLiteAdapter
                   "    ) as dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = w.code_wares\n" +
                 "    where d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                 " union all\n" + 
-                " select dws.order_doc+100000, w.CODE_WARES,coalesce(w.NAME_WARES,dws.name) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
+                " select dws.order_doc+100000, w.CODE_WARES,coalesce(dws.name,w.NAME_WARES) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
                 "     ,0 as  quantity_reason "+
                 ", 3 as Ord\n"+
                 ",w.code_unit\n"+
@@ -409,7 +409,7 @@ public class SQLiteAdapter
                 " order by "+OrderQuery;
 
         if(pTypeResult==2)
-            sql="select dw1.order_doc, w.CODE_WARES,coalesce(w.NAME_WARES,dws.name) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old,dw1.CODE_Reason \n" +
+            sql="select dw1.order_doc, w.CODE_WARES,coalesce(dws.name,w.NAME_WARES) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old,dw1.CODE_Reason \n" +
                     ",0 as Ord,w.code_unit\n"+
                     "    from Doc d  \n" +
                     "    join doc_wares dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
@@ -465,7 +465,7 @@ public class SQLiteAdapter
             if (IsSimpleDoc) {
                 sql = "select dws.CODE_WARES,dws.NAME as NAME_WARES,1 as COEFFICIENT,"+CodeUnit+" as CODE_UNIT, \"шт\" as ABR_UNIT , dws.BarCode as BAR_CODE  ,"+CodeUnit+" as BASE_CODE_UNIT  "+
                         "\nfrom DOC_WARES_sample dws"+
-                " \nwhere  dws.Type_doc=" + pTypeDoc + " and dws.number_doc=\"" + pDocNumber + "\" and dws.BarCode= "+pParseBarCode.BarCode;
+                " \nwhere  dws.Type_doc=" + pTypeDoc + " and dws.number_doc=\"" + pDocNumber + "\" and "+(pParseBarCode.Code>0 ?"dws.CODE_WARES="+pParseBarCode.Code : "dws.BarCode= "+ pParseBarCode.BarCode);
                 mCur = mDb.rawQuery(sql, null);
 
             }else

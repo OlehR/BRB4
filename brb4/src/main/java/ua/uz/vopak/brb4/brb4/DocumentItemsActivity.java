@@ -55,12 +55,12 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     CheckBox IsClose;
     DocumentItemsLayoutBinding binding;
     final Context context=this;
-    String NumberDoc;
+    public String NumberDoc;
     int TypeWeight=0;
     int TypeDoc;
     eTypeOrder TypeOrder = eTypeOrder.Scan;
     DocSetting DocSetting;
-    DocItemModel DocItemModel = new DocItemModel();
+    DocItemModel DocItemModel = new DocItemModel(this);
     //List<DocWaresModel> InventoryItems;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
@@ -215,8 +215,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 case KeyEvent.KEYCODE_8:
                     if(keyCode==KeyEvent.KEYCODE_DPAD_DOWN || config.TypeScaner!= eTypeScaner.Zebra)  selectNext(); else selectPrev();
                     break;
-                case 132:
-                    SendDoc(); //F2 Зберегти (відправити документ в 1С
+                case 132: //F2 Зберегти (відправити документ в 1С
+                    SendDoc(true);
                     break;
                 case 133: //F3 Режим сканування.
                     ExecuteDocumentScannerActivity();
@@ -244,7 +244,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         switch (v.getId()){
             case R.id.DI_F2:
             case R.id.DI_F2_Text:
-                SendDoc();
+                SendDoc(true);
                 break;
             case R.id.DI_F3:
             case R.id.DI_F3_Text:
@@ -280,7 +280,13 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             e.printStackTrace();
         }
     }
-    public void SendDoc()    {
+    public void SendDoc(boolean IsControl)    {
+        if(IsControl && !DocSetting.IsMultipleSave)
+        {
+            DocItemModel.IsPW.set(true);
+            return ;
+        }
+
         GetDIM();
         final Date DateOut = DocItemModel.GetDate();
         final String NumberOut = DocItemModel.NumberOutInvoice.get();

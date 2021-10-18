@@ -27,7 +27,7 @@ public class GetDataHTTP
     public void Init(String [] pUrl)
     {
         DefaultApi = new int[pUrl.length];
-        Url = new String[2][];
+        Url = new String[3][];
         for (int i = 0; i < pUrl.length; i++) {
             DefaultApi[i]=0;
             if(pUrl[i]!=null) {
@@ -40,7 +40,7 @@ public class GetDataHTTP
     public static GetDataHTTP instance() {
         if (Instance == null) {
             config =  AbstractConfig.instance();
-            Instance = (config==null? new GetDataHTTP() : new GetDataHTTP(new String[]{config.ApiUrl,config.ApiURLadd}));
+            Instance = (config==null? new GetDataHTTP() : new GetDataHTTP(new String[]{config.ApiUrl,config.ApiURLadd, config.ApiUrl3}));
          }
         return Instance;
     }
@@ -170,7 +170,11 @@ public String GetBaseAuth(String pLogin,String pPasWord){
     }
 
     public HttpResult HTTPRequest (int pUrlApi,String pApi,String pData,String pContentType, String pLogin, String pPassWord)
-    {
+    { //!!!!TMP
+        if(pUrlApi==2) {
+            pLogin="TSD";
+            pPassWord="321123Sd";
+        }
         if(pLogin!=null && pLogin.equals("Admin")) {
             pLogin= (config.Company== eCompany.Sim23 ?"brb":"c");
             pPassWord = (config.Company== eCompany.Sim23 ?"brb":"c");

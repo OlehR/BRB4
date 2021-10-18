@@ -1,7 +1,5 @@
 package ua.uz.vopak.brb4.brb4.models;
 
-import android.graphics.Color;
-
 import androidx.databinding.ObservableArrayList;
 import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
@@ -11,24 +9,27 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
-import ua.uz.vopak.brb4.lib.models.LabelInfo;
+import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
+
 
 public class DocItemModel {
     public ObservableBoolean IsView =new ObservableBoolean(false);
+
     public ObservableField<String> NumberOutInvoice = new ObservableField<String>("");
     public ObservableArrayList<String> ListDate = new ObservableArrayList<>();
     public ObservableInt  ListDateIdx = new ObservableInt(0);
+    public ObservableBoolean IsPW =new ObservableBoolean(false);
+    public ObservableField<String> PW    = new ObservableField<>("");
     public int IsClose=1;
     //GlobalConfig config = GlobalConfig.instance();
-
+    DocumentItemsActivity DIA;
     SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
     public void SetView() {
         IsView.set(!IsView.get());
     }
-    public DocItemModel()
+    public DocItemModel(DocumentItemsActivity pDIA)
     {
-
+        DIA=pDIA;
         Date date = new Date(System.currentTimeMillis());
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -38,6 +39,7 @@ public class DocItemModel {
             date=c.getTime();
         }
     }
+
     public String GetStrDate()
     {
         return ListDate.get(ListDateIdx.get());
@@ -64,6 +66,20 @@ public class DocItemModel {
 
     public int daysBetween(Date d1, Date d2){
         return (int)( (d2.getTime() - d1.getTime()) / (1000 * 60 * 60 * 24));
+    }
+
+    public void OnClickCancel(){PW.set("");IsPW.set(false);}
+    public void OnClickSave()
+    {
+        if(DIA.NumberDoc.substring(DIA.NumberDoc.length() - 3).equals(PW)) {
+            DIA.SendDoc(false);
+        }
+        else
+        {
+
+        }
+        OnClickCancel();
+
     }
 }
 

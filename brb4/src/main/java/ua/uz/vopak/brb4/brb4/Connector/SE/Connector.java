@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
+import org.w3c.dom.Document;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.models.Doc;
+import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.lib.models.ParseBarCode;
@@ -120,18 +122,37 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     //Робота з документами.
     //Завантаження документів в ТЗД (HTTP)
     public Boolean LoadDocsData(int pTypeDoc, String pNumberDoc, ObservableInt pProgress, boolean pIsClear) {
+        DocSetting ds= config.GetDocSetting(pTypeDoc);
+        String CodeWarehouse= String.valueOf(config.CodeWarehouse);
+
+        int CodeApi=0;
+        if(ds!=null)
+            CodeApi=ds.CodeApi;
+        else
+            if(pTypeDoc == -1 && config.IsLoginCO)  CodeApi=1;
+
+        if(pTypeDoc <= 7 &&pTypeDoc <= 9) {
+            Warehouse  Wh = config.GetWarehouse(config.CodeWarehouse);
+            if(Wh!=null)
+            CodeWarehouse=Wh.Number;
+        }
+  //      if (pTypeDoc == -1)
+  //          LoadGuidData((pTypeDoc == -1), pProgress);
+
         if (pProgress != null)
             pProgress.set(5);
         HttpResult res;
         try {
-            if (pTypeDoc == 5 || pTypeDoc == 6 || (pTypeDoc <= 0 && config.IsLoginCO)) {
-                res = Http.HTTPRequest(1, "documents" + (pTypeDoc == 5 ? "\\" + pNumberDoc : "?StoreSetting=" + config.CodeWarehouse), null, "application/json;charset=utf-8", config.Login, config.Password);
+            if ((pTypeDoc >= 5 && pTypeDoc <= 9 ) || (pTypeDoc <= 0 && config.IsLoginCO)  ) {
+                res = Http.HTTPRequest(CodeApi, "documents" + (pTypeDoc == 5 ? "\\" + pNumberDoc : "?StoreSetting=" + CodeWarehouse), null, "application/json;charset=utf-8", config.Login, config.Password);
             } else
-                res = Http.HTTPRequest(0, "documents", null, "application/json;charset=utf-8", config.Login, config.Password);
+                res = Http.HTTPRequest(CodeApi, "documents", null, "application/json;charset=utf-8", config.Login, config.Password);
+
             if (res.HttpState == eStateHTTP.HTTP_OK) {
                 if (pProgress != null)
                     pProgress.set(40);
                 InputDocs data = new Gson().fromJson(res.Result, InputDocs.class);
+                data.set();
                 if (pIsClear) {
                     // String sql = "DELETE FROM DOC; DELETE FROM DOC_WARES_sample; DELETE FROM DOC_WARES;";
                     db.execSQL("DELETE FROM DOC");
@@ -200,6 +221,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 values.put("quantity", DWS.Quantity);
                 values.put("quantity_min", DWS.QuantityMin);
                 values.put("quantity_max", DWS.QuantityMax);
+                values.put("name", DWS.Name);
                 result = db.replace("DOC_WARES_sample", null, values);
 
                 if (i >= 1000) {
@@ -282,7 +304,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             }
         }
 
-        if (config.Company == eCompany.Sim23 && pBarCode!=null) {
+        if ( pBarCode!=null) {
             if (pBarCode.substring(0, 2).equals("29") && pBarCode.length() == 13) {
                 try {
                     res.Code = Integer.parseInt(pBarCode.substring(2, 8));
@@ -294,7 +316,13 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
                 }
             }
+            else if (pBarCode.contains("$"))
+            {
+                res.Code = Integer.parseInt(pBarCode.substring(0,pBarCode.indexOf('$') ));
+            }
+
         }
+
         return res;
     }
 }
@@ -337,8 +365,23 @@ class OutputDoc
 
  class InputDocs {
     Doc[]  Doc;
-    DocWaresSample [] DocWaresSample;
+    DocWaresSample2[] DocWaresSample;
+     public void set()
+     {
+         for (DocWaresSample2 el:DocWaresSample) {el.set(); }
+     }
 }
+class DocWaresSample2 extends DocWaresSample
+        {
+        public int INUMBER;
+        public String OZ;
+        public void set()
+        {
+            CodeWares=INUMBER;
+            Name=OZ;
+        }
+        }
+
 
  class InputWarehouse {
     public int Code;

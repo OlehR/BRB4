@@ -46,7 +46,7 @@ public class AuterizationsHelper {
                             config.ApiUrl = Wh[i].Url;
                             worker.AddConfigPair("Warehouse", Integer.toString(config.CodeWarehouse));
                             worker.AddConfigPair("ApiUrl", config.ApiUrl);
-                            Http.Init(new String[]{config.ApiUrl, config.ApiURLadd});
+                            Http.Init(new String[]{config.ApiUrl, config.ApiURLadd,config.ApiUrl3});
                             Res= "Знайдено новий магазин\n"+ Wh[i].Name+" " +config.ApiUrl;
                             //UtilsUI.Dialog("Знайдено новий магазин", Wh[i].Name+" " +config.ApiUrl);
                         }

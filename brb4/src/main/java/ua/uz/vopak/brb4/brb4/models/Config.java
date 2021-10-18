@@ -29,6 +29,7 @@ public class Config extends AbstractConfig {
     public static eRole  Role = eRole.NotDefined;
     public static int IdCamera=0;
     public DocSetting[] DocsSetting;
+    Warehouse[] Warehouses;
 
     public Worker Worker;
     public SQLiteAdapter SQLiteAdapter;
@@ -59,6 +60,16 @@ public class Config extends AbstractConfig {
         return null;
     }
 
+    public Warehouse GetWarehouse(int pCodeWarehouse) {
+        if (Warehouses == null)
+            Warehouses=GetWorker().GetWarehouse();
+        if (Warehouses == null) return null;
+
+        for (int ind = 0; ind < Warehouses.length; ind++)
+            if (Warehouses[ind].Code == pCodeWarehouse)
+                return Warehouses[ind];
+        return null;
+    }
 
     public void Init(Context parApplicationContext) {
        super.Init(parApplicationContext);
