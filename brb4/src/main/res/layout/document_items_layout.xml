@@ -1,314 +1,281 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:tools="http://schemas.android.com/tools">
+
     <data>
-        <import type="android.view.View"/>
-        <variable name="DWI" type="ua.uz.vopak.brb4.brb4.models.DocItemModel"/>
+        <import type="android.view.View" />
+        <variable
+            name="DWI"
+            type="ua.uz.vopak.brb4.brb4.models.DocItemModel" />
     </data>
 
     <FrameLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         android:padding="0dp">
+
         <LinearLayout
-            android:id="@+id/DI_SavePW"
-            android:visibility = "@{DWI.IsPW ? View.VISIBLE:View.GONE}"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_marginTop="0dp"
-            android:orientation="vertical"
-            android:weightSum="1">
+            android:layout_marginBottom="28dp"
+            android:orientation="vertical">
+
+            <!--Введеня пароля -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:orientation="horizontal"
                 android:layout_height="wrap_content"
-
-                android:layout_weight="2">
+                android:orientation="horizontal"
+                android:visibility="@{DWI.IsPW ? View.VISIBLE:View.GONE}">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Пароль:"
                     android:textColor="@color/messageError"
-                    android:textSize="18dp"
-                    android:text="Пароль:"/>
+                    android:textSize="18dp" />
+
                 <EditText
                     android:id="@+id/DI_SavePassWord"
-                    android:layout_weight="4"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:inputType ="text"
+                    android:layout_weight="4"
                     android:background="@drawable/input_style"
+                    android:inputType="number"
+
+                    android:text="@={DWI.PW}"
                     android:textSize="18dp"
-                    android:windowSoftInputMode="stateHidden"
-                    android:text="@={DWI.PW}"/>
+                    android:focusableInTouchMode="@{DWI.IsPW}"
+                    android:focusable="@{DWI.IsPW}"
+                android:windowSoftInputMode="stateHidden" />
 
                 <Button
-                    android:onClick="@{(view) -> DWI.OnClickSave()}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:onClick="@{(view) -> DWI.OnClickSave()}"
                     android:text="Ok" />
+
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:onClick="@{(view) -> DWI.OnClickCancel()}"
                     android:text="Cкас" />
-
-
             </LinearLayout>
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/DI_OutLL"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:orientation="vertical"
-            android:visibility="gone"
-            android:weightSum="2">
-
-        <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:orientation="horizontal"
-        android:weightSum="2">
-        <!--"@{DWI.IsView ? View.VISIBLE : View.GONE}"-->
-        <Spinner
-            android:id="@+id/DI_DateOut"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:focusable="true"
-            android:layout_weight="0.9" />
-
-            <!--android:entries="@{DWI.ListDate}"
-            android:selectedItemPosition="@={DWI.ListDateIdx}"-->
-
-        <EditText
-            android:id="@+id/DI_NumberOut"
-            android:layout_weight="1.1"
-            android:layout_width="0dp"
-            android:layout_height="40dp"
-            android:inputType ="text"
-            android:background="@drawable/input_style"
-            android:textSize="18dp"
-            android:windowSoftInputMode="stateHidden"
-            android:text=""/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:orientation="horizontal"
-            android:weightSum="2">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18dp"
-                android:text=" Закрити "/>
-
-            <CheckBox
-                android:id="@+id/DI_IsClose"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-        </LinearLayout>
-    <FrameLayout
-        android:id="@+id/DocumentItemsFrame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_below="@+id/DI_OutLL"
-        android:orientation="vertical"
-        >
-
-        <ScrollView
-            android:id="@+id/DocumentItemsList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp">
-
+            <!--Введеня данти і номерера розхідної накладної 2 рядка-->
             <LinearLayout
-                android:id="@+id/DI_Table"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"></LinearLayout>
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="@{DWI.IsView ? View.VISIBLE:View.GONE}"
+                android:weightSum="2">
 
-            <!--        <TableLayout
-                    android:id="@+id/InventoriesList"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:weightSum="6">
-                </TableLayout>-->
-        </ScrollView>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:orientation="vertical"
+                    android:weightSum="2">
+                    <Spinner
+                        android:id="@+id/DI_DateOut"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:focusable="true"
+                        android:entries="@{DWI.ListDate}"
+                        android:selectedItemPosition="@={DWI.ListDateIdx}"
+                        />
 
-        </FrameLayout>
-   <!--     <LinearLayout
-            android:id="@+id/DI_Button"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_gravity="bottom"
-            android:weightSum="2"
-            android:visibility="gone"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:layout_height="70dp">
+                    <EditText
+                        android:id="@+id/DI_NumberOut"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1.1"
+                        android:background="@drawable/input_style"
+                        android:inputType="text"
+                        android:text=""
+                        android:textSize="18dp"
+                        android:windowSoftInputMode="stateHidden" />
+                </LinearLayout>
 
-            <Button
-                android:id="@+id/F2"
-                android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="0dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" Закрити "
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="18dp" />
+
+                    <CheckBox
+                        android:id="@+id/DI_IsClose"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!--Власне строки документа-->
+        <!-- android:id="@+id/DocumentItemsFrame"-->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Зберегти"
-                android:layout_weight="1"/>
-            <Button
-                android:id="@+id/F3"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Сканувати товари"
-                android:layout_weight="1"/>
+                android:orientation="vertical">
+                <LinearLayout
+                    android:id="@+id/DI_Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"/>
 
-            <Button
-                android:id="@+id/F4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Спис Товарів"
-                android:layout_weight="1"/>
+                <ScrollView
+                    android:id="@+id/DocumentItemsList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        </LinearLayout>-->
+                    <LinearLayout
+                        android:id="@+id/DI_Table"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"></LinearLayout>
+                </ScrollView>
+            </LinearLayout>
+        </LinearLayout>
+        <!--Гарячі кнопки-->
         <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="25dp"
+            android:layout_gravity="bottom"
+            android:background="@color/SuccessBackground"
             android:focusable="false"
             android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_gravity="bottom"
-            android:weightSum="2"
             android:paddingLeft="5dp"
             android:paddingRight="5dp"
-            android:layout_height="25dp"
-            android:background="@color/SuccessBackground">
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:orientation="horizontal"
                 android:layout_height="wrap_content"
-                android:layout_weight="2">
+                android:layout_weight="2"
+                android:orientation="horizontal">
 
                 <TextView
-                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text=" 8-"
                     android:textColor="@color/messageError"
                     android:textSize="18dp"
-                    android:text=" 8-"/>
+                    android:visibility="gone" />
 
                 <TextView
-                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="↑"
                     android:textColor="@color/messageAlert"
                     android:textSize="18dp"
-                    android:text="↑"/>
+                    android:visibility="gone" />
 
                 <TextView
-                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text=" 2-"
                     android:textColor="@color/messageError"
                     android:textSize="18dp"
-                    android:text=" 2-"/>
+                    android:visibility="gone" />
 
                 <TextView
-                    android:visibility="gone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="↓"
                     android:textColor="@color/messageAlert"
                     android:textSize="18dp"
-                    android:text="↓"/>
+                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/DI_F2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/messageError"
                     android:clickable="true"
                     android:onClick="onClick"
-                    android:textSize="18dp"
-                    android:text="F2-"/>
+                    android:text="F2-"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp" />
+
                 <TextView
                     android:id="@+id/DI_F2_Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/messageAlert"
                     android:clickable="true"
                     android:onClick="onClick"
-                    android:textSize="18dp"
-                    android:text="Збер"/>
+                    android:text="Збер"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp" />
+
                 <TextView
                     android:id="@+id/DI_F3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/messageError"
                     android:clickable="true"
                     android:onClick="onClick"
-                    android:textSize="18dp"
-                    android:text=" F3-"/>
+                    android:text=" F3-"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp" />
+
                 <TextView
                     android:id="@+id/DI_F3_Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/messageAlert"
                     android:clickable="true"
                     android:onClick="onClick"
-                    android:textSize="18dp"
-                    android:text="Скан"/>
+                    android:text="Скан"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp" />
 
                 <TextView
                     android:id="@+id/DI_F4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/messageError"
                     android:clickable="true"
                     android:onClick="onClick"
-                    android:textSize="18dp"
-                    android:text=" F4-"/>
+                    android:text=" F4-"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp" />
 
                 <TextView
                     android:id="@+id/DI_F4_Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/messageAlert"
                     android:clickable="true"
                     android:onClick="onClick"
-                    android:textSize="18dp"
-                    android:text="Спис"/>
+                    android:text="Спис"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp" />
+
                 <TextView
                     android:id="@+id/DI_F6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/messageError"
                     android:clickable="true"
                     android:onClick="onClick"
-                    android:textSize="18dp"
-                    android:text=" F6-"/>
+                    android:text=" F6-"
+                    android:textColor="@color/messageError"
+                    android:textSize="18dp" />
 
                 <TextView
                     android:id="@+id/DI_F6_Text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/messageAlert"
                     android:clickable="true"
                     android:onClick="onClick"
-                    android:textSize="18dp"
-                    android:text="Док"/>
+                    android:text="Док"
+                    android:textColor="@color/messageAlert"
+                    android:textSize="18dp" />
             </LinearLayout>
 
         </LinearLayout>

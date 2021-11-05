@@ -23,7 +23,8 @@ public class AuterizationsHelper {
         String Res=null;
         try {
             if ((pLogin.equals("Admin") && pPassWord.equals("13579")) || pLogin.equals("OffLine")) {
-                ExecuteMainActivity(pActivity, pLogin, pPassWord,pIsLoginCO,IsRunMainActivity);
+                SetLoginPw( pLogin, pPassWord,pIsLoginCO);
+                ExecuteMainActivity(pActivity,IsRunMainActivity);
                 return "Ok";
             }
 
@@ -32,10 +33,9 @@ public class AuterizationsHelper {
             if(r.State==0) {
                 Res="Ok";
                 config.DocsSetting=config.Worker.GenSettingDocs(config.Company,config.Role);
-                if(pIsLoginCO && config.Company==eCompany.Sim23)
+                SetLoginPw(pLogin,pPassWord,pIsLoginCO);
+                if( 1==2 && pIsLoginCO && config.Company==eCompany.Sim23) //Визначення магазина по IP
                 {
-                   // ua.uz.vopak.brb4.brb4.Connector.Connector con = ua.uz.vopak.brb4.brb4.Connector.Connector.instance();
-
                     Worker worker=config.GetWorker();
                     Warehouse[] Wh= worker.GetWarehouse(); //con.LoadWarehouse();
 
@@ -55,8 +55,7 @@ public class AuterizationsHelper {
                         Res="НЕ визначено  магазин \nIP=>" +config.cUtils.GetIp();
 
                 }
-
-                ExecuteMainActivity(pActivity,pLogin,pPassWord,pIsLoginCO,IsRunMainActivity);
+                ExecuteMainActivity(pActivity,IsRunMainActivity);
                 return Res;
             }
             else {
@@ -120,7 +119,14 @@ public class AuterizationsHelper {
     public AuterizationsHelper(){
     }
 
-    public void ExecuteMainActivity(Activity activity,final String pLogin,final String pPassWord,boolean pIsLoginCO,boolean IsRunMainActivity)
+    public void ExecuteMainActivity(Activity activity,boolean IsRunMainActivity)
+    {
+        if(IsRunMainActivity) {
+            Intent i = new Intent(activity, MainActivity.class);
+            activity.startActivity(i);
+        }
+    }
+    public void SetLoginPw(final String pLogin,final String pPassWord,boolean pIsLoginCO)
     {
         config.Login=pLogin;
         config.Password=pPassWord;
@@ -129,10 +135,6 @@ public class AuterizationsHelper {
         config.Worker.AddConfigPair("Login",config.Login);
         config.Worker.AddConfigPair("PassWord",config.Password);
         config.Worker.AddConfigPair("IsLoginCO",config.IsLoginCO?"true":"false");
-        if(IsRunMainActivity) {
-            Intent i = new Intent(activity, MainActivity.class);
-            activity.startActivity(i);
-        }
     }
     void MessageError(final Activity activity,final String Message,final String exMessage)
     {

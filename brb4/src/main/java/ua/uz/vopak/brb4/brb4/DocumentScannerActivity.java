@@ -129,7 +129,6 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         int dpValue = 3;
         padding = (int) (dpValue * d);
 
-
         ListWares = new ArrayList<>();
         WaresItem.ClearData();
 
@@ -154,18 +153,6 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
             barcodeView.resume();
         }
 
-        /*if(config.IsUseCamera()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
-                    checkSelfPermission(android.Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.CAMERA},
-                        PERMISSIONS_REQUEST_ACCESS_CAMERA);
-            } else {
-                //barcodeView.setVisibility(View.VISIBLE);
-                barcodeView.decodeContinuous(callback);
-                barcodeView.resume();
-            }
-        }*/
         keyboard = (MyKeyboard) findViewById(R.id.keyboard);
         Refresh();
 
@@ -351,9 +338,17 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                         WaresItem.Set(model);
                         WaresItem.BeforeQuantity = CountBeforeQuantity(ListWares, WaresItem.CodeWares);
                         // WaresItem.InputQuantity = WaresItem.QuantityBarCode;
-
-
+                    if(DocSetting.IsSimpleDoc)
+                    {
+                        if(WaresItem.BeforeQuantity>0) {
+                            UtilsUI.Dialog("Вже добавлено в документ!", model.NameWares);
+                            Refresh();
+                            return;
+                        }
+                        WaresItem.QuantityBarCode=1;
+                    }
                 }
+
                 /*if(config.TypeScaner==eTypeScaner.Camera)
                     barcodeView.resume();*/
 
@@ -370,17 +365,6 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         binding.invalidateAll();
         if(config.IsUseCamera())
             barcodeView.resume();
-
-
-    /*    EditText editText = WaresItem.IsInputQuantity() ? inputCount:barCode;
-        // prevent system keyboard from appearing when EditText is tapped
-        //editText.setRawInputType(InputType.TYPE_CLASS_TEXT);
-        editText.setTextIsSelectable(true);
-
-        // pass the InputConnection from the EditText to the keyboard
-        InputConnection ic = editText.onCreateInputConnection(new EditorInfo());
-        keyboard.setInputConnection(ic);*/
-
 
        if(WaresItem.IsInputQuantity()) {
 

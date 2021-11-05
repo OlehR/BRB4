@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 
 import android.view.KeyEvent;
 import android.view.View;
@@ -47,8 +48,8 @@ import ua.uz.vopak.brb4.lib.models.Result;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener, ScanCallBack {
     private Scaner scaner;
-    LinearLayout DataTable,DIOut;
-    FrameLayout documentItemsFrame;
+    LinearLayout DataTable,Title;//,DIOut
+    //FrameLayout documentItemsFrame,
     ScrollView documentList;
     EditText NumberOut;
     Spinner DateOut;
@@ -72,22 +73,24 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.document_items_layout);
-        documentList = findViewById(R.id.DocumentItemsList);
-        documentItemsFrame = findViewById(R.id.DocumentItemsFrame);
-        DataTable = findViewById(R.id.DI_Table);
+        binding=  DataBindingUtil.setContentView(this, R.layout.document_items_layout);
+
         Intent i = getIntent();
         NumberDoc = i.getStringExtra("number");
         TypeDoc = i.getIntExtra("document_type",0);
         TypeWeight =i.getIntExtra("TypeWeight",0);
         DocSetting=config.GetDocSetting(TypeDoc);
 
-
-        DIOut = findViewById(R.id.DI_OutLL);
+        documentList = findViewById(R.id.DocumentItemsList);
+        //documentItemsFrame = findViewById(R.id.DocumentItemsFrame);
+        DataTable = findViewById(R.id.DI_Table);
+        //DIOut = findViewById(R.id.DI_OutLL);
         NumberOut=findViewById(R.id.DI_NumberOut);
         IsClose = findViewById(R.id.DI_IsClose);
+        Title = findViewById(R.id.DI_Title);
 
-       // binding=  DataBindingUtil.setContentView(this, R.layout.document_items_layout);
-        //binding.setDWI (DocWaresItemModel);
+        binding.setDWI (DocItemModel);
+
         //Для отримання штрихкодів
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
@@ -145,10 +148,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                                 public void run() {
                                     UtilsUI.Dialog("Товар не знайдено", "Даний штрихкод=> "+pBarCode+" відсутній в базі");
                                 }});
-
                         return res;
-
-                        //return config.Worker.GetWaresFromBarcode(TypeDoc,NumberDoc,pBarCode);
                     }
                 },
                 new IPostResult<WaresItemModel>() {
@@ -258,12 +258,10 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             case R.id.DI_F6_Text:
                 SetViewOut();
                 break;
-
         }
     }
 
-    private void GenCSV()
-    {
+    private void GenCSV(){
         String FileName= NumberDoc+"_"+String.valueOf(TypeDoc)+".csv";
         StringBuilder sb=new StringBuilder();
 
@@ -280,6 +278,15 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             e.printStackTrace();
         }
     }
+
+    public void DontSave()
+    {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                UtilsUI.Dialog("Не вірний пароль", "Документ не збережено");
+            }});
+    }
     public void SendDoc(boolean IsControl)    {
         if(IsControl && !DocSetting.IsMultipleSave)
         {
@@ -287,10 +294,9 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             return ;
         }
 
-        GetDIM();
+        //GetDIM();
         final Date DateOut = DocItemModel.GetDate();
         final String NumberOut = DocItemModel.NumberOutInvoice.get();
-
 
         new AsyncHelper<Result>(new IAsyncHelper() {
             @Override
@@ -346,10 +352,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 int padding = (int)(dpValue * d);
 
                 DataTable.removeAllViews();
-
-                LinearLayout tlTitle = new LinearLayout(context);
-                tlTitle.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                tlTitle.setOrientation(LinearLayout.VERTICAL);
+                Title.removeAllViews();
 
                 LinearLayout Line1H = new LinearLayout(context);
                 Line1H.setOrientation(LinearLayout.HORIZONTAL);
@@ -366,9 +369,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 NameWaresT.setPadding(padding, padding, padding, padding);
                 NameWaresT.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
 
-
-                tlTitle.addView(Line1H);
-
+                Title.addView(Line1H);
 
                 LinearLayout Line2H = new LinearLayout(context);
                 Line2H.setOrientation(LinearLayout.HORIZONTAL);
@@ -423,16 +424,7 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     QuantityReason.setPadding(padding, padding, padding, padding);
                     QuantityReason.setBackground(ContextCompat.getDrawable(context, R.drawable.table_cell_border));
                 }
-                tlTitle.addView(Line2H);
-
-                documentList.setPadding((int)(d * 5  ), (int)(d * 54  ),(int)(d * 5  ),(int)(d * 25  ));
-                LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) tlTitle.getLayoutParams();
-
-                layoutParams.setMargins((int)(d * 5  ),(int)(d * 5  ),(int)(d * 5  ),0 );
-                tlTitle.setLayoutParams(layoutParams);
-
-                documentItemsFrame.addView(tlTitle);
-
+                Title.addView(Line2H);
 
                 try {
 
@@ -441,8 +433,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                         LinearLayout TableBlock = new LinearLayout(context);
                         TableBlock.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                         TableBlock.setOrientation(LinearLayout.VERTICAL);
-
-
 
                         LinearLayout Line1 = new LinearLayout(context);
                         Line1.setOrientation(LinearLayout.HORIZONTAL);
@@ -520,17 +510,12 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                         TableBlock.addView(Line2);
 
                         menuItems.add(TableBlock);
-
                         int index = model.indexOf(item);
-
                         UtilsUI.SetColor(TableBlock,"#000000","#"+((index % 2)==0?"FF":"60")+item.GetBackgroundColor());
 
                         DataTable.addView(TableBlock);
                     }
-
                     selectItem();
-
-
                 } catch (Exception e) {
                     e.getMessage();
                 }
@@ -559,7 +544,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
          else {
             UtilsUI.Dialog("Помилка збереження документа:\n",pResult.TextError);
         }
-
 
     }
 
@@ -633,9 +617,10 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
     }
 
     private  void SetViewOut()    {
+
         if(!DocSetting.IsViewOut)
             return;
-        GetDIM();
+       // GetDIM();
         if(DocItemModel.IsView.get())
         {
             Doc d = new Doc(TypeDoc,NumberDoc);
@@ -645,17 +630,6 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         }
 
         DocItemModel.SetView();
-
-        int view = DocItemModel.IsView.get() ? View.VISIBLE : View.INVISIBLE;
-        DIOut.setVisibility(view);
-
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.WRAP_CONTENT,
-                FrameLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(0,  DocItemModel.IsView.get()?120:0, 0, 0);
-        documentItemsFrame.setLayoutParams(params);
-
     }
 
     private  void RefreshOut(){
@@ -664,10 +638,10 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         DateOut.setSelection(DocItemModel.ListDateIdx.get());
     }
 
-    private void GetDIM()
+   /* private void GetDIM()
     {
         DocItemModel.NumberOutInvoice.set(NumberOut.getText().toString());
         DocItemModel.IsClose= IsClose.isChecked()?1:0;
-    }
+    }*/
 
 }

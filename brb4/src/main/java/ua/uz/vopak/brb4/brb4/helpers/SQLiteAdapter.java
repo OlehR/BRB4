@@ -385,7 +385,7 @@ public class SQLiteAdapter
         }
 
         if(pTypeResult==1)
-          sql = " select dw1.order_doc, w.CODE_WARES,coalesce(dws.name,w.NAME_WARES) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
+          sql = " select dw1.order_doc, dw1.CODE_WARES,coalesce(dws.name,w.NAME_WARES) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
                 ",dw1.quantity_reason as quantity_reason \n" +
                   Color+
                   ",w.code_unit\n"+
@@ -394,29 +394,29 @@ public class SQLiteAdapter
                 "    Left join wares w on dw1.code_wares = w.code_wares \n" +
                 "    left join (\n" +
                   "    select  dws.type_doc ,dws.number_doc, dws.code_wares,dws.name, sum(dws.quantity) as quantity,  min(dws.quantity_min) as quantity_min, max(dws.quantity_max) as quantity_max  from   DOC_WARES_sample dws   group by dws.type_doc ,dws.number_doc,dws.code_wares,dws.name\n" +
-                  "    ) as dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = w.code_wares\n" +
+                  "    ) as dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = dw1.code_wares\n" +
                 "    where d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                 " union all\n" + 
-                " select dws.order_doc+100000, w.CODE_WARES,coalesce(dws.name,w.NAME_WARES) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
+                " select dws.order_doc+100000, dws.CODE_WARES,coalesce(dws.name,w.NAME_WARES) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity_input,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old\n" +
                 "     ,0 as  quantity_reason "+
                 ", 3 as Ord\n"+
                 ",w.code_unit\n"+
                 "    from Doc d  \n" +
                 "    join DOC_WARES_sample dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc --and dws.code_wares = w.code_wares\n" +
                 "    left join wares w on dws.code_wares = w.code_wares \n" +
-                "    left join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,sum(dw.quantity_old) as quantity_old from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc and dw1.code_wares = w.code_wares)\n" +
+                "    left join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,sum(dw.quantity_old) as quantity_old from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc and dw1.code_wares = dws.code_wares)\n" +
                 "    where dw1.type_doc is null and d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                 " order by "+OrderQuery;
 
         if(pTypeResult==2)
-            sql="select dw1.order_doc, w.CODE_WARES,coalesce(dws.name,w.NAME_WARES) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old,dw1.CODE_Reason \n" +
+            sql="select dw1.order_doc, dw1.CODE_WARES,coalesce(dws.name,w.NAME_WARES) as NAME_WARES,coalesce(dws.quantity,0) as quantity_order,coalesce(dw1.quantity,0) as quantity_input, coalesce(dws.quantity_min,0) as quantity_min, coalesce(dws.quantity_max,0) as quantity_max ,coalesce(d.Is_Control,0) as Is_Control, coalesce(dw1.quantity_old,0) as quantity_old,dw1.CODE_Reason \n" +
                     ",0 as Ord,w.code_unit\n"+
                     "    from Doc d  \n" +
                     "    join doc_wares dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
                     "    left join wares w on dw1.code_wares = w.code_wares \n" +
                     "    left join (\n" +
                     "    select  dws.type_doc ,dws.number_doc, dws.code_wares,dws.name, sum(dws.quantity) as quantity,  min(dws.quantity_min) as quantity_min, max(dws.quantity_max) as quantity_max  from   DOC_WARES_sample dws   group by dws.type_doc ,dws.number_doc,dws.code_wares,dws.name\n" +
-                    "    ) as dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = w.code_wares\n"+
+                    "    ) as dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = dw1.code_wares\n"+
                     "    where d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                     " order by 1,2";
 
@@ -548,7 +548,6 @@ public class SQLiteAdapter
                     model.QuantityMax = (mCur.getInt(0) == 1 ? mCur.getDouble(1) : Double.MAX_VALUE);
                     model.QuantityOrder = mCur.getInt(2);
                     model.IsRecord = mCur.getInt(3) == 1;
-
                 }
             } catch (Exception e) {
                 Utils.WriteLog("e", TAG, "GetScanData >>" + e.getMessage());

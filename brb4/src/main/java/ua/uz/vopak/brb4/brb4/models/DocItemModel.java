@@ -10,6 +10,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
+import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 
 
 public class DocItemModel {
@@ -21,6 +22,7 @@ public class DocItemModel {
     public ObservableBoolean IsPW =new ObservableBoolean(false);
     public ObservableField<String> PW    = new ObservableField<>("");
     public int IsClose=1;
+    //UtilsUI UtilsUI;
     //GlobalConfig config = GlobalConfig.instance();
     DocumentItemsActivity DIA;
     SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd");
@@ -30,6 +32,7 @@ public class DocItemModel {
     public DocItemModel(DocumentItemsActivity pDIA)
     {
         DIA=pDIA;
+        UtilsUI UtilsUI = new UtilsUI(DIA);
         Date date = new Date(System.currentTimeMillis());
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -71,15 +74,15 @@ public class DocItemModel {
     public void OnClickCancel(){PW.set("");IsPW.set(false);}
     public void OnClickSave()
     {
-        if(DIA.NumberDoc.substring(DIA.NumberDoc.length() - 3).equals(PW)) {
+        if(DIA.NumberDoc.substring(DIA.NumberDoc.length() - 3).equals(PW.get().trim())) {
+            OnClickCancel();
             DIA.SendDoc(false);
         }
         else
         {
-
+            PW.set("");
+            DIA.DontSave();
         }
-        OnClickCancel();
-
     }
 }
 

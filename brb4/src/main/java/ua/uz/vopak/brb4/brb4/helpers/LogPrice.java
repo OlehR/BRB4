@@ -20,7 +20,9 @@ public class LogPrice {
     public String Article;
     public int LineNumber;
     public double NumberOfReplenishment;
-    public String GetJsonPSU() { return "[\""+BarCode+"\","+Status+",\""+DTInsert.toString()+"\","+PackageNumber+"]";}
+    DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    public String GetJsonPSU() { return "[\""+BarCode+"\","+Status+",\""+format.format(DTInsert)+"\","+PackageNumber+"]";}
     public String GetJsonSE(){return "{\"Barcode\":\""+BarCode+"\",\"Code\":\""+CodeWares+"\",\"Status\":"+Status+",\"LineNumber\":"+LineNumber+",\"NumberOfReplenishment\":"+ Double.toString(NumberOfReplenishment)+"}";}
 
     public LogPrice(){}
@@ -38,7 +40,7 @@ public class LogPrice {
     void Init( Cursor pCur)
     {
 
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
 
         BarCode= pCur.getString(0);
         Status= pCur.getInt(1);

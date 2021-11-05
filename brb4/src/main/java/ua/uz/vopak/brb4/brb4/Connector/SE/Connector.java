@@ -56,10 +56,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 Utils.WriteLog("e",  TAG , "Login=>" + e.getMessage());
                 return new Result(-1, e.getMessage());
             }
-
         }
-
-
     }
 
     //Завантаження довідників.
@@ -129,13 +126,20 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         if(ds!=null)
             CodeApi=ds.CodeApi;
         else
-            if(pTypeDoc == -1 && config.IsLoginCO)  CodeApi=1;
+            if(pTypeDoc <=0 && config.IsLoginCO)  CodeApi=1;
 
-        if(pTypeDoc <= 7 &&pTypeDoc <= 9) {
+        if(pTypeDoc >= 7 &&pTypeDoc <= 9) {
             Warehouse  Wh = config.GetWarehouse(config.CodeWarehouse);
             if(Wh!=null)
             CodeWarehouse=Wh.Number;
         }
+        String NameApi= "documents";
+        String AddPar="";
+        if(pTypeDoc >= 8 && pTypeDoc <= 9) {
+            NameApi= "docmoveoz";
+            AddPar= "&TypeMove="+(pTypeDoc ==8?"0":"1");
+        }
+
   //      if (pTypeDoc == -1)
   //          LoadGuidData((pTypeDoc == -1), pProgress);
 
@@ -144,7 +148,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         HttpResult res;
         try {
             if ((pTypeDoc >= 5 && pTypeDoc <= 9 ) || (pTypeDoc <= 0 && config.IsLoginCO)  ) {
-                res = Http.HTTPRequest(CodeApi, "documents" + (pTypeDoc == 5 ? "\\" + pNumberDoc : "?StoreSetting=" + CodeWarehouse), null, "application/json;charset=utf-8", config.Login, config.Password);
+                res = Http.HTTPRequest(CodeApi, NameApi+ (pTypeDoc == 5 ? "\\" + pNumberDoc : "?StoreSetting=" + CodeWarehouse)+AddPar, null, "application/json;charset=utf-8", config.Login, config.Password);
             } else
                 res = Http.HTTPRequest(CodeApi, "documents", null, "application/json;charset=utf-8", config.Login, config.Password);
 
@@ -165,11 +169,12 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 for (Doc v : data.Doc) {
                     //v.TypeDoc = ConvertTypeDoc(v.TypeDoc);
                     v.DateDoc = v.DateDoc.substring(0, 10);
+                    v.TypeDoc+=(pTypeDoc == 9?1:0);
                     mDbHelper.SaveDocs(v);
                 }
                 if (pProgress != null)
                     pProgress.set(60);
-                SaveDocWaresSample(data.DocWaresSample);
+                SaveDocWaresSample(data.DocWaresSample,(pTypeDoc == 9?1:0));
                 if (pProgress != null)
                     pProgress.set(100);
                 return true;
@@ -197,15 +202,19 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         }
         OD.add(el);
         String json = gson.toJson(OD);
-
-        HttpResult res = Http.HTTPRequest((pTypeDoc == 5 || pTypeDoc == 6 ? 1 : 0), "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
+        int Api=0;
+        if(pTypeDoc == 5 || pTypeDoc == 6)
+            Api=1;
+        if(pTypeDoc >= 7 || pTypeDoc <= 9)
+            Api=2;
+        HttpResult res = Http.HTTPRequest(Api, "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
         if (res.HttpState == eStateHTTP.HTTP_OK) {
             return new Result(res);
         }
         return new Result(-1, res.HttpState.toString());
     }
 
-    boolean SaveDocWaresSample(DocWaresSample[] pDWS) {
+    boolean SaveDocWaresSample(DocWaresSample[] pDWS,int AddTypeDoc) {
         int i = 0;
         db.beginTransaction();
         try {
@@ -214,14 +223,15 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             for (DocWaresSample DWS : pDWS) {
                 long result = -1;
 
-                values.put("type_doc", DWS.TypeDoc);
+                values.put("type_doc", DWS.TypeDoc+AddTypeDoc);
                 values.put("number_doc", DWS.NumberDoc);
                 values.put("order_doc", DWS.OrderDoc);
                 values.put("code_wares", DWS.CodeWares);
                 values.put("quantity", DWS.Quantity);
                 values.put("quantity_min", DWS.QuantityMin);
                 values.put("quantity_max", DWS.QuantityMax);
-                values.put("name", DWS.Name);
+                values.put("Name", DWS.Name);
+                values.put("BarCode",DWS.BarCode);
                 result = db.replace("DOC_WARES_sample", null, values);
 
                 if (i >= 1000) {
@@ -347,11 +357,18 @@ class OutputDoc
     public String DateOutInvoice; // YYYY-MM-DD
     public String NumberOutInvoice;
     public int  IsClose;
+    public int TypeMove=0;
     List<OutputDocWares> DocWares;
     public OutputDoc(){};
     public OutputDoc(int pTypeDoc, String pNumberDoc,String pDateDoc)
     {
         TypeDoc=pTypeDoc;  NumberDoc= pNumberDoc; DateDoc =pDateDoc;
+
+        if(TypeDoc==9)
+        {
+            TypeMove=1;
+            TypeDoc=8;
+        }
         DocWares = new ArrayList<>();
     }
     public OutputDoc(int pTypeDoc, String pNumberDoc,String pDateDoc,String pDateOutInvoice,String pNumberOutInvoice,int pIsClose)
@@ -371,16 +388,16 @@ class OutputDoc
          for (DocWaresSample2 el:DocWaresSample) {el.set(); }
      }
 }
-class DocWaresSample2 extends DocWaresSample
-        {
-        public int INUMBER;
-        public String OZ;
-        public void set()
-        {
-            CodeWares=INUMBER;
-            Name=OZ;
-        }
-        }
+class DocWaresSample2 extends DocWaresSample {
+    //public int INUMBER;
+   // public String NAME;
+
+    public void set() {
+        //CodeWares=INUMBER;
+  //      if (NAME != null && NAME.length() > 0)
+   //         Name = NAME;
+    }
+}
 
 
  class InputWarehouse {

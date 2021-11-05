@@ -137,11 +137,16 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     public Result SendLogPrice(List<LogPrice> pList) {
         List<String> ll = new ArrayList<>(pList.size());
-        for (LogPrice el : pList)
-            ll.add(el.GetJsonPSU());
 
-        String a = new Gson().toJson(ll);
-        String data = config.GetApiJson(141, "\"LogPrice\":" + a);
+        StringBuilder a = new StringBuilder("");
+
+        for (LogPrice el : pList)
+            a.append(","+el.GetJsonPSU());
+
+        if(a.length()<=1)
+            return new Result(-1, "Відсутні дані на відправку");
+        //String a = new Gson().toJson(ll);
+        String data = config.GetApiJson(141, "\"LogPrice\":[" +a.substring(1).toString()+"]");
 
         HttpResult res = Http.HTTPRequest(0, "", data, "application/json; charset=utf-8", null, null);
         if (res.HttpState == eStateHTTP.HTTP_OK) {

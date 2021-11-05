@@ -74,11 +74,11 @@ public class Worker {
                 if(Right[3])
                     Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,false,1);
                 if(Right[4])
-                    Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,true,2);
+                    Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2);
                 if(Right[5])
-                    Setting[step++] = new DocSetting(8,"Переміщення ОЗ Вих", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,true,2);
+                    Setting[step++] = new DocSetting(8,"Переміщення ОЗ Вих", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2);
                 if(Right[6])
-                    Setting[step++] = new DocSetting(9,"Переміщення ОЗ Вх", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,true,2);
+                    Setting[step++] = new DocSetting(9,"Переміщення ОЗ Вх", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2);
 
  //               if(Right[5])
  //                   Setting[step++] = new DocSetting(0,"Прайсчекер", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0,false,false,true,false,false);
