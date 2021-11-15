@@ -1,5 +1,6 @@
 package ua.uz.vopak.brb4.brb4.Connector;
 
+import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 
 import androidx.databinding.ObservableInt;
@@ -10,6 +11,8 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
 import ua.uz.vopak.brb4.brb4.models.Config;
+import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
@@ -53,4 +56,41 @@ public abstract class Connector {
 
     // Розбір штрихкоду.
     public abstract ParseBarCode ParsedBarCode(String pBarCode,boolean pIsOnlyBarCode);
+
+    public boolean SaveDocWaresSample(DocWaresSample[] pDWS, int AddTypeDoc) {
+        int i = 0;
+        db.beginTransaction();
+        try {
+            i++;
+            ContentValues values = new ContentValues();
+            for (DocWaresSample DWS : pDWS) {
+                long result = -1;
+
+                values.put("type_doc", DWS.TypeDoc+AddTypeDoc);
+                values.put("number_doc", DWS.NumberDoc);
+                values.put("order_doc", DWS.OrderDoc);
+                values.put("code_wares", DWS.CodeWares);
+                values.put("quantity", DWS.Quantity);
+                values.put("quantity_min", DWS.QuantityMin);
+                values.put("quantity_max", DWS.QuantityMax);
+                values.put("Name", DWS.Name);
+                values.put("BarCode",DWS.BarCode);
+                result = db.replace("DOC_WARES_sample", null, values);
+
+                if (i >= 1000) {
+                    i = 0;
+                    db.setTransactionSuccessful();
+                    db.endTransaction();
+                    db.beginTransaction();
+                }
+            }
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Utils.WriteLog("e", TAG, "SaveDOC_WARES_sample=>" + e.toString());
+        } finally {
+            db.endTransaction();
+        }
+        return true;
+    }
+
 }

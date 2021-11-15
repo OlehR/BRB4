@@ -319,14 +319,14 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                     WaresItem.ClearData();
 
                     if(  !model.IsRecord) {
-                        if (WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Ask) {
+                        if (DocSetting.TypeControlQuantity == eTypeControlDoc.Ask) {
                             if(config.Company==eCompany.Sim23)
                                 utils.PlaySound();
                             AskAddAbsentWares(model);
                             //Refresh();
                             return;
                         }
-                        if(WaresItem.DocSetting.TypeControlQuantity == eTypeControlDoc.Control) {
+                        if(DocSetting.TypeControlQuantity == eTypeControlDoc.Control) {
                             if(config.Company==eCompany.Sim23)
                                 utils.PlaySound();
                             UtilsUI.Dialog("Товар відсутній в документі", model.NameWares);

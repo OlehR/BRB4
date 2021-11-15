@@ -16,6 +16,7 @@ import ua.uz.vopak.brb4.brb4.Connector.Connector;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocModel;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
+import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.lib.models.ParseBarCode;
@@ -194,6 +195,27 @@ public class Worker {
         String outLog="Null";
         if(res!=null)
             outLog=res.CodeWares+","+res.QuantityBarCode+","+res.NameWares;
+        else
+          if(config.Company== eCompany.Sim23 && pTypeDoc==7 && PBarcode.Code!=0) { //Якщо ревізія а товар не знайдено
+
+              DocWaresSample[] DWS = new DocWaresSample[1];
+              DWS[0] = new DocWaresSample();
+              DWS[0].TypeDoc=pTypeDoc;
+              DWS[0].NumberDoc=pNumberDoc;
+              DWS[0].OrderDoc=100000+PBarcode.Code;
+              DWS[0].CodeWares=PBarcode.Code;
+              DWS[0].Quantity=1d;
+              DWS[0].QuantityMax=1d;
+              DWS[0].Name=pBarCode;
+              c.SaveDocWaresSample(DWS,0);
+              res=new WaresItemModel(DWS[0]);
+              res.Coefficient=1;
+              res.CodeUnit=config.GetCodeUnitPiece();
+              res.BaseCodeUnit=res.CodeUnit;
+              res.NameUnit="Шт";
+
+          }
+
         Utils.WriteLog("i",TAG,"SaveDocWares=>"+String.valueOf(pTypeDoc)+","+pNumberDoc+","+gson.toJson(PBarcode)+
                 ",\nres=>"+outLog);
         return res;
@@ -264,7 +286,6 @@ public class Worker {
         }
         return res;
     }
-
 
 
     public  Warehouse[] GetWarehouse(){

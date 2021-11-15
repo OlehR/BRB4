@@ -97,6 +97,16 @@ public class WaresItemModel implements Cloneable{
         ClearData();
         barcodeView=pBarcodeView;
     }
+    public WaresItemModel(DocWaresSample pDWS)
+    {
+        TypeDoc=pDWS.TypeDoc;
+        NumberDoc=pDWS.NumberDoc;
+        CodeWares=pDWS.CodeWares;
+        NameWares= pDWS.Name;
+        QuantityMax= pDWS.QuantityMax;
+        QuantityMin=pDWS.QuantityMin;
+        //QuantityOrder= pDWS.Quantity;
+    }
    // public  WaresItemModel(WaresItemModel p){return (WaresItemModel)clone(p);}
 
     public String GetQuantityOld(){return  QuantityOld==0.0d ? "": String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",QuantityOld);}
