@@ -175,7 +175,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                     }
                     catch (Exception e) {
                         WaresItem.InputQuantity =0;
-                        Utils.WriteLog("e",TAG, "InputQuantity=>" +inputCount.getText().toString()+ " "+ e.getMessage());
+                        Utils.WriteLog("e",TAG, "InputQuantity=>" +inputCount.getText().toString()+ " ",e);
                     }
 
                 }
@@ -549,7 +549,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                         WaresItemModel el = (WaresItemModel) WaresItem.clone();
                         ListWares.add(el);
                     } catch (Exception e) {
-                        Utils.WriteLog("e",TAG, "AfterSave=>" + e.getMessage());
+                        Utils.WriteLog("e",TAG, "AfterSave=>" ,e);
                     }
 
                     WaresTableLayout.addView(RenderTableItem(WaresItem),1);

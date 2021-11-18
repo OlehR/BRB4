@@ -53,7 +53,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                     return new Result(jObject.getInt("State"), jObject.getString("TextError"), "Неправильний логін або пароль");
 
             } catch (Exception e) {
-                Utils.WriteLog("e",  TAG , "Login=>" + e.getMessage());
+                Utils.WriteLog("e",  TAG , "Login=>" , e);
                 return new Result(-1, e.getMessage());
             }
         }
@@ -108,7 +108,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             Log.d(TAG, "End");
             return true;
         } catch (Exception e) {
-            Utils.WriteLog("e", TAG, "LoadGuidData=>" + e.getMessage());
+            Utils.WriteLog("e", TAG, "LoadGuidData=>",e);
             Toast toast = Toast.makeText(Config.instance().context, "Помилка завантаження довідників=>" + e.getMessage(), Toast.LENGTH_LONG);
             toast.show();
         }
@@ -181,7 +181,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             }
 
         } catch (Exception e) {
-            Utils.WriteLog("e", TAG, "LoadDocsData=>" + e.getMessage());
+            Utils.WriteLog("e", TAG, "LoadDocsData=>" , e);
         }
         return false;
     }
@@ -232,7 +232,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             }
 
         } catch (Exception e) {
-            Utils.WriteLog("e", TAG, "LoadWarehouse=>" + e.getMessage());
+            Utils.WriteLog("e", TAG, "LoadWarehouse=>" , e);
         }
         return null;
     }
@@ -273,7 +273,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 res.BarCode=null;
             }catch(Exception e)
             {
-                Utils.WriteLog("e",TAG,"ParsedBarCode=> "+ pBarCode+" "+e.getMessage());
+                Utils.WriteLog("e",TAG,"ParsedBarCode=> "+ pBarCode,e);
             }
         }
 
@@ -285,7 +285,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                     res.IsOnlyBarCode=false; // Для варіанту коли у виробника штрихкод починається з 29 так як і у цінника.
                     //res.BarCode=null;
                 } catch (Exception e) {
-                    Log.e("ParsedBarCode", e.getMessage());
+                   Utils.WriteLog("e",TAG,"ParsedBarCode", e);
 
                 }
             }

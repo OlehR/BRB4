@@ -153,7 +153,7 @@ public class BL_PriceChecker extends BL {
             Utils.WriteLog("d",TAG, "vStatus  >>"+ vStatus );
             SetProgress(100);
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "InsLogPrice  >>"+ e.getMessage() );
+            Utils.WriteLog("e",TAG, "InsLogPrice  >>",e );
         }
         return LI;
     }
@@ -249,7 +249,7 @@ public class BL_PriceChecker extends BL {
                     LI.AllScan = varRes[0];
                     LI.BadScan = varRes[1];
                 } catch (Exception e) {
-                    Utils.WriteLog("e",TAG, "SendLogPricePSU  >>" + e.getMessage());
+                    Utils.WriteLog("e",TAG, "SendLogPricePSU  >>" ,e);
                 }
 
             }

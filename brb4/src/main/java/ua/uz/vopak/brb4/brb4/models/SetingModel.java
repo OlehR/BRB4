@@ -77,7 +77,7 @@ public class SetingModel {
                     OnClickSave();
             }
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "OnClickIP=>" + e.getMessage());
+            Utils.WriteLog("e",TAG, "OnClickIP=>" , e);
         }
 
     }

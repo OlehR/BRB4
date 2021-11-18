@@ -186,7 +186,7 @@ public class SQLiteAdapter
         }
         catch (SQLException e)
         {
-            Utils.WriteLog("e",TAG, "LoadDataDoc=>"+e.getMessage());
+            Utils.WriteLog("e",TAG, "LoadDataDoc=>",e);
             if(pProgress!=null)
                 pProgress.set(0);
             return false;
@@ -341,7 +341,7 @@ public class SQLiteAdapter
                 }
             }
         }catch (Exception e){
-            Utils.WriteLog("e",TAG, "GetDocumentList >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetDocumentList >>",e);
         }
         return model;
     }
@@ -358,7 +358,7 @@ public class SQLiteAdapter
             res=mCur.getInt(0);
             }
         }catch (Exception e){
-            Utils.WriteLog("e",TAG, "GetStateDoc >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetStateDoc >>",e);
         }
         return res;
 
@@ -446,7 +446,7 @@ public class SQLiteAdapter
                 }
             }
         }catch (Exception e){
-            Utils.WriteLog("e",TAG, "GetDocWares >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetDocWares >>",e);
         }
         return model;
     }
@@ -534,7 +534,7 @@ public class SQLiteAdapter
                 model.QuantityBarCode = pParseBarCode.Quantity;
             }
         } catch (Exception e) {
-            Utils.WriteLog("e", TAG, "GetScanData >>" + e.getMessage());
+            Utils.WriteLog("e", TAG, "GetScanData >>" , e);
 
         }
         if (model != null && pDocNumber != null) {
@@ -550,7 +550,7 @@ public class SQLiteAdapter
                     model.IsRecord = mCur.getInt(3) == 1;
                 }
             } catch (Exception e) {
-                Utils.WriteLog("e", TAG, "GetScanData >>" + e.getMessage());
+                Utils.WriteLog("e", TAG, "GetScanData >>", e);
             }
 
         }
@@ -570,7 +570,7 @@ public class SQLiteAdapter
                 }
             }
         }catch (Exception e){
-            Utils.WriteLog("e",TAG, "GetReason>>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetReason>>", e);
         }
         return model.toArray(new Reason[model.size()]);
     }
@@ -583,7 +583,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            Utils.WriteLog("e",TAG, "UpdateDocState >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "UpdateDocState >>",e);
         }
     }
 
@@ -598,7 +598,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            Utils.WriteLog("e",TAG, "SetNullableWares >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "SetNullableWares >>",  e);
         }
     }
 
@@ -619,7 +619,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            Utils.WriteLog("e",TAG, "SaveDocWares >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "SaveDocWares >>",  e);
         }
        return new Result((int)result,s);
     }
@@ -674,7 +674,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            Utils.WriteLog("e",TAG, "SaveDocOut >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "SaveDocOut >>",e);
         }
     }
 
@@ -698,7 +698,7 @@ public class SQLiteAdapter
         }
         catch (Exception e)
         {
-            Utils.WriteLog("e",TAG, "GetDocOut >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetDocOut >>",  e);
         }
         return result;
     }
@@ -723,7 +723,7 @@ public class SQLiteAdapter
     public List<Warehouse> GetWarehouse(){
         List<Warehouse> res= new ArrayList<>();
         Cursor mCur;
-        String sql="select Code,  Number,Name, Url, InternalIP TEXT, ExternalIP from Warehouse";
+        String sql="select Code,  Number,Name, Url, InternalIP TEXT, ExternalIP from Warehouse order by Name";
         try {
             mCur = mDb.rawQuery(sql, null);
             if (mCur!=null && mCur.getCount() > 0) {
@@ -733,7 +733,7 @@ public class SQLiteAdapter
                 }
             }
         }catch (Exception e){
-            Utils.WriteLog("e",TAG, "GetWarehouse >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "GetWarehouse >>",e);
         }
         return res;
     }
@@ -743,7 +743,7 @@ public class SQLiteAdapter
              mDb.execSQL("delete from Warehouse");
             return true;
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "ClearWarehouse >>" + e.getMessage());
+            Utils.WriteLog("e",TAG, "ClearWarehouse >>" ,e);
         }
         return false;
     }

@@ -188,7 +188,7 @@ public class Utils {
         myMediaPlayer.stop();  //>>> stop myMediaPlayer
         myMediaPlayer.release(); */
         }catch (Exception e) {
-            Utils.WriteLog("e",TAG,"Error PlaySound() => "+e.getMessage());
+            Utils.WriteLog("e",TAG,"Error PlaySound() => ",e);
         }
     }
 
@@ -207,7 +207,7 @@ public class Utils {
             Log.i(TAG, "Data Saved");
         } catch (IOException e) {
             if(IsWriteLog)
-                Utils.WriteLog("e",TAG, "Could not write file " + e.getMessage());
+                Utils.WriteLog("e",TAG, "Could not write file ", e);
             else
                 Log.e(TAG,"Could not write file " + e.getMessage());
         }
@@ -236,10 +236,15 @@ public class Utils {
 
     static public void  WriteLog(String pType, String pTAG,String pText)
     {
+        WriteLog(pType, pTAG, pText,null);
+    }
+
+    static public void  WriteLog(String pType, String pTAG,String pText,Exception e)
+    {
         String Type="";
         if(pType.equals("e")) {
             Type = "Error=>";
-            Log.e(pTAG, pText);
+            Log.e(pTAG, pText+(e!=null?"\nTextError=> "+e.getMessage()+"\n"+Log.getStackTraceString(e.getCause().getCause()):""));
         }
         if(pType.equals("i")) {
             Type = "Info=>";
@@ -512,7 +517,7 @@ public class Utils {
                 }
             }
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "CopyFile" + pFrom+" " +pTo + " " + e.getMessage());
+            Utils.WriteLog("e",TAG, "CopyFile" + pFrom+" " +pTo , e);
         }
     }
 
@@ -547,7 +552,7 @@ public class Utils {
                     Res=true;
                 }
                 catch (Exception e){
-                    Utils.WriteLog("e",TAG,"GetFileFTP() => "+e.getMessage());
+                    Utils.WriteLog("e",TAG,"GetFileFTP() => ",e);
                 }
                 finally {
                     in.close();

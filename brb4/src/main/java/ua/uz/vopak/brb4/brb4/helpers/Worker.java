@@ -55,7 +55,7 @@ public class Worker {
                         break;
                     case User:
                         Right = new boolean[]{true,true , true, false,false,true, false};
-                        Setting =  new  DocSetting[3];
+                        Setting =  new  DocSetting[4];
                         break;
                     case  Auditor:
                         Right = new boolean[]{false,true , false, true,true,true,true};
@@ -282,7 +282,7 @@ public class Worker {
                 }
             }
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "FindWhIP=>" + e.getMessage());
+            Utils.WriteLog("e",TAG, "FindWhIP=>" ,e);
         }
         return res;
     }

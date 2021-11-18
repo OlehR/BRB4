@@ -339,7 +339,7 @@ public class DocumentWeightActivity extends Activity  {
 
                 } catch(Exception e)
                 {
-                    Utils.WriteLog("e",TAG,"focusOnView\\ position=>" + String.valueOf(position)+" "+e.getMessage());
+                    Utils.WriteLog("e",TAG,"focusOnView\\ position=>" + String.valueOf(position),e);
                 }
             }
 

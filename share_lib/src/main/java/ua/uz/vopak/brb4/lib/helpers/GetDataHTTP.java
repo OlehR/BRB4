@@ -151,7 +151,7 @@ public String GetBaseAuth(String pLogin,String pPasWord){
             }
 
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "HTTPRequest\\"+e.getMessage());
+            Utils.WriteLog("e",TAG, "HTTPRequest\\",e);
             e.printStackTrace();
             res.HttpState= eStateHTTP.HTTP_Not_Define_Error;
             if(e.getMessage().equals("Read timed out")) {

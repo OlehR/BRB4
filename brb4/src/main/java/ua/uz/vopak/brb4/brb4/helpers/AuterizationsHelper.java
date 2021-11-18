@@ -34,7 +34,7 @@ public class AuterizationsHelper {
                 Res="Ok";
                 config.DocsSetting=config.Worker.GenSettingDocs(config.Company,config.Role);
                 SetLoginPw(pLogin,pPassWord,pIsLoginCO);
-                if( 1==2 && pIsLoginCO && config.Company==eCompany.Sim23) //Визначення магазина по IP
+                if( pIsLoginCO && config.Company==eCompany.Sim23) //Визначення магазина по IP
                 {
                     Worker worker=config.GetWorker();
                     Warehouse[] Wh= worker.GetWarehouse(); //con.LoadWarehouse();
@@ -70,7 +70,7 @@ public class AuterizationsHelper {
             */
 
         }catch (Exception e){
-            Utils.WriteLog("e",TAG, "Login >>"+  e.getMessage());
+            Utils.WriteLog("e",TAG, "Login >>"+" Res=>"+Res,e);
         }
         return null;
     }

@@ -75,7 +75,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             }
 
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "LoadWarehouse=>" + e.getMessage());
+            Utils.WriteLog("e",TAG, "LoadWarehouse=>" , e);
         }
         return res;
     }
@@ -130,7 +130,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             Result res = gson.fromJson(result.Result, Result.class);
             return res;
         } catch (Exception e) {
-            Utils.WriteLog("e",TAG, "SyncDocsData=>" +e.getMessage()+" " +data);
+            Utils.WriteLog("e",TAG, "SyncDocsData=>" +data,e);
             return new Result(-1, e.getMessage()+data);
         }
     }
@@ -154,7 +154,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 return gson.fromJson(res.Result, Result.class);
 
             } catch (Exception e) {
-                Utils.WriteLog("e",TAG, "SendLogPrice  >>" + e.getMessage());
+                Utils.WriteLog("e",TAG, "SendLogPrice  >>",  e);
                 return new Result(-1, e.getMessage());
             }
         } else {
@@ -182,10 +182,10 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             }
             return res.HttpState.toString();
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            Utils.WriteLog("e",TAG, "printHTTP  >>" + ex.getMessage() );
-            return  ex.getMessage();
+            Utils.WriteLog("e",TAG, "printHTTP  >>" , e);
+            return  e.getMessage();
         }
     }
 
@@ -206,7 +206,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 return res;
             }catch(Exception e)
             {
-                Utils.WriteLog("e",TAG,"ParsedBarCode=> "+ pBarCode+" "+e.getMessage());
+                Utils.WriteLog("e",TAG,"ParsedBarCode=> "+ pBarCode,e);
             }
         }
 
@@ -225,7 +225,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                             break;
                     }
                 } catch (Exception e) {
-                    Log.e("PriceBarCode", e.getMessage());
+                   Utils.WriteLog("e",TAG,"PriceBarCode", e);
                 }
             }
             if(pBarCode.length()==13)

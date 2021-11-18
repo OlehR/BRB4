@@ -33,7 +33,7 @@ public class LabelInfo
 
     boolean isInit=false;
     public AbstractConfig config;
-
+    String  TAG="LabelInfo";
     public int Code;
     public String strCode(){return config.Company==eCompany.Sim23 ?Integer.toString(Code):Article.replaceFirst("^0+(?!$)", ""); }
     public String strCodeArticle(){ return config.Company==eCompany.Sim23 ? "Код:":"Арт.:";}
@@ -270,7 +270,7 @@ public class LabelInfo
 
 
         }catch (Exception e){
-            e.getMessage();
+            Utils.WriteLog("e",TAG, "Init=>",e);
         }
 
     }

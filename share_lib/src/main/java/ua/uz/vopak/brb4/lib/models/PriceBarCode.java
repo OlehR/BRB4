@@ -3,8 +3,10 @@ package ua.uz.vopak.brb4.lib.models;
 import android.util.Log;
 
 import ua.uz.vopak.brb4.lib.enums.eCompany;
+import ua.uz.vopak.brb4.lib.helpers.Utils;
 
 public class PriceBarCode {
+    String TAG ="PriceBarCode";
     public String BarCode;
     public int Code=0;
     public double Price=0d;
@@ -25,7 +27,8 @@ public class PriceBarCode {
                     Price = Double.valueOf(pBarCode.substring(8, 13)) / 100d;
                 }
                 catch (Exception e){
-                    Log.e("PriceBarCode",e.getMessage());
+                    Utils.WriteLog("e",TAG, "PriceBarCode" ,e);
+
                 };
             }
         }
@@ -43,7 +46,7 @@ public class PriceBarCode {
                         break;
                 }
             } catch (Exception e) {
-                Log.e("PriceBarCode",e.getMessage());
+                Utils.WriteLog("e",TAG, "PriceBarCode" ,e);
             }
 
         }
