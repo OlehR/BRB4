@@ -266,6 +266,8 @@ public class Worker {
 
     public int FindWhIP( Warehouse[] pWarehouses) {
         int res=-1;
+        if(pWarehouses==null)
+            return res;
         try {
             String Ip = config.cUtils.GetIp();
             if (Ip == null)

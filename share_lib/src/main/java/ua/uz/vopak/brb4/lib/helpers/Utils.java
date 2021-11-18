@@ -244,7 +244,9 @@ public class Utils {
         String Type="";
         if(pType.equals("e")) {
             Type = "Error=>";
-            Log.e(pTAG, pText+(e!=null?"\nTextError=> "+e.getMessage()+"\n"+Log.getStackTraceString(e.getCause().getCause()):""));
+        if(e!=null)
+            pText= pText+"\nTextError=> "+e.getMessage()+"\n"+Log.getStackTraceString(e);
+        Log.e(pTAG, pText);
         }
         if(pType.equals("i")) {
             Type = "Info=>";
