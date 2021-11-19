@@ -140,8 +140,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             AddPar= "&TypeMove="+(pTypeDoc ==8?"0":"1");
         }
 
-  //      if (pTypeDoc == -1)
-  //          LoadGuidData((pTypeDoc == -1), pProgress);
+        if (pTypeDoc == -1)
+            LoadGuidData((pTypeDoc == -1), pProgress);
 
         if (pProgress != null)
             pProgress.set(5);
@@ -189,6 +189,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     //Вивантаження документів з ТЗД (HTTP)
     public Result SyncDocsData(int pTypeDoc, String pNumberDoc, List<WaresItemModel> pWares, Date pDateOutInvoice, String pNumberOutInvoice, int pIsClose) {
         Gson gson = new Gson();
+        DocSetting ds= config.GetDocSetting(pTypeDoc);
         SimpleDateFormat formatterDT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         SimpleDateFormat formatterD = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date(System.currentTimeMillis());
@@ -202,12 +203,12 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         }
         OD.add(el);
         String json = gson.toJson(OD);
-        int Api=0;
-        if(pTypeDoc == 5 || pTypeDoc == 6)
-            Api=1;
-        if(pTypeDoc >= 7 || pTypeDoc <= 9)
-            Api=2;
-        HttpResult res = Http.HTTPRequest(Api, "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
+
+        int CodeApi=0;
+        if(ds!=null)
+            CodeApi=ds.CodeApi;
+
+        HttpResult res = Http.HTTPRequest(CodeApi, "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
         if (res.HttpState == eStateHTTP.HTTP_OK) {
             return new Result(res);
         }
