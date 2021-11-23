@@ -188,9 +188,11 @@ public class Worker {
     }
     // Отримати Товар по штрихкоду
     public WaresItemModel GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode,boolean pIsOnlyBarCode) {
-
         Connector c = Connector.instance();
-        ParseBarCode PBarcode= c.ParsedBarCode(pBarCode,pIsOnlyBarCode);
+        boolean IsSimpleDoc=false;
+        if(pTypeDoc>0)
+            IsSimpleDoc = config.GetDocSetting(pTypeDoc).IsSimpleDoc;
+        ParseBarCode PBarcode= c.ParsedBarCode(pBarCode,pIsOnlyBarCode&&!IsSimpleDoc);
         WaresItemModel res=mDbHelper.GetScanData(pTypeDoc, pNumberDoc,PBarcode);// pBarCode, pIsOnlyBarCode,false);
         String outLog="Null";
         if(res!=null)
