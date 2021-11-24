@@ -22,7 +22,7 @@ public class LogPrice {
     public double NumberOfReplenishment;
     DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public String GetJsonPSU() { return "[\""+BarCode+"\","+Status+",\""+format.format(DTInsert)+"\","+PackageNumber+"]";}
+    public String GetJsonPSU() { return "[\""+BarCode+"\","+Status+",\""+format.format(DTInsert)+"\","+PackageNumber+","+ CodeWares+"]";}
     public String GetJsonSE(){return "{\"Barcode\":\""+BarCode+"\",\"Code\":\""+CodeWares+"\",\"Status\":"+Status+",\"LineNumber\":"+LineNumber+",\"NumberOfReplenishment\":"+ Double.toString(NumberOfReplenishment)+"}";}
 
     public LogPrice(){}

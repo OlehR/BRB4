@@ -146,7 +146,7 @@ public class BL_PriceChecker extends BL {
 
             int vStatus = config.Company== eCompany.Sim23 ?
                     (!LI.IsOnLine.get()?-999 : (LI.Code==0?1:(parBarCode.substring(0,2).equals("29")?(LI.OldPrice == LI.Price && LI.PriceOpt==LI.OldPriceOpt?-1:0):(isHandInput?3:2)))):
-                    (isError ? -9 : (LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError != ePrinterError.None ? -1 : 0)))
+                    (isError ? -9 : (LI.Price>0 && LI.OldPrice == LI.Price && LI.OldPriceOpt == LI.PriceOpt ? 1 : (this.Printer.varPrinterError != ePrinterError.None ? -1 : 0)))
             ;
 
             mDbHelper.InsLogPrice(parBarCode,vStatus , LI.ActionType, config.NumberPackege, LI.Code,LI.Article,config.LineNumber);
