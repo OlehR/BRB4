@@ -51,9 +51,10 @@ public class LogPrice {
         {
             DTInsert= Calendar.getInstance().getTime();
         }
-        IsSend=pCur.getInt(3);
-        ActionType=pCur.getInt(4);
-        PackageNumber=pCur.getInt(5);
+        PackageNumber=pCur.getInt(3);
+        IsSend=pCur.getInt(4);
+        ActionType=pCur.getInt(5);
+
         CodeWares=pCur.getInt(6);
         Article=pCur.getString(7);
         LineNumber=pCur.getInt(8);
@@ -61,3 +62,4 @@ public class LogPrice {
     }
 //,DT_insert,package_number
 }
+//select bar_code,Status,DT_insert,package_number,is_send,action_type,code_wares,article,Line_Number,Number_Of_Replenishment
