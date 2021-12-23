@@ -302,6 +302,7 @@ public class SQLiteAdapter
             sql = "SELECT date_doc,type_doc,number_doc,ext_info,name_user,bar_code,description,dt_insert,state \n"+
                     ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT="+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as Weight\n" +
                     ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT<>"+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as NoWeight\n"+
+                    ", coalesce(Color,0) \n"+
                     "FROM DOC d WHERE d.state>=0 and type_doc = '"+pTypeDoc+"'"+
                     " AND date_doc >= date(datetime(CURRENT_TIMESTAMP,'-"+DS.DayBefore+" day')) \n" +//AND datetime(CURRENT_TIMESTAMP)
                     (pExtInfo==null?"":" and ext_info like'%"+ pExtInfo.trim()+"%'") +
@@ -313,6 +314,7 @@ public class SQLiteAdapter
                 sql="SELECT DISTINCT d.date_doc,d.type_doc,d.number_doc,d.ext_info,d.name_user,d.bar_code,d.description,d.dt_insert,d.state -- ,bc.BAR_CODE, dw.*\n" +
                         ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT="+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as Weight\n" +
                         ", (select count(*)  from DOC_WARES_sample dws join wares w on (dws.code_wares=w.CODE_WARES and w.CODE_UNIT<>"+config.GetCodeUnitWeight()+") where dws.type_doc=d.type_doc and dws.number_doc=d.number_doc ) as NoWeight\n"+
+                        ", coalesce(Color,0) \n"+
                         "FROM DOC d \n" +
                         "Join DOC_WARES_SAMPLE dw on dw.number_doc=d.number_doc and dw.type_doc=d.type_doc\n" +
                         "join bar_code bc on dw.code_wares=bc.CODE_WARES\n" +
@@ -336,6 +338,8 @@ public class SQLiteAdapter
                     document.State = mCur.getInt(8);
                     int Weight=mCur.getInt(9);
                     int NoWeight=mCur.getInt(10);
+                    document.Color = mCur.getInt(11);
+
                     document.WaresType = (Weight>0 && NoWeight>0)? 0: (Weight>0?2:1);
                     model.add(document);
                 }

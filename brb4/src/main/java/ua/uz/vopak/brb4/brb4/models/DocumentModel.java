@@ -11,13 +11,21 @@ public class DocumentModel {
     public String DateInsert;
     // 0 - Редагується,1 - Збережена,9 - Проведена (закрита)
     public int State;
+    public int Color;
     public int WaresType;
-    // 3 - червоний, 2- оранжевий, 1 - жовтий, 0 - зелений, інше грязно жовтий-ранжевий.
+
+    // 9 - червоний, 2- оранжевий, 1 - жовтий, 0 - зелений, інше грязно жовтий-ранжевий.
     public String GetBackgroundColor()
     {
-      /*  if(!DocSetting.IsViewPlan)
-            return "fff3cd";*/
-        switch (State) {
+         if(Color>0)
+            return GetColor(Color);
+        return GetColor(State);
+    }
+
+    // 9 - червоний, 2- оранжевий, 1 - жовтий, 0 - зелений, інше грязно жовтий-ранжевий.
+    String GetColor(int pCodeColor)
+    {
+        switch (pCodeColor) {
             case 9:
                 return "FFB0B0"; //Червоний
             case 2:

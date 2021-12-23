@@ -50,11 +50,15 @@ public class DataBaseHelper extends SQLiteOpenHelper
             sql3="create index DOC_WARES_sample_BC on DOC_WARES_sample (BarCode);";
             db.execSQL(sql3);
         }
+        if (oldVersion<5 && newVersion >= 5) {
+            sql3="alter table DOC add COLUMN Color INTEGER;";
+            db.execSQL(sql3);
+        }
     }
 
     public DataBaseHelper(Context context)
     {
-        super(context, DB_NAME, null, 4);// 1? Its database Version
+        super(context, DB_NAME, null, 5);// 1? Its database Version
         if(android.os.Build.VERSION.SDK_INT >= 17){
             DB_PATH = context.getApplicationInfo().dataDir + "/databases/";
         }
