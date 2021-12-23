@@ -87,12 +87,13 @@ public class Worker {
                 break;
             case SparPSU:
             case VopakPSU:
-                Setting =  new  DocSetting[5];
+                Setting =  new  DocSetting[6];
                 Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false,0);
                 Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,5,3,true,true,true,false,false,0);
                 Setting[2] = new DocSetting(3,"Переміщення");
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");
+                Setting[5] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2);
                 break;
         }
        return Setting;
