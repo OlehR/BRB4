@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.lib.helpers;
 
 import android.content.Context;
+import android.os.Build;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -61,8 +62,8 @@ public abstract class AbstractConfig {
         TypeScaner =cUtils.GetTypeScaner();
     }
 
-    public String GetApiJson(int parCodeData, String parData) {
-        return "{\"CodeData\":" + parCodeData + ",\"SerialNumber\":\"" + SN + "\",\"NameDCT\":\"" + NameDCT + "\", \"Ver\":\"" + VERSION_CODE + "\", \"CodeWarehouse\":\"" + this.getCodeWarehouse() + "\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
+    public String GetApiJson(int parCodeData, int VersionCode, String parData) {
+        return "{\"CodeData\":" + parCodeData + ",\"SerialNumber\":\"" + SN + "\",\"NameDCT\":\"" + NameDCT + "\", \"Ver\":\"" + VersionCode + "\", \"CodeWarehouse\":\"" + this.getCodeWarehouse() + "\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData == null || parData =="" ? "" : "," + parData) + "}";
     }
 

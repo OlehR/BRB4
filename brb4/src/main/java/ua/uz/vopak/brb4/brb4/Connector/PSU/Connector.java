@@ -1,5 +1,6 @@
 package ua.uz.vopak.brb4.brb4.Connector.PSU;
 
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ua.uz.vopak.brb4.brb4.BuildConfig;
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.lib.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
@@ -55,7 +57,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     //Завантаження Списку складів (HTTP)
     public Warehouse[] LoadWarehouse() {
         Warehouse[] res = null;
-        String data = config.GetApiJson(210, "");
+        String data = config.GetApiJson(210, BuildConfig.VERSION_CODE,"");
         try {
             HttpResult result = Http.HTTPRequest(0, "", data, "application/json; charset=utf-8", null, null);
             if (result.HttpState == eStateHTTP.HTTP_OK) {
@@ -93,7 +95,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         if (pProgress != null)
             pProgress.set(5);
 
-        String data = config.GetApiJson(150, "\"TypeDoc\":" + pTypeDoc);
+        String data = config.GetApiJson(150,BuildConfig.VERSION_CODE ,"\"TypeDoc\":" + pTypeDoc);
         HttpResult result = Http.HTTPRequest(0, "", data, "application/json; charset=utf-8", null, null);
         if (result.HttpState != eStateHTTP.HTTP_OK) {
             Utils.WriteLog("e",TAG, "Load=>" + result.HttpState.toString());
@@ -120,7 +122,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 wares.add(war);
             }
         }
-        String data = config.GetApiJson(153, "\"TypeDoc\":" + parTypeDoc + ",\"NumberDoc\":\"" + NumberDoc + "\",\"Wares\":[" + TextUtils.join(",", wares) + "]");
+        String data = config.GetApiJson(153, BuildConfig.VERSION_CODE,"\"TypeDoc\":" + parTypeDoc + ",\"NumberDoc\":\"" + NumberDoc + "\",\"Wares\":[" + TextUtils.join(",", wares) + "]");
         try {
             HttpResult result = Http.HTTPRequest(0, "", data, "application/json; charset=utf-8", null, null);
             if (result.HttpState != eStateHTTP.HTTP_OK) {
@@ -146,7 +148,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         if(a.length()<=1)
             return new Result(-1, "Відсутні дані на відправку");
         //String a = new Gson().toJson(ll);
-        String data = config.GetApiJson(141, "\"LogPrice\":[" +a.substring(1).toString()+"]");
+        String data = config.GetApiJson(141, BuildConfig.VERSION_CODE,"\"LogPrice\":[" +a.substring(1).toString()+"]");
 
         HttpResult res = Http.HTTPRequest(0, "", data, "application/json; charset=utf-8", null, null);
         if (res.HttpState == eStateHTTP.HTTP_OK) {
@@ -174,7 +176,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 sb.append(s);
                 sb.append(",");
             }
-            String json = config.GetApiJson(999, "\"CodeWares\":\"" + sb.toString() + "\"");
+            String json = config.GetApiJson(999, BuildConfig.VERSION_CODE,"\"CodeWares\":\"" + sb.toString() + "\"");
             HttpResult res = Http.HTTPRequest(1, "", json, "application/json;charset=UTF-8", null, null);//"http://znp.vopak.local:8088/Print"
             if (res.HttpState == eStateHTTP.HTTP_OK) {
                 return res.Result;
