@@ -214,6 +214,13 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
         if(pBarCode!=null  )
         {
+            Utils.WriteLog( "e",TAG,"ParsedBarCode=> "+ pBarCode.charAt(0)+ " " + pBarCode.contains("|"));
+            if( pBarCode.contains("|")&& pBarCode.charAt(0) == 'Б') {
+                res.Code=200000000+ Integer.valueOf(pBarCode.substring(1,9));
+                res.Quantity=1;
+                res.BarCode=null;
+            }
+            else
             if( pBarCode.contains("-")) {
                 try {
                     String[] str = pBarCode.split("-");
@@ -230,6 +237,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                    Utils.WriteLog("e",TAG,"PriceBarCode", e);
                 }
             }
+            else
             if(pBarCode.length()==13)
             {
               //  Log.e("XXX",number+' ' +number.substring(0,1));
@@ -260,4 +268,5 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         }
         return res;
     }
+
 }

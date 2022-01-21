@@ -878,6 +878,19 @@ public class SQLiteAdapter
         }
         return true;
     }
+public boolean DelOldData()
+{
+    try {
+        mDb.execSQL("delete from DOC_WARES_sample where EXISTS(select 1 from doc d where date_doc < date(datetime(CURRENT_TIMESTAMP,'-45 day')) and d.number_doc=DOC_WARES_sample.number_doc and d.type_doc=DOC_WARES_sample.type_doc )");
+        mDb.execSQL("delete from DOC_WARES where EXISTS(select 1 from doc d where date_doc < date(datetime(CURRENT_TIMESTAMP,'-45 day')) and d.number_doc=DOC_WARES.number_doc and d.type_doc=DOC_WARES.type_doc )");
+        mDb.execSQL("delete from DOC where   date_doc < date(datetime(CURRENT_TIMESTAMP,'-45 day'))");
+        return true;
+    } catch (Exception e) {
+        Utils.WriteLog("e",TAG, "DelOldData >>" ,e);
+    }
+    return false;
+}
+
 
     public  boolean SaveWarehouse(Warehouse[] pWh ) {
         if(pWh==null)

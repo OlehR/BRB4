@@ -93,7 +93,7 @@ public class Worker {
                 Setting[2] = new DocSetting(3,"Переміщення");
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");
-                Setting[5] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2);
+                Setting[5] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,0);
                 break;
         }
        return Setting;
@@ -290,6 +290,10 @@ public class Worker {
             Utils.WriteLog("e",TAG, "FindWhIP=>" ,e);
         }
         return res;
+    }
+
+    public boolean DelOldData() {
+        return  mDbHelper.DelOldData();
     }
 
 

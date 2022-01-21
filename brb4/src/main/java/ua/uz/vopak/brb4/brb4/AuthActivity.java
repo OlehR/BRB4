@@ -130,6 +130,10 @@ public class AuthActivity extends FragmentActivity implements ScanCallBack {
                 config.GetWorker().LoadStartData();
                 AddText("Видаленння старих логів");
                 Utils.DellOldLog();
+
+                AddText("Видаленння старих документів");
+                config.GetWorker().DelOldData();
+
                 AddText("Пошук Оновлення");
                 if(config.cUtils.UpdateAPK("https://github.com/OlehR/BRB4/raw/master/apk/"+(config.IsTest?"test":"work")+"/","brb4.apk",null,BuildConfig.VERSION_CODE,BuildConfig.APPLICATION_ID))
                 {
