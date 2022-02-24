@@ -24,8 +24,6 @@ public abstract class AbstractConfig {
     public String SN;
     public String NameDCT = USER;
 
-    public String VERSION_CODE ="0.0.0";
-
     public boolean isAutorized;
     public String Login = "";
     public String Password = "123";
@@ -33,9 +31,9 @@ public abstract class AbstractConfig {
     public Date LastFullUpdate=null;
     public SimpleDateFormat FormatterDate = new SimpleDateFormat("yyyy-MM-dd");
 
-    public int GetCodeUnitWeight() { return Company == eCompany.VopakPSU?7:166;}
+    public int GetCodeUnitWeight() { return Company == eCompany.Sim23 ?  166:7;}
 
-    public int GetCodeUnitPiece() { return Company == eCompany.VopakPSU?19:796;}
+    public int GetCodeUnitPiece() { return Company == eCompany.Sim23 ?  796:19;}
 
     public String ApiUrl,ApiURLadd,ApiUrl3="http://93.183.216.37:2380/1c/hs/UTP/";
 

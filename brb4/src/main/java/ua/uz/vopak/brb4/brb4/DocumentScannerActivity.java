@@ -709,6 +709,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
                         model.IsRecord=true;
+                        model.QuantityMax=Double.MAX_VALUE;
                         RenderData(model);
                     }
                 }).create().show();

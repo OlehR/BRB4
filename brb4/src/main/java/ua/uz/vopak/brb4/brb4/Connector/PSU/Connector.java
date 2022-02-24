@@ -53,7 +53,6 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     }
 
-
     //Завантаження Списку складів (HTTP)
     public Warehouse[] LoadWarehouse() {
         Warehouse[] res = null;
@@ -85,9 +84,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     //Завантаження довідників.
     public boolean LoadGuidData(boolean IsFull, ObservableInt pProgress) {
         return true;
-    }
-
-    ;
+    };
 
     //Завантаження документів в ТЗД (HTTP)
     //PSU Треба перенести в окремий конектор
