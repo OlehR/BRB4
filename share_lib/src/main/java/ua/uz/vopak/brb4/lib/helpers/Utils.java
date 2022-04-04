@@ -532,6 +532,7 @@ public class Utils {
             NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(pDomain, pSmbUser, pSmbPassword);
             SmbSession.logon(domainController, auth);
             SmbFile sf = new SmbFile(url, auth);
+
             final File destination = new File(pFileName+".tmp");//Environment.getExternalStorageDirectory()+"/Movies/promo.mp4"
             final File curent = new File(pFileName);
             sf.connect();
