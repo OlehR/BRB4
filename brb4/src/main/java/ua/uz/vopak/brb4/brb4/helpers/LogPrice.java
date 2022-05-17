@@ -2,6 +2,10 @@ package ua.uz.vopak.brb4.brb4.helpers;
 
 import android.database.Cursor;
 
+import com.google.gson.Gson;
+
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
@@ -22,9 +26,13 @@ public class LogPrice {
     public double NumberOfReplenishment;
     DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-    public String GetJsonPSU() { return "[\""+BarCode+"\","+Status+",\""+format.format(DTInsert)+"\","+PackageNumber+","+ CodeWares+"]";}
+    public String GetJsonPSU()
+    {
+        Object[] arr = {BarCode,Status,format.format(DTInsert),PackageNumber,CodeWares};
+        Gson gson = new Gson();
+        return gson.toJson(arr);
+    }//return "[\""+BarCode+"\","+Status+",\""+format.format(DTInsert)+"\","+PackageNumber+","+ CodeWares+"]";}
     public String GetJsonSE(){return "{\"Barcode\":\""+BarCode+"\",\"Code\":\""+CodeWares+"\",\"Status\":"+Status+",\"LineNumber\":"+LineNumber+",\"NumberOfReplenishment\":"+ Double.toString(NumberOfReplenishment)+"}";}
-
     public LogPrice(){}
     public LogPrice(Cursor pCur)
     {
@@ -37,11 +45,9 @@ public class LogPrice {
             return true;
         return false;
     }
+
     void Init( Cursor pCur)
     {
-
-
-
         BarCode= pCur.getString(0);
         Status= pCur.getInt(1);
         String  vDT=pCur.getString(2);

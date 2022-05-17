@@ -209,6 +209,7 @@
                 android:layout_weight="1"
                 android:onClick="@{(view) -> SM.OnCopyDB()}"
                 android:text="Коп. бази" />
+
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
