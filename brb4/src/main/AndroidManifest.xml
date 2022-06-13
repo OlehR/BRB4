@@ -29,6 +29,7 @@
         <activity
             android:name=".AuthActivity"
             android:noHistory="true"
+            android:exported="true"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -81,6 +82,7 @@
 
         <receiver
             android:name=".Scaner.ScanResultReceiverPM"
+            android:exported="true"
             android:enabled="true">
             <intent-filter>
                 <action android:name="device.scanner.EVENT" />

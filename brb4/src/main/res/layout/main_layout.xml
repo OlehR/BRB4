@@ -20,24 +20,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
+
         <LinearLayout
             android:id="@+id/M_ButtonLayout"
-            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center">
+            android:gravity="center"
+            android:orientation="vertical">
+
             <Button
                 android:id="@+id/M_PriceCheker"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
-                android:textColor="@color/white"
                 android:background="@drawable/main_button"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:text="@string/checking_price"
-                android:textSize="15sp">
-            </Button>
+                android:textColor="@color/white"
+                android:textSize="15sp"></Button>
 
         </LinearLayout>
 
