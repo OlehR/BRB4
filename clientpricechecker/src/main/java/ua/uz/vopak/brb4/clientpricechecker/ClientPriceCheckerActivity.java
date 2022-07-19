@@ -44,6 +44,7 @@ public class ClientPriceCheckerActivity extends Activity {
     RelativeLayout InfoLayout;
     LinearLayout LogoLayout, OptPriceBlock, VideoWatermark, HideInfoLayout;
     ImageView Background, Logo, Logo2;
+    TextView CheckPriceHungary;
     VideoView PromoVideo;
     ClientPriceCheckerActivity context;
     LinearLayout ClientPriceChecker;
@@ -56,7 +57,7 @@ public class ClientPriceCheckerActivity extends Activity {
     Button HideInfoBTN;
     ua.uz.vopak.brb4.clientpricechecker.Config config;
     Resources res;
-
+    //ClientPriceCheckerActivityBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,7 +74,7 @@ public class ClientPriceCheckerActivity extends Activity {
         HideInfoBTN = findViewById(R.id.HiddenInfoBtn);
         HideInfoLayout = findViewById(R.id.HideInfoLayout);
         config = ua.uz.vopak.brb4.clientpricechecker.Config.instance(this.getApplicationContext());
-        config.Company= eCompany.VopakPSU;
+        //config.Company= eCompany.VopakPSU;
         BarCode.addTextChangedListener(new TextWatcher() {
 
             // the user's changes are saved here
@@ -124,6 +125,7 @@ public class ClientPriceCheckerActivity extends Activity {
         OptPriceBlock = findViewById(R.id.OptPriceBlock);
         Logo = findViewById(R.id.Logo);
         Logo2 = findViewById(R.id.Logo2);
+        CheckPriceHungary = findViewById((R.id.CheckPriceHungary));
         Sum = findViewById(R.id.Sum);
         Resources res = getResources();
 
@@ -133,6 +135,12 @@ public class ClientPriceCheckerActivity extends Activity {
         Logo.setBackground(background);
         background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.logo2spar : R.drawable.logo2vopak);
         Logo2.setBackground(background);
+        if(!Config.IsHungary) {
+            CheckPriceHungary.setVisibility(View.INVISIBLE);
+            findViewById(R.id.CheckPrice_HU).setVisibility(View.INVISIBLE);
+            ((TextView) findViewById(R.id.WorkPhone)).setText("З питань працевлаштування звертайтесь за тел: 050 549 6971");
+        }
+
         if (videoTimer != null) {
             videoTimer.cancel();
         }
@@ -356,6 +364,10 @@ public class ClientPriceCheckerActivity extends Activity {
     }
 
     public void videoPlayback() {
+        String FileName= Environment.getExternalStorageDirectory() + "/Movies/promo.mp4";
+        File f = new File(FileName);
+        if(!f.exists())
+            return;
         Uri uri = Uri.parse(Environment.getExternalStorageDirectory() + "/Movies/promo.mp4");
         PromoVideo.setVideoURI(uri);
         PromoVideo.setVisibility(View.VISIBLE);

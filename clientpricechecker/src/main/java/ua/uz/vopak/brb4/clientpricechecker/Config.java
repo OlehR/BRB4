@@ -13,12 +13,12 @@ import ua.uz.vopak.brb4.lib.helpers.AbstractConfig;
 public class Config extends AbstractConfig {
     private static Context context;
 
-    public static String Password;
     public static String SmbDomain;
     public static String SmbUser;
     public static String SmbPassword;
     public static String SmbPath;
     public static String SmbServer;
+    public static Boolean IsHungary=false;
 
     XmlResourceParser xrp;
 
@@ -45,6 +45,7 @@ public class Config extends AbstractConfig {
                         case "CodeWarehouse" :
                             CodeWarehouse = Integer.valueOf(xrp.getAttributeValue(null,"value"));
                             Company= (CodeWarehouse>30)?eCompany.SparPSU :eCompany.VopakPSU;
+                             IsHungary = (CodeWarehouse>30) && (CodeWarehouse<148);
                             break;
                         case "Login" :
                             Login = xrp.getAttributeValue(null,"value");
@@ -70,7 +71,6 @@ public class Config extends AbstractConfig {
                         case "ApiUrl" :
                             ApiUrl = xrp.getAttributeValue(null,"value");
                             break;
-
                     }
                 }
                 eventType = xrp.next();
@@ -79,6 +79,7 @@ public class Config extends AbstractConfig {
         }catch (Exception e){
             e.toString();
         }
+        Init(parContext);
     }
 
     public static Config instance(Context context) {
