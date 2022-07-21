@@ -48,7 +48,7 @@ import ua.uz.vopak.brb4.lib.models.LabelInfo;
 import ua.uz.vopak.brb4.brb4.databinding.PriceCheckerLayoutNewBinding;
 //import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class PriceCheckerActivity extends FragmentActivity implements ScanCallBack{
+public class PriceCheckerActivity extends FragmentActivity implements  View.OnClickListener,ScanCallBack{
     //private ZXingScannerView mScannerView;
     Context context;
     private Scaner scaner;
@@ -213,6 +213,29 @@ public class PriceCheckerActivity extends FragmentActivity implements ScanCallBa
             }
         }
         return super.dispatchKeyEvent(event);
+    }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.PCh_F1:
+            case R.id.PCh_F1_Text:
+                //SendDoc(true);
+                break;
+            case R.id.PCh_F2:
+            case R.id.PCh_F2_Text:
+                LI.InputFocus.set(LI.InputFocus.get()==1?2:1);
+                break;
+            case R.id.PCh_F4:
+            case R.id.PCh_F4_Text:
+                if(config.Company== eCompany.Sim23)
+                    LI.ChangeOnLineState();
+                break;
+            case R.id.PCh_F5:
+            case R.id.PCh_F5_Text:
+                LI.ChangeMultyLabel();
+                break;
+
+        }
     }
 
     @Override //Приходить штрихкод.

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 
+import android.os.Environment;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import com.aspose.cells.Cell;
+import com.aspose.cells.FileFormatType;
+import  com.aspose.cells.Workbook;
+import com.aspose.cells.Worksheet;
 
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
@@ -47,6 +53,7 @@ import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class DocumentItemsActivity extends Activity implements View.OnClickListener, ScanCallBack {
+    static final String TAG="DocumentItemsActivity";
     private Scaner scaner;
     LinearLayout DataTable,Title;//,DIOut
     //FrameLayout documentItemsFrame,
@@ -232,7 +239,8 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                     SetViewOut();
                     break;
                 case 137: //F7 генерація csv файла документа
-                    GenCSV();
+                    //GenCSV();
+                    GenXLS();
                     break;
             }
         }
@@ -258,10 +266,15 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
             case R.id.DI_F6_Text:
                 SetViewOut();
                 break;
+            case R.id.DI_F7:
+            case R.id.DI_F7_Text:
+                //GenCSV();
+                GenXLS();
+                break;
         }
     }
 
-    private void GenCSV(){
+    /*private void GenCSV(){
         String FileName= NumberDoc+"_"+String.valueOf(TypeDoc)+".csv";
         StringBuilder sb=new StringBuilder();
 
@@ -275,7 +288,33 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
         try {
             Utils.SaveData(FileName, Text.getBytes("UTF-8"),true,true);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Utils.WriteLog("e",TAG,"GenCSV" , e);
+        }
+    }*/
+
+    private void GenXLS(){
+        String FileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)+"/"+NumberDoc+"_"+String.valueOf(TypeDoc)+".xlsx";
+        Workbook workbook = new Workbook();
+        Worksheet worksheet = workbook.getWorksheets().get(0);
+        worksheet.getCells().get(1,1).setValue("Код Товару");
+        worksheet.getCells().get(1,2).setValue("Кількість");
+        worksheet.getCells().get(1,2).setValue("Назва");
+        int i=1;
+        for (WaresItemModel item : ListWares) {
+            if(item.InputQuantity>0) {
+                i++;
+                worksheet.getCells().get(i, 1).setValue(item.CodeWares);
+                worksheet.getCells().get(i, 2).setValue(item.InputQuantity);
+                worksheet.getCells().get(i, 3).setValue(item.NameWares);
+
+            }
+        }
+
+        try {
+            workbook.save(FileName);
+            UtilsUI.Dialog("ExpData.xlsx", "Файл згенеровано");
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG,"GenXLS" , e);
         }
     }
 
@@ -427,9 +466,10 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 Title.addView(Line2H);
 
                 try {
-
+int i=0; //TMP!!!
                     for (WaresItemModel item : model) {
-
+if(i++>4000) break;
+                        //Utils.WriteLog("d",TAG,String.valueOf(i)+ " "+ item.GetCodeWares());
                         LinearLayout TableBlock = new LinearLayout(context);
                         TableBlock.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
                         TableBlock.setOrientation(LinearLayout.VERTICAL);
@@ -514,10 +554,12 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                         UtilsUI.SetColor(TableBlock,"#000000","#"+((index % 2)==0?"FF":"60")+item.GetBackgroundColor());
 
                         DataTable.addView(TableBlock);
+
                     }
                     selectItem();
+
                 } catch (Exception e) {
-                    e.getMessage();
+                    Utils.WriteLog("e",TAG,"renderTable" , e);
                 }
 
             }

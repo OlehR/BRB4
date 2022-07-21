@@ -70,7 +70,8 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         //binding.setDM (DM);
 
         scaner=config.GetScaner();
-        scaner.Init(this,savedInstanceState);
+        if(scaner!=null)
+            scaner.Init(this,savedInstanceState);
 
         FilterKey=findViewById(R.id.FilterKey);
         FilterText=findViewById(R.id.FilterText);
@@ -84,8 +85,10 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     public void onResume() {
         super.onResume();
         //Zebra
-        scaner.Init(this);
-        scaner.StartScan();
+        if(scaner!=null) {
+            scaner.Init(this);
+            scaner.StartScan();
+        }
         RefreshTable(null,null);
     }
 

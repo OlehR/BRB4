@@ -401,6 +401,8 @@
             android:weightSum="6">
 
             <TextView
+                android:id="@+id/PCh_F1"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="f1-"
@@ -408,6 +410,8 @@
                 android:textSize="18dp" />
 
             <TextView
+                android:id="@+id/PCh_F1_Text"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Друк"
@@ -415,6 +419,8 @@
                 android:textSize="18dp" />
 
             <TextView
+                android:id="@+id/PCh_F2"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" f2-"
@@ -422,6 +428,8 @@
                 android:textSize="18dp" />
 
             <TextView
+                android:id="@+id/PCh_F2_Text"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Підбір"
@@ -429,6 +437,8 @@
                 android:textSize="18dp" />
 
             <TextView
+                android:id="@+id/PCh_F4"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" f4-"
@@ -436,6 +446,8 @@
                 android:textSize="18dp"
                 android:visibility="@{LI.IsViewReplenishment()?View.VISIBLE:View.GONE }" />
             <TextView
+                android:id="@+id/PCh_F4_Text"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="@{LI.IsViewReplenishment()?View.VISIBLE:View.GONE }"
@@ -443,6 +455,8 @@
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp" />
             <TextView
+                android:id="@+id/PCh_F5"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="@{LI.IsEnableMultyLabel()?View.VISIBLE:View.GONE }"
@@ -450,6 +464,8 @@
                 android:textColor="@color/messageError"
                 android:textSize="18dp" />
             <TextView
+                android:id="@+id/PCh_F5_Text"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="@{LI.IsEnableMultyLabel()?View.VISIBLE:View.GONE }"

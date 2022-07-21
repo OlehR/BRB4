@@ -28,6 +28,8 @@ allprojects {
 
 
 }
+
+
 /*
 allprojects {
     group = 'me.dm7.barcodescanner'

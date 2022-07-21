@@ -118,8 +118,10 @@
             android:layout_weight="1">
 
             <TextView
+                android:id="@+id/DW_F3"
+                android:onClick="onClick"
                 android:visibility="visible"
-                android:id="@+id/f3Text"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageError"
@@ -127,14 +129,15 @@
                 android:text="f3-"/>
 
             <TextView
-                android:id="@+id/f3NameText"
-                android:visibility="visible"
+                android:id="@+id/DW_F3_Text"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/DW_F3"
+                android:text="Всі"
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp"
-                android:layout_toRightOf="@+id/f3Text"
-                android:text="Всі"/>
+                android:visibility="visible" />
 
 
         </RelativeLayout>
@@ -146,16 +149,19 @@
             android:layout_weight="1">
 
             <TextView
+                android:id="@+id/DW_Enter"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageError"
                 android:layout_centerVertical="true"
-                android:layout_toLeftOf="@id/f4Text"
+                android:layout_toLeftOf="@id/DW_Enter_Text"
                 android:textSize="18dp"
                 android:text=" Enter-"/>
 
             <TextView
-                android:id="@+id/f4Text"
+                android:id="@+id/DW_Enter_Text"
+                android:onClick="onClick"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageAlert"

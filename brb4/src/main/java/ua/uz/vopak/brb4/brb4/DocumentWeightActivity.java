@@ -32,7 +32,7 @@ import ua.uz.vopak.brb4.lib.helpers.IPostResult;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
 
-public class DocumentWeightActivity extends Activity  {
+public class DocumentWeightActivity extends Activity implements View.OnClickListener  {
     final String TAG="DocumentWeightActivity";
     String NumberDoc;
     int documentType;
@@ -64,7 +64,7 @@ public class DocumentWeightActivity extends Activity  {
 
         tl = findViewById(R.id.DW_ItemsTable);
         searchField = findViewById(R.id.searchFild);
-        IsOnlyOrderTB= findViewById(R.id.f3NameText);
+        IsOnlyOrderTB= findViewById(R.id.DW_F3_Text);
         WaresScroll= findViewById(R.id.DW_WaresScroll);
         searchField.addTextChangedListener(new TextWatcher() {
 
@@ -110,6 +110,20 @@ public class DocumentWeightActivity extends Activity  {
         }
 
         return super.dispatchKeyEvent(event);
+    }
+
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.DW_F3:
+            case R.id.DW_F3_Text:
+                IsOnlyOrder=!IsOnlyOrder;
+                IsOnlyOrderTB.setText(IsOnlyOrder?"Всі":"Замовлені");
+                filter();
+                break;
+            case R.id.DW_Enter:
+            savePosition();
+            break;
+        }
     }
 
     public void renderTable(final List<WaresItemModel> model) {
