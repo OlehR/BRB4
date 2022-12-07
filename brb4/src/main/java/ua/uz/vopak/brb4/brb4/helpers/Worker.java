@@ -29,8 +29,6 @@ import ua.uz.vopak.brb4.lib.enums.eTypeOrder;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.Result;
 
-
-
 public class Worker {
     protected static final String TAG = "BRB4/Worker";
     Config config = Config.instance();
@@ -73,7 +71,7 @@ public class Worker {
                 if(Right[2])
                     Setting[step++] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false,false,0);
                 if(Right[3])
-                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,0,false,false,true,false,false,1);
+                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,1,false,false,true,false,false,1);
                 if(Right[4])
                     Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2);
                 if(Right[5])
@@ -90,7 +88,7 @@ public class Worker {
                 Setting =  new  DocSetting[6];
                 Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false,0);
                 Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0);
-                Setting[2] = new DocSetting(3,"Переміщення");
+                Setting[2] = new DocSetting(3,"Переміщення",eTypeControlDoc.Ask,false,false,true,true,true,1,5,3,true,true,true,false,false,0);
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");
                 Setting[5] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,0);
@@ -295,7 +293,6 @@ public class Worker {
     public boolean DelOldData() {
         return  mDbHelper.DelOldData();
     }
-
 
     public  Warehouse[] GetWarehouse(){
         Warehouse[] Wh;

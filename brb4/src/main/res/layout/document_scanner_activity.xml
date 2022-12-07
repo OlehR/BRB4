@@ -236,7 +236,7 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.5">
+        android:layout_weight="0.42">
         <ScrollView
             android:id="@+id/DS_ScrollView"
             android:layout_width="match_parent"

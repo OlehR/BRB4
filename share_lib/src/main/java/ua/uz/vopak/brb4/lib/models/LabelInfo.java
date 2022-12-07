@@ -219,7 +219,7 @@ public class LabelInfo
             QuantityOpt = 0;
             Rest = 0;
 
-            if(parData.has("PromotionPrice"))//SevenEleven В ціннику Оптова ціна.
+            if(parData.has("ActionType"))//SevenEleven В ціннику Оптова ціна.
             {
                 String[] varPrice = parData.getString("PromotionPrice").replace(',','.').split("\\.");
                 PriceBillOpt = Integer.parseInt(varPrice[0]);

@@ -5,7 +5,9 @@ public enum eTypeScaner {
     None,
     Zebra,
     PM550,
+    PM351,
     Camera,
+
     KeyBoard
 
 }

@@ -4,9 +4,9 @@ import android.content.Context;
 
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
-import ua.uz.vopak.brb4.brb4.BuildConfig;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
+import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM351;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM500;
 //import ua.uz.vopak.brb4.brb4.Scaner.ScanerTC20;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerZebra;
@@ -125,6 +125,8 @@ public class Config extends AbstractConfig {
             case Zebra:
                 Scaner = new ScanerZebra(context);
                 break;
+            case PM351:
+                Scaner = new ScanerPM351(context);
             case NotDefine:
                 break;
             default:

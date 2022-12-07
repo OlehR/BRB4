@@ -142,8 +142,10 @@ public class Utils {
 
         if (/*model.equals("TC20") &&*/ (manufacturer.contains("Zebra Technologies") || manufacturer.contains("Motorola Solutions")))
             return eTypeScaner.Zebra;
-        if (model.equals("PM550") && (manufacturer.contains("POINTMOBILE") || manufacturer.contains("Point Mobile Co., Ltd.")))
+        if ( model.equals("PM550")  && (manufacturer.contains("POINTMOBILE") || manufacturer.contains("Point Mobile Co., Ltd.")))
             return eTypeScaner.PM550;
+        if ( model.equals("PM351")  && (manufacturer.contains("POINTMOBILE") || manufacturer.contains("Point Mobile Co., Ltd.")))
+            return eTypeScaner.PM351;
 
         return eTypeScaner.Camera;
 

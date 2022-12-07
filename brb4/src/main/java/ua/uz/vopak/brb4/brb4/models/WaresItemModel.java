@@ -151,6 +151,7 @@ public class WaresItemModel implements Cloneable{
         InputQuantity=0;
         QuantityMax=Double.MAX_VALUE ;
         CodeReason=0;
+        ListReasonIdx.set(0);
 
     }
     public Boolean IsInputQuantity() { return (Coefficient>0 && QuantityMax>0d);}

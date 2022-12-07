@@ -115,7 +115,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 String war = "";
                 war += "[" + ware.GetOrderDoc() + ",";
                 war += ware.GetCodeWares() + ",";
-                war += ware.GetInputQuantityZero() + "]";
+                war += ware.GetInputQuantityZero() +",";
+                war +=Integer.toString(ware.CodeReason) + "]";
                 wares.add(war);
             }
         }
