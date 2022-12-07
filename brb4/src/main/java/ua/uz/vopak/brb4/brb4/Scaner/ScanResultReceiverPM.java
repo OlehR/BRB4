@@ -31,7 +31,8 @@ public  class ScanResultReceiverPM extends BroadcastReceiver {
                     byte[] decodeBytesValue = intent.getByteArrayExtra(EXTRA_EVENT_DECODE_VALUE);
                     if (decodeBytesValue != null) {
                         String value = new String(decodeBytesValue);
-
+if(value.equals("READ_FAIL"))
+    return;
                         if(mScaner.CallBack!=null)
                           mScaner.CallBack.Run(value);
                     }

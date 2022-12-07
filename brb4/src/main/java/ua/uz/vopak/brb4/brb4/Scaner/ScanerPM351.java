@@ -29,6 +29,8 @@ public class ScanerPM351 extends Scaner {
                         byte[] decodeBytesValue = intent.getByteArrayExtra(EXTRA_EVENT_DECODE_VALUE);
                         if (decodeBytesValue != null) {
                             String value = new String(decodeBytesValue);
+                            if(value.equals("READ_FAIL"))
+                                return;
                             CallBack.Run(value);
                             Log.d( "PM","onReceive =>"+value + " Type=>"+TypeBarCode);
                         }
