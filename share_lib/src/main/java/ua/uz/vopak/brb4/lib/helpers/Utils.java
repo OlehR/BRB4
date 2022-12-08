@@ -146,9 +146,7 @@ public class Utils {
             return eTypeScaner.PM550;
         if ( model.equals("PM351")  && (manufacturer.contains("POINTMOBILE") || manufacturer.contains("Point Mobile Co., Ltd.")))
             return eTypeScaner.PM351;
-
         return eTypeScaner.Camera;
-
     }
 
     public String GetStringFromAssetsFile(String parPath){
@@ -162,10 +160,7 @@ public class Utils {
             }
             Label=total.toString();
         }
-        catch (Exception ex)
-        {
-
-        }
+        catch (Exception ex) { }
         return Label;
     }
 
@@ -193,9 +188,6 @@ public class Utils {
             Utils.WriteLog("e",TAG,"Error PlaySound() => ",e);
         }
     }
-
-
-
 
     static public void SaveData(String pFileName,byte[] pData,boolean pIsDelete,boolean IsWriteLog){
         File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -287,6 +279,7 @@ public class Utils {
         cal.add(Calendar.DATE, days); //minus number would decrement the days
         return cal.getTime();
     }
+
     private  boolean isRedirected( Map<String, List<String>> header ) {
             for( String hv : header.get( null )) {
                 if(   hv.contains( " 301 " )
@@ -307,7 +300,6 @@ public class Utils {
                 http   = (HttpURLConnection)url.openConnection();
                 header = http.getHeaderFields();
             }
-
             InputStream  input  = http.getInputStream();
             return input;
         }
@@ -379,7 +371,6 @@ public class Utils {
         }
         return new String(encoded, encoding);
     }
-
 
     public String FileToString(String pFileName)
     {

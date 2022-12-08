@@ -221,23 +221,25 @@ public class LabelInfo
 
             if(parData.has("ActionType"))//SevenEleven В ціннику Оптова ціна.
             {
-                String[] varPrice = parData.getString("PromotionPrice").replace(',','.').split("\\.");
-                PriceBillOpt = Integer.parseInt(varPrice[0]);
-                if(varPrice.length ==2) {
-                    if (varPrice[1].length() == 1)
-                        varPrice[1] = varPrice[1] + "0";
-                    PriceCoinOpt = Integer.parseInt(varPrice[1]);
-                }
-                PriceOpt = PriceBillOpt * 100 + PriceCoinOpt;
+                if (parData.has("PromotionPrice")) {
+                    String[] varPrice = parData.getString("PromotionPrice").replace(',', '.').split("\\.");
+                    PriceBillOpt = Integer.parseInt(varPrice[0]);
+                    if (varPrice.length == 2) {
+                        if (varPrice[1].length() == 1)
+                            varPrice[1] = varPrice[1] + "0";
+                        PriceCoinOpt = Integer.parseInt(varPrice[1]);
+                    }
+                    PriceOpt = PriceBillOpt * 100 + PriceCoinOpt;
                 /*if(PriceOpt!=Price)
                 {
                     OldPriceOpt = OldPrice;
                     OldPrice = Price;
                 }*/
 
-                Price=PriceOpt;
-                PriceBillOpt=0;
-                PriceCoinOpt=0;
+                    Price = PriceOpt;
+                    PriceBillOpt = 0;
+                    PriceCoinOpt = 0;
+                }
             }
 
             if (parData.has("QuantityOpt") && parData.has("PriceOpt")) {
