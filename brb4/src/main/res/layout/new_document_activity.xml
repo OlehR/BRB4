@@ -56,7 +56,7 @@
                 android:weightSum="5">
                 <!-- -->
                 <EditText
-                    android:id="@+id/DS_BarCode"
+                    android:id="@+id/ND_Warehouse_To"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginRight="5dp"

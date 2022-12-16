@@ -305,10 +305,10 @@ public class Worker {
         Wh=c.LoadWarehouse();
         if(Wh !=null && Wh.length>0)
             mDbHelper.SaveWarehouse(Wh);
-        else {
-            List<Warehouse> lWh = mDbHelper.GetWarehouse();
-            Wh = lWh.toArray(new Warehouse[lWh.size()]);
-        }
+
+        List<Warehouse> lWh = mDbHelper.GetWarehouse();
+        Wh = lWh.toArray(new Warehouse[lWh.size()]);
+
         return Wh;
     }
 

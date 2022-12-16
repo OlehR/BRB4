@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.databinding.DataBindingUtil;
@@ -26,7 +29,7 @@ public class NewDocumentActivity extends Activity implements View.OnClickListene
     NewDocumentActivityBinding binding;
     NewDocModel NDM ;
     public int DocumentType;
-
+    EditText To;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +42,33 @@ public class NewDocumentActivity extends Activity implements View.OnClickListene
         NDM = new NewDocModel(this);
 
         binding.setND(NDM);
+
+ To = (EditText)findViewById(R.id.ND_Warehouse_To);
+        To.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void afterTextChanged(Editable s) {}
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) { }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                int i=0;
+                if(s.length() >= 3)
+                    for (Warehouse el: config.Warehouses ) {
+                        if(el.Name.indexOf(s.toString())>0)
+                        {
+                            NDM.ListWarehouseIdx.set(i);
+                            return;
+                        }
+                        i++;
+                    }
+            }
+        });
+
     }
 
     @Override

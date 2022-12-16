@@ -29,7 +29,7 @@ public class Config extends AbstractConfig {
     public static eRole  Role = eRole.NotDefined;
     public static int IdCamera=0;
     public DocSetting[] DocsSetting;
-    Warehouse[] Warehouses;
+    public Warehouse[] Warehouses;
 
     public Worker Worker;
     public SQLiteAdapter SQLiteAdapter;
