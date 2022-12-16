@@ -282,7 +282,7 @@
                     android:layout_height="wrap_content"
                     android:clickable="true"
                     android:onClick="onClick"
-                    android:text=" F6-"
+                    android:text=" F7-"
                     android:textColor="@color/messageError"
                     android:textSize="18dp" />
 

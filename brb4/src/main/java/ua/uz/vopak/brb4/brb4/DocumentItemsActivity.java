@@ -271,9 +271,17 @@ public class DocumentItemsActivity extends Activity implements View.OnClickListe
                 //GenCSV();
                 GenXLS();
                 break;
+
+
         }
     }
-
+    void NewDoc()
+    {
+        Intent i = new Intent(this, DocumentScannerActivity.class);
+        i.putExtra("number", NumberDoc);
+        i.putExtra("document_type", TypeDoc);
+        startActivity(i);
+    }
     /*private void GenCSV(){
         String FileName= NumberDoc+"_"+String.valueOf(TypeDoc)+".csv";
         StringBuilder sb=new StringBuilder();

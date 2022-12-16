@@ -53,7 +53,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                     return new Result(jObject.getInt("State"), jObject.getString("TextError"), "Неправильний логін або пароль");
 
             } catch (Exception e) {
-                Utils.WriteLog("e",  TAG , "Login=>" , e);
+                Utils.WriteLog("e", TAG, "Login=>", e);
                 return new Result(-1, e.getMessage());
             }
         }
@@ -108,7 +108,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             Log.d(TAG, "End");
             return true;
         } catch (Exception e) {
-            Utils.WriteLog("e", TAG, "LoadGuidData=>",e);
+            Utils.WriteLog("e", TAG, "LoadGuidData=>", e);
             Toast toast = Toast.makeText(Config.instance().context, "Помилка завантаження довідників=>" + e.getMessage(), Toast.LENGTH_LONG);
             toast.show();
         }
@@ -119,25 +119,24 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     //Робота з документами.
     //Завантаження документів в ТЗД (HTTP)
     public Boolean LoadDocsData(int pTypeDoc, String pNumberDoc, ObservableInt pProgress, boolean pIsClear) {
-        DocSetting ds= config.GetDocSetting(pTypeDoc);
-        String CodeWarehouse= String.valueOf(config.CodeWarehouse);
+        DocSetting ds = config.GetDocSetting(pTypeDoc);
+        String CodeWarehouse = String.valueOf(config.CodeWarehouse);
 
-        int CodeApi=0;
-        if(ds!=null)
-            CodeApi=ds.CodeApi;
-        else
-            if(pTypeDoc <=0 && config.IsLoginCO)  CodeApi=1;
+        int CodeApi = 0;
+        if (ds != null)
+            CodeApi = ds.CodeApi;
+        else if (pTypeDoc <= 0 && config.IsLoginCO) CodeApi = 1;
 
-        if(pTypeDoc >= 7 &&pTypeDoc <= 9) {
-            Warehouse  Wh = config.GetWarehouse(config.CodeWarehouse);
-            if(Wh!=null)
-            CodeWarehouse=Wh.Number;
+        if (pTypeDoc >= 7 && pTypeDoc <= 9) {
+            Warehouse Wh = config.GetWarehouse(config.CodeWarehouse);
+            if (Wh != null)
+                CodeWarehouse = Wh.Number;
         }
-        String NameApi= "documents";
-        String AddPar="";
-        if(pTypeDoc >= 8 && pTypeDoc <= 9) {
-            NameApi= "docmoveoz";
-            AddPar= "&TypeMove="+(pTypeDoc ==8?"0":"1");
+        String NameApi = "documents";
+        String AddPar = "";
+        if (pTypeDoc >= 8 && pTypeDoc <= 9) {
+            NameApi = "docmoveoz";
+            AddPar = "&TypeMove=" + (pTypeDoc == 8 ? "0" : "1");
         }
 
         if (pTypeDoc == -1)
@@ -147,8 +146,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             pProgress.set(5);
         HttpResult res;
         try {
-            if ((pTypeDoc >= 5 && pTypeDoc <= 9 ) || (pTypeDoc <= 0 && config.IsLoginCO)  ) {
-                res = Http.HTTPRequest(CodeApi, NameApi+ (pTypeDoc == 5 ? "\\" + pNumberDoc : "?StoreSetting=" + CodeWarehouse)+AddPar, null, "application/json;charset=utf-8", config.Login, config.Password);
+            if ((pTypeDoc >= 5 && pTypeDoc <= 9) || (pTypeDoc <= 0 && config.IsLoginCO)) {
+                res = Http.HTTPRequest(CodeApi, NameApi + (pTypeDoc == 5 ? "\\" + pNumberDoc : "?StoreSetting=" + CodeWarehouse) + AddPar, null, "application/json;charset=utf-8", config.Login, config.Password);
             } else
                 res = Http.HTTPRequest(CodeApi, "documents", null, "application/json;charset=utf-8", config.Login, config.Password);
 
@@ -169,19 +168,19 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 for (Doc v : data.Doc) {
                     //v.TypeDoc = ConvertTypeDoc(v.TypeDoc);
                     v.DateDoc = v.DateDoc.substring(0, 10);
-                    v.TypeDoc+=(pTypeDoc == 9?1:0);
+                    v.TypeDoc += (pTypeDoc == 9 ? 1 : 0);
                     mDbHelper.SaveDocs(v);
                 }
                 if (pProgress != null)
                     pProgress.set(60);
-                SaveDocWaresSample(data.DocWaresSample,(pTypeDoc == 9?1:0));
+                SaveDocWaresSample(data.DocWaresSample, (pTypeDoc == 9 ? 1 : 0));
                 if (pProgress != null)
                     pProgress.set(100);
                 return true;
             }
 
         } catch (Exception e) {
-            Utils.WriteLog("e", TAG, "LoadDocsData=>" , e);
+            Utils.WriteLog("e", TAG, "LoadDocsData=>", e);
         }
         return false;
     }
@@ -189,7 +188,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     //Вивантаження документів з ТЗД (HTTP)
     public Result SyncDocsData(int pTypeDoc, String pNumberDoc, List<WaresItemModel> pWares, Date pDateOutInvoice, String pNumberOutInvoice, int pIsClose) {
         Gson gson = new Gson();
-        DocSetting ds= config.GetDocSetting(pTypeDoc);
+        DocSetting ds = config.GetDocSetting(pTypeDoc);
         SimpleDateFormat formatterDT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         SimpleDateFormat formatterD = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date(System.currentTimeMillis());
@@ -204,9 +203,9 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         OD.add(el);
         String json = gson.toJson(OD);
 
-        int CodeApi=0;
-        if(ds!=null)
-            CodeApi=ds.CodeApi;
+        int CodeApi = 0;
+        if (ds != null)
+            CodeApi = ds.CodeApi;
 
         HttpResult res = Http.HTTPRequest(CodeApi, "documentin", json, "application/json;charset=utf-8", config.Login, config.Password);
         if (res.HttpState == eStateHTTP.HTTP_OK) {
@@ -233,7 +232,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             }
 
         } catch (Exception e) {
-            Utils.WriteLog("e", TAG, "LoadWarehouse=>" , e);
+            Utils.WriteLog("e", TAG, "LoadWarehouse=>", e);
         }
         return null;
     }
@@ -260,44 +259,87 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     }
 
     // Розбір штрихкоду.
-    public ParseBarCode ParsedBarCode(String pBarCode,boolean pIsOnlyBarCode) {
+    public ParseBarCode ParsedBarCode(String pBarCode, boolean pIsOnlyBarCode) {
         ParseBarCode res = new ParseBarCode();
-        if(pBarCode==null)
+        if (pBarCode == null)
             return res;
-        pBarCode=pBarCode.trim();
-        res.BarCode=pBarCode;
-        res.IsOnlyBarCode=pIsOnlyBarCode;
+        pBarCode = pBarCode.trim();
+        res.BarCode = pBarCode;
+        res.IsOnlyBarCode = pIsOnlyBarCode;
 
         if (!pIsOnlyBarCode && pBarCode.length() <= 8 && !pBarCode.equals("")) {
-            try{
-                res.Code=Integer.parseInt(pBarCode);
-                res.BarCode=null;
-            }catch(Exception e)
-            {
-                Utils.WriteLog("e",TAG,"ParsedBarCode=> "+ pBarCode,e);
+            try {
+                res.Code = Integer.parseInt(pBarCode);
+                res.BarCode = null;
+            } catch (Exception e) {
+                Utils.WriteLog("e", TAG, "ParsedBarCode=> " + pBarCode, e);
             }
         }
 
-        if ( pBarCode!=null) {
+        if (pBarCode != null) {
             if (pBarCode.substring(0, 2).equals("29") && pBarCode.length() == 13) {
                 try {
                     res.Code = Integer.parseInt(pBarCode.substring(2, 8));
                     res.Price = Double.valueOf(pBarCode.substring(8, 13)) / 100d;
-                    res.IsOnlyBarCode=false; // Для варіанту коли у виробника штрихкод починається з 29 так як і у цінника.
+                    res.IsOnlyBarCode = false; // Для варіанту коли у виробника штрихкод починається з 29 так як і у цінника.
                     //res.BarCode=null;
                 } catch (Exception e) {
-                   Utils.WriteLog("e",TAG,"ParsedBarCode", e);
+                    Utils.WriteLog("e", TAG, "ParsedBarCode", e);
 
                 }
-            }
-            else if (pBarCode.contains("$"))
-            {
-                res.Code = Integer.parseInt(pBarCode.substring(0,pBarCode.indexOf('$') ));
+            } else if (pBarCode.contains("$")) {
+                res.Code = Integer.parseInt(pBarCode.substring(0, pBarCode.indexOf('$')));
+                res.Quantity=1;
             }
 
         }
 
         return res;
+    }
+
+    public Result CreateNewDoc(int pTypeDoc, int pCodeWarehouseFrom, int pCodeWarehouseTo) {
+        DocSetting ds = config.GetDocSetting(pTypeDoc);
+        //String CodeWarehouse= String.valueOf(config.CodeWarehouse);
+        int CodeApi = 0;
+        if (ds != null) CodeApi = ds.CodeApi;
+
+        String NameApi = null;
+        if (pTypeDoc == 8) {
+            NameApi = "newmovedoc?StoreSetting=" + pCodeWarehouseFrom + "&StoreSettingTO=" + pCodeWarehouseTo;
+        }
+
+        HttpResult res;
+        try {
+            if ((pTypeDoc >= 5 && pTypeDoc <= 9) || (pTypeDoc <= 0 && config.IsLoginCO)) {
+                res = Http.HTTPRequest(CodeApi, NameApi, null, "application/json;charset=utf-8", config.Login, config.Password);
+                Result Res = new Gson().fromJson(res.Result, Result.class);
+                return Res;
+            }
+        } catch (Exception e) {
+            return new Result(-1, e.getMessage());
+        }
+        return new Result(-1, "Документ не створено");
+    }
+
+    public WaresItemModel GetWares(int pCodeWares, boolean pIsSimpleDoc) {
+        String NameApi = "";
+        if (pIsSimpleDoc)
+            NameApi = "OZgetoz?CodeWares=11751" + pCodeWares;
+
+        WaresItemModel Res=null;
+        try {
+            HttpResult res = Http.HTTPRequest(2, NameApi, null, "application/json;charset=utf-8", config.Login, config.Password);
+            if (res.HttpState == eStateHTTP.HTTP_OK) {
+                JSONObject jObject = new JSONObject(res.Result);
+                Res= new WaresItemModel();
+                Res.NameWares=jObject.getString("NAME");
+                Res.CodeWares=pCodeWares;
+            }
+        } catch (
+                Exception e) {
+            //return new Result(-1,e.getMessage());
+        }
+        return Res; //new Result(-1,"Документ не створено");
     }
 }
 
@@ -342,6 +384,7 @@ class OutputDoc
         DateOutInvoice=pDateOutInvoice;
         IsClose=pIsClose;
     }
+
 }
 
  class InputDocs {

@@ -110,42 +110,68 @@
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp"
                 android:text="вибір"/>
+
             <TextView
                 android:id="@+id/FilterEDRPO"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageError"
                 android:textSize="18dp"
-                android:text=" F1-"/>
-            <!--android:visibility= "@{DM.TypeDoc==2? View.GONE : View.VISIBLE}"-->
+                android:text=" F1-"
+                android:onClick="onClick"
+                android:visibility= "@{DM.IsEnterCodeZKPO? View.VISIBLE : View.GONE}"
+                />
             <TextView
                 android:id="@+id/FilterEDRPOText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp"
-                android:text="ЗКПО"/>
-            <!--                android:visibility= "@{DM.TypeDoc==2? View.GONE : View.VISIBLE}" -->
-
+                android:text="ЗКПО"
+                android:onClick="onClick"
+                 android:visibility= "@{DM.IsEnterCodeZKPO? View.VISIBLE : View.GONE}"/>
 
             <TextView
                 android:id="@+id/FilterKey"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:onClick="onClick"
                 android:textColor="@color/messageError"
                 android:textSize="18dp"
+                android:text=" F2-"
+              android:visibility= "@{DM.IsFilter? View.VISIBLE : View.GONE }"/>
 
-                android:text=" F2-"/>
-            <!--android:visibility= "@{DM.IsFilter? View.GONE : View.VISIBLE}"-->
             <TextView
                 android:id="@+id/FilterText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Без фільтра"
+                android:onClick="onClick"
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp"
-                android:text="Без фільтра"/>
-            <!--  android:visibility= "@{DM.IsFilter? View.GONE : View.VISIBLE}"-->
+                android:visibility= "@{DM.IsFilter? View.VISIBLE : View.GONE}"/>
 
+            <TextView
+                android:id="@+id/D_F4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{DM.IsCreateNewDoc? View.VISIBLE : View.GONE}"
+                android:clickable="true"
+                android:onClick="onClick"
+                android:text=" F4-"
+                android:textColor="@color/messageError"
+                android:textSize="18dp" />
+
+            <TextView
+                android:id="@+id/D_F4_Text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{DM.IsCreateNewDoc? View.VISIBLE : View.GONE}"
+                android:clickable="true"
+                android:onClick="onClick"
+                android:text="Створити"
+                android:textColor="@color/messageAlert"
+                android:textSize="18dp" />
         </LinearLayout>
 
     </LinearLayout>

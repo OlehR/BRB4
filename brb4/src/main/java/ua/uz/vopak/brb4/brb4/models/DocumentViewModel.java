@@ -5,19 +5,17 @@ import androidx.databinding.ObservableField;
 import androidx.databinding.ObservableInt;
 
 public class DocumentViewModel {
+
+    public DocSetting DS;
+    public DocumentViewModel(DocSetting pDS)
+    {
+        DS=pDS;
+        IsCreateNewDoc.set(DS.IsCreateNewDoc);
+        IsEnterCodeZKPO.set(DS.TypeDoc==2);
+    }
     public ObservableField<String> ZKPO= new ObservableField<>("");
     public ObservableBoolean IsFilter = new ObservableBoolean(false);
     public ObservableBoolean IsEnterCodeZKPO = new ObservableBoolean(false);
-    public ObservableInt TypeDoc = new ObservableInt(0);
+    public ObservableBoolean IsCreateNewDoc = new ObservableBoolean(false);
 
-    /* public void OnClickURL( SetingModel pSM ) {
-        config.ApiUrl=   apiURL.get();
-        new AsyncHelper<Void>(new IAsyncHelper() {
-            @Override
-            public Void Invoke() {
-                config.Worker.AddConfigPair("ApiUrl", config.ApiUrl);
-                return null;
-            }
-        }).execute();
-    }*/
 }

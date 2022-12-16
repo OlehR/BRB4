@@ -93,4 +93,7 @@ public abstract class Connector {
         return true;
     }
 
+    public abstract Result CreateNewDoc(int pTypeDoc,int pCodeWarehouseFrom,int pCodeWarehouseTo);
+
+    public abstract WaresItemModel GetWares(int pCodeWares,boolean IsSimpleDoc);
 }

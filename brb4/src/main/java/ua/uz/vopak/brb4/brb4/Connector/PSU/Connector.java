@@ -249,7 +249,6 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
                 if(pBarCode.substring(0,3).equals("111"))
                 {
-
                     //isBarCode=false;
                     res.Article=pBarCode.substring(3,9);
                     String Quantity=pBarCode.substring(9,12);
@@ -262,9 +261,14 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                     res.BarCode=null;
                 }
             }
-
         }
         return res;
     }
 
+    @Override
+    public Result CreateNewDoc(int pTypeDoc,int pCodeWarehouseFrom,int pCodeWarehouseTo) {
+        return null;
+    }
+
+    public WaresItemModel GetWares(int pCodeWares,boolean IsSimpleDoc){return null;};
 }

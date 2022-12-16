@@ -113,7 +113,8 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         setContentView(R.layout.document_scanner_activity);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         binding = DataBindingUtil.setContentView(this, R.layout.document_scanner_activity);
-        if (BuildConfig.FLAVOR=="pro") {
+        //if (BuildConfig.FLAVOR=="pro")
+        {
             barcodeView = findViewById(R.id.DS_scanner);
             barcodeView.setCameraSettings(config.GetCameraSettings());
         }

@@ -7,7 +7,9 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import androidx.core.content.ContextCompat;
+import androidx.databinding.DataBindingUtil;
 
+import android.os.Parcelable;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,50 +38,49 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
     DocSetting DS;
     LinearLayout Table;
     ScrollView documentList;
-    int DocumentType;
-    DocumentActivity context;
+    public int DocumentType;
+    public DocumentActivity context;
     List<DocumentModel> modelDoc;
     int current = 0;
     List<View> menuItems = new ArrayList<View>();
     Config config = Config.instance();
     UtilsUI UtilsUI = new UtilsUI( this);
     private Scaner scaner;
-    TextView  FilterKey,FilterText,FilterEDRPOText,FilterEDRPO;
+    //TextView  FilterKey,FilterText,FilterEDRPOText,FilterEDRPO;
     EditText DocumentZKPO;
-    DocumentViewModel DM= new DocumentViewModel();
+    DocumentViewModel DM;
 
     DocumentLayoutBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.document_layout);
+        binding = DataBindingUtil.setContentView(this, R.layout.document_layout);
         Table = findViewById(R.id.RevisionsList);
         documentList = findViewById(R.id.DocumentList);
         DocumentZKPO =findViewById(R.id.DocumentZKPO);
-        FilterEDRPO =findViewById(R.id.FilterEDRPO);
-        FilterEDRPOText =findViewById(R.id.FilterEDRPOText);
+        //FilterEDRPO =findViewById(R.id.FilterEDRPO);
+        //FilterEDRPOText =findViewById(R.id.FilterEDRPOText);
 
         context = this;
 
         Intent i = getIntent();
         DocumentType =  i.getIntExtra("document_type",0);
-
         DS=config.GetDocSetting(DocumentType);
-        DM.TypeDoc.set(DocumentType);
-        //binding = DataBindingUtil.setContentView(this, R.layout.document_layout);
-        //binding.setDM (DM);
+        DM=new DocumentViewModel(DS);
+
+        binding.setDM(DM);
 
         scaner=config.GetScaner();
         if(scaner!=null)
             scaner.Init(this,savedInstanceState);
 
-        FilterKey=findViewById(R.id.FilterKey);
-        FilterText=findViewById(R.id.FilterText);
+        //FilterKey=findViewById(R.id.FilterKey);
+        //FilterText=findViewById(R.id.FilterText);
         //new AsyncLoadListDoc(GlobalConfig.GetWorker(), this).execute(DocumentType);
 
      //  RefreshTable(null,null);
     }
-
 
     @Override
     public void onResume() {
@@ -98,9 +99,10 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                int view = DM.IsFilter.get() ? View.VISIBLE : View.INVISIBLE;
-                FilterKey.setVisibility(view);
-                FilterText.setVisibility(view);
+                int view;
+                //= DM.IsFilter.get() ? View.VISIBLE : View.INVISIBLE;
+                //FilterKey.setVisibility(view);
+                //FilterText.setVisibility(view);
 
                 view = DM.IsEnterCodeZKPO.get() ? View.VISIBLE : View.GONE;
                 DocumentZKPO.setText(DM.ZKPO.get());
@@ -111,9 +113,9 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                 DocumentZKPO.requestFocusFromTouch();
                 DocumentZKPO.setFocusableInTouchMode(false);
 
-                view = DM.TypeDoc.get() == 2 ? View.VISIBLE : View.GONE;
-                FilterEDRPO.setVisibility(view);
-                FilterEDRPOText.setVisibility(view);
+                view = DS.TypeDoc == 2 ? View.VISIBLE : View.GONE;
+                //FilterEDRPO.setVisibility(view);
+                //FilterEDRPOText.setVisibility(view);
             }});
     }
 
@@ -146,22 +148,62 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
 
     @Override
     public void onClick(View v) {
-        TextView currentNumber = v.findViewWithTag("number");
-        Intent i;
+        switch (v.getId()) {
+            case R.id.FilterEDRPO:
+            case R.id.FilterEDRPOText:
+                DM.IsEnterCodeZKPO.set(true);
+                ViewFilter();
+                break;
+            case R.id.FilterKey:
+            case R.id.FilterText:
+                RefreshTable(null, null);
+                break;
+            case R.id.D_F4:
+            case R.id.D_F4_Text:
+                NewDoc();
+                break;
+            default:
+                OpenDoc(v);
+                break;
+        }
+    }
 
-        Object tag = ((ViewGroup)v).getChildAt(0).getTag();
-        int TypeWeight = tag != null?Integer.parseInt( tag.toString()):0;
+ private void OpenDoc(View v) {
+     TextView currentNumber = v.findViewWithTag("number");
 
+     Object tag = ((ViewGroup) v).getChildAt(0).getTag();
+     int TypeWeight = tag != null ? Integer.parseInt(tag.toString()) : 0;
+     OpenDoc(currentNumber.getText().toString(), TypeWeight);
+ }
 
- //       if(tag != null && (tag.toString().equals("2")|| tag.toString().equals("0")))
-//            i = new Intent(context, DocumentWeightActivity.class);
- //       else
-          i = new Intent((Context) this, DocumentItemsActivity.class);
+private void OpenDoc(String pNumber,int pTypeWeight)
+{
+    Intent i;
+    i = new Intent((Context) this, DocumentItemsActivity.class);
+    i.putExtra("number", pNumber);
+    i.putExtra("document_type", DocumentType);
+    i.putExtra("TypeWeight", pTypeWeight);
+    startActivity(i);
+}
 
-        i.putExtra("number", currentNumber.getText().toString());
-        i.putExtra("document_type", DocumentType);
-        i.putExtra("TypeWeight", TypeWeight);
-        startActivity(i);
+    private void NewDoc()
+        {
+            Intent i = new Intent(this, NewDocumentActivity.class);
+            i.putExtra("document_type", DocumentType);
+            startActivityForResult(i,1);
+        }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                String result=data.getStringExtra("NumberDoc");
+                OpenDoc(result,0);
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
+        }
     }
 
     @Override
@@ -198,6 +240,9 @@ public class DocumentActivity extends Activity implements View.OnClickListener, 
                     break;
                 case 132: //F2 Перерисовуємо без фільтра
                     RefreshTable(null, null);
+                    break;
+                case 134: //F4 Перерисовуємо без фільтра
+                  NewDoc();
                     break;
             }
         }

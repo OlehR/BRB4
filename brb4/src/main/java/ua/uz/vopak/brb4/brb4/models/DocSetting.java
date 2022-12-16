@@ -34,13 +34,15 @@ public class DocSetting {
     public boolean IsSimpleDoc = false;
     // Код API для документа (723 -(0-2)
     public int CodeApi=0;
+    //
+    public boolean IsCreateNewDoc =false;
 
     public DocSetting(int pTypeDoc,String pNameDoc)
     {
         TypeDoc=pTypeDoc;
         NameDoc=pNameDoc;
     }
-    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut,boolean pIsmultipleSave,boolean pIsSaveOnlyScan,boolean pIsAddZero,boolean pIsSimpleDoc,int pCodeApi )
+    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut,boolean pIsmultipleSave,boolean pIsSaveOnlyScan,boolean pIsAddZero,boolean pIsSimpleDoc,int pCodeApi,boolean pIsCreateNewDoc )
     {
         this(pTypeDoc, pNameDoc);
         TypeControlQuantity =pTypeControlQuantity;
@@ -58,7 +60,7 @@ public class DocSetting {
         IsAddZero=pIsAddZero;
         IsSimpleDoc =pIsSimpleDoc;
         CodeApi = pCodeApi;
-
+        IsCreateNewDoc=pIsCreateNewDoc;
     }
 
 }

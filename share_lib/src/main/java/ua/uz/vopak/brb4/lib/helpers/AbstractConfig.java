@@ -35,7 +35,7 @@ public abstract class AbstractConfig {
 
     public int GetCodeUnitPiece() { return Company == eCompany.Sim23 ?  796:19;}
 
-    public String ApiUrl,ApiURLadd,ApiUrl3="http://93.183.216.37:2380/1c/hs/UTP/";
+    public String ApiUrl,ApiURLadd,ApiUrl3="http://160.238.125.158:2380/1c/hs/UTP/";
 
     public eTypeScaner TypeScaner = eTypeScaner.NotDefine;
     public eTypeUsePrinter TypeUsePrinter;

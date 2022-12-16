@@ -79,6 +79,10 @@
             android:name=".DocumentWeightActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>
+        <activity
+            android:name=".NewDocumentActivity"
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait"/>
 
         <receiver
             android:name=".Scaner.ScanResultReceiverPM"

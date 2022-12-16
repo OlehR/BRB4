@@ -65,19 +65,19 @@ public class Worker {
                 }
                 int step=0;
                 if(Right[0])
-                    Setting[step++] = new DocSetting(2, "Мініревізія", eTypeControlDoc.Ask, false, false, false, false, false, 1, 1, 0, false, true, false, true,false,0);
+                    Setting[step++] = new DocSetting(2, "Мініревізія", eTypeControlDoc.Ask, false, false, false, false, false, 1, 1, 0, false, true, false, true,false,0,false);
                 if(Right[1])
-                    Setting[step++] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false,true,true,false,false,1);
+                    Setting[step++] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false,true,true,false,false,1,false);
                 if(Right[2])
-                    Setting[step++] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false,false,0);
+                    Setting[step++] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false,false,0,false);
                 if(Right[3])
-                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,1,false,false,true,false,false,1);
+                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,1,false,false,true,false,false,1,false);
                 if(Right[4])
-                    Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2);
+                    Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2,false);
                 if(Right[5])
-                    Setting[step++] = new DocSetting(8,"Переміщення ОЗ Вих", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2);
+                    Setting[step++] = new DocSetting(8,"Переміщення ОЗ Вих", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2,true);
                 if(Right[6])
-                    Setting[step++] = new DocSetting(9,"Переміщення ОЗ Вх", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2);
+                    Setting[step++] = new DocSetting(9,"Переміщення ОЗ Вх", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2,false);
 
  //               if(Right[5])
  //                   Setting[step++] = new DocSetting(0,"Прайсчекер", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0,false,false,true,false,false);
@@ -86,12 +86,12 @@ public class Worker {
             case SparPSU:
             case VopakPSU:
                 Setting =  new  DocSetting[6];
-                Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false,0);
-                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0);
-                Setting[2] = new DocSetting(3,"Переміщення",eTypeControlDoc.Ask,false,false,true,true,true,1,5,3,true,true,true,false,false,0);
+                Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false,0,false);
+                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false);
+                Setting[2] = new DocSetting(3,"Переміщення",eTypeControlDoc.Ask,false,false,true,true,true,1,5,3,true,true,true,false,false,0,false);
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");
-                Setting[5] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,0);
+                Setting[5] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,0,true);
                 break;
         }
        return Setting;
@@ -189,15 +189,21 @@ public class Worker {
     public WaresItemModel GetWaresFromBarcode(int pTypeDoc, String pNumberDoc, String pBarCode,boolean pIsOnlyBarCode) {
         Connector c = Connector.instance();
         boolean IsSimpleDoc=false;
-        if(pTypeDoc>0)
+        DocSetting DS=config.GetDocSetting(pTypeDoc);
+        if(pTypeDoc>0 && DS!=null)
             IsSimpleDoc = config.GetDocSetting(pTypeDoc).IsSimpleDoc;
         ParseBarCode PBarcode= c.ParsedBarCode(pBarCode,pIsOnlyBarCode&&!IsSimpleDoc);
         WaresItemModel res=mDbHelper.GetScanData(pTypeDoc, pNumberDoc,PBarcode);// pBarCode, pIsOnlyBarCode,false);
+
+
         String outLog="Null";
         if(res!=null)
             outLog=res.CodeWares+","+res.QuantityBarCode+","+res.NameWares;
         else
-          if(config.Company== eCompany.Sim23 && pTypeDoc==7 && PBarcode.Code!=0) { //Якщо ревізія а товар не знайдено
+          if(config.Company== eCompany.Sim23 && (pTypeDoc==7 || pTypeDoc==8)&& PBarcode.Code!=0) { //Якщо ревізія а товар не знайдено
+              if( IsSimpleDoc) {
+                  res= c.GetWares( PBarcode.Code,IsSimpleDoc);
+              }
 
               DocWaresSample[] DWS = new DocWaresSample[1];
               DWS[0] = new DocWaresSample();
@@ -207,14 +213,13 @@ public class Worker {
               DWS[0].CodeWares=PBarcode.Code;
               DWS[0].Quantity=1d;
               DWS[0].QuantityMax=1d;
-              DWS[0].Name=pBarCode;
+              DWS[0].Name= (res==null?pBarCode:res.NameWares);
               c.SaveDocWaresSample(DWS,0);
               res=new WaresItemModel(DWS[0]);
               res.Coefficient=1;
               res.CodeUnit=config.GetCodeUnitPiece();
               res.BaseCodeUnit=res.CodeUnit;
               res.NameUnit="Шт";
-
           }
 
         Utils.WriteLog("i",TAG,"SaveDocWares=>"+String.valueOf(pTypeDoc)+","+pNumberDoc+","+gson.toJson(PBarcode)+
