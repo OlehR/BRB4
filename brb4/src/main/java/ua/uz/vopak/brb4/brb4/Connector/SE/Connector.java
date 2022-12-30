@@ -324,7 +324,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     public WaresItemModel GetWares(int pCodeWares, boolean pIsSimpleDoc) {
         String NameApi = "";
         if (pIsSimpleDoc)
-            NameApi = "OZgetoz?CodeWares=11751" + pCodeWares;
+            NameApi = "oz?CodeWares=" + pCodeWares;
 
         WaresItemModel Res=null;
         try {

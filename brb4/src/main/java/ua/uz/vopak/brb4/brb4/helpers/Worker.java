@@ -193,13 +193,14 @@ public class Worker {
         if(pTypeDoc>0 && DS!=null)
             IsSimpleDoc = config.GetDocSetting(pTypeDoc).IsSimpleDoc;
         ParseBarCode PBarcode= c.ParsedBarCode(pBarCode,pIsOnlyBarCode&&!IsSimpleDoc);
+        //if(pTypeDoc==7 || pTypeDoc==8) //Якщо переміщення ОЗ
+
         WaresItemModel res=mDbHelper.GetScanData(pTypeDoc, pNumberDoc,PBarcode);// pBarCode, pIsOnlyBarCode,false);
 
 
         String outLog="Null";
-        if(res!=null)
-            outLog=res.CodeWares+","+res.QuantityBarCode+","+res.NameWares;
-        else
+
+
           if(config.Company== eCompany.Sim23 && (pTypeDoc==7 || pTypeDoc==8)&& PBarcode.Code!=0) { //Якщо ревізія а товар не знайдено
               if( IsSimpleDoc) {
                   res= c.GetWares( PBarcode.Code,IsSimpleDoc);
@@ -215,12 +216,20 @@ public class Worker {
               DWS[0].QuantityMax=1d;
               DWS[0].Name= (res==null?pBarCode:res.NameWares);
               c.SaveDocWaresSample(DWS,0);
-              res=new WaresItemModel(DWS[0]);
+             // res=new WaresItemModel(DWS[0]);
+              res.TypeDoc=DWS[0].TypeDoc;
+              res.NumberDoc=DWS[0].NumberDoc;
+              res.CodeWares=DWS[0].CodeWares;
+              res.NameWares= DWS[0].Name;
+              res.QuantityMax= DWS[0].QuantityMax;
               res.Coefficient=1;
               res.CodeUnit=config.GetCodeUnitPiece();
               res.BaseCodeUnit=res.CodeUnit;
               res.NameUnit="Шт";
           }
+          else
+              if(res!=null )
+        outLog=res.CodeWares+","+res.QuantityBarCode+","+res.NameWares;
 
         Utils.WriteLog("i",TAG,"SaveDocWares=>"+String.valueOf(pTypeDoc)+","+pNumberDoc+","+gson.toJson(PBarcode)+
                 ",\nres=>"+outLog);

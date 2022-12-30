@@ -35,11 +35,7 @@ public class NewDocModel {
             for (Warehouse el:C.Warehouses) {
                 ListWarehouse.add(el.Name);
             }
-
     }
-
-
-
 
     public void OnClickCreate() {
         new AsyncHelper<Void>(new IAsyncHelper<Void>() {
@@ -47,6 +43,7 @@ public class NewDocModel {
             public Void Invoke() {
                Result Res = c.CreateNewDoc(NDA.DocumentType, Integer.parseInt( WhFrom.Number) ,  Integer.parseInt(C.Warehouses[ListWarehouseIdx.get()].Number));
                if(Res.State==0) {
+                   c.LoadDocsData(NDA.DocumentType,"",null,false);
                    NDA.Exit(Res.Info);
                }
                else {
