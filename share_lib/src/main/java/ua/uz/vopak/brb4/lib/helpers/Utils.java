@@ -488,7 +488,7 @@ public class Utils {
 
     public void CopyFile(String pFrom,String pTo) {
         try {
-            File sd = Environment.getExternalStorageDirectory();
+            //File sd = Environment.getExternalStorageDirectory();
             //File data = Environment.getDataDirectory();
 
             File fdelete = new File(pTo);
@@ -497,11 +497,13 @@ public class Utils {
                     Utils.WriteLog("e",TAG, "file not Deleted :" + pTo);
                 }
             }
-            if (sd.canWrite()) {
+            //fdelete=null;
+            File backupDB = new File(pTo);//(sd, backupDBPath);
+            //if (backupDB.canWrite()) {
                 //String currentDBPath = "//data//"+getPackageName()+"//databases//"+databaseName+"";
                 //String backupDBPath = "backupname.db";
                 File currentDB = new File(pFrom); //(data, currentDBPath);
-                File backupDB = new File(pTo);//(sd, backupDBPath);
+                //File backupDB = new File(pTo);//(sd, backupDBPath);
 
                 if (currentDB.exists()) {
                     FileChannel src = new FileInputStream(currentDB).getChannel();
@@ -510,7 +512,7 @@ public class Utils {
                     src.close();
                     dst.close();
                 }
-            }
+            //}
         } catch (Exception e) {
             Utils.WriteLog("e",TAG, "CopyFile" + pFrom+" " +pTo , e);
         }
