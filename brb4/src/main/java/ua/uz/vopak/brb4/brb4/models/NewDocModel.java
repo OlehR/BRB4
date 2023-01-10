@@ -42,12 +42,18 @@ public class NewDocModel {
             @Override
             public Void Invoke() {
                Result Res = c.CreateNewDoc(NDA.DocumentType, Integer.parseInt( WhFrom.Number) ,  Integer.parseInt(C.Warehouses[ListWarehouseIdx.get()].Number));
-               if(Res.State==0) {
+               if(Res!=null && Res.State==0) {
                    c.LoadDocsData(NDA.DocumentType,"",null,false);
                    NDA.Exit(Res.Info);
                }
                else {
-                   new UtilsUI(NDA).Dialog("Документ не створено", Res.TextError);
+                   NDA.runOnUiThread(new Runnable() {
+                       @Override
+                       public void run() {
+                           new UtilsUI(NDA).Dialog("Документ не створено", Res==null?"Відсутня відповідь":Res.TextError);
+                       }
+                   });
+
                }
                return null;
                }

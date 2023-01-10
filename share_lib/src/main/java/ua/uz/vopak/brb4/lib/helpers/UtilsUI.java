@@ -30,6 +30,7 @@ public class UtilsUI {
     }
 
     public void Dialog(String pHead,String pText) {
+
         new AlertDialog.Builder(context)
                 .setTitle(pHead)
                 .setMessage(pText)
