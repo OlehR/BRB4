@@ -23,6 +23,7 @@ import ua.uz.vopak.brb4.lib.models.Result;
 public abstract class Connector {
     protected static final String TAG = "BRB4/Connector";
     public abstract Warehouse[] LoadWarehouse();
+    //public abstract Warehouse[] LoadWarehouseAdd();
     private static Connector Instance = null;
 
     protected static Config config = Config.instance();
