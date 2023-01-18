@@ -85,13 +85,15 @@ public class Worker {
                 break;
             case SparPSU:
             case VopakPSU:
-                Setting =  new  DocSetting[6];
+                Setting =  new  DocSetting[7];
                 Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false,0,false);
                 Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false);
-                Setting[2] = new DocSetting(3,"Переміщення",eTypeControlDoc.Ask,false,false,true,true,true,1,5,3,true,true,true,false,false,0,false);
+                Setting[2] = new DocSetting(3,"Переміщення Вих",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false);
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");
                 Setting[5] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,0,true);
+                Setting[6] = new DocSetting(8,"Переміщення Вх",eTypeControlDoc.Ask,false,false,true,true,true,1,5,3,true,true,true,false,false,0,false);
+
                 break;
         }
        return Setting;
@@ -317,8 +319,6 @@ public class Worker {
 
         List<Warehouse> lWh = mDbHelper.GetWarehouse();
         Wh = lWh.toArray(new Warehouse[lWh.size()]);
-
         return Wh;
     }
-
 }

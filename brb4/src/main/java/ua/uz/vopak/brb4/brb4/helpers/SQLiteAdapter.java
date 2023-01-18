@@ -394,10 +394,14 @@ public class SQLiteAdapter
                   Color+
                   ",w.code_unit\n"+
                   "    from Doc d  \n" +
-                "    join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,max(dw.order_doc) as order_doc,sum(quantity_old) as quantity_old,  sum(case when dw.CODE_Reason>0 then  dw.quantity else 0 end) as quantity_reason  from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
+                "    join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,max(dw.order_doc) as order_doc,sum(quantity_old) as quantity_old,  sum(case when dw.CODE_Reason>0 then  dw.quantity else 0 end) as quantity_reason  " +
+                "           from doc_wares dw where dw.type_doc="+pTypeDoc+" and  dw.number_doc = '"+pNumberDoc+"'\n" +
+                "           group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
                 "    Left join wares w on dw1.code_wares = w.code_wares \n" +
                 "    left join (\n" +
-                  "    select  dws.type_doc ,dws.number_doc, dws.code_wares,dws.name, sum(dws.quantity) as quantity,  min(dws.quantity_min) as quantity_min, max(dws.quantity_max) as quantity_max  from   DOC_WARES_sample dws   group by dws.type_doc ,dws.number_doc,dws.code_wares,dws.name\n" +
+                  "    select  dws.type_doc ,dws.number_doc, dws.code_wares,dws.name, sum(dws.quantity) as quantity,  min(dws.quantity_min) as quantity_min, max(dws.quantity_max) as quantity_max  " +
+                  "         from   DOC_WARES_sample dws   where dws.type_doc="+pTypeDoc+" and  dws.number_doc = '"+pNumberDoc+"'\n" +
+                  "group by dws.type_doc ,dws.number_doc,dws.code_wares,dws.name\n" +
                   "    ) as dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = dw1.code_wares\n" +
                 "    where d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                 " union all\n" + 
@@ -408,7 +412,9 @@ public class SQLiteAdapter
                 "    from Doc d  \n" +
                 "    join DOC_WARES_sample dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc --and dws.code_wares = w.code_wares\n" +
                 "    left join wares w on dws.code_wares = w.code_wares \n" +
-                "    left join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,sum(dw.quantity_old) as quantity_old from doc_wares dw group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc and dw1.code_wares = dws.code_wares)\n" +
+                "    left join (select dw.type_doc ,dw.number_doc, dw.code_wares, sum(dw.quantity) as quantity_input,sum(dw.quantity_old) as quantity_old from doc_wares dw " +
+                  "where dw.type_doc="+pTypeDoc+" and  dw.number_doc = '"+pNumberDoc+"'\n" +
+                  "group by dw.type_doc ,dw.number_doc,code_wares) dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc and dw1.code_wares = dws.code_wares)\n" +
                 "    where dw1.type_doc is null and d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                 " order by "+OrderQuery;
 
@@ -419,7 +425,10 @@ public class SQLiteAdapter
                     "    join doc_wares dw1 on (dw1.number_doc = d.number_doc and d.type_doc=dw1.type_doc)\n" +
                     "    left join wares w on dw1.code_wares = w.code_wares \n" +
                     "    left join (\n" +
-                    "    select  dws.type_doc ,dws.number_doc, dws.code_wares,dws.name, sum(dws.quantity) as quantity,  min(dws.quantity_min) as quantity_min, max(dws.quantity_max) as quantity_max  from   DOC_WARES_sample dws   group by dws.type_doc ,dws.number_doc,dws.code_wares,dws.name\n" +
+                    "    select  dws.type_doc ,dws.number_doc, dws.code_wares,dws.name, sum(dws.quantity) as quantity,  min(dws.quantity_min) as quantity_min, max(dws.quantity_max) as quantity_max  "+
+                    "       from   DOC_WARES_sample dws \n"+
+                    "       where dws.type_doc="+pTypeDoc+" and  dws.number_doc = '"+pNumberDoc+"'\n" +
+                    "   group by dws.type_doc ,dws.number_doc,dws.code_wares,dws.name\n" +
                     "    ) as dws on d.number_doc = dws.number_doc and d.type_doc=dws.type_doc and dws.code_wares = dw1.code_wares\n"+
                     "    where d.type_doc="+pTypeDoc+" and  d.number_doc = '"+pNumberDoc+"'\n" +
                     " order by 1,2";
