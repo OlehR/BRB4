@@ -11,11 +11,12 @@ public class DocumentViewModel {
     {
         DS=pDS;
         IsCreateNewDoc.set(DS.IsCreateNewDoc);
-        IsEnterCodeZKPO.set(DS.TypeDoc==2);
+        IsEnableCodeZKPO.set(DS.TypeDoc==2);
     }
     public ObservableField<String> ZKPO= new ObservableField<>("");
     public ObservableBoolean IsFilter = new ObservableBoolean(false);
-    public ObservableBoolean IsEnterCodeZKPO = new ObservableBoolean(false);
+    public ObservableBoolean IsEnterCodeZKPO = new ObservableBoolean(true);
     public ObservableBoolean IsCreateNewDoc = new ObservableBoolean(false);
+    public ObservableBoolean IsEnableCodeZKPO = new ObservableBoolean(false);
 
 }

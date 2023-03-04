@@ -234,7 +234,7 @@ private void OpenDoc(String pNumber,int pTypeWeight)
                             r.callOnClick();
                     }
                     break;
-                case  131: //F2 Пошук по коду ЄДРПОУ для прихідних
+                case  131: //F1 Пошук по коду ЄДРПОУ для прихідних
                   DM.IsEnterCodeZKPO.set(true);
                   ViewFilter();
                     break;

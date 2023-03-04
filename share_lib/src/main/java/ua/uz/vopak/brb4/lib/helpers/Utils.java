@@ -146,6 +146,8 @@ public class Utils {
             return eTypeScaner.PM550;
         if ( model.equals("PM351")  && (manufacturer.contains("POINTMOBILE") || manufacturer.contains("Point Mobile Co., Ltd.")))
             return eTypeScaner.PM351;
+        if(model.equals("HC61") || manufacturer.contains("Bita"))
+            return eTypeScaner.BitaHC61;
         return eTypeScaner.Camera;
     }
 

@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.journeyapps.barcodescanner.camera.CameraSettings;
 
+import ua.uz.vopak.brb4.brb4.Scaner.BitaHC61;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanCallBack;
 import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.Scaner.ScanerPM351;
@@ -127,6 +128,8 @@ public class Config extends AbstractConfig {
                 break;
             case PM351:
                 Scaner = new ScanerPM351(context);
+            case BitaHC61:
+                Scaner = new BitaHC61(context);
             case NotDefine:
                 break;
             default:

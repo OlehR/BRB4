@@ -192,7 +192,7 @@
                 android:layout_weight="1.4"
                 android:text="Ц.с.опт:"
                 android:textColor="@{LI.ColorPrice()}"
-                android:textSize="4mm"></TextView>
+                android:textSize="16sp"></TextView>
 
             <TextView
                 android:layout_width="0dp"
@@ -200,7 +200,7 @@
                 android:layout_weight="1.6"
                 android:text="@{LI.strOldPriceOpt()}"
                 android:textColor="@{LI.ColorPrice()}"
-                android:textSize="6mm"></TextView>
+                android:textSize="28sp"></TextView>
 
 
             <TextView
@@ -209,7 +209,7 @@
                 android:layout_weight="1.4"
                 android:text="Ц.н.опт:"
                 android:textColor="@{LI.ColorPrice()}"
-                android:textSize="4mm"></TextView>
+                android:textSize="16sp"></TextView>
 
             <TextView
                 android:layout_width="0dp"
@@ -217,7 +217,7 @@
                 android:layout_weight="1.6"
                 android:text="@{LI.strPriceOpt()}"
                 android:textColor="@{LI.ColorPrice()}"
-                android:textSize="6mm"></TextView>
+                android:textSize="28sp"></TextView>
         </LinearLayout>
 <!--
         <RelativeLayout
@@ -247,7 +247,7 @@
                 android:layout_span="3"
                 android:layout_weight="6"
                 android:text="@{LI.Name}"
-                android:textSize="6mm"></TextView>
+                android:textSize="40sp"></TextView>
 
         </LinearLayout>
 
@@ -255,21 +255,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:weightSum="6">
+            android:weightSum="8">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="Штрих код:"
-                android:textSize="3mm"></TextView>
+                android:textSize="16sp"></TextView>
 
             <EditText
                 android:id="@+id/PCh_bar_code"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_span="3"
-                android:layout_weight="4"
+                android:layout_weight="6"
                 android:background="@{LI.Action() ?  @drawable/input_style_yellow : @drawable/input_style}"
                 android:enabled="@{LI.InputFocus==1}"
                 android:inputType="numberSigned"
@@ -279,7 +279,7 @@
                 android:text="@={LI.BarCode}"
                 android:focusable="@{LI.InputFocus==1}"
                 android:onClick="@{(view) -> handler.OnClickBarCode(view,LI)}"
-                android:textSize="5mm"></EditText>
+                android:textSize="26sp"></EditText>
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -294,7 +294,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:text="Поповнення:"
-                android:textSize="3mm"></TextView>
+                android:textSize="20sp"></TextView>
 
             <EditText
                 android:id="@+id/PCh_NumberOfReplenishment"
@@ -302,7 +302,7 @@
                 android:layout_height="wrap_content"
                 android:layout_span="3"
                 android:layout_weight="4"
-                android:textSize="5mm"
+                android:textSize="28sp"
                 android:background="@drawable/input_style"
 
                 android:enabled="@{LI.InputFocus==2}"

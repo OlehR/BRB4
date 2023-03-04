@@ -7,7 +7,7 @@ public enum eTypeScaner {
     PM550,
     PM351,
     Camera,
-
+    BitaHC61,
     KeyBoard
 
 }

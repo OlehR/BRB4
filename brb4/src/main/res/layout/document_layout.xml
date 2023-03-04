@@ -16,19 +16,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <EditText
-        android:focusable="false"
         android:id="@+id/DocumentZKPO"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="9pt"
         android:layout_marginTop="10dp"
-        android:visibility="gone"
-        />
-    <!--
-     android:visibility= "@{DM.IsEnterCodeZKPO ? View.GONE : View.VISIBLE}"
-        android:focusable="@{DM.IsEnterCodeZKPO ? true : false}"
+        android:inputType="numberDecimal"
+        android:visibility= "@{DM.IsEnableCodeZKPO ? View.GONE : View.VISIBLE}"
+        android:focusable="@{DM.IsEnableCodeZKPO}"
         android:text="@={ DM.ZKPO}"
-        -->
+        android:focusableInTouchMode="@{DM.IsEnableCodeZKPO}"
+        />
+
 
 <ScrollView
     android:focusable="false"
@@ -119,7 +118,10 @@
                 android:textSize="18dp"
                 android:text=" F1-"
                 android:onClick="onClick"
-                android:visibility= "@{DM.IsEnterCodeZKPO? View.VISIBLE : View.GONE}"
+                android:visibility= "@{DM.IsEnableCodeZKPO? View.VISIBLE : View.GONE}"
+                android:enabled="@{DM.IsEnableCodeZKPO }"
+                android:focusable="@{DM.IsEnableCodeZKPO}"
+                android:focusableInTouchMode="@{DM.IsEnableCodeZKPO}"
                 />
             <TextView
                 android:id="@+id/FilterEDRPOText"
@@ -129,7 +131,7 @@
                 android:textSize="18dp"
                 android:text="ЗКПО"
                 android:onClick="onClick"
-                 android:visibility= "@{DM.IsEnterCodeZKPO? View.VISIBLE : View.GONE}"/>
+                 android:visibility= "@{DM.IsEnableCodeZKPO? View.VISIBLE : View.GONE}"/>
 
             <TextView
                 android:id="@+id/FilterKey"

@@ -31,7 +31,7 @@
         android:id="@+id/Ver"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="9pt"
+        android:textSize="18dp"
         android:layout_marginTop="5dp"
         android:text="Ver: " />
     <TextView
@@ -39,7 +39,7 @@
         android:id="@+id/SN"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="9pt"
+        android:textSize="18dp"
         android:layout_marginTop="5dp"
         android:text="SN: " />
     </LinearLayout>
@@ -96,7 +96,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:textSize="8pt"
+            android:textSize="18dp"
             android:enabled ="@{SM.IsAdmin}"
             android:onClick="@{(view) -> SM.OnClickGen()}"
             android:text="Зген." />
@@ -104,7 +104,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="3"
-            android:textSize="8pt"
+            android:textSize="18dp"
 
             android:onClick="@{(view) -> SM.OnClickIP()}"
             android:text="IP" />
@@ -115,7 +115,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="9pt"
+        android:textSize="18dp"
         android:layout_marginTop="1dp"
         android:enabled ="@{SM.IsAdmin}"
         android:text="@={SM.apiURL}"
@@ -124,7 +124,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="9pt"
+            android:textSize="18dp"
             android:layout_marginTop="1dp"
             android:enabled ="@{SM.IsAdmin}"
             android:text="@={SM.apiURLadd}"
