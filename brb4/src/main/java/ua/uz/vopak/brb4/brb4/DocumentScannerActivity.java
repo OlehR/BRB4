@@ -156,7 +156,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         }
 
         keyboard = (MyKeyboard) findViewById(R.id.keyboard);
-        Refresh();
+
 
         inputCount.addTextChangedListener(new TextWatcher() {
             @Override
@@ -364,39 +364,41 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
     }
 
     void Refresh( ){
+        //WaresItem.IsInputQuantity1.set(WaresItem.IsInputQuantity());
         binding.invalidateAll();
         if(config.IsUseCamera())
             barcodeView.resume();
+        inputCount.setEnabled(WaresItem.IsInputQuantity());
+        barCode.setEnabled(!WaresItem.IsInputQuantity());
+
+        barCode.setFocusable(false);
+        inputCount.setFocusable(false);
 
        if(WaresItem.IsInputQuantity()) {
-
             inputCount.setFocusable(true);
             inputCount.requestFocus();
            if(config.IsUseCamera()) {
                imm.showSoftInput(inputCount, InputMethodManager.SHOW_IMPLICIT);
            }
-
            // inputCount.setFocusable(true);
-            //inputCount.setFocusableInTouchMode(true);
-            //inputCount.requestFocusFromTouch();
+            inputCount.setFocusableInTouchMode(true);
+            inputCount.requestFocusFromTouch();
            // inputCount.setFocusableInTouchMode(false);
-
         }
         else
         {
             barCode.setFocusable(true);
-            barCode.requestFocus();
-       //     if(config.IsUseCamera()) {
-        //        imm.showSoftInput(barCode, InputMethodManager.SHOW_IMPLICIT);
-         //   }
+              barCode.requestFocus();
+           if(config.IsUseCamera()) {
+               imm.showSoftInput(barCode, InputMethodManager.SHOW_IMPLICIT);
+            }
             //barCode.setFocusable(true);
-           // barCode.setFocusableInTouchMode(true);
-            //barCode.requestFocusFromTouch();
+            barCode.setFocusableInTouchMode(true);
+            barCode.requestFocusFromTouch();
             //barCode.setFocusableInTouchMode(false);
 
         }
-
-
+        //binding.invalidateAll();
     }
 
     public TableRow RenderTableItem (WaresItemModel parWM ) {

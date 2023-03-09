@@ -247,7 +247,7 @@
                 android:layout_span="3"
                 android:layout_weight="6"
                 android:text="@{LI.Name}"
-                android:textSize="36sp"></TextView>
+                android:textSize="32sp"></TextView>
 
         </LinearLayout>
 

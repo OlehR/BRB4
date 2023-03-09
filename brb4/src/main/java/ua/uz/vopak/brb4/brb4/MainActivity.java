@@ -267,7 +267,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         new AsyncHelper<Boolean>(new IAsyncHelper() {
             @Override
             public Boolean Invoke() {
-                    config.Worker.LoadData(pTypeDoc,null,MM.Progress,false);
+                    config.Worker.LoadData(pTypeDoc,"",MM.Progress,false);
                     return true;
             }
         },

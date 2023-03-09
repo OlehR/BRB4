@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.graphics.Color;
 
 import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableInt;
 
 import com.journeyapps.barcodescanner.BarcodeView;
@@ -154,6 +155,8 @@ public class WaresItemModel implements Cloneable{
         ListReasonIdx.set(0);
 
     }
+
+    public ObservableBoolean IsInputQuantity1 = new ObservableBoolean(IsInputQuantity());
     public Boolean IsInputQuantity() { return (Coefficient>0 && QuantityMax>0d);}
     public Boolean IsInputQuantityTouch() { return IsInputQuantity() && IsUseCamera();}
     public Boolean IsInputBarCodeTouch() { return !IsInputQuantity() && IsUseCamera();}
