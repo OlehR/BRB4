@@ -293,6 +293,7 @@ public class Worker {
             if (IP.length != 4)
                 return res;
             for (int i = 0; i < pWarehouses.length; i++) {
+                if(pWarehouses[i].InternalIP==null) continue;
                 String[] WhIp = pWarehouses[i].InternalIP.split("\\.");
                 if (WhIp.length != 4)
                     continue;
