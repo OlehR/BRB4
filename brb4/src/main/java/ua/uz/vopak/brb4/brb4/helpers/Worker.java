@@ -59,6 +59,10 @@ public class Worker {
                         Right = new boolean[]{false,true , false, true,true,true,true};
                         Setting =  new  DocSetting[5];
                         break;
+                    case  UserCO:
+                        Right = new boolean[]{true,true , true, false,true,true,true};
+                        Setting =  new  DocSetting[6];
+                        break;
                     default:
                         Right = new boolean[]{false,false , false, false, false, false, false};
                         break;

@@ -4,7 +4,8 @@ public enum eRole {
     NotDefined(0),
     Admin(1),
     User(2),
-    Auditor(3);
+    Auditor(3),
+    UserCO(4);
 
     private static eRole[] allValues = values();
     public static eRole fromOrdinal(int n) {return allValues[n];}
@@ -29,6 +30,7 @@ public enum eRole {
             case 1: return "Адміністратор";
             case 2: return "Кортстувач";
             case 3: return "Ревізор";
+            case 4: return "Кортстувач ЦБ";
             default: return "Невідомий профайл";
         }
     }

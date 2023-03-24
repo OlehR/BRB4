@@ -46,8 +46,27 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         else {
             try {
                 JSONObject jObject = new JSONObject(res.Result);
+                //Якщо конектимся локально пробуємо до ЦБ
                 if (jObject.getInt("State") == 0) {
                     config.Role = eRole.fromOrdinal(jObject.getInt("Profile"));
+
+                    if(!pIsLoginCO) {
+                        res = Http.HTTPRequest(pIsLoginCO ? 1 : 0, "login", "{\"login\" : \"" + pLogin + "\"}", "application/json;charset=utf-8", pLogin, pPassWord);
+                        if (res.HttpState == eStateHTTP.HTTP_OK) {
+                            try {
+                                
+                                jObject = new JSONObject(res.Result);
+
+                                if (jObject.getInt("State") == 0) {
+                                    eRole vRole = eRole.fromOrdinal(jObject.getInt("Profile"));
+
+                                    if (vRole == eRole.User) config.Role = eRole.UserCO;
+                                }
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+
                     return new Result();
                 } else
                     return new Result(jObject.getInt("State"), jObject.getString("TextError"), "Неправильний логін або пароль");
