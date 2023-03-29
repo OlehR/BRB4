@@ -83,9 +83,6 @@ public class Worker {
                 if(Right[6])
                     Setting[step++] = new DocSetting(9,"Переміщення ОЗ Вх", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,true,true,false,true,2,false);
 
- //               if(Right[5])
- //                   Setting[step++] = new DocSetting(0,"Прайсчекер", eTypeControlDoc.Ask,false,false,false,false,false,1,1,0,false,false,true,false,false);
-
                 break;
             case SparPSU:
             case VopakPSU:
@@ -203,9 +200,7 @@ public class Worker {
 
         WaresItemModel res=mDbHelper.GetScanData(pTypeDoc, pNumberDoc,PBarcode);// pBarCode, pIsOnlyBarCode,false);
 
-
         String outLog="Null";
-
 
           if(config.Company== eCompany.Sim23 && (pTypeDoc==7 || pTypeDoc==8)&& PBarcode.Code!=0) { //Якщо ревізія а товар не знайдено
               if( IsSimpleDoc) {
