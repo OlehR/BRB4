@@ -257,7 +257,6 @@ public class Worker {
            if(State>=1)
                return new Result(-2,"Даний документ не можна повторно зберігати!");
         }
-
         Connector c = Connector.instance();
         mDbHelper.UpdateDocState(pState, pTypeDoc, pNumberDoc);
         List<WaresItemModel> wares = mDbHelper.GetDocWares(pTypeDoc, pNumberDoc,( DS==null || DS.IsSaveOnlyScan?2:1), eTypeOrder.Scan);
