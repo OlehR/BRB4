@@ -262,7 +262,6 @@ public class Worker {
         mDbHelper.UpdateDocState(pState, pTypeDoc, pNumberDoc);
         List<WaresItemModel> wares = mDbHelper.GetDocWares(pTypeDoc, pNumberDoc,( DS==null || DS.IsSaveOnlyScan?2:1), eTypeOrder.Scan);
         return c.SyncDocsData(pTypeDoc, pNumberDoc, wares,pDateOutInvoice,pNumberOutInvoice,pIsClose);
-
     }
 
     public DocModel GetDocOut(int pTypeDoc, String pNumberDoc){
