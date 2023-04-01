@@ -291,7 +291,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
         Intent intent = new Intent(this, AlarmReceiver.class);
         // intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0,
-                intent, 0);
+                intent, PendingIntent.FLAG_IMMUTABLE);
         // get the alarm manager, and scedule an alarm that calls the receiver
         ((AlarmManager) getSystemService(ALARM_SERVICE)).setRepeating(
                 AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + start

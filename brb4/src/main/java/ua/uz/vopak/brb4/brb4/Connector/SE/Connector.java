@@ -1,6 +1,5 @@
 package ua.uz.vopak.brb4.brb4.Connector.SE;
 
-import android.content.ContentValues;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -10,7 +9,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import org.json.JSONObject;
-import org.w3c.dom.Document;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,18 +16,17 @@ import java.util.Date;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
+import ua.uz.vopak.brb4.brb4.models.Config;
 import ua.uz.vopak.brb4.brb4.models.Doc;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
-import ua.uz.vopak.brb4.brb4.models.Config;
-import ua.uz.vopak.brb4.lib.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
-import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
+import ua.uz.vopak.brb4.lib.models.ParseBarCode;
 import ua.uz.vopak.brb4.lib.models.Result;
 
 public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
@@ -39,7 +36,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     public Result Login(final String pLogin, final String pPassWord, final boolean pIsLoginCO) {
         HttpResult res = Http.HTTPRequest(pIsLoginCO ? 1 : 0, "login", "{\"login\" : \"" + pLogin + "\"}", "application/json;charset=utf-8", pLogin, pPassWord);
         if (res.HttpState == eStateHTTP.HTTP_UNAUTHORIZED || res.HttpState == eStateHTTP.HTTP_Not_Define_Error) {
-            Utils.WriteLog("e", TAG, "Login >>" + res.HttpState.toString());
+            Utils.WriteLog("e", TAG, "Login >>" + res.HttpState);
             return new Result(-1, res.HttpState.toString(), "Неправильний логін або пароль");
         } else if (res.HttpState != eStateHTTP.HTTP_OK)
             return new Result(res, "Ви не підключені до мережі " + config.Company.name());
@@ -48,7 +45,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 JSONObject jObject = new JSONObject(res.Result);
                 //Якщо конектимся локально пробуємо до ЦБ
                 if (jObject.getInt("State") == 0) {
-                    config.Role = eRole.fromOrdinal(jObject.getInt("Profile"));
+                    Config.Role = eRole.fromOrdinal(jObject.getInt("Profile"));
 
                     if(!pIsLoginCO) {
                         res = Http.HTTPRequest(pIsLoginCO ? 1 : 0, "login", "{\"login\" : \"" + pLogin + "\"}", "application/json;charset=utf-8", pLogin, pPassWord);
@@ -159,7 +156,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         }
 
         if (pTypeDoc == -1)
-            LoadGuidData((pTypeDoc == -1), pProgress);
+            LoadGuidData(true, pProgress);
 
         if (pProgress != null)
             pProgress.set(5);
@@ -245,7 +242,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 InputWarehouse[] data = new Gson().fromJson(res.Result, InputWarehouse[].class);
                 Warehouse[] WH_UTP=LoadWarehouseAdd();
                 Warehouse[] WH = new Warehouse[data.length+WH_UTP.length];
-                int i = 0;
+                int i;
                 for (i = 0; i < data.length; i++)  WH[i] = data[i].GetWarehouse();
                 for (i = 0; i < WH_UTP.length; i++) { WH_UTP[i].Code+=999000000; WH[i+data.length] = WH_UTP[i];}
                 return WH;
@@ -282,13 +279,12 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         StringBuilder sb = new StringBuilder();
         for (LogPrice s : pList) {
             if (s.IsGoodBarCode())
-                sb.append("," + s.GetJsonSE());
+                sb.append(",").append(s.GetJsonSE());
         }
         if (sb.length() <= 2)
             return new Result(-1, "Недостатньо даних");
-        String a = "[" + sb.substring(1) + "]";
 
-        String data = a;
+        String data = "[" + sb.substring(1) + "]";
 
         HttpResult res = Http.HTTPRequest(0, "pricetag", data, "application/json;charset=utf-8", config.Login, config.Password);
         return new Result(res);
@@ -318,10 +314,10 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         }
 
         if (pBarCode != null) {
-            if (pBarCode.substring(0, 2).equals("29") && pBarCode.length() == 13) {
+            if (pBarCode.startsWith("29") && pBarCode.length() == 13) {
                 try {
                     res.Code = Integer.parseInt(pBarCode.substring(2, 8));
-                    res.Price = Double.valueOf(pBarCode.substring(8, 13)) / 100d;
+                    res.Price = Double.parseDouble(pBarCode.substring(8, 13)) / 100d;
                     res.IsOnlyBarCode = false; // Для варіанту коли у виробника штрихкод починається з 29 так як і у цінника.
                     //res.BarCode=null;
                 } catch (Exception e) {
@@ -406,7 +402,7 @@ class OutputDoc
     public int  IsClose;
     public int TypeMove=0;
     List<OutputDocWares> DocWares;
-    public OutputDoc(){};
+    public OutputDoc(){}
     public OutputDoc(int pTypeDoc, String pNumberDoc,String pDateDoc)
     {
         TypeDoc=pTypeDoc;  NumberDoc= pNumberDoc; DateDoc =pDateDoc;
