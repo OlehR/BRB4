@@ -162,7 +162,9 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             pProgress.set(5);
         HttpResult res;
         try {
-            if ((pTypeDoc >= 5 && pTypeDoc <= 9) || (pTypeDoc <= 0 && config.IsLoginCO)) {
+            if ((pTypeDoc >= 5 && pTypeDoc <= 9) || (pTypeDoc <= 0 && config.IsLoginCO) ) {
+                if(pTypeDoc == 5  && (pNumberDoc==null && pNumberDoc.length()==0))
+                        return false;
                 res = Http.HTTPRequest(CodeApi, NameApi + (pTypeDoc == 5 ? "\\" + pNumberDoc : "?StoreSetting=" + CodeWarehouse) + AddPar, null, "application/json;charset=utf-8", config.Login, config.Password);
             } else
                 res = Http.HTTPRequest(CodeApi, "documents", null, "application/json;charset=utf-8", config.Login, config.Password);

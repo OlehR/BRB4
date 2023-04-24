@@ -399,6 +399,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:focusableInTouchMode="false"
+            android:focusable="false"
             android:weightSum="6">
 
             <TextView
@@ -407,6 +409,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="f1-"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:textColor="@color/messageError"
                 android:textSize="18dp" />
 
@@ -416,6 +420,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Друк"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp" />
 
@@ -425,6 +431,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" f2-"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:textColor="@color/messageError"
                 android:textSize="18dp" />
 
@@ -434,6 +442,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Підбір"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp" />
 
@@ -443,6 +453,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" f4-"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:textColor="@color/messageError"
                 android:textSize="18dp"
                 android:visibility="@{LI.IsViewReplenishment()?View.VISIBLE:View.GONE }" />
@@ -452,6 +464,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="@{LI.IsViewReplenishment()?View.VISIBLE:View.GONE }"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:text="@{LI.OnLineText}"
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp" />
@@ -462,6 +476,8 @@
                 android:layout_height="wrap_content"
                 android:visibility="@{LI.IsEnableMultyLabel()?View.VISIBLE:View.GONE }"
                 android:text=" f5-"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:textColor="@color/messageError"
                 android:textSize="18dp" />
             <TextView
@@ -471,6 +487,8 @@
                 android:layout_height="wrap_content"
                 android:visibility="@{LI.IsEnableMultyLabel()?View.VISIBLE:View.GONE }"
                 android:text="@{LI.MultyLabelText}"
+                android:focusableInTouchMode="false"
+                android:focusable="false"
                 android:textColor="@color/messageAlert"
                 android:textSize="18dp" />
         </LinearLayout>

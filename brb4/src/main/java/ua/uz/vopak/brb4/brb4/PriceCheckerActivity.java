@@ -26,6 +26,7 @@ import com.journeyapps.barcodescanner.BarcodeView;
 
 import android.content.Intent;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import java.util.ArrayDeque;
@@ -74,6 +75,7 @@ public class PriceCheckerActivity extends FragmentActivity implements  View.OnCl
     PriceCheckerLayoutNewBinding binding;
     final int PERMISSIONS_REQUEST_ACCESS_CAMERA=0;
 
+    InputMethodManager imm;
    // Калбек штрихкода з камери.
    private BarcodeCallback callback = new BarcodeCallback() {
     @Override
@@ -143,6 +145,7 @@ public class PriceCheckerActivity extends FragmentActivity implements  View.OnCl
         scaner=config.GetScaner();
         scaner.Init(this,savedInstanceState);
         HandlerPC.OnClickFlashLite();
+        imm = (InputMethodManager)   getSystemService(Context.INPUT_METHOD_SERVICE);
     }
 
     @SuppressLint("RestrictedApi")
@@ -163,20 +166,26 @@ public class PriceCheckerActivity extends FragmentActivity implements  View.OnCl
             switch (keyCode)
             {
                 case "66"://Enter
+                //case "133"://F3
                     if(LI.InputFocus.get()==1) {
                         FindWares(LI.BarCode.get(), true);
                         LI.InputFocus.set(0);
                     }
-                    else
-                        if(LI.InputFocus.get()==2) {
-                            LI.InputFocus.set(0);
-                           final double inReplenishment= Double.valueOf(LI.NumberOfReplenishment.get());
-                           if(inReplenishment>LI.Rest) {
-                               LI.NumberOfReplenishment.set("");
-                               UtilsUI.Dialog("Невірний ввід даних","На залишку=>"+ LI.Rest+" Ввели=>"+inReplenishment);
-                           }
+                    else {
+                        if (LI.InputFocus.get() == 2) {
+                            double iReplenishment;
+                            try {
+                                iReplenishment = Double.valueOf(LI.NumberOfReplenishment.get());
+                            } catch (Exception e) {
+                                iReplenishment = 0;
+                            }
+                            if (iReplenishment > LI.Rest) {
+                                LI.NumberOfReplenishment.set("");
+                                UtilsUI.Dialog("Невірний ввід даних", "На залишку=>" + LI.Rest + " Ввели=>" + iReplenishment);
+                                return false;
+                            }
 
-
+                            final double inReplenishment = iReplenishment;
                             new AsyncHelper<Void>(
                                     new IAsyncHelper<Boolean>() {
                                         @Override
@@ -189,20 +198,23 @@ public class PriceCheckerActivity extends FragmentActivity implements  View.OnCl
                                         @Override
                                         public void Invoke(Boolean p) {
                                             LI.NumberOfReplenishment.set("");
+                                            //UtilsUI.Dialog("Інформація","Добавлено =>" + inReplenishment);
                                             return;
                                         }
                                     }).execute();
                         }
-
-                    break;
+                    }
+                    return false;
+                    //break;
                 case "131"://F1
                     break;
                 case "132"://F2
                     LI.InputFocus.set(LI.InputFocus.get()==1?2:1);
+                    SetFocus();
                      break;
-                case "133"://F3
-                    LI.InputFocus.set(1);
-                    break;
+                // case "133"://F3
+                 //   LI.InputFocus.set(1);
+                 //   break;
                 case "134"://F4
                     if(config.Company== eCompany.Sim23)
                         LI.ChangeOnLineState();
@@ -224,6 +236,7 @@ public class PriceCheckerActivity extends FragmentActivity implements  View.OnCl
             case R.id.PCh_F2:
             case R.id.PCh_F2_Text:
                 LI.InputFocus.set(LI.InputFocus.get()==1?2:1);
+                SetFocus();
                 break;
             case R.id.PCh_F4:
             case R.id.PCh_F4_Text:
@@ -234,7 +247,6 @@ public class PriceCheckerActivity extends FragmentActivity implements  View.OnCl
             case R.id.PCh_F5_Text:
                 LI.ChangeMultyLabel();
                 break;
-
         }
     }
 
@@ -343,21 +355,51 @@ public class PriceCheckerActivity extends FragmentActivity implements  View.OnCl
                 ).execute();
     }
 
+    void SetFocus()
+    {
+        binding.invalidateAll();
+/*
+        textBarcodeView.setEnabled(false);//LI.InputFocus.get()==1);
+        NumberOfReplenishment.setEnabled(false);//LI.InputFocus.get()==2);
+
+        textBarcodeView.setFocusable(false);
+        NumberOfReplenishment.setFocusable(false);
+
+        if(LI.InputFocus.get()==1) {
+            textBarcodeView.setFocusable(true);
+            textBarcodeView.requestFocus();
+            if (config.IsUseCamera()) {
+                imm.showSoftInput(textBarcodeView, InputMethodManager.SHOW_IMPLICIT);
+            }
+            textBarcodeView.setFocusableInTouchMode(true);
+            textBarcodeView.requestFocusFromTouch();
+        }
+        else
+        {
+            NumberOfReplenishment.setFocusable(true);
+            NumberOfReplenishment.requestFocus();
+            if (config.IsUseCamera()) {
+                imm.showSoftInput(NumberOfReplenishment, InputMethodManager.SHOW_IMPLICIT);
+            }
+            // inputCount.setFocusable(true);
+            NumberOfReplenishment.setFocusableInTouchMode(true);
+            NumberOfReplenishment.requestFocusFromTouch();
+        }*/
+    }
     public void  setScanResult(LabelInfo LI) {
         LI.InputFocus.set(LI.IsViewReplenishment()?2:1);
         if(LI.Code==0&&LI.InputFocus.get()==2)
             LI.InputFocus.set(1);
 
-        binding.invalidateAll();
-        LI.SetListPackege();
+        SetFocus();
 
+        LI.SetListPackege();
         if (BarcodeImageLayout != null) {
             Drawable dw = BarcodeImageLayout.getBackground();
             if (BL.Printer.varPrinterError != ePrinterError.None || LI.HttpState != eStateHTTP.HTTP_OK) {
                 dw.setColorFilter(0xffff0000, PorterDuff.Mode.MULTIPLY);
             } else {
-                if (LI.Action())
-                   dw.setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
+                if (LI.Action()) dw.setColorFilter(Color.YELLOW, PorterDuff.Mode.MULTIPLY);
                 else
                 dw.clearColorFilter();
             }
