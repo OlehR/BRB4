@@ -128,8 +128,10 @@ public class Config extends AbstractConfig {
                 break;
             case PM351:
                 Scaner = new ScanerPM351(context);
+                break;
             case BitaHC61:
                 Scaner = new BitaHC61(context);
+                break;
             case NotDefine:
                 break;
             default:
