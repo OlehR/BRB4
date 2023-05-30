@@ -152,7 +152,8 @@ public class WaresItemModel implements Cloneable{
         InputQuantity=0;
         QuantityMax=Double.MAX_VALUE ;
         CodeReason=0;
-        if(!DocSetting.IsWarehouse)
+
+        if(DocSetting!=null && !DocSetting.IsWarehouse)
             ListReasonIdx.set(0);
     }
 
