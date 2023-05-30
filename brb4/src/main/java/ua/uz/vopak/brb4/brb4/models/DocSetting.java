@@ -37,12 +37,14 @@ public class DocSetting {
     //
     public boolean IsCreateNewDoc =false;
 
+    //
+    public boolean IsWarehouse =false;
     public DocSetting(int pTypeDoc,String pNameDoc)
     {
         TypeDoc=pTypeDoc;
         NameDoc=pNameDoc;
     }
-    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut,boolean pIsmultipleSave,boolean pIsSaveOnlyScan,boolean pIsAddZero,boolean pIsSimpleDoc,int pCodeApi,boolean pIsCreateNewDoc )
+    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut,boolean pIsmultipleSave,boolean pIsSaveOnlyScan,boolean pIsAddZero,boolean pIsSimpleDoc,int pCodeApi,boolean pIsCreateNewDoc,boolean pIsWarehouse  )
     {
         this(pTypeDoc, pNameDoc);
         TypeControlQuantity =pTypeControlQuantity;
@@ -61,6 +63,7 @@ public class DocSetting {
         IsSimpleDoc =pIsSimpleDoc;
         CodeApi = pCodeApi;
         IsCreateNewDoc=pIsCreateNewDoc;
+        IsWarehouse=pIsWarehouse;
     }
 
 }

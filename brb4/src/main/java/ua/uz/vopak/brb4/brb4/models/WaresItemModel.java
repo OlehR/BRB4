@@ -152,15 +152,14 @@ public class WaresItemModel implements Cloneable{
         InputQuantity=0;
         QuantityMax=Double.MAX_VALUE ;
         CodeReason=0;
-        ListReasonIdx.set(0);
-
+        if(!DocSetting.IsWarehouse)
+            ListReasonIdx.set(0);
     }
 
     public ObservableBoolean IsInputQuantity1 = new ObservableBoolean(IsInputQuantity());
     public Boolean IsInputQuantity() { return (Coefficient>0 && QuantityMax>0d);}
     public Boolean IsInputQuantityTouch() { return IsInputQuantity() && IsUseCamera();}
     public Boolean IsInputBarCodeTouch() { return !IsInputQuantity() && IsUseCamera();}
-
     public Object clone() throws CloneNotSupportedException {
         return super.clone();
     }

@@ -69,31 +69,31 @@ public class Worker {
                 }
                 int step=0;
                 if(Right[0])
-                    Setting[step++] = new DocSetting(2, "Мініревізія", eTypeControlDoc.Ask, false, false, false, false, false, 1, 1, 0, false, true, false, true,false,0,false);
+                    Setting[step++] = new DocSetting(2, "Мініревізія", eTypeControlDoc.Ask, false, false, false, false, false, 1, 1, 0, false, true, false, true,false,0,false,false);
                 if(Right[1])
-                    Setting[step++] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false,true,true,false,false,1,false);
+                    Setting[step++] = new DocSetting(5,"Перевірка Лотів з ЛЦ",eTypeControlDoc.Ask,true,true,true,true,true,2,2,0,false,true,true,false,false,1,false,false);
                 if(Right[2])
-                    Setting[step++] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false,false,0,false);
+                    Setting[step++] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false,false,0,false,false);
                 if(Right[3])
-                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,1,false,false,true,false,false,1,false);
+                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,1,false,false,true,false,false,1,false,true);
                 if(Right[4])
-                    Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2,false);
+                    Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2,false,false);
                 if(Right[5])
-                    Setting[step++] = new DocSetting(8,"Переміщення ОЗ Вих", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,true,true,false,true,2,true);
+                    Setting[step++] = new DocSetting(8,"Переміщення ОЗ Вих", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,true,true,false,true,2,true,false);
                 if(Right[6])
-                    Setting[step++] = new DocSetting(9,"Переміщення ОЗ Вх", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,true,true,false,true,2,false);
+                    Setting[step++] = new DocSetting(9,"Переміщення ОЗ Вх", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,true,true,false,true,2,false,false);
 
                 break;
             case SparPSU:
             case VopakPSU:
                 Setting =  new  DocSetting[7];
-                Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false,0,false);
-                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false);
-                Setting[2] = new DocSetting(3,"Переміщення Вих",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false);
+                Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false,0,false,false);
+                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false,false);
+                Setting[2] = new DocSetting(3,"Переміщення Вих",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false,false);
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");
-                Setting[5] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,0,true);
-                Setting[6] = new DocSetting(8,"Переміщення Вх",eTypeControlDoc.Ask,false,false,true,true,true,1,5,3,true,true,true,false,false,0,false);
+                Setting[5] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,0,true,false);
+                Setting[6] = new DocSetting(8,"Переміщення Вх",eTypeControlDoc.Ask,false,false,true,true,true,1,5,3,true,true,true,false,false,0,false,false);
 
                 break;
         }

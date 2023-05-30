@@ -31,8 +31,12 @@ public class ScanerPM351 extends Scaner {
                             String value = new String(decodeBytesValue);
                             if(value.equals("READ_FAIL"))
                                 return;
-                            CallBack.Run(value);
-                            Log.d( "PM","onReceive =>"+value + " Type=>"+TypeBarCode);
+                            if(CallBack!=null)
+                            {
+                                CallBack.Run(value);
+                                Log.d( "PM","onReceive =>"+value + " Type=>"+TypeBarCode);
+                            }
+
                         }
                     }
                 }

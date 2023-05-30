@@ -137,10 +137,16 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         WaresItem.TypeDoc = i.getIntExtra("document_type", 0);
         WaresItem.NumberDoc = i.getStringExtra("number");
         WaresItem.ListReason.clear();
-        for (Reason el: config.Reasons)
+        DocSetting=config.GetDocSetting(WaresItem.TypeDoc);
+        if(DocSetting.IsWarehouse) {
+            WaresItem.ListReason.add("ТЗ");
+            WaresItem.ListReason.add("Склад");
+        }
+        else
+         for (Reason el: config.Reasons)
             WaresItem.ListReason.add(el.NameReason);
 
-        DocSetting=config.GetDocSetting(WaresItem.TypeDoc);
+
         WaresItem.DocSetting=DocSetting;
 
         barCode = findViewById(R.id.DS_BarCode);
@@ -527,7 +533,10 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
             new AsyncHelper<Result>(new IAsyncHelper() {
                 @Override
                 public Result Invoke() {
-                    WaresItem.CodeReason = config.Reasons[WaresItem.ListReasonIdx.get()].СodeReason;
+                    if (DocSetting.IsWarehouse)
+                        WaresItem.CodeReason = WaresItem.ListReasonIdx.get() == 0 ? 0 : -1;
+                    else
+                        WaresItem.CodeReason = config.Reasons[WaresItem.ListReasonIdx.get()].СodeReason;
                     return config.Worker.SaveDocWares(WaresItem.TypeDoc, WaresItem.NumberDoc, WaresItem.CodeWares, WaresItem.OrderDoc, WaresItem.InputQuantity, WaresItem.CodeReason, isNullable);
                 }
             },
