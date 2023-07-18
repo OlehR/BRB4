@@ -1,9 +1,11 @@
 package ua.uz.vopak.brb4.brb4;
 
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -159,14 +161,27 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
     }
 
     @Override
-    public void Run(String parBarCode)
+    public void Run(String pBarCode)
     {
+        if(pBarCode.length()>=6 && pBarCode.substring(0,6).equals("Conf=>") ) {
+            config.Worker.SetConfig(pBarCode);
+            new AlertDialog.Builder(this)
+                    .setTitle("Налаштування Прийнято")
+                    .setMessage("Для завершення програми натисніть ОК?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                            Exit();
+                        }
+                    }).create().show();
+            return;
+        }
+
         String varNumber=null;
         String varDocType=null;
         //Якщо внутрішне переміщення
-        if(parBarCode.length()==13&& parBarCode.substring(0,2).equals("28")) {
+        if(pBarCode.length()==13&& pBarCode.substring(0,2).equals("28")) {
             varDocType="9";
-            varNumber=parBarCode.substring(2,8);
+            varNumber=pBarCode.substring(2,8);
         }
         if(varNumber!=null&&varDocType!=null) {
             Intent i;
@@ -343,5 +358,12 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             backToast.show();
         }
         backPressedTime = System.currentTimeMillis();
+    }
+    void Exit()  {
+        config.isAutorized = false;
+        super.onBackPressed();
+        //       finish();
+        moveTaskToBack(true);
+        finishAndRemoveTask();
     }
 }

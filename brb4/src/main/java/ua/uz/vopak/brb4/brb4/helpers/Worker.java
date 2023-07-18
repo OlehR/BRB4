@@ -19,6 +19,7 @@ import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.DocumentModel;
 import ua.uz.vopak.brb4.brb4.models.Config;
+import ua.uz.vopak.brb4.lib.enums.eTypeUsePrinter;
 import ua.uz.vopak.brb4.lib.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
@@ -319,4 +320,42 @@ public class Worker {
         Wh = lWh.toArray(new Warehouse[lWh.size()]);
         return Wh;
     }
+
+    public void SetConfig(String pBarCode)    {
+        pBarCode=pBarCode.substring(6);
+        String[]  par=pBarCode.split(" ");
+        for ( String el:par) {
+            String[]  El=el.split("=");
+            if(El.length==2)
+            {
+                switch(El[0])
+                {
+                    case "Company":
+                        config.Company= eCompany.fromOrdinal(Integer.valueOf(El[1]));
+                        config.Worker.AddConfigPair("Company", Integer.toString(config.Company.getAction()));
+                        break;
+                    case "Warehouse":
+                        config.CodeWarehouse= Integer.valueOf(El[1]);
+                        config.Worker.AddConfigPair("Warehouse", Integer.toString(config.CodeWarehouse));
+                        break;
+                    case "Url":
+                        config.ApiUrl= El[1];
+                        config.Worker.AddConfigPair("ApiUrl", config.ApiUrl);
+
+                        break;
+                    case "URLadd":
+                        config.ApiURLadd = El[1];
+                        config.Worker.AddConfigPair("ApiUrladd", config.ApiURLadd);
+                        break;
+                    case "AutoLogin":
+                        config.IsAutoLogin = El[1].equals("1");
+                        config.Worker.AddConfigPair("IsAutoLogin",config.IsAutoLogin?"true":"false");
+                        break;
+                    case "Printer":
+                        config.TypeUsePrinter = eTypeUsePrinter.fromOrdinal(Integer.valueOf(El[1]));
+                        config.Worker.AddConfigPair("connectionPrinterType", config.TypeUsePrinter.GetStrCode());
+                }
+            }
+        }
+    };
 }

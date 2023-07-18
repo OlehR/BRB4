@@ -90,7 +90,8 @@ public class SetingModel {
         apiURL.set(Company==eCompany.Sim23 ? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
                 "http://api.spar.uz.ua/znp/");
         config.ApiUrl=apiURL.get();
-        apiURLadd.set(Company==eCompany.Sim23 ? "http://160.238.125.158/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/":"http://api.spar.uz.ua/print/;http://znp.vopak.local:8088/Print");
+        apiURLadd.set(Company==eCompany.Sim23 ? "http://qlik.sim23.ua/TK/hs/TSD/;http://vpn.sim23.ua/TK/hs/TSD/;http://music.sim23.ua/TK/hs/TSD/"//"http://160.238.125.158/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/"
+                :"http://api.spar.uz.ua/print/;http://znp.vopak.local:8088/Print");
         config.ApiURLadd=apiURLadd.get();
     }
 
