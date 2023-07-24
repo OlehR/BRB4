@@ -242,14 +242,17 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
             if (res.HttpState == eStateHTTP.HTTP_OK) {
                 InputWarehouse[] data = new Gson().fromJson(res.Result, InputWarehouse[].class);
-                Warehouse[] WH_UTP=LoadWarehouseAdd();
-                Warehouse[] WH = new Warehouse[data.length+WH_UTP.length];
+                Warehouse[] WH_UTP = LoadWarehouseAdd();
+                Warehouse[] WH = new Warehouse[data.length + (WH_UTP == null ? 0 : WH_UTP.length)];
                 int i;
-                for (i = 0; i < data.length; i++)  WH[i] = data[i].GetWarehouse();
-                for (i = 0; i < WH_UTP.length; i++) { WH_UTP[i].Code+=999000000; WH[i+data.length] = WH_UTP[i];}
+                for (i = 0; i < data.length; i++) WH[i] = data[i].GetWarehouse();
+                if (WH_UTP != null)
+                    for (i = 0; i < WH_UTP.length; i++) {
+                        WH_UTP[i].Code += 999000000;
+                        WH[i + data.length] = WH_UTP[i];
+                    }
                 return WH;
             }
-
         } catch (Exception e) {
             Utils.WriteLog("e", TAG, "LoadWarehouse=>", e);
         }

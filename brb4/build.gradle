@@ -26,7 +26,7 @@ android {
         minSdkVersion 24
         targetSdkVersion 33
         versionCode 550
-        versionName "4.5.50"
+        versionName "4.5.51"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
