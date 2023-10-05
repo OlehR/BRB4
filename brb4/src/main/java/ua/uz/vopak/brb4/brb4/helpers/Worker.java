@@ -76,7 +76,7 @@ public class Worker {
                 if(Right[2])
                     Setting[step++] = new DocSetting(1,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,1,3,true,true,true,false,false,0,false,false);
                 if(Right[3])
-                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,false,false,false,1,1,1,false,false,true,false,false,1,false,true);
+                    Setting[step++] = new DocSetting(6,"Ревізія", eTypeControlDoc.Ask,true,false,true,false,false,1,1,1,false,false,true,false,false,1,false,true);
                 if(Right[4])
                     Setting[step++] = new DocSetting(7,"Ревізія ОЗ", eTypeControlDoc.Ask,true,false,false,false,false,1,6,0,false,false,true,false,true,2,false,false);
                 if(Right[5])
