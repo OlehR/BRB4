@@ -1,5 +1,6 @@
 package ua.uz.vopak.brb4.brb4;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -26,6 +27,7 @@ import ua.uz.vopak.brb4.brb4.Scaner.Scaner;
 import ua.uz.vopak.brb4.brb4.databinding.DocumentLayoutBinding;
 import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocumentViewModel;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eTypeScaner;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
@@ -206,6 +208,7 @@ private void OpenDoc(String pNumber,int pTypeWeight)
         }
     }
 
+    @SuppressLint("SuspiciousIndentation")
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
         if (event.getAction() == KeyEvent.ACTION_UP) {
@@ -226,7 +229,8 @@ private void OpenDoc(String pNumber,int pTypeWeight)
                     if(DM.IsEnterCodeZKPO.get()) {
                         String find = DocumentZKPO.getText().toString().replace("\n", "").replace(" ", "");
                         DM.ZKPO.set("");
-                        RefreshTable(null, find);
+                        if(config.Company == eCompany.Sim23 && DocumentType==5 ) { RefreshTable(find,null );}
+                        else {RefreshTable(null, find);}
                     }
                     else {
                         View r = Table.findViewWithTag("selected");
