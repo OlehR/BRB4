@@ -79,8 +79,6 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     public boolean LoadGuidData(boolean IsFull, ObservableInt pProgress) {
         try {
             Log.d(TAG, "Start");
-
-
             pProgress.set(5);
             HttpResult res = Http.HTTPRequest(config.IsLoginCO ? 1 : 0, "nomenclature", null, "application/json;charset=utf-8", config.Login, config.Password);
             if (res.HttpState == eStateHTTP.HTTP_OK) {
