@@ -25,8 +25,8 @@ android {
         applicationId "ua.uz.vopak.brb4.brb4"
         minSdkVersion 24
         targetSdkVersion 33
-        versionCode 556
-        versionName "4.5.56"
+        versionCode 557
+        versionName "4.5.57"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
