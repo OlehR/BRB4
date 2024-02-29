@@ -4,7 +4,9 @@ public enum eCompany {
     NotDefined(0),
     VopakPSU(1),
     SparPSU(2),
-    Sim23(3);
+    Sim23(3),
+    LuboPSU(4);
+
     private static eCompany[] allValues = values();
     public static eCompany fromOrdinal(int n) {return allValues[n];}
 
@@ -23,10 +25,10 @@ public enum eCompany {
 
     public String GetText() {
         switch(action) {
-            case 0: return "NotDefined";
             case 1: return "VopakPSU";
             case 2: return "SparPSU";
             case 3: return "Sim23";
+            case 4:return "Lubo";
             default: return "NotDefined";
         }
     }
@@ -35,6 +37,7 @@ public enum eCompany {
             case 1: return "Вопак";
             case 2: return "Spar";
             case 3: return "Сім23";
+            case 4: return "Любо";
             default: return "Невідомий";
         }
     }

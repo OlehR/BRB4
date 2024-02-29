@@ -148,6 +148,8 @@ public class Utils {
             return eTypeScaner.PM351;
         if(model.equals("HC61") || manufacturer.contains("Bita"))
             return eTypeScaner.BitaHC61;
+        if(model.equals("C61") || manufacturer.contains("CHAINWAY"))
+            return eTypeScaner.ChainWayC61;
         return eTypeScaner.Camera;
     }
 

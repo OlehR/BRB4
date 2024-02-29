@@ -89,7 +89,7 @@ public class Worker {
             case VopakPSU:
                 Setting =  new  DocSetting[7];
                 Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false,0,false,false);
-                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false,false);
+                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false,false);
                 Setting[2] = new DocSetting(3,"Переміщення Вих",eTypeControlDoc.Ask,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false,false);
                 Setting[3] = new DocSetting(4,"Списання");
                 Setting[4] = new DocSetting(5,"Повернення");

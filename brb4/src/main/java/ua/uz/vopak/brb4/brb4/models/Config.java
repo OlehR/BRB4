@@ -129,6 +129,7 @@ public class Config extends AbstractConfig {
             case PM351:
                 Scaner = new ScanerPM351(context);
                 break;
+            case ChainWayC61:
             case BitaHC61:
                 Scaner = new BitaHC61(context);
                 break;

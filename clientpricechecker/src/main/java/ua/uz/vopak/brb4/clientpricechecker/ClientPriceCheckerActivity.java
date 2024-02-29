@@ -129,11 +129,11 @@ public class ClientPriceCheckerActivity extends Activity {
         Sum = findViewById(R.id.Sum);
         Resources res = getResources();
 
-        Drawable background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.background2spar : R.drawable.background1vopak);
+        Drawable background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.background1spar : ( config.Company==eCompany.LuboPSU?R.drawable.background1lubo :  R.drawable.background1vopak));
         Background.setBackground(background);
-        background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.logo1spar : R.drawable.logo1vopak);
+        background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.logo1spar : ( config.Company==eCompany.LuboPSU?R.drawable.logo1lubo : R.drawable.logo1vopak));
         Logo.setBackground(background);
-        background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.logo2spar : R.drawable.logo2vopak);
+        background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.logo2spar : ( config.Company==eCompany.LuboPSU?R.drawable.logo2lubo : R.drawable.logo2vopak));
         Logo2.setBackground(background);
         if(!Config.IsHungary) {
             CheckPriceHungary.setVisibility(View.INVISIBLE);
@@ -301,7 +301,7 @@ public class ClientPriceCheckerActivity extends Activity {
         Sum.setVisibility(Li.Sum > 0 ? View.VISIBLE : View.INVISIBLE);
 
 
-        Drawable background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.background1spar : R.drawable.background1vopak);
+        Drawable background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.background1spar :( config.Company==eCompany.LuboPSU?R.drawable.background1lubo : R.drawable.background1vopak));
         Background.setBackground(background);
 
         LogoLayout.setVisibility(View.INVISIBLE);
@@ -352,7 +352,7 @@ public class ClientPriceCheckerActivity extends Activity {
         HideInfoLayout.setVisibility(View.INVISIBLE);
         LogoLayout.setVisibility(View.VISIBLE);
 
-        Drawable background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.background2spar : R.drawable.background2vopak);
+        Drawable background = res.getDrawable(config.Company==eCompany.SparPSU ? R.drawable.background2spar :( config.Company==eCompany.LuboPSU?R.drawable.background2lubo : R.drawable.background2vopak));
         Background.setBackground(background);
 
         if (videoTimer != null) {
