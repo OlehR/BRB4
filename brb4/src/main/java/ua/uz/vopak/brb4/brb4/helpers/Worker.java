@@ -97,6 +97,11 @@ public class Worker {
                 Setting[6] = new DocSetting(8,"Переміщення Вх",eTypeControlDoc.Ask,false,false,true,true,true,1,5,3,true,true,true,false,false,0,false,false);
 
                 break;
+            case Test:
+                Setting =  new  DocSetting[2];
+                Setting[0] = new DocSetting(1,"Ревізія",eTypeControlDoc.Ask,false,false,false,false,true,1,1,0,false,true,false,false,false,0,false,false);
+                Setting[1] = new DocSetting(2,"Прихід",eTypeControlDoc.Control,false,false,false,true,true,1,5,3,true,true,true,false,false,0,false,false);
+                break;
         }
        return Setting;
     }
@@ -130,7 +135,7 @@ public class Worker {
 
         config.ApiUrl=GetConfigPair("ApiUrl");
         if(config.ApiUrl==null || config.ApiUrl.isEmpty() )
-                config.ApiUrl=(config.Company==eCompany.Sim23 ? "http://176.241.128.13/RetailShop/hs/TSD/":"http://znp.vopak.local/api/api_v1_utf8.php");
+                config.ApiUrl=(config.Company==eCompany.Sim23 ? "http://176.241.128.13/RetailShop/hs/TSD/":"http://api.spar.uz.ua/znp/");
         config.ApiURLadd=GetConfigPair("ApiUrladd");
 
         config.Login = GetConfigPair("Login");

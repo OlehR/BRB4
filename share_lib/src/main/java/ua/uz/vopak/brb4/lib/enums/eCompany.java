@@ -5,7 +5,8 @@ public enum eCompany {
     VopakPSU(1),
     SparPSU(2),
     Sim23(3),
-    LuboPSU(4);
+    LuboPSU(4),
+    Test(5);
 
     private static eCompany[] allValues = values();
     public static eCompany fromOrdinal(int n) {return allValues[n];}
@@ -29,6 +30,7 @@ public enum eCompany {
             case 2: return "SparPSU";
             case 3: return "Sim23";
             case 4:return "Lubo";
+            case 5:return "Test";
             default: return "NotDefined";
         }
     }
@@ -38,6 +40,7 @@ public enum eCompany {
             case 2: return "Spar";
             case 3: return "Сім23";
             case 4: return "Любо";
+            case 5: return "Тест";
             default: return "Невідомий";
         }
     }
