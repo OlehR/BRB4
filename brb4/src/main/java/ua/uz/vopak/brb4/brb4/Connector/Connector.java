@@ -33,7 +33,10 @@ public abstract class Connector {
 
     public static ua.uz.vopak.brb4.brb4.Connector.Connector instance() {
        // if (Instance == null) {
-            Instance = (config.Company== eCompany.Sim23 ? new ua.uz.vopak.brb4.brb4.Connector.SE.Connector(): new ua.uz.vopak.brb4.brb4.Connector.PSU.Connector());
+        if(config.Company== eCompany.Test)
+            Instance =  new ua.uz.vopak.brb4.brb4.Connector.Test.Connector();
+            else
+             Instance = (config.Company== eCompany.Sim23 ? new ua.uz.vopak.brb4.brb4.Connector.SE.Connector(): new ua.uz.vopak.brb4.brb4.Connector.PSU.Connector());
       //  }
         return Instance;
     }

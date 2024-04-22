@@ -190,78 +190,80 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     }
 
     public ParseBarCode ParsedBarCode(String pBarCode,boolean pIsOnlyBarCode) {
-        ParseBarCode res =  new ParseBarCode();
-        if(pBarCode==null)
+        ParseBarCode res = new ParseBarCode();
+        if (pBarCode == null)
             return res;
-        pBarCode=pBarCode.trim();
-        res.BarCode=pBarCode;
-        res.IsOnlyBarCode=pIsOnlyBarCode;
+        pBarCode = pBarCode.trim();
+        res.BarCode = pBarCode;
+        res.IsOnlyBarCode = pIsOnlyBarCode;
         /*if(pIsOnlyBarCode)
             return res;*/
 
         if (!pIsOnlyBarCode && pBarCode.length() <= 8 && !pBarCode.equals("")) {
-            try{
-                res.Article = "0000000000".substring(0,8-pBarCode.length())+pBarCode;
+            try {
+                res.Article = "0000000000".substring(0, 8 - pBarCode.length()) + pBarCode;
                 res.BarCode = null;
-                return res;
-            }catch(Exception e)
-            {
-                Utils.WriteLog("e",TAG,"ParsedBarCode=> "+ pBarCode,e);
+            } catch (Exception e) {
+                Utils.WriteLog("e", TAG, "ParsedBarCode=> " + pBarCode, e);
             }
+            return res;
         }
 
-        if(pBarCode!=null  )
-        {
-            Utils.WriteLog( "e",TAG,"ParsedBarCode=> "+ pBarCode.charAt(0)+ " " + pBarCode.contains("|"));
-            if( pBarCode.contains("|")&& pBarCode.charAt(0) == 'Б') {
-                res.Code=200000000+ Integer.valueOf(pBarCode.substring(1,9));
-                res.Quantity=1;
-                res.BarCode=null;
-            }
-            else
-            if( pBarCode.contains("-")) {
-                try {
-                    String[] str = pBarCode.split("-");
-                    switch (str.length) {
-                        case 3:
-                            res.PriceOpt = Integer.parseInt(str[2]) / 100d;
-                        case 2:
-                            res.Price = Integer.parseInt(str[1]) / 100d;
-                            res.Code = Integer.parseInt(str[0]);
-                            res.BarCode=null;
-                            break;
-                    }
-                } catch (Exception e) {
-                   Utils.WriteLog("e",TAG,"PriceBarCode", e);
-                }
-            }
-            else
-            if(pBarCode.length()==13)
-            {
-              //  Log.e("XXX",number+' ' +number.substring(0,1));
-                if(pBarCode.substring(0,2).equals("22"))
-                {
-                    res.Article=pBarCode.substring(2,8);
-                    String Quantity=pBarCode.substring(8,12);
-                    res.Quantity=Double.parseDouble(Quantity)/1000d;
-                   // Log.e("XXX",Article+" "+ Quantity );
-                }
+        Utils.WriteLog("e", TAG, "ParsedBarCode=> "+pBarCode + "  " + String.valueOf(pBarCode.length()));
+        if (pBarCode.contains("|") && pBarCode.charAt(0) == 'Б') {
+            res.Code = 200000000 + Integer.valueOf(pBarCode.substring(1, 9));
+            res.Quantity = 1;
+            res.BarCode = null;
+            return res;
+        }
 
-                if(pBarCode.substring(0,3).equals("111"))
-                {
-                    //isBarCode=false;
-                    res.Article=pBarCode.substring(3,9);
-                    String Quantity=pBarCode.substring(9,12);
-                    res.Quantity=Double.parseDouble(Quantity);
-                    //Log.e("XXX",Article+" "+ Quantity );
+        if (pBarCode.contains("-")) {
+            try {
+                String[] str = pBarCode.split("-");
+                switch (str.length) {
+                    case 3:
+                        res.PriceOpt = Integer.parseInt(str[2]) / 100d;
+                    case 2:
+                        res.Price = Integer.parseInt(str[1]) / 100d;
+                        res.Code = Integer.parseInt(str[0]);
+                        res.BarCode = null;
+                        break;
                 }
+            } catch (Exception e) {
+                Utils.WriteLog("e", TAG, "PriceBarCode", e);
+            }
+            return res;
+        }
 
-                if(res.Article!=null) {
-                    res.Article = "00" + res.Article;
-                    res.BarCode=null;
-                }
+        if (pBarCode.length() == 13) {
+            //  Log.e("XXX",number+' ' +number.substring(0,1));
+            if (pBarCode.substring(0, 2).equals("22")) {
+                res.Article = pBarCode.substring(2, 8);
+                String Quantity = pBarCode.substring(8, 12);
+                res.Quantity = Double.parseDouble(Quantity) / 1000d;
+                // Log.e("XXX",Article+" "+ Quantity );
+            }
+
+            if (pBarCode.substring(0, 3).equals("111")) {
+                //isBarCode=false;
+                res.Article = pBarCode.substring(3, 9);
+                String Quantity = pBarCode.substring(9, 12);
+                res.Quantity = Double.parseDouble(Quantity);
+                //Log.e("XXX",Article+" "+ Quantity );
             }
         }
+        if (pBarCode.length() == 16 && pBarCode.startsWith("22")) {
+            res.Article = pBarCode.substring(2, 8);
+            String Quantity = pBarCode.substring(11, 16);
+            res.Quantity = Double.parseDouble(Quantity)/ 1000d;
+        }
+
+        if (res.Article != null) {
+            res.Article = "00" + res.Article;
+            res.BarCode = null;
+        }
+
+        Utils.WriteLog("I", TAG, "Article=> "+res.Article + "  " + String.valueOf(res.Quantity));
         return res;
     }
 

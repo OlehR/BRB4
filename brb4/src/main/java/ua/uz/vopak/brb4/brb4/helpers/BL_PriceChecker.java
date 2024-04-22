@@ -251,7 +251,6 @@ public class BL_PriceChecker extends BL {
                 } catch (Exception e) {
                     Utils.WriteLog("e",TAG, "SendLogPricePSU  >>" ,e);
                 }
-
             }
             else
                 break;

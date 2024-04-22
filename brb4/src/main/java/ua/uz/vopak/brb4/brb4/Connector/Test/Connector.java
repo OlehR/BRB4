@@ -10,12 +10,17 @@ import com.google.gson.Gson;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.BuildConfig;
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
+import ua.uz.vopak.brb4.brb4.models.Doc;
+import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
 import ua.uz.vopak.brb4.lib.enums.eRole;
@@ -36,6 +41,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
             if("test".equals(pLogin)) {
                 config.Role= eRole.Admin;
+                config.Login="c";
+                config.Password="c";
                 return new Result();
             }
             else
@@ -50,7 +57,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     //Завантаження Списку складів (HTTP)
     public Warehouse[] LoadWarehouse() {
         Warehouse[] res = new Warehouse[1];
-        res[0]= new Warehouse(1,"1","Тестовий склад","","127.0.0.1","127.0.0.1")
+        res[0]= new Warehouse(1,"1","Тестовий склад","","127.0.0.1","127.0.0.1");
         return res;
     }
 
@@ -59,7 +66,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         if (pProgress != null)
             pProgress.set(5);
 
-        String data = config.GetApiJson(150,BuildConfig.VERSION_CODE ,"\"TypeDoc\":-1");
+        String data = config.GetApiJson(150,BuildConfig.VERSION_CODE ,"\"TypeDoc\":-2");
         HttpResult result = Http.   HTTPRequest("http://api.spar.uz.ua/znp/", data, "application/json; charset=utf-8", "nov", "123");
 
         if (result.HttpState != eStateHTTP.HTTP_OK) {
@@ -77,8 +84,41 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     //Завантаження документів в ТЗД (HTTP)
     //PSU Треба перенести в окремий конектор
     public Boolean LoadDocsData(int pTypeDoc, String pNumberDoc, ObservableInt pProgress, boolean pIsClear) {
+        if(pTypeDoc<=0)
+            return true;
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        Doc d =new Doc(1,"1");
+        d.DateDoc= formatter.format(date);
+        d.Description="Документ 1";
+        d.ExtInfo="011101";
+        mDbHelper.SaveDocs(d);
+        d.TypeDoc=2;
+        mDbHelper.SaveDocs(d);
+        DocWaresSample[] dws= new DocWaresSample[3];
+        dws[0] = new DocWaresSample();
+        dws[0].TypeDoc=pTypeDoc;
+        dws[0].NumberDoc="1";
+        dws[0].CodeWares=164730;
+        dws[0].Quantity=2d;
+        dws[0].OrderDoc=1;
 
-        return mDbHelper.LoadDataDoc("", pProgress);
+        dws[1] = new DocWaresSample();
+        dws[1].TypeDoc=pTypeDoc;
+        dws[1].NumberDoc="1";
+        dws[1].CodeWares=164734;
+        dws[1].Quantity=10d;
+        dws[1].OrderDoc=2;
+
+        dws[2] = new DocWaresSample();
+        dws[2].TypeDoc=pTypeDoc;
+        dws[2].NumberDoc="1";
+        dws[2].CodeWares=196208;
+        dws[2].Quantity=6d;
+        dws[2].OrderDoc=3;
+
+        SaveDocWaresSample(dws,0);
+        return true;
     }
 
     //Вивантаження документів з ТЗД (HTTP)

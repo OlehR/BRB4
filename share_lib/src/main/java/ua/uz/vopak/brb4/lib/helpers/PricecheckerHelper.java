@@ -8,7 +8,7 @@ public class PricecheckerHelper {
     private GetDataHTTP Http = GetDataHTTP.instance();
     public LabelInfo getPriceCheckerData(LabelInfo LI, String BarCode, boolean isHandInput, AbstractConfig config) {
         //Http = new GetDataHTTP(new String[]{config.ApiUrl, config.ApiURLadd});
-        if(config.Company== eCompany.SparPSU||config.Company==eCompany.VopakPSU)
+        if(config.Company== eCompany.SparPSU||config.Company==eCompany.VopakPSU || config.Company==eCompany.Test)
             return getPriceCheckerDataPSU(  LI,  BarCode,  isHandInput,  config);
         else if(config.Company== eCompany.Sim23)
             return getPriceCheckerDataSevenEleven(LI,  BarCode,  isHandInput,  config);

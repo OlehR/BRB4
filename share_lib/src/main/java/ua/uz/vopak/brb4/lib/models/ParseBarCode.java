@@ -8,6 +8,7 @@ public class ParseBarCode {
         public double Price=0d;
         public double PriceOpt=0d;
         public String Article =null;
+
         public double Quantity =0d;;//= Double.parseDouble(Weight) / 1000d;
         public ParseBarCode(){};
 

@@ -61,6 +61,11 @@ public abstract class AbstractConfig {
     }
 
     public String GetApiJson(int parCodeData, int VersionCode, String parData) {
+        if(Company==eCompany.Test)
+        {
+            Login="c";
+            Password="c";
+        }
         return "{\"CodeData\":" + parCodeData + ",\"SerialNumber\":\"" + SN + "\",\"NameDCT\":\"" + NameDCT + "\", \"Ver\":\"" + VersionCode + "\", \"CodeWarehouse\":\"" + this.getCodeWarehouse() + "\", \"Login\": \"" + Login + "\",\"PassWord\": \"" + Password + "\"" +
                 (parData == null || parData =="" ? "" : "," + parData) + "}";
     }
