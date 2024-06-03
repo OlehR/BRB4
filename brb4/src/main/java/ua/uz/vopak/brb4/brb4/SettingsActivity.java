@@ -34,7 +34,7 @@ public class SettingsActivity extends Activity implements View.OnClickListener {
         BildWarehouse();
         TextView SN;
         SN = findViewById(R.id.SN);
-        SN.setText("SN: " + config.SN);
+        SN.setText( config.NameDCT+ " SN: " + config.SN);
         SN = findViewById(R.id.Ver);
         SN.setText("Ver: " + BuildConfig.VERSION_NAME);
     }

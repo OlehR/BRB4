@@ -22,7 +22,7 @@ public abstract class AbstractConfig {
     public boolean IsOnline=false;
 
     public String SN;
-    public String NameDCT = USER;
+    public String NameDCT;
 
     public boolean isAutorized;
     public String Login = "";
@@ -56,6 +56,7 @@ public abstract class AbstractConfig {
         context = pContext;
         cUtils=new Utils(context);
         SN= cUtils.GetSN();
+        NameDCT= cUtils.GetNameDCT();
         //Визначаємо тип Сканера
         TypeScaner =cUtils.GetTypeScaner();
     }

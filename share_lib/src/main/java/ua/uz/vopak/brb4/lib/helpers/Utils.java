@@ -15,6 +15,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.text.format.Formatter;
 import android.util.Log;
 import android.media.MediaPlayer;
@@ -121,10 +122,24 @@ public class Utils {
                 if (ActivityCompat.checkSelfPermission(vApplicationContext, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                     return "Not PERMISSION READ_PHONE_STATE";
                 }
+
                 return getSerial();
             }
             else
               return Build.SERIAL;
+        }
+        catch (Exception e )
+        {
+            String ee=e.getMessage();
+        }
+        return "";
+
+    }
+
+    @SuppressLint("HardwareIds")
+    public String GetNameDCT() {
+        try {
+               return Settings.Global.getString(vApplicationContext.getContentResolver(), "device_name");
         }
         catch (Exception e )
         {
