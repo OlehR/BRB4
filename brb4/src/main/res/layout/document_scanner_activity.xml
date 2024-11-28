@@ -140,6 +140,14 @@
                     android:weightSum="5">
 
 
+                    <!--
+                    android:enabled="@{WaresItem.IsInputQuantity1 }"
+                        android:focusable="@{WaresItem.IsInputQuantity1}"
+android:enabled="@{WaresItem.IsInputQuantity() ? true : false }"
+                        android:focusable="@{WaresItem.IsInputQuantity() ? true : false }"
+                        android:focusableInTouchMode="@{WaresItem.IsInputQuantityTouch()}"
+-->
+
                     <EditText
                         android:id="@+id/DS_InputCount"
                         android:layout_width="0dp"
@@ -150,16 +158,7 @@
                         android:ems="10"
                         android:inputType="number|numberDecimal|numberSigned"
                         android:padding="5dp"
-                        android:text=""
-                        />
-
-                    <!--
-                    android:enabled="@{WaresItem.IsInputQuantity1 }"
-                        android:focusable="@{WaresItem.IsInputQuantity1}"
-android:enabled="@{WaresItem.IsInputQuantity() ? true : false }"
-                        android:focusable="@{WaresItem.IsInputQuantity() ? true : false }"
-                        android:focusableInTouchMode="@{WaresItem.IsInputQuantityTouch()}"
--->
+                        android:text="" />
 
                     <TextView
                         android:layout_width="0dp"

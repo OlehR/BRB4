@@ -60,8 +60,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginRight="5dp"
-
                     android:background="@drawable/input_style"
+
                     android:ems="10"
                     android:enabled="true"
                     android:focusable="true"
@@ -69,7 +69,8 @@
                     android:inputType="numberDecimal"
                     android:padding="5dp"
                     android:text="@{ND.WarehouseTo}"
-                    android:textAlignment="center" />
+                    android:textAlignment="center"
+                    android:visibility="@{ND.IsWarehouseTo? View.VISIBLE : View.GONE}" />
             </LinearLayout>
 
             <LinearLayout
@@ -78,7 +79,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:orientation="horizontal"
-                android:weightSum="5">
+                android:weightSum="5"
+                android:visibility="@{ND.IsWarehouseTo? View.VISIBLE : View.GONE}"
+                >
 
                 <Spinner
                     android:layout_width="match_parent"

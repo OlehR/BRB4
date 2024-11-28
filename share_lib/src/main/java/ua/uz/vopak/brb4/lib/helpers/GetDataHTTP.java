@@ -109,8 +109,8 @@ public String GetBaseAuth(String pLogin,String pPasWord){
             url = new URL(pURL);
 
              conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(30000);
-            conn.setConnectTimeout(30000);
+            conn.setReadTimeout(50000);
+            conn.setConnectTimeout(50000);
             conn.setUseCaches(false);
            /* if (pPropertyName != null)
                 conn.setRequestProperty(pPropertyName, pPropertyValue);*/

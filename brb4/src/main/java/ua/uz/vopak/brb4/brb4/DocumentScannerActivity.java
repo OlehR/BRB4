@@ -441,7 +441,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
         TextView Quantity = new TextView(this);
         Quantity.setPadding(padding, padding, padding, padding);
         Quantity.setBackground(ContextCompat.getDrawable(this, R.drawable.table_cell_border));
-        Quantity.setText(parWM.GetInputQuantity());
+        Quantity.setText(parWM.GetQuantityBase());
         Quantity.setTextColor(Color.parseColor("#000000"));
         tr.addView(Quantity);
 
@@ -537,7 +537,7 @@ public class DocumentScannerActivity extends FragmentActivity implements View.On
                         WaresItem.CodeReason = WaresItem.ListReasonIdx.get() == 0 ? 0 : -1;
                     else
                         WaresItem.CodeReason = config.Reasons[WaresItem.ListReasonIdx.get()].СodeReason;
-                    return config.Worker.SaveDocWares(WaresItem.TypeDoc, WaresItem.NumberDoc, WaresItem.CodeWares, WaresItem.OrderDoc, WaresItem.InputQuantity, WaresItem.CodeReason, isNullable);
+                    return config.Worker.SaveDocWares(WaresItem.TypeDoc, WaresItem.NumberDoc, WaresItem.CodeWares, WaresItem.OrderDoc, WaresItem.InputQuantity* WaresItem.Coefficient, WaresItem.CodeReason, isNullable);
                 }
             },
                     new IPostResult<Result>() {

@@ -3,6 +3,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.databinding.ObservableArrayList;
+import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableInt;
 
 import ua.uz.vopak.brb4.brb4.Connector.Connector;
@@ -10,6 +11,7 @@ import ua.uz.vopak.brb4.brb4.DocumentActivity;
 import ua.uz.vopak.brb4.brb4.DocumentItemsActivity;
 import ua.uz.vopak.brb4.brb4.NewDocumentActivity;
 import ua.uz.vopak.brb4.brb4.helpers.Worker;
+import ua.uz.vopak.brb4.lib.enums.eTypeCreate;
 import ua.uz.vopak.brb4.lib.helpers.AsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.IAsyncHelper;
 import ua.uz.vopak.brb4.lib.helpers.UtilsUI;
@@ -22,12 +24,14 @@ public class NewDocModel {
     public ObservableArrayList<String> ListWarehouse = new ObservableArrayList<>();
     public ObservableInt  ListWarehouseIdx = new ObservableInt(0);
 
+    public ObservableBoolean IsWarehouseTo = new ObservableBoolean(false);
     public String WarehouseFrom,WarehouseTo="";
     //public Warehouse[] Warehouses;
     NewDocumentActivity NDA;
     Warehouse WhFrom;
     public NewDocModel(NewDocumentActivity pNDA)
     {
+        DocSetting DS=C.GetDocSetting(pNDA.DocumentType);
         NDA=pNDA;
         WhFrom=C.GetWarehouse(C.CodeWarehouse);
         WarehouseFrom=WhFrom.Name;
@@ -35,6 +39,7 @@ public class NewDocModel {
             for (Warehouse el:C.Warehouses) {
                 ListWarehouse.add(el.Name);
             }
+        IsWarehouseTo.set(DS.TypeCreateNewDoc == eTypeCreate.WithWarehouseTo);
     }
 
     public void OnClickCreate() {
@@ -53,7 +58,6 @@ public class NewDocModel {
                            new UtilsUI(NDA).Dialog("Документ не створено", Res==null?"Відсутня відповідь":Res.TextError);
                        }
                    });
-
                }
                return null;
                }

@@ -247,7 +247,7 @@ public class ClientPriceCheckerActivity extends Activity {
                         }
 
                         lastTapTimeMs = System.currentTimeMillis();
-
+                        //FindBarCode("5449000130389");
                         if (numberOfTaps == 3) {
                             if (InfoLayout.getVisibility() == View.VISIBLE)
                                 HideInfoLayout.setVisibility(View.VISIBLE);

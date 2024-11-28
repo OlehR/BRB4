@@ -2,7 +2,7 @@
 
 <Config>
 
-    <CodeWarehouse value="278" />
+    <CodeWarehouse value="199" />
 
     <Login value="c" />
 
@@ -18,6 +18,6 @@
 
     <SmbPath value="/Public/СПІЛЬНІ ДОКУМЕНТИ ЦО/ГАЗЕТА/Відео для Прайсчекера/promo.mp4" />
 
-    <ApiUrl value="http://znp.vopak.local/api/api_v1_utf8.php" />
+    <ApiUrl value="https://apitest.spar.uz.ua/znp/" />  <!--- "http://znp.vopak.local/api/api_v1_utf8.php"-->
 
 </Config>

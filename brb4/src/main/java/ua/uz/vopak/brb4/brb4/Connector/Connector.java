@@ -11,7 +11,9 @@ import java.util.List;
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
 import ua.uz.vopak.brb4.brb4.helpers.SQLiteAdapter;
 import ua.uz.vopak.brb4.brb4.models.Config;
+import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
+import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
@@ -41,6 +43,7 @@ public abstract class Connector {
         return Instance;
     }
 
+    public abstract DocSetting[] GenSettingDocs(eCompany pCompany, eRole pProfile);
     //Логін
     public abstract Result Login(final String pLogin, final String pPassWord,final boolean pIsLoginCO);
     //Завантаження довідників.

@@ -15,6 +15,7 @@ import android.util.Log;
 import androidx.databinding.ObservableInt;
 
 import ua.uz.vopak.brb4.brb4.Connector.SE.Barcode;
+import ua.uz.vopak.brb4.brb4.Connector.SE.GroupWares;
 import ua.uz.vopak.brb4.brb4.Connector.SE.Nomenclature;
 import ua.uz.vopak.brb4.brb4.Connector.SE.UnitDimension;
 import ua.uz.vopak.brb4.brb4.Connector.SE.Units;
@@ -788,12 +789,12 @@ public class SQLiteAdapter
             ContentValues values = new ContentValues();
             for (Nomenclature wares : pW) {
                 values.put("CODE_WARES", wares.CODE_WARES);
+                values.put("Code_Group", wares.CodeGroup);
                 values.put("NAME_WARES", wares.NAME_WARES);
                 values.put("ARTICL", wares.ARTICL);
                 values.put("CODE_UNIT", wares.CODE_UNIT);
                 values.put("VAT", wares.VAT);
                 values.put("DESCRIPTION", wares.DESCRIPTION);
-                values.put("CODE_GROUP", wares.CODE_GROUP);
                 values.put("VAT_OPERATION", wares.VAT_OPERATION);
                 mDb.replace("Wares", null, values);
                 if (i >= 1000) {
@@ -887,6 +888,25 @@ public class SQLiteAdapter
         }
         return true;
     }
+    public boolean SaveGroupWares(GroupWares[] pGW) {
+        mDb.beginTransaction();
+        try {
+            ContentValues values = new ContentValues();
+            for (GroupWares GW : pGW) {
+                values.put("CodeGroup", GW.CodeGroup);
+                values.put("NameGroup", GW.NameGroup);
+                values.put("IsAlcohol", GW.IsAlcohol);
+                mDb.replace("GroupWares", null, values);
+            }
+            mDb.setTransactionSuccessful();
+        } catch (Exception e) {
+            Utils.WriteLog("e",TAG, "GroupWares=>" + e.toString());
+        } finally {
+            mDb.endTransaction();
+        }
+        return true;
+    }
+
 public boolean DelOldData()
 {
     try {

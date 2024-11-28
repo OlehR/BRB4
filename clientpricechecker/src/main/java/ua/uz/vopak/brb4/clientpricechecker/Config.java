@@ -44,7 +44,7 @@ public class Config extends AbstractConfig {
                     switch (xrp.getName()){
                         case "CodeWarehouse" :
                             CodeWarehouse = Integer.valueOf(xrp.getAttributeValue(null,"value"));
-                            Company= (CodeWarehouse>30)?(CodeWarehouse==195?eCompany.LuboPSU :eCompany.SparPSU) :eCompany.VopakPSU;
+                            Company= (CodeWarehouse>30)?(CodeWarehouse==195 || CodeWarehouse==199 ?eCompany.LuboPSU :eCompany.SparPSU) :eCompany.VopakPSU;
                              IsHungary = (CodeWarehouse>30) && (CodeWarehouse<148);
                             break;
                         case "Login" :

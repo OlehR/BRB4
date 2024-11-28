@@ -34,7 +34,7 @@ public class AuterizationsHelper {
             Result r=c.Login(pLogin,pPassWord,pIsLoginCO);
             if(r.State==0) {
                 Res="Ok";
-                config.DocsSetting=config.Worker.GenSettingDocs(config.Company,config.Role);
+                config.DocsSetting=c.GenSettingDocs(config.Company,config.Role);
                 SetLoginPw(pLogin,pPassWord,pIsLoginCO);
                 if( pIsLoginCO && config.Company==eCompany.Sim23) //Визначення магазина по IP
                 {

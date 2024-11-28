@@ -22,8 +22,11 @@ import ua.uz.vopak.brb4.brb4.models.DocSetting;
 import ua.uz.vopak.brb4.brb4.models.DocWaresSample;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
 import ua.uz.vopak.brb4.lib.enums.eRole;
 import ua.uz.vopak.brb4.lib.enums.eStateHTTP;
+import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
+import ua.uz.vopak.brb4.lib.enums.eTypeCreate;
 import ua.uz.vopak.brb4.lib.helpers.Utils;
 import ua.uz.vopak.brb4.lib.models.HttpResult;
 import ua.uz.vopak.brb4.lib.models.ParseBarCode;
@@ -32,7 +35,47 @@ import ua.uz.vopak.brb4.lib.models.Result;
 public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     protected static final String TAG = "BRB4/Connector.SE";
-
+    public DocSetting[] GenSettingDocs(eCompany pCompany, eRole pProfile) {
+        DocSetting[] Setting = null;
+        boolean[] Right;
+        switch (pProfile) {
+            case Admin:
+                Right = new boolean[]{true, true, true, true, true, true, true};
+                Setting = new DocSetting[5];
+                break;
+            case User:
+                Right = new boolean[]{true, true, true, false, false, true, false};
+                Setting = new DocSetting[4];
+                break;
+            case Auditor:
+                Right = new boolean[]{false, true, false, true, true, true, true};
+                Setting = new DocSetting[5];
+                break;
+            case UserCO:
+                Right = new boolean[]{true, true, true, false, true, true, true};
+                Setting = new DocSetting[6];
+                break;
+            default:
+                Right = new boolean[]{false, false, false, false, false, false, false};
+                break;
+        }
+        int step = 0;
+        if (Right[0])
+            Setting[step++] = new DocSetting(2, "Мініревізія", eTypeControlDoc.Ask, false, false, false, false, false, 1, 1, 0, false, true, false, true, false, 0, eTypeCreate.Simple, false);
+        if (Right[1])
+            Setting[step++] = new DocSetting(5, "Перевірка Лотів з ЛЦ", eTypeControlDoc.Ask, true, true, true, true, true, 2, 2, 0, false, true, true, false, false, 1, eTypeCreate.None, false);
+        if (Right[2])
+            Setting[step++] = new DocSetting(1, "Прихід", eTypeControlDoc.Control, false, false, false, true, true, 1, 1, 3, true, true, true, false, false, 0, eTypeCreate.None, false);
+        if (Right[3])
+            Setting[step++] = new DocSetting(6, "Ревізія", eTypeControlDoc.Ask, true, false, true, false, false, 1, 1, 1, false, false, true, false, false, 1, eTypeCreate.None, true);
+        if (Right[4])
+            Setting[step++] = new DocSetting(7, "Ревізія ОЗ", eTypeControlDoc.Ask, true, false, false, false, false, 1, 6, 0, false, false, true, false, true, 2, eTypeCreate.None, false);
+        if (Right[5])
+            Setting[step++] = new DocSetting(8, "Переміщення ОЗ Вих", eTypeControlDoc.Ask, true, false, false, false, false, 1, 6, 0, false, true, true, false, true, 2, eTypeCreate.WithWarehouseTo, false);
+        if (Right[6])
+            Setting[step++] = new DocSetting(9, "Переміщення ОЗ Вх", eTypeControlDoc.Ask, true, false, false, false, false, 1, 6, 0, false, true, true, false, true, 2, eTypeCreate.None, false);
+        return Setting;
+    }
     public Result Login(final String pLogin, final String pPassWord, final boolean pIsLoginCO) {
         HttpResult res = Http.HTTPRequest(pIsLoginCO ? 1 : 0, "login", "{\"login\" : \"" + pLogin + "\"}", "application/json;charset=utf-8", pLogin, pPassWord);
         if (res.HttpState == eStateHTTP.HTTP_UNAUTHORIZED || res.HttpState == eStateHTTP.HTTP_Not_Define_Error) {
@@ -89,11 +132,11 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                     db.execSQL("DELETE FROM ADDITION_UNIT");
                     db.execSQL("DELETE FROM BAR_CODE");
                     db.execSQL("DELETE FROM UNIT_DIMENSION");
+                    db.execSQL("DELETE FROM GroupWares");
                 }
                 Log.d(TAG, "DELETE");
                 pProgress.set(45);
                 InputData data = new Gson().fromJson(res.Result, InputData.class);
-
                 Log.d(TAG, "Parse JSON");
                 pProgress.set(60);
                 mDbHelper.SaveWares(data.Nomenclature);
@@ -106,6 +149,12 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 Log.d(TAG, "Barcodes");
                 pProgress.set(90);
                 mDbHelper.SaveUnitDimension(data.Dimentions);
+                Log.d(TAG, "GroupWares");
+                pProgress.set(95);
+                if (data.Parents != null && data.Parents.length > 0)
+                    for (GroupWares el : data.Parents)
+                        if (el.CodeGroup == 26 || el.CodeGroup == 47) el.IsAlcohol = true;
+                mDbHelper.SaveGroupWares(data.Parents);
             } else
                 Log.d(TAG, res.HttpState.name());
 
@@ -123,8 +172,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             return true;
         } catch (Exception e) {
             Utils.WriteLog("e", TAG, "LoadGuidData=>", e);
-            Toast toast = Toast.makeText(Config.instance().context, "Помилка завантаження довідників=>" + e.getMessage(), Toast.LENGTH_LONG);
-            toast.show();
+//            Toast toast = Toast.makeText(Config.instance().context, "Помилка завантаження довідників=>" + e.getMessage(), Toast.LENGTH_LONG);
+ //           toast.show();
         }
         return false;
     }
@@ -146,27 +195,27 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
             if (Wh != null)
                 CodeWarehouse = Wh.Number;
         }
-        String NameApi = "documents";
-        String AddPar = "";
+
+        String NameApi = "documents"+ (pTypeDoc>0&&pTypeDoc<5 ? "" :  "?StoreSetting=" + CodeWarehouse);
+        if(pTypeDoc == 5)
+            NameApi = (pNumberDoc==null || pNumberDoc.isEmpty())? "DocumentsCurrentLot?StoreSetting=" + CodeWarehouse : "documents\\" + pNumberDoc;
+
         if (pTypeDoc >= 8 && pTypeDoc <= 9) {
-            NameApi = "docmoveoz";
-            AddPar = "&TypeMove=" + (pTypeDoc == 8 ? "0" : "1");
+            NameApi = "docmoveoz?StoreSetting=" + CodeWarehouse+"&TypeMove=" + (pTypeDoc == 8 ? "0" : "1");
         }
 
         if (pTypeDoc == -1)
             LoadGuidData(true, pProgress);
 
-         if (pProgress != null)
-            pProgress.set(5);
+        if (pProgress != null) pProgress.set(5);
         HttpResult res;
         try {
-            if ((pTypeDoc >= 5 && pTypeDoc <= 9) || (pTypeDoc <= 0 && config.IsLoginCO) ) {
-
-                if(pTypeDoc == 5  && (pNumberDoc==null || pNumberDoc.length()==0))
-                        return false;
-                res = Http.HTTPRequest(CodeApi, NameApi + (pTypeDoc == 5 ? "\\" + pNumberDoc : "?StoreSetting=" + CodeWarehouse) + AddPar, null, "application/json;charset=utf-8", config.Login, config.Password);
-            } else
-                res = Http.HTTPRequest(CodeApi, "documents", null, "application/json;charset=utf-8", config.Login, config.Password);
+            //if ((pTypeDoc >= 5 && pTypeDoc <= 9) || (pTypeDoc <= 0 && config.IsLoginCO) ) {
+                //if(pTypeDoc == 5  && (pNumberDoc==null || pNumberDoc.isEmpty())) return false;
+                //NameApi + (pTypeDoc == 5 ? "\\" + pNumberDoc : "?StoreSetting=" + CodeWarehouse) + AddPar
+                res = Http.HTTPRequest(CodeApi, NameApi, null, "application/json;charset=utf-8", config.Login, config.Password);
+            //} else
+             //   res = Http.HTTPRequest(CodeApi, "documents", null, "application/json;charset=utf-8", config.Login, config.Password);
 
             if (res.HttpState == eStateHTTP.HTTP_OK) {
                 if (pProgress != null)
@@ -195,7 +244,6 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                     pProgress.set(100);
                 return true;
             }
-
         } catch (Exception e) {
             Utils.WriteLog("e", TAG, "LoadDocsData=>", e);
         }
@@ -259,7 +307,8 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
     }
 
     public Warehouse[] LoadWarehouseAdd(){
-        HttpResult res;
+        return new Warehouse[0];
+       /* HttpResult res;
         try {
 
             res = Http.HTTPRequest(2, "storeUTP", null, "application/json;charset=utf-8", config.Login, config.Password);
@@ -276,7 +325,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         } catch (Exception e) {
             Utils.WriteLog("e", TAG, "LoadWarehouse=>", e);
         }
-        return null;
+        return null;*/
     }
 
     public Result SendLogPrice(List<LogPrice> pList) {
@@ -332,9 +381,7 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                 res.Code = Integer.parseInt(pBarCode.substring(0, pBarCode.indexOf('$')));
                 res.Quantity=1;
             }
-
         }
-
         return res;
     }
 
@@ -343,16 +390,20 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
         //String CodeWarehouse= String.valueOf(config.CodeWarehouse);
         int CodeApi = 0;
         if (ds != null) CodeApi = ds.CodeApi;
-
+        String Data=null;
         String NameApi = null;
         if (pTypeDoc == 8) {
             NameApi = "newmovedoc?StoreSetting=" + pCodeWarehouseFrom + "&StoreSettingTO=" + pCodeWarehouseTo;
         }
+        if (pTypeDoc == 2) {
+            NameApi = "newmovedoc";
+            Data="{\"TypeDoc\":"+pTypeDoc+"}";
+        }
 
         HttpResult res;
         try {
-            if ((pTypeDoc >= 5 && pTypeDoc <= 9) || (pTypeDoc <= 0 && config.IsLoginCO)) {
-                res = Http.HTTPRequest(CodeApi, NameApi, null, "application/json;charset=utf-8", config.Login, config.Password);
+            if (pTypeDoc <= 2|| (pTypeDoc >= 5 && pTypeDoc <= 9) || (pTypeDoc <= 0 && config.IsLoginCO)) {
+                res = Http.HTTPRequest(CodeApi, NameApi, Data, "application/json;charset=utf-8", config.Login, config.Password);
                 Result Res = new Gson().fromJson(res.Result, Result.class);
                 return Res;
             }

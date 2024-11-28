@@ -34,7 +34,7 @@ public class WaresItemModel implements Cloneable{
     public boolean IsRecord =false;
     public String GetInputQuantity() {return InputQuantity==0.0d ? "": String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",InputQuantity);}
     public String GetInputQuantityZero() {return String.format(Locale.US,CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",InputQuantity);}
-    public String GetQuantityBase() {return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",(double)Coefficient*InputQuantity);}
+    public String GetQuantityBase() {return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",(double)(Coefficient==0?1:Coefficient)*InputQuantity);}
     public double BeforeQuantity;
     public String GetBeforeQuantity() {
         return String.format(CodeUnit == config.GetCodeUnitWeight() ? "%.3f" : "%.0f",BeforeQuantity)+

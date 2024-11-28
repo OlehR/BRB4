@@ -1,6 +1,7 @@
 package ua.uz.vopak.brb4.brb4.models;
 
 import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
+import ua.uz.vopak.brb4.lib.enums.eTypeCreate;
 
 public class DocSetting {
     public int TypeDoc;
@@ -35,7 +36,7 @@ public class DocSetting {
     // Код API для документа (723 -(0-2)
     public int CodeApi=0;
     //
-    public boolean IsCreateNewDoc =false;
+    public eTypeCreate TypeCreateNewDoc = eTypeCreate.None;
 
     //
     public boolean IsWarehouse =false;
@@ -44,7 +45,7 @@ public class DocSetting {
         TypeDoc=pTypeDoc;
         NameDoc=pNameDoc;
     }
-    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut,boolean pIsmultipleSave,boolean pIsSaveOnlyScan,boolean pIsAddZero,boolean pIsSimpleDoc,int pCodeApi,boolean pIsCreateNewDoc,boolean pIsWarehouse  )
+    public DocSetting(int pTypeDoc,String pNameDoc,eTypeControlDoc pTypeControlQuantity,boolean pIsUrlAdd,boolean pIsAddBarCode, boolean pIsViewReason,boolean pIsViewPlan,boolean pIsShowUser,int pTypeColor,int pDayBefore,int pDayAfter,boolean pIsViewOut,boolean pIsmultipleSave,boolean pIsSaveOnlyScan,boolean pIsAddZero,boolean pIsSimpleDoc,int pCodeApi,eTypeCreate pTypeCreateNewDoc,boolean pIsWarehouse  )
     {
         this(pTypeDoc, pNameDoc);
         TypeControlQuantity =pTypeControlQuantity;
@@ -62,8 +63,7 @@ public class DocSetting {
         IsAddZero=pIsAddZero;
         IsSimpleDoc =pIsSimpleDoc;
         CodeApi = pCodeApi;
-        IsCreateNewDoc=pIsCreateNewDoc;
+        TypeCreateNewDoc=pTypeCreateNewDoc;
         IsWarehouse=pIsWarehouse;
     }
-
 }

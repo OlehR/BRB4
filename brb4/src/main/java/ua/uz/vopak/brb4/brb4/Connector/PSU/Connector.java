@@ -17,6 +17,10 @@ import java.util.List;
 
 import ua.uz.vopak.brb4.brb4.BuildConfig;
 import ua.uz.vopak.brb4.brb4.helpers.LogPrice;
+import ua.uz.vopak.brb4.brb4.models.DocSetting;
+import ua.uz.vopak.brb4.lib.enums.eCompany;
+import ua.uz.vopak.brb4.lib.enums.eTypeControlDoc;
+import ua.uz.vopak.brb4.lib.enums.eTypeCreate;
 import ua.uz.vopak.brb4.lib.models.ParseBarCode;
 import ua.uz.vopak.brb4.brb4.models.Warehouse;
 import ua.uz.vopak.brb4.brb4.models.WaresItemModel;
@@ -30,7 +34,17 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
 
     protected static final String TAG = "BRB4/Connector.PSU";
     Gson gson = new Gson();
-
+    public DocSetting[] GenSettingDocs(eCompany pCompany, eRole pProfile) {
+        DocSetting[] Setting = new DocSetting[7];
+        Setting[0] = new DocSetting(1, "Ревізія", eTypeControlDoc.Ask, false, false, false, false, true, 1, 1, 0, false, true, false, false, false, 0, eTypeCreate.None, false);
+        Setting[1] = new DocSetting(2, "Прихід", eTypeControlDoc.Control, false, false, false, true, true, 1, 5, 3, true, true, true, false, false, 0, eTypeCreate.None, false);
+        Setting[2] = new DocSetting(3, "Переміщення Вих", eTypeControlDoc.Ask, false, false, false, true, true, 1, 5, 3, true, true, true, false, false, 0, eTypeCreate.None, false);
+        Setting[3] = new DocSetting(4, "Списання");
+        Setting[4] = new DocSetting(5, "Повернення");
+        Setting[5] = new DocSetting(7, "Ревізія ОЗ", eTypeControlDoc.Ask, true, false, false, false, false, 1, 6, 0, false, false, true, false, true, 0, eTypeCreate.WithWarehouseTo, false);
+        Setting[6] = new DocSetting(8, "Переміщення Вх", eTypeControlDoc.Ask, false, false, true, true, true, 1, 5, 3, true, true, true, false, false, 0, eTypeCreate.None, false);
+        return Setting;
+    }
     public Result Login(final String pLogin, final String pPassWord,final boolean pIsLoginCO) {
         final String data = "{\"CodeData\": \"1\"" + ", \"Login\": \"" + pLogin + "\"" + ", \"PassWord\": \"" + pPassWord + "\"}";
         HttpResult result = Http.HTTPRequest(0, "",data,"application/json; charset=utf-8",null,null);

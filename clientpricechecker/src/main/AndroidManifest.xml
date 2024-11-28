@@ -17,6 +17,7 @@
         android:theme="@style/AppTheme">
 
         <activity android:name=".ClientPriceCheckerActivity"
+            android:exported="true"
             android:stateNotNeeded="true"
             android:windowSoftInputMode="stateAlwaysHidden"
             android:screenOrientation="landscape"
