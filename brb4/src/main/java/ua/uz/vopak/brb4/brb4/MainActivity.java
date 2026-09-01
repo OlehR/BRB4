@@ -85,7 +85,7 @@ public class  MainActivity extends AppCompatActivity implements View.OnClickList
             params.setMargins(5,0,5,10);
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             if(config.DocsSetting!=null)
-            for (int i = 0; i < config.DocsSetting.length; i++) {
+             for (int i = 0; i < config.DocsSetting.length; i++) {
                 Button btn = new Button(this);
                 btn.setText("F" + String.valueOf(i + 2) + "-" + config.DocsSetting[i].NameDoc);
                 btn.setId(btn.generateViewId());//setId(some_random_id);

@@ -325,7 +325,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:lines="2"
-            android:text="З питань працевлаштування звертайтесь за тел: 050 549 6971 \n Ha szeretnél nálunk dolgozni 050 549 6971"
+            android:text="З питань працевлаштування звертайтесь за тел: 050 432 2665"
             android:textColor="#fefefe"
             android:textStyle="bold"
             android:textScaleX="1.3"

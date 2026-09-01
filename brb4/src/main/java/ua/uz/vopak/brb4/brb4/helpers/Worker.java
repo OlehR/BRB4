@@ -69,7 +69,7 @@ public class Worker {
 
         config.ApiUrl=GetConfigPair("ApiUrl");
         if(config.ApiUrl==null || config.ApiUrl.isEmpty() )
-                config.ApiUrl=(config.Company==eCompany.Sim23 ? "http://176.241.128.13/RetailShop/hs/TSD/":"http://api.spar.uz.ua/znp/");
+                config.ApiUrl=(config.Company==eCompany.Sim23 ? "http://176.241.128.13/RetailShop/hs/TSD/":"https://dct.spar.uz.ua/znp/");
         config.ApiURLadd=GetConfigPair("ApiUrladd");
 
         config.Login = GetConfigPair("Login");

@@ -135,18 +135,22 @@ public class Connector extends  ua.uz.vopak.brb4.brb4.Connector.Connector {
                     db.execSQL("DELETE FROM GroupWares");
                 }
                 Log.d(TAG, "DELETE");
+                int i;
                 pProgress.set(45);
                 InputData data = new Gson().fromJson(res.Result, InputData.class);
                 Log.d(TAG, "Parse JSON");
                 pProgress.set(60);
                 mDbHelper.SaveWares(data.Nomenclature);
-                Log.d(TAG, "Nomenclature");
+                 i=mDbHelper.GetCount("Wares");
+                Log.d(TAG, "Nomenclature=>"+  Integer.toString(i));
                 pProgress.set(70);
                 mDbHelper.SaveAdditionUnit(data.Units);
-                Log.d(TAG, "Units");
+                i=mDbHelper.GetCount("ADDITION_UNIT");
+                Log.d(TAG, "Units=>"+i);
                 pProgress.set(80);
                 mDbHelper.SaveBarCode(data.Barcodes);
-                Log.d(TAG, "Barcodes");
+                i=mDbHelper.GetCount("BAR_CODE");
+                Log.d(TAG, "Barcodes=>"+i);
                 pProgress.set(90);
                 mDbHelper.SaveUnitDimension(data.Dimentions);
                 Log.d(TAG, "GroupWares");

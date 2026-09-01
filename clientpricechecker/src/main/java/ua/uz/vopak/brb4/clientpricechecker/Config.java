@@ -17,6 +17,8 @@ public class Config extends AbstractConfig {
     public static String SmbUser;
     public static String SmbPassword;
     public static String SmbPath;
+
+    public static String HttpPath;
     public static String SmbServer;
     public static Boolean IsHungary=false;
 
@@ -70,6 +72,9 @@ public class Config extends AbstractConfig {
                             break;
                         case "ApiUrl" :
                             ApiUrl = xrp.getAttributeValue(null,"value");
+                            break;
+                        case "HttpPath" :
+                            HttpPath = xrp.getAttributeValue(null,"value");
                             break;
                     }
                 }

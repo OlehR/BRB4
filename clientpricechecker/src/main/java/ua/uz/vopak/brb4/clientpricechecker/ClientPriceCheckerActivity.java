@@ -138,7 +138,7 @@ public class ClientPriceCheckerActivity extends Activity {
         if(!Config.IsHungary) {
             CheckPriceHungary.setVisibility(View.INVISIBLE);
             findViewById(R.id.CheckPrice_HU).setVisibility(View.INVISIBLE);
-            ((TextView) findViewById(R.id.WorkPhone)).setText("З питань працевлаштування звертайтесь за тел: 050 549 6971");
+            ((TextView) findViewById(R.id.WorkPhone)).setText("З питань працевлаштування звертайтесь за тел: 050 432 2665");
         }
 
         if (videoTimer != null) {
@@ -173,8 +173,17 @@ public class ClientPriceCheckerActivity extends Activity {
                         new IAsyncHelper<Boolean>() {
                             @Override
                             public Boolean Invoke() {
-                                Boolean Res= config.cUtils.GetFileFTP("smb://10.1.0.15"+config.SmbPath,"vopak.local",config.SmbUser, config.SmbPassword,Environment.getExternalStorageDirectory()+"/Movies/promo.mp4");
-                                return Res;
+
+                                try {
+                                    config.cUtils.GetFile(config.HttpPath,Environment.getExternalStorageDirectory()+"/Movies/promo.mp4.tmp");
+                                    return  true;
+                                } catch (Throwable e) {
+                                    String er= e.getMessage();
+                                    //throw new RuntimeException(e);
+                                }
+                                //Boolean Res= config.cUtils.GetFileFTP("smb://10.1.0.15"+config.SmbPath,"vopak.local",config.SmbUser, config.SmbPassword,Environment.getExternalStorageDirectory()+"/Movies/promo.mp4");
+                                //return Res;
+                                return false;
                             }
                         },
                         new IPostResult<Boolean>() {

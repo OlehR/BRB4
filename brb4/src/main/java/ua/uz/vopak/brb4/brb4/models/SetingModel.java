@@ -76,6 +76,12 @@ public class SetingModel {
                     apiURL.set(Warehouse[i].Url);
                     OnClickSave();
             }
+            else {
+                //ListWarehouseIdx.set(i);
+                //apiURL.set("http://45.83.1.207/market/hs/TSD");
+                //OnClickSave();
+            }
+
         } catch (Exception e) {
             Utils.WriteLog("e",TAG, "OnClickIP=>" , e);
         }
@@ -87,11 +93,11 @@ public class SetingModel {
         if(Warehouse!=null && Warehouse.length>ListWarehouseIdx.get())
             url=Warehouse[ListWarehouseIdx.get()].Url;
 
-        apiURL.set(Company==eCompany.Sim23 ? (url!=null && url.length()>0? url : "http://93.183.216.37:80/dev1/hs/TSD/"):
-                "http://api.spar.uz.ua/znp/");
+        apiURL.set(Company==eCompany.Sim23 ? (url!=null && url.length()>0? url : "http://45.83.1.207/market/hs/TSD"):
+                "https://dct.spar.uz.ua/znp/");
         config.ApiUrl=apiURL.get();
-        apiURLadd.set(Company==eCompany.Sim23 ? "http://93.183.216.37/copy_tk/hs/TSD/"//http://qlik.sim23.ua/TK/hs/TSD/;http://vpn.sim23.ua/TK/hs/TSD/"//;http://music.sim23.ua/TK/hs/TSD/"//"http://160.238.125.158/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/"
-                :"http://api.spar.uz.ua/print/;http://znp.vopak.local:8088/Print");
+        apiURLadd.set(Company==eCompany.Sim23 ? "http://qlik.sim23.ua/TK/hs/TSD/;http://vpn.sim23.ua/TK/hs/TSD/"//;http://music.sim23.ua/TK/hs/TSD/"//"http://160.238.125.158/TK/hs/TSD/;http://37.53.84.148/TK/hs/TSD/""http://93.183.216.37/copy_tk/hs/TSD/"//
+                :"https://dct.spar.uz.ua/print/;");
         config.ApiURLadd=apiURLadd.get();
     }
 
@@ -152,34 +158,7 @@ public class SetingModel {
         new AsyncHelper<Void>(new IAsyncHelper() {
             @Override
             public Void Invoke() {
-                config.cUtils.UpdateAPK("https://github.com/OlehR/BRB4/raw/master/apk/"+(config.IsTest?"test":"work")+"/","brb4.apk",Progress,BuildConfig.VERSION_CODE,BuildConfig.APPLICATION_ID);
-               /* try {
-                    Progress.set(0);
-                    String FileNameVer = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/"+"Ver.txt";
-                    config.cUtils.GetFile("https://github.com/OlehR/BRB4/raw/master/apk/test/Ver.txt", FileNameVer );
-                    String Ver= config.cUtils.FileToString(FileNameVer);
-                    Progress.set(10);
-                    if(Ver!=null&&Ver.length()>0) {
-                        int ver=0;
-                        try {
-                            ver= Integer.parseInt(Ver);
-                        } catch (NumberFormatException e) {
-
-                        }
-                        if(ver>BuildConfig.VERSION_CODE) {
-                            String FileName = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + "brb4.apk";
-                            config.cUtils.GetFile("https://github.com/OlehR/BRB4/raw/master/apk/test/brb4.apk", FileName);
-                            Progress.set(60);
-                            File file = new File(FileName);
-                            config.cUtils.InstallAPK(file, BuildConfig.APPLICATION_ID);
-                        }
-                    }
-                }
-                catch (Exception e){}
-                catch (Throwable throwable) {
-                    throwable.printStackTrace();
-                }
-                Progress.set(100);*/
+                config.cUtils.UpdateAPK("https://github.com/OlehR/BRB4/raw/master/apk/new/"+(config.IsTest?"test":"work")+"/","brb4.apk",Progress,BuildConfig.VERSION_CODE,BuildConfig.APPLICATION_ID);
                 return null;
             }
         }).execute();

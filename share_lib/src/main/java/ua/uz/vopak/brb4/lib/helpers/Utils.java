@@ -159,7 +159,7 @@ public class Utils {
             return eTypeScaner.Zebra;
         if ( model.equals("PM550")  && (manufacturer.contains("POINTMOBILE") || manufacturer.contains("Point Mobile Co., Ltd.")))
             return eTypeScaner.PM550;
-        if ( model.equals("PM351")  && (manufacturer.contains("POINTMOBILE") || manufacturer.contains("Point Mobile Co., Ltd.")))
+        if ( (model.equals("PM351")  ||  model.equals("PM352")  )&& (manufacturer.contains("POINTMOBILE") || manufacturer.contains("Point Mobile Co., Ltd.")))
             return eTypeScaner.PM351;
         if(model.equals("HC61") || manufacturer.contains("Bita"))
             return eTypeScaner.BitaHC61;
@@ -536,11 +536,16 @@ public class Utils {
             Utils.WriteLog("e",TAG, "CopyFile" + pFrom+" " +pTo , e);
         }
     }
-
     public boolean GetFileFTP(String pSmbPath,String pDomain ,String pSmbUser,String pSmbPassword,String pFileName)
     {
         boolean Res=false;
         try{
+            //jcifs.Config.setProperty("jcifs.smb.client.disablePlainTextPasswords","false");
+            System.setProperty("jcifs.smb.client.disableSMB1", "true");
+            System.setProperty("jcifs.smb.client.enableSMB2", "true");
+            System.setProperty("jcifs.smb.client.useSMB2Negotiation", "true");
+            System.setProperty("jcifs.smb.client.dfs.disabled", "true");
+
             String url = pSmbPath;//"smb://10.1.0.15"+config.SmbPath; //config.SmbDomain+
             final UniAddress domainController = UniAddress.getByName(pDomain);//"vopak.local"
             NtlmPasswordAuthentication auth = new NtlmPasswordAuthentication(pDomain, pSmbUser, pSmbPassword);

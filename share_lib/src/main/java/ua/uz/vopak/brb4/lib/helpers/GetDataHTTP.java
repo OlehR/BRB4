@@ -109,6 +109,7 @@ public String GetBaseAuth(String pLogin,String pPasWord){
             url = new URL(pURL);
 
              conn = (HttpURLConnection) url.openConnection();
+            conn.setFollowRedirects(true);
             conn.setReadTimeout(50000);
             conn.setConnectTimeout(50000);
             conn.setUseCaches(false);
@@ -118,6 +119,8 @@ public String GetBaseAuth(String pLogin,String pPasWord){
             //conn.setRequestMethod(pMetod);
             conn.setDoInput(true);
             conn.setDoOutput(true);
+
+
             conn.setInstanceFollowRedirects(false);
             Utils.WriteLog("d",TAG, "HTTPRequest\\Output");
             if(pData!=null) {
@@ -147,7 +150,7 @@ public String GetBaseAuth(String pLogin,String pPasWord){
                 res.Result=everything.toString();
                 Utils.WriteLog("d",TAG, "HTTPRequest\\EndRead");
 
-                log+= "\nResponse=>"+ (res.Result==null?"":res.Result);
+                log+= "\nResponse=>"+ (res.Result==null?"":res.Result.substring(0,res.Result.length()<1001? res.Result.length()-1: 1000));
             }
 
         } catch (Exception e) {

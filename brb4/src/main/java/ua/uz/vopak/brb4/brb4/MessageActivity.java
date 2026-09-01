@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import ua.uz.vopak.brb4.lib.enums.ActionType;
+//import ua.uz.vopak.brb4.lib.enums.ActionType;
 import ua.uz.vopak.brb4.lib.enums.MessageType;
 
 
@@ -36,7 +36,7 @@ public class MessageActivity extends Activity implements View.OnClickListener {
         String messageHeader = intent.getStringExtra("messageHeader");
         String message = intent.getStringExtra("message");
         MessageType type = (MessageType)intent.getSerializableExtra("type");
-        ActionType action = (ActionType)intent.getSerializableExtra("action");
+        //ActionType action = (ActionType)intent.getSerializableExtra("action");
 
         switch (type){
             case ErrorMessage:
@@ -59,7 +59,7 @@ public class MessageActivity extends Activity implements View.OnClickListener {
         messageHeaderView.setText(messageHeader);
         messageView.setText(message);
 
-        if(action != null){
+        /*if(action != null){
             switch (action){
                 case ConnectionNetwork:
                     // Додати виклик вікна підключення до мережі
@@ -68,7 +68,7 @@ public class MessageActivity extends Activity implements View.OnClickListener {
                     // Додати виклик вікна підключення по блютуз
                     break;
             }
-        }
+        }*/
     }
 
     @Override

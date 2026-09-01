@@ -111,6 +111,19 @@ public class SQLiteAdapter
         return value;
     }
 
+    public int GetCount(String pTable) {
+        Cursor mCur;
+        int value = 0;
+        String sql = "SELECT count(*) FROM "+pTable;
+
+        mCur = mDb.rawQuery(sql, null);
+        if (mCur!=null && mCur.getCount() > 0) {
+            mCur.moveToFirst();
+            value = mCur.getInt (0);
+        }
+        return value;
+    }
+
     public void InsLogPrice(String pBarCode,Integer pStatus, Integer pActionType, Integer pPackageNumber, Integer pCodeWarees,String pArticle,Integer pLineNumber) {
         try {
             SQLiteDatabase db = mDb;
@@ -785,19 +798,18 @@ public class SQLiteAdapter
         int i = 0;
         mDb.beginTransaction();
         try {
-            i++;
             ContentValues values = new ContentValues();
             for (Nomenclature wares : pW) {
                 values.put("CODE_WARES", wares.CODE_WARES);
-                values.put("Code_Group", wares.CodeGroup);
+                values.put("Code_Group", wares.CodeGroup==null?"0": wares.CodeGroup);
                 values.put("NAME_WARES", wares.NAME_WARES);
                 values.put("ARTICL", wares.ARTICL);
                 values.put("CODE_UNIT", wares.CODE_UNIT);
                 values.put("VAT", wares.VAT);
                 values.put("DESCRIPTION", wares.DESCRIPTION);
                 values.put("VAT_OPERATION", wares.VAT_OPERATION);
-                mDb.replace("Wares", null, values);
-                if (i >= 1000) {
+                mDb.replace("WARES", null, values);
+                if (++i >= 1000) {
                     i = 0;
                     mDb.setTransactionSuccessful();
                     mDb.endTransaction();
@@ -852,7 +864,7 @@ public class SQLiteAdapter
                 values.put("CODE_UNIT", BarCode.CODE_UNIT);
                 values.put("BAR_CODE", BarCode.BAR_CODE);
                 mDb.replace("BAR_CODE", null, values);
-                if (i >= 1000) {
+                if (++i >= 1000) {
                     i = 0;
                     mDb.setTransactionSuccessful();
                     mDb.endTransaction();

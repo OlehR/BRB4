@@ -2,12 +2,12 @@
 
 <Config>
 
-    <CodeWarehouse value="199" />
+    <CodeWarehouse value="159" />
 
     <Login value="c" />
 
     <Password value="c" />
-
+<!--
     <SmbDomain value="vopak.local" />
 
     <SmbServer value="freenas" />
@@ -16,8 +16,9 @@
 
     <SmbPassword value="Kd198475" />
 
-    <SmbPath value="/Public/СПІЛЬНІ ДОКУМЕНТИ ЦО/ГАЗЕТА/Відео для Прайсчекера/promo.mp4" />
+    <SmbPath value="/Public/СПІЛЬНІ ДОКУМЕНТИ ЦО/ГАЗЕТА/Відео для Прайсчекера/LUBO.mp4" />-->
+    <HttpPath value="http://apiold.spar.uz.ua/apk/SPAR.mp4" />
 
-    <ApiUrl value="https://apitest.spar.uz.ua/znp/" />  <!--- "http://znp.vopak.local/api/api_v1_utf8.php"-->
+    <ApiUrl value="http://apiold.spar.uz.ua/znp/" />  <!---"http://api.spar.uz.ua/znp/"  "http://znp.vopak.local/api/api_v1_utf8.php" SPAR VOPAK-->
 
 </Config>
