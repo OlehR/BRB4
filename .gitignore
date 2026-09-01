@@ -16,3 +16,10 @@
 /app/release
 /.vs/BRB4/CopilotIndices/17.14.995.13737
 /.vs/BRB4/FileContentIndex
+/brb4/debug
+/brb4/release
+*.log
+/.vs/BRB4/CopilotIndices/17.14.1601.40145
+/.vs/BRB4/v17
+/.vs
+/brb4/.idea
